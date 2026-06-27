@@ -47,7 +47,7 @@ const GameSchema: Schema<IGame> = new Schema({
   featured: { type: Boolean, default: false },
   likes: { type: [String], default: [] },
   dislikes: { type: [String], default: [] },
-  developer: { type: String, default: "CloudGames" },
+  developer: { type: String, default: "TapAndPlay" },
   platforms: { type: String, default: "Browser (desktop, mobile, tablet)" },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

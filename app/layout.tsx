@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
+import Footer from "@/components/layout/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CloudGames - Play Free Browser Games",
-  description: "Play the best free online HTML5 and Unity WebGL games directly in your browser without any downloads.",
+  title: "TapAndPlay - Free HTML5 Browser Games & Unblocked Arcade",
+  description: "Play the best free online HTML5 and Unity WebGL games directly in your browser on TapAndPlay. No downloads, instant play!",
 };
 
 export default function RootLayout({
@@ -32,7 +33,10 @@ export default function RootLayout({
           <Navbar />
           <div className="flex flex-1 pt-16 w-full">
             <Sidebar />
-            <main className="flex-1 min-w-0">{children}</main>
+            <main className="flex-1 min-w-0 flex flex-col">
+              {children}
+              <Footer />
+            </main>
           </div>
         </Providers>
       </body>

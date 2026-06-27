@@ -25,7 +25,7 @@ export default function Navbar() {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-40 h-16 bg-surface/80 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between px-4 lg:px-8">
-        <Link href="/" className="flex items-center text-primary hover:text-primary-light transition-colors" title="CloudGames Home">
+        <Link href="/" className="flex items-center text-primary hover:text-primary-light transition-colors" title="TapAndPlay Home">
           <Gamepad2 className="w-8 h-8" />
         </Link>
         
