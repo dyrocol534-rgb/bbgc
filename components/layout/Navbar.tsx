@@ -143,14 +143,24 @@ export default function Navbar() {
             <X className="w-5 h-5" />
           </button>
         </div>
-        
         <div className="flex-1 overflow-y-auto py-4">
+          <div className="px-3 mb-2">
+            <Link 
+              href="/profile" 
+              onClick={() => setIsSidebarOpen(false)} 
+              className="flex items-center gap-3 px-4 py-3 text-zinc-300 hover:bg-primary/10 hover:text-primary-light transition-colors rounded-lg font-medium group"
+            >
+              <UserIcon className="w-5 h-5 text-zinc-500 group-hover:text-primary-light" />
+              My Profile
+            </Link>
+          </div>
+          
           {session?.user?.email === "tusharkantanayak713@gmail.com" && (
             <div className="px-3">
               <Link 
                 href="/admin" 
                 onClick={() => setIsSidebarOpen(false)} 
-                className="flex items-center gap-3 px-4 py-3 text-zinc-300 hover:bg-primary/10 hover:text-indigo-400 transition-colors rounded-lg font-medium group"
+                className="flex items-center gap-3 px-4 py-3 text-zinc-300 hover:bg-primary/10 hover:text-primary-light transition-colors rounded-lg font-medium group"
               >
                 <UploadCloud className="w-5 h-5 text-indigo-500 group-hover:text-primary-light" />
                 Admin Dashboard

@@ -6,6 +6,7 @@ export interface IUser extends Document {
   image: string;
   favorites: string[]; // slugs of favorite games
   recentlyPlayed: string[]; // slugs of recently played games
+  bio: string;
   createdAt: Date;
 }
 
@@ -15,6 +16,7 @@ const UserSchema: Schema<IUser> = new Schema({
   image: { type: String },
   favorites: { type: [String], default: [] },
   recentlyPlayed: { type: [String], default: [] },
+  bio: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
 });
 

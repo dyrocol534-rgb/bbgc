@@ -40,6 +40,7 @@ export const authOptions: NextAuthOptions = {
           const dbUser = await User.findOne({ email: session.user.email });
           if (dbUser) {
             (session.user as any).id = dbUser._id.toString();
+            (session.user as any).bio = dbUser.bio || "";
             (session.user as any).favorites = dbUser.favorites || [];
             (session.user as any).recentlyPlayed = dbUser.recentlyPlayed || [];
           }
