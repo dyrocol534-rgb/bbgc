@@ -18,7 +18,8 @@ export default function UploadGamePage() {
     category: "action",
     buildType: "html5",
     developer: "CloudGames",
-    platforms: "Browser (desktop, mobile, tablet)"
+    platforms: "Browser (desktop, mobile, tablet)",
+    thumbnailUrl: ""
   });
 
   const handleUpload = async (e: React.FormEvent) => {
@@ -36,7 +37,6 @@ export default function UploadGamePage() {
       
       let uploadedCount = 0;
       let playUrl = "";
-      const thumbnailUrl = "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80"; // Using dummy thumbnail for now
 
       const getMimeType = (filename: string) => {
         const ext = filename.split('.').pop()?.toLowerCase();
@@ -99,7 +99,7 @@ export default function UploadGamePage() {
         buildType: formData.buildType,
         source: "own",
         playUrl: playUrl || `https://cdn.dummy.com/games/${formData.slug}/index.html`,
-        thumbnailUrl: thumbnailUrl,
+        thumbnailUrl: formData.thumbnailUrl || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
         status: "published", // auto publish for MVP
         developer: formData.developer,
         platforms: formData.platforms
@@ -144,6 +144,18 @@ export default function UploadGamePage() {
             required
             value={formData.slug}
             onChange={e => setFormData({...formData, slug: e.target.value})}
+            className="w-full bg-surface-hover border border-border-main rounded-lg p-3 text-text-main focus:ring-2 focus:ring-primary-hover outline-none transition-all"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-text-secondary mb-2">Thumbnail URL</label>
+          <input 
+            type="url" 
+            required
+            value={formData.thumbnailUrl}
+            onChange={e => setFormData({...formData, thumbnailUrl: e.target.value})}
+            placeholder="https://..."
             className="w-full bg-surface-hover border border-border-main rounded-lg p-3 text-text-main focus:ring-2 focus:ring-primary-hover outline-none transition-all"
           />
         </div>
