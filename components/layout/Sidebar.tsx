@@ -12,13 +12,11 @@ import {
 
 const PRIMARY_LINKS = [
   { name: "Home", href: "/", icon: Home },
-  { name: "Recently played", href: "/recently-played", icon: Clock },
   { name: "New", href: "/category/new", icon: Sparkles },
   { name: "Popular Games", href: "/category/popular", icon: Flame },
   { name: "Updated", href: "/category/updated", icon: RefreshCw },
   { name: "Originals", href: "/category/originals", icon: Star },
   { name: "Multiplayer", href: "/category/multiplayer", icon: Users },
-  { name: "Leaderboards", href: "/leaderboards", icon: Trophy },
 ];
 
 const CATEGORY_LINKS = [

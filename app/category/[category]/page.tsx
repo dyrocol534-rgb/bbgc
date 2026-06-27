@@ -8,12 +8,31 @@ export const revalidate = 3600;
 async function getCategoryGames(category: string) {
   try {
     await dbConnect();
-    const games = await Game.find({ 
-      status: "published", 
-      category: { $regex: new RegExp(`^${category}$`, 'i') } 
-    })
-      .sort({ playCount: -1 })
-      .lean();
+    let query: any = { status: "published" };
+    let sort: any = { playCount: -1 };
+    let limitAmount = 0; // 0 means no limit
+
+    const cat = category.toLowerCase();
+    
+    if (cat === 'new') {
+      sort = { createdAt: -1 };
+      limitAmount = 6;
+    } else if (cat === 'popular') {
+      sort = { playCount: -1 };
+      limitAmount = 6;
+    } else if (cat === 'updated') {
+      sort = { updatedAt: -1 };
+      limitAmount = 6;
+    } else {
+      query.category = { $regex: new RegExp(`^${category}$`, 'i') };
+    }
+
+    const queryBuilder = Game.find(query).sort(sort);
+    if (limitAmount > 0) {
+      queryBuilder.limit(limitAmount);
+    }
+
+    const games = await queryBuilder.lean();
     return JSON.parse(JSON.stringify(games));
   } catch (error) {
     console.error(`Error fetching ${category} games:`, error);
@@ -24,8 +43,8 @@ async function getCategoryGames(category: string) {
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
   const { category } = await params;
   return {
-    title: `${category.charAt(0).toUpperCase() + category.slice(1)} Games - CloudGames`,
-    description: `Play the best free online ${category} games on CloudGames.`,
+    title: `${category.charAt(0).toUpperCase() + category.slice(1)} Games - TapAndPlay`,
+    description: `Play the best free online ${category} games on TapAndPlay.`,
   };
 }
 

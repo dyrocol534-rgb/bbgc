@@ -19,20 +19,16 @@ async function getGame(slug: string) {
   }
 }
 
-async function getRelatedGames(category: string[], currentSlug: string) {
+async function getRandomGames(currentSlug: string) {
   try {
     await dbConnect();
-    const games = await Game.find({
-      status: "published",
-      slug: { $ne: currentSlug },
-      category: { $in: category }
-    })
-      .sort({ playCount: -1 })
-      .limit(10)
-      .lean();
+    const games = await Game.aggregate([
+      { $match: { status: "published", slug: { $ne: currentSlug } } },
+      { $sample: { size: 12 } }
+    ]);
     return JSON.parse(JSON.stringify(games));
   } catch (error) {
-    console.error("Error fetching related games:", error);
+    console.error("Error fetching random games:", error);
     return [];
   }
 }
@@ -64,7 +60,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
     notFound();
   }
 
-  const relatedGames = await getRelatedGames(game.category, game.slug);
+  const randomGames = await getRandomGames(game.slug);
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-[1400px]">
@@ -143,14 +139,14 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
         </div>
 
         {/* Suggested Games Sidebar (Right on Desktop, Below on Mobile) */}
-        {relatedGames.length > 0 && (
-          <aside className="w-full lg:w-[350px] xl:w-[400px] shrink-0">
+        {randomGames.length > 0 && (
+          <aside className="w-full lg:w-[450px] xl:w-[500px] shrink-0">
             <div className="bg-zinc-900 rounded-2xl p-4 sm:p-5 shadow-lg border border-border-main">
               <h3 className="font-bold text-lg text-white mb-4">Play next</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {relatedGames.map((g: any) => (
+              <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-3">
+                {randomGames.map((g: any) => (
                   <Link key={g.slug} href={`/games/${g.slug}`} className="group block">
-                    <div className="relative aspect-video rounded-xl overflow-hidden bg-zinc-800 shadow-md border border-border-main group-hover:border-indigo-500/50 transition-colors">
+                    <div className="relative aspect-square rounded-xl overflow-hidden bg-zinc-800 shadow-md border border-border-main group-hover:border-indigo-500/50 transition-colors">
                       <img 
                         src={g.thumbnailUrl} 
                         alt={g.title} 
