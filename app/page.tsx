@@ -29,7 +29,7 @@ async function getSuggestedGames() {
     // Sort by play count for popular suggestions
     const games = await Game.find({ status: "published" })
       .sort({ playCount: -1 })
-      .limit(6)
+      .limit(24)
       .lean();
     return JSON.parse(JSON.stringify(games));
   } catch (error) {
@@ -43,11 +43,28 @@ async function getRecentGames() {
     await dbConnect();
     const games = await Game.find({ status: "published" })
       .sort({ createdAt: -1 })
-      .limit(6)
+      .limit(16)
       .lean();
     return JSON.parse(JSON.stringify(games));
   } catch (error) {
     console.error(`Error fetching recent games:`, error);
+    return [];
+  }
+}
+
+async function getCategoryGames(category: string, limit: number = 16) {
+  try {
+    await dbConnect();
+    const games = await Game.find({ 
+      status: "published", 
+      category: { $regex: new RegExp(`^${category}$`, 'i') } 
+    })
+      .sort({ playCount: -1 })
+      .limit(limit)
+      .lean();
+    return JSON.parse(JSON.stringify(games));
+  } catch (error) {
+    console.error(`Error fetching ${category} games:`, error);
     return [];
   }
 }
@@ -58,6 +75,12 @@ export default async function Home() {
   const featuredGames = await getFeaturedGames();
   const suggestedGames = await getSuggestedGames();
   const recentGames = await getRecentGames();
+  
+  // Fetch specific categories for a richer homepage
+  const actionGames = await getCategoryGames("action", 16);
+  const arcadeGames = await getCategoryGames("arcade", 16);
+  const puzzleGames = await getCategoryGames("puzzle", 16);
+  const racingGames = await getCategoryGames("racing", 16);
 
   // Fetch user's recently played games if logged in
   let userRecentGames = [];
@@ -104,13 +127,37 @@ export default async function Home() {
 
       {suggestedGames.length > 0 && (
         <section>
-          <CategoryRow title="Suggestion for u" games={suggestedGames} />
+          <CategoryRow title="Suggestions for you" games={suggestedGames} />
+        </section>
+      )}
+
+      {actionGames.length > 0 && (
+        <section>
+          <CategoryRow title="Action Games" categorySlug="action" games={actionGames} />
+        </section>
+      )}
+
+      {arcadeGames.length > 0 && (
+        <section>
+          <CategoryRow title="Arcade Classics" categorySlug="arcade" games={arcadeGames} />
         </section>
       )}
 
       {recentGames.length > 0 && (
         <section>
           <CategoryRow title="New Releases" games={recentGames} />
+        </section>
+      )}
+
+      {puzzleGames.length > 0 && (
+        <section>
+          <CategoryRow title="Puzzle Games" categorySlug="puzzle" games={puzzleGames} />
+        </section>
+      )}
+
+      {racingGames.length > 0 && (
+        <section>
+          <CategoryRow title="Racing & Driving" categorySlug="racing" games={racingGames} />
         </section>
       )}
     </div>

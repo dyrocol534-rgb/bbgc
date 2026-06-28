@@ -21,9 +21,11 @@ export default function CategoryRow({ title, categorySlug, games }: CategoryRowP
           </Link>
         )}
       </div>
-      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
+      <div className="grid grid-rows-2 grid-flow-col gap-3 sm:gap-4 overflow-x-auto pb-2 snap-x auto-cols-[85px] sm:auto-cols-[105px] md:auto-cols-[125px] lg:auto-cols-[145px] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
         {games.map(game => (
-          <GameCard key={game._id} game={game} />
+          <div key={game._id} className="snap-start h-full">
+            <GameCard game={game} />
+          </div>
         ))}
       </div>
     </div>

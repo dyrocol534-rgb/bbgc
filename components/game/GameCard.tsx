@@ -27,8 +27,8 @@ export default function GameCard({ game }: GameCardProps) {
           <div className="text-white font-medium">{game.title}</div>
         </div>
       </div>
-      <div className="mt-2.5 px-1 text-center">
-        <h3 className="text-sm font-medium text-zinc-300 truncate group-hover:text-white transition-colors">{game.title}</h3>
+      <div className="mt-2 px-1 text-center">
+        <h3 className="text-xs sm:text-sm font-medium text-zinc-300 truncate group-hover:text-white transition-colors">{game.title}</h3>
       </div>
     </Link>
   );
