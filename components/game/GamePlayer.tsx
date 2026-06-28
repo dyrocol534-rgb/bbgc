@@ -68,16 +68,15 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     if (!isPlaying) return;
     
     const checkOrientation = () => {
-      if (game.width && game.height) {
-        const isGameLandscape = game.width > game.height;
+      if (game.orientation === 'landscape') {
         const isDevicePortrait = window.innerHeight > window.innerWidth;
-        
-        // Show overlay if playing a landscape game on a portrait device
-        if (isGameLandscape && isDevicePortrait) {
-          setShowRotateOverlay(true);
-        } else {
-          setShowRotateOverlay(false);
-        }
+        setShowRotateOverlay(isDevicePortrait);
+      } else if (game.orientation === 'portrait') {
+        const isDeviceLandscape = window.innerWidth > window.innerHeight;
+        setShowRotateOverlay(isDeviceLandscape);
+      } else {
+        // If orientation is 'any', never force them to rotate
+        setShowRotateOverlay(false);
       }
     };
 
@@ -105,9 +104,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             const promise = requestFS.call(docEl);
             const lockOrientation = () => {
               const orient = screen.orientation as any;
-              if (orient && orient.lock) {
-                const orientationMode = (game.width && game.height && game.width > game.height) ? 'landscape' : 'portrait';
-                orient.lock(orientationMode).catch((e: any) => console.log("Orientation lock failed:", e));
+              if (orient && orient.lock && game.orientation && game.orientation !== 'any') {
+                orient.lock(game.orientation).catch((e: any) => console.log("Orientation lock failed:", e));
               }
             };
             if (promise && promise.then) {
@@ -321,7 +319,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                     <RotateCcw className="w-16 h-16 text-indigo-400 animate-[spin_3s_ease-in-out_infinite]" />
                     <h3 className="text-white font-bold text-2xl tracking-tight">Rotate your screen</h3>
                     <p className="text-zinc-400 text-sm max-w-[200px]">
-                      This game is designed to be played in landscape mode.
+                      This game requires you to play in {game.orientation === 'landscape' ? 'landscape' : 'portrait'} mode.
                     </p>
                   </div>
                 </div>
