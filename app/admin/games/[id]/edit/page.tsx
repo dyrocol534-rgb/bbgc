@@ -26,7 +26,8 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
     playUrl: "",
     developer: "CloudGames",
     platforms: "Browser (desktop, mobile, tablet)",
-    isMultiplayer: false
+    isMultiplayer: false,
+    orientation: "any"
   });
 
   useEffect(() => {
@@ -46,7 +47,8 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
         playUrl: data.playUrl || "",
         developer: data.developer || "CloudGames",
         platforms: data.platforms || "Browser (desktop, mobile, tablet)",
-        isMultiplayer: data.category?.includes("multiplayer") || false
+        isMultiplayer: data.category?.includes("multiplayer") || false,
+        orientation: data.orientation || "any"
       });
     } catch (error) {
       console.error("Failed to fetch game", error);
@@ -133,6 +135,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
         thumbnailUrl: formData.thumbnailUrl,
         developer: formData.developer,
         platforms: formData.platforms,
+        orientation: formData.orientation,
         ...(file ? { playUrl: finalPlayUrl } : {})
       });
 
@@ -281,6 +284,20 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
             >
               <option value="html5">HTML5 (zip with index.html)</option>
               <option value="unity-webgl">Unity WebGL (zip)</option>
+              <option value="iframe-external">External iframe URL</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">Required Orientation</label>
+            <select 
+              value={formData.orientation}
+              onChange={e => setFormData({...formData, orientation: e.target.value})}
+              className="w-full bg-surface-hover border border-border-main rounded-lg p-3 text-text-main focus:ring-2 focus:ring-primary-hover outline-none transition-all"
+            >
+              <option value="any">Any (Fully Responsive)</option>
+              <option value="landscape">Force Landscape</option>
+              <option value="portrait">Force Portrait</option>
             </select>
           </div>
         </div>

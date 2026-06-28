@@ -41,7 +41,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const updateData: any = {};
     
     // Allow updating various fields
-    const allowedFields = ['status', 'featured', 'title', 'slug', 'description', 'category', 'buildType', 'playUrl', 'thumbnailUrl', 'developer', 'platforms'];
+    const allowedFields = ['status', 'featured', 'title', 'slug', 'description', 'category', 'buildType', 'playUrl', 'thumbnailUrl', 'developer', 'platforms', 'orientation'];
     for (const field of allowedFields) {
       if (body[field] !== undefined) {
         updateData[field] = body[field];
