@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play } from 'lucide-react';
+import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play, RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
 
@@ -180,7 +180,17 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             </div>
             
             <button 
-              onClick={() => setIsPlaying(true)}
+              onClick={() => {
+                setIsPlaying(true);
+                if (window.innerWidth < 640) {
+                  document.documentElement.requestFullscreen().then(() => {
+                    if (screen.orientation && screen.orientation.lock) {
+                      const orientationMode = (game.width && game.height && game.width > game.height) ? 'landscape' : 'portrait';
+                      screen.orientation.lock(orientationMode).catch(e => console.log("Orientation lock failed:", e));
+                    }
+                  }).catch(err => console.log("Fullscreen failed:", err));
+                }
+              }}
               className="px-6 py-2 bg-primary hover:bg-primary-hover text-white text-base sm:text-lg font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(108,64,255,0.4)] flex items-center gap-2 group"
             >
               <Play className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
@@ -198,13 +208,35 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           )}>
             {/* Top Bar for Mobile */}
             <div className="h-12 bg-[#121216] flex items-center justify-between px-3 shrink-0">
-              <button 
-                onClick={() => setIsPlaying(false)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#6c40ff] text-white text-sm font-bold rounded-md"
-              >
-                <div className="w-3 h-4 border border-white rounded-sm border-l-4"></div>
-                Exit
-              </button>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => {
+                    setIsPlaying(false);
+                    if (document.fullscreenElement) {
+                      document.exitFullscreen().catch(err => console.log(err));
+                    }
+                    if (screen.orientation && screen.orientation.unlock) {
+                      screen.orientation.unlock();
+                    }
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#6c40ff] text-white text-sm font-bold rounded-md"
+                >
+                  <div className="w-3 h-4 border border-white rounded-sm border-l-4"></div>
+                  Exit
+                </button>
+                <button 
+                  onClick={() => {
+                    if (screen.orientation && screen.orientation.lock && screen.orientation.type) {
+                      const newOrientation = screen.orientation.type.startsWith('portrait') ? 'landscape' : 'portrait';
+                      screen.orientation.lock(newOrientation).catch(e => console.log("Manual lock failed", e));
+                    }
+                  }}
+                  className="p-1.5 bg-zinc-800 text-zinc-300 hover:text-white rounded-md"
+                  title="Rotate Screen"
+                >
+                  <RotateCcw className="w-5 h-5" />
+                </button>
+              </div>
               <button onClick={() => setShowFeedbackModal(true)} className="p-2">
                 <MessageSquareWarning className="w-5 h-5 text-red-500" />
               </button>
