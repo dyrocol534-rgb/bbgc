@@ -11,10 +11,15 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const page = searchParams.get("page") || "1";
+    const category = searchParams.get("category") || "All";
     
     // Using GameMonetize JSON API Feed since GameDistribution is unreachable
-    const num = 30;
-    const url = `https://gamemonetize.com/feed.php?format=0&num=${num}&page=${page}`;
+    const num = 50;
+    let url = `https://gamemonetize.com/feed.php?format=0&num=${num}&page=${page}`;
+    
+    if (category !== "All") {
+      url += `&category=${encodeURIComponent(category)}`;
+    }
     
     const response = await fetch(url);
     

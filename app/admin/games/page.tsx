@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader2, Trash2, Eye, EyeOff, Star, Pencil } from "lucide-react";
+import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, Filter } from "lucide-react";
 import Link from "next/link";
 
 interface GameData {
@@ -22,6 +22,14 @@ interface GameData {
 export default function AdminGamesPage() {
   const [games, setGames] = useState<GameData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const filteredGames = games.filter(game => {
+    const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase()) || game.slug.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "all" || game.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   useEffect(() => {
     fetchGames();
@@ -81,7 +89,30 @@ export default function AdminGamesPage() {
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-text-main mb-6">Manage Games ({games.length})</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h2 className="text-xl font-bold text-text-main">Manage Games ({filteredGames.length})</h2>
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+            <input 
+              type="text" 
+              placeholder="Search games..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-4 py-2 bg-surface border border-border-main rounded-lg text-sm text-text-main focus:border-primary focus:outline-none transition-colors"
+            />
+          </div>
+          <select 
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3 py-2 bg-surface border border-border-main rounded-lg text-sm text-text-main focus:border-primary focus:outline-none transition-colors outline-none"
+          >
+            <option value="all">All Status</option>
+            <option value="published">Published</option>
+            <option value="draft">Drafts</option>
+          </select>
+        </div>
+      </div>
       
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
@@ -97,7 +128,7 @@ export default function AdminGamesPage() {
             </tr>
           </thead>
           <tbody>
-            {games.map((game) => (
+            {filteredGames.map((game) => (
               <tr key={game._id} className={`border-b border-border-main transition-colors ${game.status === 'draft' ? 'bg-background/50' : 'hover:bg-surface-hover/50'}`}>
                 <td className="py-3 px-4">
                   <img src={game.thumbnailUrl} alt={game.title} className="w-10 h-10 rounded-lg object-cover bg-background" />
@@ -164,7 +195,7 @@ export default function AdminGamesPage() {
                 </td>
               </tr>
             ))}
-            {games.length === 0 && (
+            {filteredGames.length === 0 && (
               <tr>
                 <td colSpan={6} className="py-12 text-center text-text-muted">
                   No games found. Time to upload some!

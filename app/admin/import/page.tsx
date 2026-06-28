@@ -17,19 +17,20 @@ export default function ImportGamesPage() {
   const [games, setGames] = useState<GMGame[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [category, setCategory] = useState("All");
   const [importingUrls, setImportingUrls] = useState<Set<string>>(new Set());
   const [importedUrls, setImportedUrls] = useState<Set<string>>(new Set());
   const [error, setError] = useState("");
 
   useEffect(() => {
     fetchGames();
-  }, [page]);
+  }, [page, category]);
 
   const fetchGames = async () => {
     try {
       setIsLoading(true);
       setError("");
-      const { data } = await axios.get(`/api/admin/import?page=${page}`);
+      const { data } = await axios.get(`/api/admin/import?page=${page}&category=${encodeURIComponent(category)}`);
       
       const gamesArray = Array.isArray(data) ? data : (data.items || []);
       setGames(gamesArray);
@@ -86,6 +87,29 @@ export default function ImportGamesPage() {
             Browse and import thousands of free HTML5 games from GameMonetize instantly.
           </p>
         </div>
+        
+        <select 
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value);
+            setPage(1);
+          }}
+          className="bg-surface-hover border border-zinc-700 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 outline-none min-w-[150px]"
+        >
+          <option value="All">All Categories</option>
+          <option value="1">Action</option>
+          <option value="2">Arcade</option>
+          <option value="4">Puzzle</option>
+          <option value="5">Shooting</option>
+          <option value="7">Racing</option>
+          <option value="8">Multiplayer</option>
+          <option value="6">Sports</option>
+          <option value="10">Adventure</option>
+          <option value="9">Girls</option>
+          <option value="11">3D</option>
+          <option value="15">Clicker</option>
+          <option value="14">Casual</option>
+        </select>
       </div>
 
       {error && (
@@ -160,7 +184,7 @@ export default function ImportGamesPage() {
             })}
           </div>
 
-          <div className="flex justify-center items-center gap-4 mt-8 pt-4 border-t border-border-main">
+          <div className="flex justify-center items-center gap-2 sm:gap-4 mt-8 pt-4 border-t border-border-main">
             <button 
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
@@ -168,7 +192,32 @@ export default function ImportGamesPage() {
             >
               Previous Page
             </button>
-            <span className="text-text-muted font-medium">Page {page}</span>
+            
+            <div className="flex items-center gap-2 bg-surface-hover px-3 py-1.5 rounded-lg border border-zinc-800">
+              <span className="text-text-muted font-medium text-sm">Page</span>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const target = parseInt(formData.get("pageInput") as string);
+                if (!isNaN(target) && target > 0) {
+                  setPage(target);
+                }
+              }} className="flex items-center">
+                <input 
+                  type="number" 
+                  name="pageInput"
+                  defaultValue={page}
+                  min="1"
+                  key={`page-input-${page}`}
+                  className="w-20 px-2 py-1 bg-surface border border-zinc-700 rounded text-center text-white focus:outline-none focus:border-indigo-500 text-sm"
+                  title="Press Enter to jump to page"
+                />
+                <button type="submit" className="ml-2 px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-sm transition-colors">
+                  Go
+                </button>
+              </form>
+            </div>
+
             <button 
               onClick={() => setPage(p => p + 1)}
               className="px-4 py-2 bg-surface-hover hover:bg-surface-active text-text-main rounded-lg transition-colors"
