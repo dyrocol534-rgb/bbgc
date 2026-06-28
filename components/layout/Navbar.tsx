@@ -42,8 +42,9 @@ export default function Navbar() {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-40 h-16 bg-surface/80 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between px-4 lg:px-8">
-        <Link href="/" className="flex items-center text-primary hover:text-primary-light transition-colors" title="TapAndPlay Home">
-          <Gamepad2 className="w-8 h-8" />
+        <Link href="/" className="flex items-center text-primary hover:text-primary-light transition-colors" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay"} Home`}>
+          <Gamepad2 className="w-9 h-9 hidden md:block" />
+          <span className="font-extrabold text-2xl tracking-tight text-white hidden md:block ml-2">{process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay"}</span>
         </Link>
         
         <div className="flex-1 max-w-xl mx-4 hidden sm:block">
@@ -166,7 +167,7 @@ export default function Navbar() {
             )}
             <div className="flex flex-col">
               <span className="text-sm font-bold text-white truncate max-w-[140px]">{session?.user?.name || "Guest"}</span>
-              {session?.user?.email === "tusharkantanayak713@gmail.com" && (
+              {session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") && (
                 <span className="text-xs font-semibold text-indigo-400 tracking-wide uppercase mt-0.5">Admin</span>
               )}
             </div>
@@ -192,7 +193,7 @@ export default function Navbar() {
                 </Link>
               </div>
               
-              {session?.user?.email === "tusharkantanayak713@gmail.com" && (
+              {session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") && (
                 <div className="px-3">
                   <Link 
                     href="/admin" 

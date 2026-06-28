@@ -9,7 +9,7 @@ import AdminNav from "@/components/layout/AdminNav";
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
 
-  if (!session || session.user?.email !== "tusharkantanayak713@gmail.com") {
+  if (!session || session.user?.email !== (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com")) {
     return (
       <div className="container mx-auto px-4 py-20 text-center max-w-md">
         <h1 className="text-2xl font-bold text-red-400 mb-4">Access Denied</h1>

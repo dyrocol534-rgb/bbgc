@@ -16,6 +16,7 @@ interface GameData {
   likes?: string[];
   dislikes?: string[];
   createdAt: string;
+  source: string;
 }
 
 export default function AdminGamesPage() {
@@ -102,7 +103,14 @@ export default function AdminGamesPage() {
                   <img src={game.thumbnailUrl} alt={game.title} className="w-10 h-10 rounded-lg object-cover bg-background" />
                 </td>
                 <td className="py-3 px-4">
-                  <div className="font-medium text-text-main">{game.title}</div>
+                  <div className="font-medium text-text-main flex items-center gap-2">
+                    {game.title}
+                    {game.source === "aggregated" && (
+                      <span className="bg-indigo-500/20 text-indigo-400 text-[10px] uppercase font-bold px-1.5 py-0.5 rounded">
+                        Imported
+                      </span>
+                    )}
+                  </div>
                   <div className="text-xs text-text-muted font-mono">{game.slug}</div>
                 </td>
                 <td className="py-3 px-4 text-center text-text-secondary text-sm">

@@ -205,8 +205,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
               <iframe
                 src={game.playUrl}
                 className="w-full h-full border-0"
-                allow="fullscreen; autoplay; gamepad"
-                sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
+                allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
                 onLoad={() => setIsLoading(false)}
               />
             </div>
@@ -231,8 +230,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             <iframe
               src={game.playUrl}
               className="w-full h-full border-0"
-              allow="fullscreen; autoplay; gamepad"
-              sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
+              allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
               onLoad={() => setIsLoading(false)}
             />
 

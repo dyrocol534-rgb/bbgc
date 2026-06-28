@@ -5,6 +5,8 @@ import { Gamepad2, Globe, Mail, MessageSquare, CheckCircle, XCircle, Loader2 } f
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay";
+  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@tapandplay.com";
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -46,9 +48,9 @@ export default function Footer() {
           
           {/* Brand Section */}
           <div className="md:col-span-1">
-            <Link href="/" className="flex items-center gap-2 text-primary hover:text-primary-light transition-colors mb-4" title="TapAndPlay Home">
+            <Link href="/" className="flex items-center gap-2 text-primary hover:text-primary-light transition-colors mb-4" title={`${siteName} Home`}>
               <Gamepad2 className="w-8 h-8" />
-              <span className="text-xl font-bold tracking-tight text-white">TapAndPlay</span>
+              <span className="text-xl font-bold tracking-tight text-white">{siteName}</span>
             </Link>
             <p className="text-zinc-400 text-sm leading-relaxed mb-6">
               Play the best free online HTML5 and Unity WebGL games directly in your browser. No downloads, instant play!
@@ -57,7 +59,7 @@ export default function Footer() {
               <a href="#" className="text-zinc-500 hover:text-white transition-colors" aria-label="Website">
                 <Globe className="w-5 h-5" />
               </a>
-              <a href="mailto:support@tapandplay.com" className="text-zinc-500 hover:text-white transition-colors" aria-label="Email">
+              <a href={`mailto:${supportEmail}`} className="text-zinc-500 hover:text-white transition-colors" aria-label="Email">
                 <Mail className="w-5 h-5" />
               </a>
               <a href="/contact" className="text-zinc-500 hover:text-white transition-colors" aria-label="Contact">
@@ -146,7 +148,7 @@ export default function Footer() {
 
         <div className="mt-12 pt-8 border-t border-border-main flex justify-center">
           <p className="text-zinc-500 text-sm text-center">
-            &copy; {currentYear} TapAndPlay. All rights reserved.
+            &copy; {currentYear} {siteName}. All rights reserved.
           </p>
         </div>
       </div>

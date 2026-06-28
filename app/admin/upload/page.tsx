@@ -20,13 +20,56 @@ export default function UploadGamePage() {
     developer: "CloudGames",
     platforms: "Browser (desktop, mobile, tablet)",
     thumbnailUrl: "",
-    isMultiplayer: false
+    isMultiplayer: false,
+    gameUrl: ""
   });
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) return setMessage("Please select a ZIP file");
     if (!formData.title || !formData.slug) return setMessage("Title and Slug are required");
+
+    // Handle Embed/Iframe type
+    if (formData.buildType === 'iframe-external') {
+      if (!formData.gameUrl) return setMessage("Game URL is required for embedded games");
+      
+      // Auto-extract URL if they accidentally pasted the full iframe code
+      let finalUrl = formData.gameUrl;
+      const iframeMatch = finalUrl.match(/src=["']([^"']+)["']/);
+      if (iframeMatch && iframeMatch[1]) {
+        finalUrl = iframeMatch[1];
+      }
+      
+      try {
+        setIsUploading(true);
+        setMessage("Creating database record...");
+        await axios.post('/api/games', {
+          title: formData.title,
+          slug: formData.slug,
+          description: formData.description,
+          category: formData.isMultiplayer ? [formData.category, "multiplayer"] : [formData.category],
+          buildType: formData.buildType,
+          source: "aggregated",
+          playUrl: finalUrl,
+          thumbnailUrl: formData.thumbnailUrl || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+          status: "published",
+          developer: formData.developer,
+          platforms: formData.platforms
+        });
+        
+        setMessage("Game embedded successfully!");
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
+      } catch (error: any) {
+        console.error(error);
+        setMessage(`Error: ${error.message}`);
+      } finally {
+        setIsUploading(false);
+      }
+      return;
+    }
+
+    if (!file) return setMessage("Please select a ZIP file");
 
     try {
       setIsUploading(true);
@@ -238,40 +281,58 @@ export default function UploadGamePage() {
             >
               <option value="html5">HTML5 (zip with index.html)</option>
               <option value="unity-webgl">Unity WebGL (zip)</option>
+              <option value="iframe-external">Embed from URL (External Game)</option>
             </select>
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">Game Files (ZIP)</label>
-          <div className={`border-2 rounded-lg p-8 text-center transition-colors relative overflow-hidden ${
-            file 
-              ? 'border-solid border-green-500 bg-green-500/10' 
-              : 'border-dashed border-border-strong hover:border-primary-light bg-surface'
-          }`}>
+        {formData.buildType === 'iframe-external' ? (
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">Game URL or Iframe Code</label>
             <input 
-              type="file" 
-              accept=".zip"
-              ref={fileInputRef}
-              onChange={e => setFile(e.target.files?.[0] || null)}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
-              id="file-upload"
+              type="text" 
+              required
+              value={formData.gameUrl}
+              onChange={e => setFormData({...formData, gameUrl: e.target.value})}
+              placeholder='https://html5.gamedistribution.com/... OR <iframe src="...">'
+              className="w-full bg-surface-hover border border-border-main rounded-lg p-3 text-text-main focus:ring-2 focus:ring-primary-hover outline-none transition-all"
             />
-            <div className="pointer-events-none flex flex-col items-center">
-              {file ? (
-                <CheckCircle className="w-10 h-10 text-green-500 mb-3" />
-              ) : (
-                <UploadCloud className="w-10 h-10 text-text-muted mb-3" />
-              )}
-              <span className={`text-sm font-medium ${file ? 'text-green-400' : 'text-text-secondary'}`}>
-                {file ? file.name : "Click to select or drag & drop ZIP file"}
-              </span>
-              <span className={`text-xs mt-1 ${file ? 'text-green-500/70' : 'text-text-placeholder'}`}>
-                {file ? "Ready to upload!" : "ZIP should contain index.html at the root"}
-              </span>
+            <p className="text-xs text-text-muted mt-2">
+              Paste the "Example URL" or the full "Embed" iframe code from the provider.
+            </p>
+          </div>
+        ) : (
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">Game Files (ZIP)</label>
+            <div className={`border-2 rounded-lg p-8 text-center transition-colors relative overflow-hidden ${
+              file 
+                ? 'border-solid border-green-500 bg-green-500/10' 
+                : 'border-dashed border-border-strong hover:border-primary-light bg-surface'
+            }`}>
+              <input 
+                type="file" 
+                accept=".zip"
+                ref={fileInputRef}
+                onChange={e => setFile(e.target.files?.[0] || null)}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                id="file-upload"
+              />
+              <div className="pointer-events-none flex flex-col items-center">
+                {file ? (
+                  <CheckCircle className="w-10 h-10 text-green-500 mb-3" />
+                ) : (
+                  <UploadCloud className="w-10 h-10 text-text-muted mb-3" />
+                )}
+                <span className={`text-sm font-medium ${file ? 'text-green-400' : 'text-text-secondary'}`}>
+                  {file ? file.name : "Click to select or drag & drop ZIP file"}
+                </span>
+                <span className={`text-xs mt-1 ${file ? 'text-green-500/70' : 'text-text-placeholder'}`}>
+                  {file ? "Ready to upload!" : "ZIP should contain index.html at the root"}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {message && (
           <div className={`p-4 rounded-lg text-sm font-medium ${message.includes('Error') ? 'bg-red-900/50 text-red-200' : 'bg-surface-hover text-text-secondary'}`}>

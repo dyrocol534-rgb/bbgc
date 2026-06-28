@@ -2,44 +2,65 @@ import { MetadataRoute } from 'next';
 import dbConnect from '@/lib/mongodb';
 import Game from '@/models/Game';
 
+export const revalidate = 86400; // Revalidate every 24 hours
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://cloud-games-demo.vercel.app'; // Replace with actual domain
+  // Replace with your actual domain when you deploy!
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cloud-games-demo.vercel.app';
   
   try {
     await dbConnect();
-    const games = await Game.find({ status: 'published' }).select('slug updatedAt').lean();
     
-    const gameUrls = games.map((game: any) => ({
-      url: `${baseUrl}/games/${game.slug}`,
-      lastModified: game.updatedAt || new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
+    // Fetch all published games
+    const games = await Game.find({ status: 'published' }).select('slug updatedAt createdAt').lean();
+    
+    // Fetch all categories dynamically
+    const categories = await Game.distinct("category", { status: "published" });
+    const validCategories = categories
+      .filter((c: any) => typeof c === 'string' && c.trim() !== '')
+      .map((c: string) => c.toLowerCase())
+      .filter((value: string, index: number, self: string[]) => self.indexOf(value) === index);
+
+    // Core static routes
+    const routes: MetadataRoute.Sitemap = [
+      '',
+      '/category/new',
+      '/category/popular',
+      '/category/updated',
+      '/category/originals',
+      '/category/multiplayer'
+    ].map((route) => ({
+      url: `${baseUrl}${route}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: route === '' ? 1 : 0.8,
     }));
 
-    const categories = ['action', 'puzzle', 'racing', 'sports'];
-    const categoryUrls = categories.map((cat) => ({
-      url: `${baseUrl}/category/${cat}`,
+    // Dynamic game routes
+    const gameRoutes: MetadataRoute.Sitemap = games.map((game: any) => ({
+      url: `${baseUrl}/games/${game.slug}`,
+      lastModified: new Date(game.updatedAt || game.createdAt || new Date()),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    }));
+
+    // Dynamic category routes
+    const categoryRoutes: MetadataRoute.Sitemap = validCategories.map((category: string) => ({
+      url: `${baseUrl}/category/${category}`,
       lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
+      changeFrequency: 'weekly',
       priority: 0.6,
     }));
 
-    return [
-      {
-        url: baseUrl,
-        lastModified: new Date(),
-        changeFrequency: 'daily' as const,
-        priority: 1,
-      },
-      ...categoryUrls,
-      ...gameUrls,
-    ];
+    return [...routes, ...categoryRoutes, ...gameRoutes];
   } catch (error) {
     console.error("Sitemap generation error:", error);
     return [
       {
         url: baseUrl,
         lastModified: new Date(),
+        changeFrequency: 'daily',
+        priority: 1,
       }
     ];
   }

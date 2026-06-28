@@ -16,9 +16,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay";
 export const metadata: Metadata = {
-  title: "TapAndPlay - Free HTML5 Browser Games & Unblocked Arcade",
-  description: "Play the best free online HTML5 and Unity WebGL games directly in your browser on TapAndPlay. No downloads, instant play!",
+  title: `${siteName} - Free HTML5 Browser Games & Unblocked Arcade`,
+  description: `Play the best free online HTML5 and Unity WebGL games directly in your browser on ${siteName}. No downloads, instant play!`,
 };
 
 export default function RootLayout({

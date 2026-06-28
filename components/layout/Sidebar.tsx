@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
@@ -19,24 +19,57 @@ const PRIMARY_LINKS = [
   { name: "Multiplayer", href: "/category/multiplayer", icon: Users },
 ];
 
-const CATEGORY_LINKS = [
-  { name: "Action", href: "/category/action", icon: Zap },
-  { name: "Adventure", href: "/category/adventure", icon: Compass },
-  { name: "Arcade", href: "/category/arcade", icon: Gamepad2 },
-  { name: "Board", href: "/category/board", icon: Grid },
-  { name: "Card", href: "/category/card", icon: Layers },
-  { name: "Clicker", href: "/category/clicker", icon: MousePointer2 },
-  { name: "Driving", href: "/category/driving", icon: Car },
-  { name: ".io", href: "/category/io", icon: CircleDot },
-  { name: "Puzzle", href: "/category/puzzle", icon: Puzzle },
-  { name: "Shooting", href: "/category/shooting", icon: Crosshair },
-];
+const getCategoryIcon = (category: string) => {
+  const normalized = category.toLowerCase();
+  switch (normalized) {
+    case "action": return Zap;
+    case "adventure": return Compass;
+    case "arcade": return Gamepad2;
+    case "board": return Grid;
+    case "card": return Layers;
+    case "clicker": return MousePointer2;
+    case "driving": 
+    case "racing": return Car;
+    case ".io": 
+    case "io": return CircleDot;
+    case "puzzle": return Puzzle;
+    case "shooting": 
+    case "shooter": return Crosshair;
+    case "sports": return Trophy;
+    default: return Gamepad2;
+  }
+};
 
 export default function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const [isRolling, setIsRolling] = useState(false);
+  const [categories, setCategories] = useState<{name: string, href: string, icon: any}[]>([]);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const res = await fetch("/api/categories");
+        const data = await res.json();
+        if (data.categories) {
+          const formattedLinks = data.categories.map((c: string) => {
+            // Special case for io
+            const displayName = c === "io" ? ".io" : c.charAt(0).toUpperCase() + c.slice(1);
+            return {
+              name: displayName,
+              href: `/category/${c}`,
+              icon: getCategoryIcon(c)
+            };
+          });
+          setCategories(formattedLinks);
+        }
+      } catch (error) {
+        console.error("Failed to fetch dynamic categories", error);
+      }
+    }
+    fetchCategories();
+  }, []);
 
   const handleSurpriseMe = async () => {
     if (isRolling) return;
@@ -156,7 +189,11 @@ export default function Sidebar() {
         </div>
 
         <nav className="flex flex-col gap-1 px-2">
-          {CATEGORY_LINKS.map((link) => {
+          {categories.length === 0 ? (
+            <div className="flex justify-center items-center py-4">
+              <Loader2 className="w-5 h-5 text-zinc-500 animate-spin" />
+            </div>
+          ) : categories.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
             return (
@@ -206,7 +243,7 @@ export default function Sidebar() {
         </div>
 
         <div className="text-xs text-text-placeholder">
-          © 2026 CloudGames
+          © {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "CloudGames"}
         </div>
       </div>
       
