@@ -16,7 +16,7 @@ export async function GET() {
   try {
     await dbConnect();
     // Fetch all games for the admin
-    const games = await Game.find({}).sort({ createdAt: -1 });
+    const games = await Game.find({}).sort({ createdAt: -1 }).lean();
     
     return NextResponse.json(games);
   } catch (error) {

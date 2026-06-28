@@ -43,8 +43,8 @@ async function getCategoryGames(category: string) {
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
   const { category } = await params;
   return {
-    title: `${category.charAt(0).toUpperCase() + category.slice(1)} Games - TapAndPlay`,
-    description: `Play the best free online ${category} games on TapAndPlay.`,
+    title: `${category.charAt(0).toUpperCase() + category.slice(1)} Games - ${process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay"}`,
+    description: `Play the best free online ${category} games on ${process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay"}.`,
   };
 }
 
@@ -65,8 +65,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-          {games.map((game: any) => (
-            <GameCard key={game._id} game={game} />
+          {games.map((game: Record<string, any>) => (
+            <GameCard key={game._id?.toString() || game.slug} game={game as any} />
           ))}
         </div>
       )}
