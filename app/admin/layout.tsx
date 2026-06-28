@@ -32,14 +32,20 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <h1 className="text-3xl font-bold text-text-main">Admin Dashboard</h1>
-        <AdminNav />
-      </div>
-      
-      <div className="bg-surface border border-border-main rounded-xl p-6 shadow-xl">
-        {children}
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <aside className="w-full lg:w-64 shrink-0 lg:sticky lg:top-24">
+          <div className="flex items-center justify-between lg:flex-col lg:items-start lg:gap-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-text-main">Admin Dashboard</h1>
+            <AdminNav />
+          </div>
+        </aside>
+        
+        <main className="flex-1 min-w-0 w-full">
+          <div className="bg-surface border border-border-main rounded-xl p-6 shadow-xl">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

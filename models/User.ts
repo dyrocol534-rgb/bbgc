@@ -8,6 +8,7 @@ export interface IUser extends Document {
   recentlyPlayed: string[]; // slugs of recently played games
   bio: string;
   createdAt: Date;
+  lastActiveAt: Date;
 }
 
 const UserSchema: Schema<IUser> = new Schema({
@@ -18,6 +19,7 @@ const UserSchema: Schema<IUser> = new Schema({
   recentlyPlayed: { type: [String], default: [] },
   bio: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
+  lastActiveAt: { type: Date, default: Date.now },
 });
 
 const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);

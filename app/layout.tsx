@@ -67,6 +67,16 @@ export const metadata: Metadata = {
   alternates: {
     canonical: siteUrl,
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: siteName,
+  },
+};
+
+export const viewport = {
+  themeColor: "#09090b",
 };
 
 export default function RootLayout({
@@ -88,6 +98,25 @@ export default function RootLayout({
             gtag('config', 'G-XL79QHW97L');
           `}
         </Script>
+        
+        {/* PWA Service Worker Registration */}
+        <Script id="register-sw" strategy="afterInteractive">
+          {`
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(
+                  function(registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                  },
+                  function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                  }
+                );
+              });
+            }
+          `}
+        </Script>
+        
         <Providers>
           <Navbar />
           <div className="flex flex-1 pt-16 w-full">

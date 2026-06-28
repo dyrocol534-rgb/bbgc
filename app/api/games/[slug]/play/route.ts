@@ -42,7 +42,8 @@ export async function POST(
               $position: 0, 
               $slice: 3 
             } 
-          } 
+          },
+          $set: { lastActiveAt: new Date() }
         }
       );
     }

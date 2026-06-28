@@ -22,9 +22,12 @@ export default function ScannerPage() {
   const [isScanning, setIsScanning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [scanIndex, setScanIndex] = useState(0);
+  const [lastScanned, setLastScanned] = useState<string | null>(null);
 
   useEffect(() => {
     fetchGames();
+    const stored = localStorage.getItem('lastScannedAt');
+    if (stored) setLastScanned(stored);
   }, []);
 
   async function fetchGames() {
@@ -55,8 +58,11 @@ export default function ScannerPage() {
   // Perform the scan sequentially (or in batches)
   useEffect(() => {
     if (!isScanning) return;
-    if (scanIndex >= games.length) {
+    if (scanIndex >= games.length && games.length > 0) {
       setIsScanning(false);
+      const now = new Date().toISOString();
+      localStorage.setItem('lastScannedAt', now);
+      setLastScanned(now);
       return;
     }
 
@@ -146,9 +152,16 @@ export default function ScannerPage() {
 
       {/* Progress Card */}
       <div className="bg-surface border border-zinc-800 rounded-xl p-6">
-        <div className="flex justify-between text-sm font-medium mb-3">
-          <span className="text-zinc-300">Scanning progress</span>
-          <span className="text-indigo-400">{scannedCount} / {games.length} Games</span>
+        <div className="flex justify-between items-end mb-3">
+          <div>
+            <div className="text-sm font-medium text-zinc-300 mb-1">Scanning progress</div>
+            {lastScanned && !isScanning && (
+              <div className="text-xs text-zinc-500">
+                Last scanned: {new Date(lastScanned).toLocaleString()}
+              </div>
+            )}
+          </div>
+          <span className="text-sm font-medium text-indigo-400">{scannedCount} / {games.length} Games</span>
         </div>
         <div className="w-full bg-zinc-800 rounded-full h-3 mb-6 overflow-hidden">
           <div 
@@ -179,27 +192,59 @@ export default function ScannerPage() {
 
       {/* Broken Games List */}
       {brokenGames.length > 0 && (
-        <div className="bg-surface border border-red-900/50 rounded-xl overflow-hidden shadow-lg shadow-red-900/10">
+        <div className="bg-surface border border-red-900/50 rounded-xl overflow-hidden shadow-lg shadow-red-900/10 animate-in fade-in duration-300 mt-6">
           <div className="bg-red-500/10 border-b border-red-900/50 p-4 flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-red-400" />
             <h3 className="font-bold text-red-100">Action Required: Broken Games Found</h3>
           </div>
-          <div className="overflow-x-auto">
+          
+          {/* Mobile View (Cards) */}
+          <div className="block sm:hidden divide-y divide-red-900/30">
+            {brokenGames.map((game) => (
+              <div key={game._id} className="p-4 space-y-3 hover:bg-red-500/5 transition-colors">
+                <div className="flex justify-between items-start gap-2">
+                  <div>
+                    <div className="font-medium text-red-100">{game.title}</div>
+                    <div className="text-zinc-500 text-xs">/{game.slug}</div>
+                  </div>
+                  <span className="inline-flex shrink-0 items-center px-2 py-1 rounded text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
+                    {game.statusCode || 'Timeout/Failed'}
+                  </span>
+                </div>
+                
+                <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 text-sm break-all">
+                  <ExternalLink className="w-3.5 h-3.5 shrink-0" /> {game.playUrl}
+                </a>
+                
+                <div className="pt-2 flex justify-end">
+                  <Link 
+                    href={`/admin/games/${game._id}/edit`}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-lg transition-colors border border-zinc-700"
+                  >
+                    Edit Game <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop View (Table) */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-zinc-800 text-sm text-text-muted">
+                <tr className="border-b border-zinc-800 text-sm text-text-muted bg-zinc-900/30">
                   <th className="p-4 font-medium">Game</th>
                   <th className="p-4 font-medium">Status Code</th>
                   <th className="p-4 font-medium">URL</th>
                   <th className="p-4 font-medium text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="text-sm">
+              <tbody className="text-sm divide-y divide-zinc-800/50">
                 {brokenGames.map((game) => (
-                  <tr key={game._id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors">
+                  <tr key={game._id} className="hover:bg-zinc-800/30 transition-colors">
                     <td className="p-4">
                       <div className="font-medium text-zinc-200">{game.title}</div>
-                      <div className="text-zinc-500 text-xs">/{game.slug}</div>
+                      <div className="text-zinc-500 text-xs mt-0.5">/{game.slug}</div>
                     </td>
                     <td className="p-4">
                       <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
@@ -207,14 +252,14 @@ export default function ScannerPage() {
                       </span>
                     </td>
                     <td className="p-4">
-                      <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 truncate max-w-[200px]">
-                        {game.playUrl} <ExternalLink className="w-3 h-3 shrink-0" />
+                      <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 truncate max-w-[300px]">
+                        <ExternalLink className="w-3.5 h-3.5 shrink-0" /> {game.playUrl}
                       </a>
                     </td>
                     <td className="p-4 text-right">
                       <Link 
                         href={`/admin/games/${game._id}/edit`}
-                        className="inline-flex items-center justify-center p-2 text-zinc-400 hover:text-white hover:bg-zinc-700 rounded-lg transition-colors"
+                        className="inline-flex items-center justify-center p-2 text-zinc-400 hover:text-white hover:bg-zinc-700 rounded-lg transition-colors border border-transparent hover:border-zinc-600"
                         title="Edit Game"
                       >
                         <ArrowRight className="w-4 h-4" />

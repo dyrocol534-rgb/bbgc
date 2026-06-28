@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
 import Game from "@/models/Game";
 import User from "@/models/User";
+import Subscriber from "@/models/Subscriber";
 
 export const dynamic = "force-dynamic";
 
@@ -17,16 +18,28 @@ export async function GET() {
   try {
     await dbConnect();
     
-    const totalUsers = await User.countDocuments();
-    const totalGames = await Game.countDocuments();
+    const now = new Date();
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const [totalUsers, totalGames, totalSubscribers, activeUsers24h, newUsers7d, games] = await Promise.all([
+      User.countDocuments(),
+      Game.countDocuments(),
+      Subscriber.countDocuments(),
+      User.countDocuments({ lastActiveAt: { $gte: oneDayAgo } }),
+      User.countDocuments({ createdAt: { $gte: sevenDaysAgo } }),
+      Game.find({}, 'playCount').lean()
+    ]);
     
-    const games = await Game.find({}, 'playCount');
-    const totalPlays = games.reduce((sum, game) => sum + (game.playCount || 0), 0);
+    const totalPlays = games.reduce((sum, game: any) => sum + (game.playCount || 0), 0);
 
     return NextResponse.json({
       totalUsers,
       totalGames,
-      totalPlays
+      totalPlays,
+      activeUsers24h,
+      newUsers7d,
+      totalSubscribers
     });
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch stats" }, { status: 500 });

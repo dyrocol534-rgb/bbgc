@@ -24,6 +24,9 @@ export const authOptions: NextAuthOptions = {
               email: user.email || "",
               image: user.image || "",
             });
+          } else {
+            existingUser.lastActiveAt = new Date();
+            await existingUser.save();
           }
           return true;
         } catch (error) {
