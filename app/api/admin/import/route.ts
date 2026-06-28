@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import dbConnect from "@/lib/mongodb";
+import Game from "@/models/Game";
 
 export async function GET(req: Request) {
   try {
@@ -28,7 +30,13 @@ export async function GET(req: Request) {
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    
+    await dbConnect();
+    const urls = Array.isArray(data) ? data.map((g: any) => g.url) : [];
+    const existingGames = await Game.find({ playUrl: { $in: urls } }).select('playUrl').lean();
+    const importedUrls = existingGames.map(g => g.playUrl);
+
+    return NextResponse.json({ items: data, importedUrls });
   } catch (error: any) {
     console.error("GameMonetize Fetch Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -26,6 +26,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
+  const [showRotateOverlay, setShowRotateOverlay] = useState(false);
   
   const [currentUrl, setCurrentUrl] = useState('');
   
@@ -53,7 +54,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       .catch(console.error);
   }, [game.slug]);
 
-  // Fallback to remove loader after 5 seconds if iframe onLoad fails
   useEffect(() => {
     if (isPlaying) {
       const timer = setTimeout(() => {
@@ -62,6 +62,32 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       return () => clearTimeout(timer);
     }
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    
+    const checkOrientation = () => {
+      if (game.width && game.height) {
+        const isGameLandscape = game.width > game.height;
+        const isDevicePortrait = window.innerHeight > window.innerWidth;
+        
+        // Show overlay if playing a landscape game on a portrait device
+        if (isGameLandscape && isDevicePortrait) {
+          setShowRotateOverlay(true);
+        } else {
+          setShowRotateOverlay(false);
+        }
+      }
+    };
+
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+    return () => {
+      window.removeEventListener('resize', checkOrientation);
+      window.removeEventListener('orientationchange', checkOrientation);
+    };
+  }, [isPlaying, game.width, game.height]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -180,8 +206,9 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             </div>
             
             <button 
-              onClick={() => {
-                setIsPlaying(true);
+              onClick={(e) => {
+                e.preventDefault();
+                // 1. Fire fullscreen request immediately (synchronously) before React state updates
                 if (window.innerWidth < 1024 || ('ontouchstart' in window)) {
                   const docEl = document.documentElement as any;
                   const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
@@ -202,6 +229,9 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                     } catch(e) { console.log("FS error", e); }
                   }
                 }
+                
+                // 2. Then update React state to show the game player
+                setIsPlaying(true);
               }}
               className="px-6 py-2 bg-primary hover:bg-primary-hover text-white text-base sm:text-lg font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(108,64,255,0.4)] flex items-center gap-2 group"
             >
@@ -268,6 +298,19 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
                 onLoad={() => setIsLoading(false)}
               />
+              
+              {/* Rotate Screen Overlay */}
+              {showRotateOverlay && (
+                <div className="absolute inset-0 z-40 bg-[#121216] flex flex-col items-center justify-center p-6 text-center">
+                  <div className="bg-black/60 p-8 rounded-3xl flex flex-col items-center gap-4 border border-white/10 shadow-2xl backdrop-blur-md">
+                    <RotateCcw className="w-16 h-16 text-indigo-400 animate-[spin_3s_ease-in-out_infinite]" />
+                    <h3 className="text-white font-bold text-2xl tracking-tight">Rotate your screen</h3>
+                    <p className="text-zinc-400 text-sm max-w-[200px]">
+                      This game is designed to be played in landscape mode.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

@@ -32,8 +32,13 @@ export default function ImportGamesPage() {
       setError("");
       const { data } = await axios.get(`/api/admin/import?page=${page}&category=${encodeURIComponent(category)}`);
       
-      const gamesArray = Array.isArray(data) ? data : (data.items || []);
+      const gamesArray = Array.isArray(data.items) ? data.items : (Array.isArray(data) ? data : []);
       setGames(gamesArray);
+      if (data.importedUrls) {
+        setImportedUrls(new Set(data.importedUrls));
+      } else {
+        setImportedUrls(new Set());
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.error || "Failed to fetch games from GameMonetize");

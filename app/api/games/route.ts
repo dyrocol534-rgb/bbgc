@@ -39,6 +39,11 @@ export async function POST(request: Request) {
     await dbConnect();
     const data = await request.json();
     
+    const existingGame = await Game.findOne({ $or: [{ slug: data.slug }, { playUrl: data.playUrl }] });
+    if (existingGame) {
+      return NextResponse.json({ error: "Game already exists" }, { status: 409 });
+    }
+    
     const newGame = await Game.create({
       ...data,
       status: "draft"
