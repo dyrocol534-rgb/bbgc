@@ -31,28 +31,28 @@ export default async function ProfilePage() {
   const orderedRecent = userRecent.map((slug: string) => recentMap.get(slug)).filter(Boolean);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="mb-12">
-        <h1 className="text-3xl font-bold text-white mb-2">My Profile</h1>
-        <p className="text-zinc-400">Manage your profile and view your games.</p>
+    <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-white mb-1">My Profile</h1>
+        <p className="text-sm text-zinc-400">Manage your profile and view your games.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Column: User Details */}
         <div className="lg:col-span-1">
-          <div className="bg-surface rounded-2xl p-6 border border-border-main sticky top-24">
+          <div className="bg-surface rounded-xl p-4 border border-border-main sticky top-24">
             <div className="flex flex-col items-center text-center">
               {session.user.image ? (
-                <img src={session.user.image} alt={session.user.name || "User"} className="w-24 h-24 rounded-full mb-4 border-4 border-surface-hover shadow-lg object-cover" />
+                <img src={session.user.image} alt={session.user.name || "User"} className="w-16 h-16 rounded-full mb-3 border-2 border-surface-hover shadow-md object-cover" />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-surface-hover mb-4 flex items-center justify-center text-3xl font-bold text-zinc-500 border-4 border-zinc-800">
+                <div className="w-16 h-16 rounded-full bg-surface-hover mb-3 flex items-center justify-center text-xl font-bold text-zinc-500 border-2 border-zinc-800">
                   {(session.user.name || "U").charAt(0).toUpperCase()}
                 </div>
               )}
-              <h2 className="text-xl font-bold text-white mb-1">{session.user.name}</h2>
-              <p className="text-sm text-zinc-400 mb-6">{session.user.email}</p>
+              <h2 className="text-lg font-bold text-white mb-0.5">{session.user.name}</h2>
+              <p className="text-xs text-zinc-400 mb-4">{session.user.email}</p>
               
-              <div className="w-full h-px bg-border-main mb-6"></div>
+              <div className="w-full h-px bg-border-main mb-4"></div>
 
               <ProfileClient initialBio={(session.user as any).bio || ""} />
             </div>
@@ -60,12 +60,12 @@ export default async function ProfilePage() {
         </div>
 
         {/* Right Column: Games */}
-        <div className="lg:col-span-3 space-y-12">
+        <div className="lg:col-span-3 space-y-8">
           
           <section>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-2xl">🕒</span>
-              <h3 className="text-2xl font-bold text-white">Recently Played</h3>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xl">🕒</span>
+              <h3 className="text-xl font-bold text-white">Recently Played</h3>
             </div>
             
             {orderedRecent.length > 0 ? (
@@ -78,16 +78,16 @@ export default async function ProfilePage() {
                 ))}
               </div>
             ) : (
-              <div className="bg-surface border border-border-main rounded-xl p-8 text-center">
-                <p className="text-zinc-400">You haven't played any games yet.</p>
+              <div className="bg-surface border border-border-main rounded-xl p-6 text-center">
+                <p className="text-sm text-zinc-400">You haven't played any games yet.</p>
               </div>
             )}
           </section>
 
           <section>
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-2xl">❤️</span>
-              <h3 className="text-2xl font-bold text-white">Favorite Games</h3>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xl">❤️</span>
+              <h3 className="text-xl font-bold text-white">Favorite Games</h3>
             </div>
             
             {orderedFavorites.length > 0 ? (
@@ -100,8 +100,8 @@ export default async function ProfilePage() {
                 ))}
               </div>
             ) : (
-              <div className="bg-surface border border-border-main rounded-xl p-8 text-center">
-                <p className="text-zinc-400">You haven't favorited any games yet.</p>
+              <div className="bg-surface border border-border-main rounded-xl p-6 text-center">
+                <p className="text-sm text-zinc-400">You haven't favorited any games yet.</p>
               </div>
             )}
           </section>
