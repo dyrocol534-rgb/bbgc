@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UploadCloud, BarChart3, Users, Gamepad2, MessageSquareWarning } from "lucide-react";
+import { UploadCloud, BarChart3, Users, Gamepad2, MessageSquareWarning, Activity } from "lucide-react";
 import clsx from "clsx";
 
 export default function AdminNav() {
@@ -12,6 +12,7 @@ export default function AdminNav() {
     { name: "Analytics", href: "/admin", icon: BarChart3, exact: true },
     { name: "Manage Games", href: "/admin/games", icon: Gamepad2, exact: false },
     { name: "Upload Game", href: "/admin/upload", icon: UploadCloud, exact: false },
+    { name: "Scanner", href: "/admin/scanner", icon: Activity, exact: false },
     { name: "Feedback", href: "/admin/feedback", icon: MessageSquareWarning, exact: false },
     { name: "Users", href: "/admin/users", icon: Users, exact: false },
   ];

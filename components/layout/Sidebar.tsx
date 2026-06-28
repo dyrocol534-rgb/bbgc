@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 import { 
   Home, Clock, Sparkles, Flame, RefreshCw, Star, Users, Trophy,
   Zap, Compass, Gamepad2, Grid, Layers, MousePointer2, Car, CircleDot, Puzzle, Crosshair,
-  Mail, ChevronRight, ChevronLeft, Menu, X
+  Mail, ChevronRight, ChevronLeft, Menu, X, Dices, Loader2
 } from "lucide-react";
 
 const PRIMARY_LINKS = [
@@ -35,6 +35,25 @@ const CATEGORY_LINKS = [
 export default function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const [isRolling, setIsRolling] = useState(false);
+
+  const handleSurpriseMe = async () => {
+    if (isRolling) return;
+    try {
+      setIsRolling(true);
+      const res = await fetch("/api/games/random");
+      const data = await res.json();
+      if (data.slug) {
+        setIsExpanded(false);
+        router.push(`/games/${data.slug}`);
+      }
+    } catch (error) {
+      console.error("Failed to fetch random game");
+    } finally {
+      setIsRolling(false);
+    }
+  };
 
   return (
     <>
@@ -80,6 +99,32 @@ export default function Sidebar() {
       >
       {/* Scrollable Navigation Area */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar py-4">
+        <div className="px-2 mb-4">
+          <button
+            onClick={handleSurpriseMe}
+            disabled={isRolling}
+            className={clsx(
+              "w-full flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap",
+              "bg-gradient-to-r from-indigo-600/20 to-purple-600/20 hover:from-indigo-600/30 hover:to-purple-600/30",
+              "border border-indigo-500/30 hover:border-indigo-400/50 shadow-[0_0_15px_rgba(99,102,241,0.1)]",
+              !isExpanded && "justify-center px-0"
+            )}
+            title={!isExpanded ? "Surprise Me (Random Game)" : undefined}
+          >
+            {isRolling ? (
+              <Loader2 className="w-5 h-5 shrink-0 text-indigo-400 animate-spin" />
+            ) : (
+              <Dices className="w-5 h-5 shrink-0 text-indigo-400" />
+            )}
+            <span className={clsx(
+              "font-bold text-sm bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent transition-opacity duration-300", 
+              isExpanded ? "opacity-100" : "opacity-0 hidden"
+            )}>
+              Surprise Me!
+            </span>
+          </button>
+        </div>
+
         <nav className="flex flex-col gap-1 px-2 mb-6">
           {PRIMARY_LINKS.map((link) => {
             const Icon = link.icon;

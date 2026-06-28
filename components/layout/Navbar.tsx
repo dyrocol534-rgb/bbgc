@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud } from "lucide-react";
+import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2 } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,6 +13,23 @@ export default function Navbar() {
   const [query, setQuery] = useState("");
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
+
+  const handleSurpriseMe = async () => {
+    if (isRolling) return;
+    try {
+      setIsRolling(true);
+      const res = await fetch("/api/games/random");
+      const data = await res.json();
+      if (data.slug) {
+        router.push(`/games/${data.slug}`);
+      }
+    } catch (error) {
+      console.error("Failed to fetch random game");
+    } finally {
+      setIsRolling(false);
+    }
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,6 +72,24 @@ export default function Navbar() {
             title="Search"
           >
             <Search className="w-5 h-5" />
+          </button>
+          
+          <button
+            onClick={handleSurpriseMe}
+            disabled={isRolling}
+            className="group relative flex items-center justify-center p-2 rounded-full bg-gradient-to-tr from-indigo-600/20 to-purple-500/20 hover:from-indigo-600/40 hover:to-purple-500/40 border border-indigo-500/30 hover:border-indigo-400/50 transition-all shadow-[0_0_15px_rgba(99,102,241,0.15)] hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] disabled:opacity-50"
+            title="Surprise Me!"
+          >
+            {isRolling ? (
+              <Loader2 className="w-5 h-5 text-indigo-400 animate-spin" />
+            ) : (
+              <Dices className="w-5 h-5 text-indigo-400 group-hover:text-indigo-300 transition-colors transform group-hover:rotate-12" />
+            )}
+            
+            {/* Tooltip for desktop */}
+            <span className="absolute -bottom-10 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-zinc-800 text-xs text-white px-2 py-1 rounded shadow-lg hidden sm:block">
+              Random Game
+            </span>
           </button>
 
           {session ? (
