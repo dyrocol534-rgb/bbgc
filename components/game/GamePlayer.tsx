@@ -104,9 +104,10 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           try {
             const promise = requestFS.call(docEl);
             const lockOrientation = () => {
-              if (screen.orientation && screen.orientation.lock) {
+              const orient = screen.orientation as any;
+              if (orient && orient.lock) {
                 const orientationMode = (game.width && game.height && game.width > game.height) ? 'landscape' : 'portrait';
-                screen.orientation.lock(orientationMode).catch(e => console.log("Orientation lock failed:", e));
+                orient.lock(orientationMode).catch((e: any) => console.log("Orientation lock failed:", e));
               }
             };
             if (promise && promise.then) {
@@ -271,8 +272,9 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                     if (exitFS && (doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement)) {
                       try { exitFS.call(doc); } catch(e) {}
                     }
-                    if (screen.orientation && screen.orientation.unlock) {
-                      screen.orientation.unlock();
+                    const orient = screen.orientation as any;
+                    if (orient && orient.unlock) {
+                      orient.unlock();
                     }
                   }}
                   className="flex items-center gap-1.5 px-3 py-1.5 bg-[#6c40ff] text-white text-sm font-bold rounded-md"
@@ -282,9 +284,10 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 </button>
                 <button 
                   onClick={() => {
-                    if (screen.orientation && screen.orientation.lock && screen.orientation.type) {
-                      const newOrientation = screen.orientation.type.startsWith('portrait') ? 'landscape' : 'portrait';
-                      screen.orientation.lock(newOrientation).catch(e => console.log("Manual lock failed", e));
+                    const orient = screen.orientation as any;
+                    if (orient && orient.lock && orient.type) {
+                      const newOrientation = orient.type.startsWith('portrait') ? 'landscape' : 'portrait';
+                      orient.lock(newOrientation).catch((e: any) => console.log("Manual lock failed", e));
                     }
                   }}
                   className="p-1.5 bg-zinc-800 text-zinc-300 hover:text-white rounded-md"
