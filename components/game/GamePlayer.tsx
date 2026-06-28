@@ -38,6 +38,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   const [isFavorited, setIsFavorited] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
+  const playButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setCurrentUrl(window.location.href);
@@ -88,6 +89,39 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       window.removeEventListener('orientationchange', checkOrientation);
     };
   }, [isPlaying, game.width, game.height]);
+
+  // Use a native DOM event listener for the Play button to guarantee Android Chrome 
+  // recognizes the gesture for the Fullscreen API (React synthetic events can sometimes drop the gesture token).
+  useEffect(() => {
+    const btn = playButtonRef.current;
+    if (!btn) return;
+
+    const handleNativePlayClick = () => {
+      if (window.innerWidth < 1024 || ('ontouchstart' in window)) {
+        const docEl = document.documentElement as any;
+        const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+        if (requestFS) {
+          try {
+            const promise = requestFS.call(docEl);
+            const lockOrientation = () => {
+              if (screen.orientation && screen.orientation.lock) {
+                const orientationMode = (game.width && game.height && game.width > game.height) ? 'landscape' : 'portrait';
+                screen.orientation.lock(orientationMode).catch(e => console.log("Orientation lock failed:", e));
+              }
+            };
+            if (promise && promise.then) {
+              promise.then(lockOrientation).catch((err: any) => console.log("Fullscreen failed:", err));
+            } else {
+              setTimeout(lockOrientation, 300);
+            }
+          } catch(e) { console.log("FS error", e); }
+        }
+      }
+    };
+
+    btn.addEventListener('click', handleNativePlayClick);
+    return () => btn.removeEventListener('click', handleNativePlayClick);
+  }, [game.width, game.height]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -206,31 +240,9 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             </div>
             
             <button 
+              ref={playButtonRef}
               onClick={(e) => {
                 e.preventDefault();
-                // 1. Fire fullscreen request immediately (synchronously) before React state updates
-                if (window.innerWidth < 1024 || ('ontouchstart' in window)) {
-                  const docEl = document.documentElement as any;
-                  const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-                  if (requestFS) {
-                    try {
-                      const promise = requestFS.call(docEl);
-                      const lockOrientation = () => {
-                        if (screen.orientation && screen.orientation.lock) {
-                          const orientationMode = (game.width && game.height && game.width > game.height) ? 'landscape' : 'portrait';
-                          screen.orientation.lock(orientationMode).catch(e => console.log("Orientation lock failed:", e));
-                        }
-                      };
-                      if (promise && promise.then) {
-                        promise.then(lockOrientation).catch((err: any) => console.log("Fullscreen failed:", err));
-                      } else {
-                        setTimeout(lockOrientation, 300);
-                      }
-                    } catch(e) { console.log("FS error", e); }
-                  }
-                }
-                
-                // 2. Then update React state to show the game player
                 setIsPlaying(true);
               }}
               className="px-6 py-2 bg-primary hover:bg-primary-hover text-white text-base sm:text-lg font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(108,64,255,0.4)] flex items-center gap-2 group"
