@@ -64,7 +64,7 @@ export default async function Home() {
   if (session?.user && (session.user as any).recentlyPlayed?.length > 0) {
     try {
       await dbConnect();
-      const recentSlugs = (session.user as any).recentlyPlayed.slice(0, 10);
+      const recentSlugs = (session.user as any).recentlyPlayed.slice(0, 3);
       const games = await Game.find({ slug: { $in: recentSlugs } }).lean();
       
       // Preserve order

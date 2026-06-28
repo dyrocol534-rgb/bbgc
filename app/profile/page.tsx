@@ -17,7 +17,7 @@ export default async function ProfilePage() {
 
   // The session user object contains favorites and recentlyPlayed as arrays of slugs
   const userFavorites = (session.user as any).favorites || [];
-  const userRecent = (session.user as any).recentlyPlayed || [];
+  const userRecent = ((session.user as any).recentlyPlayed || []).slice(0, 3);
 
   // Fetch full game objects
   const favoriteGames = await Game.find({ slug: { $in: userFavorites } }).lean();
@@ -69,7 +69,7 @@ export default async function ProfilePage() {
             </div>
             
             {orderedRecent.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4">
                 {orderedRecent.map((game: any) => (
                   <GameCard
                     key={`recent-${game.slug}`}
@@ -91,7 +91,7 @@ export default async function ProfilePage() {
             </div>
             
             {orderedFavorites.length > 0 ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4">
                 {orderedFavorites.map((game: any) => (
                   <GameCard
                     key={`fav-${game.slug}`}

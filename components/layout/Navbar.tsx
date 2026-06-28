@@ -43,8 +43,7 @@ export default function Navbar() {
     <>
       <nav className="fixed top-0 left-0 right-0 z-40 h-16 bg-surface/80 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between px-4 lg:px-8">
         <Link href="/" className="flex items-center text-primary hover:text-primary-light transition-colors" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay"} Home`}>
-          <Gamepad2 className="w-9 h-9 hidden md:block" />
-          <span className="font-extrabold text-2xl tracking-tight text-white hidden md:block ml-2">{process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay"}</span>
+          <Gamepad2 className="w-9 h-9" />
         </Link>
         
         <div className="flex-1 max-w-xl mx-4 hidden sm:block">

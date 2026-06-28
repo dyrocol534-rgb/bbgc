@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X } from 'lucide-react';
+import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
 
@@ -152,27 +152,41 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       {/* Desktop/Default Game Container */}
       {!isPlaying ? (
         // --- SPLASH SCREEN ---
-        <div className="flex flex-col items-center justify-center bg-black rounded-xl overflow-hidden shadow-2xl py-12 px-4 transition-all duration-300 w-full min-h-[400px] sm:min-h-[500px]">
-          <img src={game.thumbnailUrl} alt={game.title} className="w-48 sm:w-64 aspect-video object-cover rounded-2xl shadow-xl mb-6 border-2 border-zinc-800" />
+        <div className="relative flex flex-col items-center justify-center bg-zinc-950 rounded-xl overflow-hidden shadow-2xl py-6 px-4 transition-all duration-300 w-full min-h-[250px] sm:min-h-[300px]">
           
-          <h1 className="text-3xl font-bold text-white mb-4 text-center">{game.title}</h1>
-          
-          <div className="flex items-center justify-center gap-6 mb-8 text-zinc-300 font-medium">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🕹️</span>
-              <span className="capitalize">Arcade</span>
+          {/* Dynamic Blurred Background */}
+          <div 
+            className="absolute inset-0 z-0 opacity-40 blur-3xl scale-125"
+            style={{
+              backgroundImage: `url(${game.thumbnailUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
+          {/* Gradient Overlay (Top to Bottom Fade) */}
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-black/90" />
+
+          {/* Content (needs relative and z-10 to sit above background) */}
+          <div className="relative z-10 flex flex-col items-center w-full">
+            <img src={game.thumbnailUrl} alt={game.title} className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
+            
+            <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 text-center drop-shadow-md">{game.title}</h1>
+            
+            <div className="flex items-center justify-center gap-3 mb-4 text-zinc-200 font-medium drop-shadow">
+              <div className="flex items-center gap-1 text-xs sm:text-sm">
+                <span className="text-base">🕹️</span>
+                <span className="capitalize">Arcade</span>
+              </div>
             </div>
+            
+            <button 
+              onClick={() => setIsPlaying(true)}
+              className="px-6 py-2 bg-primary hover:bg-primary-hover text-white text-base sm:text-lg font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(108,64,255,0.4)] flex items-center gap-2 group"
+            >
+              <Play className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
+              Play now
+            </button>
           </div>
-          
-          <button 
-            onClick={() => setIsPlaying(true)}
-            className="px-12 py-4 bg-[#6c40ff] hover:bg-[#7b54ff] text-white text-xl font-bold rounded-full transition-transform hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(108,64,255,0.4)] flex items-center gap-3"
-          >
-            <div className="w-6 h-6 border-2 border-white rounded-md flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-            </div>
-            Play now
-          </button>
         </div>
       ) : (
         // --- PLAYING STATE ---
@@ -249,30 +263,30 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       )}
 
       {/* Action Bar */}
-      <div className="flex flex-row items-center justify-between bg-zinc-900/80 backdrop-blur-md rounded-2xl p-2.5 sm:p-3 shadow-xl border border-white/5 gap-3 mt-2 overflow-x-auto scrollbar-none">
+      <div className="flex flex-row items-center justify-between bg-zinc-900/80 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 shadow-xl border border-white/5 gap-2 mt-2 overflow-x-auto scrollbar-none">
         {/* Left Side: Game Title & Icon */}
-        <div className="flex items-center gap-2.5 min-w-0 shrink">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg overflow-hidden flex-shrink-0 shadow-md bg-zinc-800">
+        <div className="flex items-center gap-2 min-w-0 shrink">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden flex-shrink-0 shadow-md bg-zinc-800 ml-1">
              <img src={game.thumbnailUrl} alt={game.title} className="w-full h-full object-cover" />
           </div>
-          <h2 className="text-zinc-100 font-bold truncate text-base sm:text-lg">{game.title}</h2>
+          <h2 className="text-zinc-100 font-bold truncate text-sm sm:text-base">{game.title}</h2>
         </div>
 
         {/* Right Side: Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 pr-1">
           {/* Like/Dislike Group */}
           <div className="flex items-center bg-zinc-800/80 rounded-full border border-white/5 overflow-hidden shrink-0">
             <button 
               onClick={() => handleInteract('like')}
-              className={clsx("flex items-center gap-1.5 px-3 py-2 hover:bg-zinc-700 transition-colors group", isLiked ? "text-indigo-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}
+              className={clsx("flex items-center gap-1.5 px-3 py-1.5 sm:py-2 hover:bg-zinc-700 transition-colors group", isLiked ? "text-indigo-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}
             >
               <ThumbsUp className={clsx("w-4 h-4 transition-transform", isLiked ? "fill-current" : "group-hover:scale-110")} />
-              <span className="text-sm font-bold transition-colors">{likeCount > 0 ? (likeCount > 999 ? (likeCount/1000).toFixed(1)+'k' : likeCount) : 'Like'}</span>
+              {likeCount > 0 && <span className="text-sm font-bold transition-colors">{likeCount > 999 ? (likeCount/1000).toFixed(1)+'k' : likeCount}</span>}
             </button>
-            <div className="w-px h-5 bg-white/10"></div>
+            <div className="w-px h-4 bg-white/10"></div>
             <button 
               onClick={() => handleInteract('dislike')}
-              className={clsx("flex items-center gap-1.5 px-3 py-2 hover:bg-zinc-700 transition-colors group", isDisliked ? "text-red-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}
+              className={clsx("flex items-center gap-1.5 px-3 py-1.5 sm:py-2 hover:bg-zinc-700 transition-colors group", isDisliked ? "text-red-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}
             >
               <ThumbsDown className={clsx("w-4 h-4 transition-transform", isDisliked ? "fill-current" : "group-hover:scale-110")} />
             </button>
@@ -282,14 +296,14 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           <button 
             onClick={() => handleInteract('favorite')}
             title="Add to Favorites" 
-            className={clsx("p-2 sm:p-2.5 rounded-full border border-white/5 transition-colors shrink-0 group hover:border-pink-500/50 hover:bg-zinc-700", isFavorited ? "bg-zinc-700 text-pink-500 border-pink-500/30" : "bg-zinc-800/80 text-zinc-300 hover:text-white")}
+            className={clsx("p-1.5 sm:p-2 rounded-full border border-white/5 transition-colors shrink-0 group hover:border-pink-500/50 hover:bg-zinc-700", isFavorited ? "bg-zinc-700 text-pink-500 border-pink-500/30" : "bg-zinc-800/80 text-zinc-300 hover:text-white")}
           >
             <Heart className={clsx("w-4 h-4 transition-colors", isFavorited ? "fill-current" : "group-hover:text-pink-500")} />
           </button>
           <button 
             onClick={() => setShowFeedbackModal(true)}
             title="Report / Feedback" 
-            className="p-2 sm:p-2.5 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0"
+            className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0"
           >
             <MessageSquareWarning className="w-4 h-4" />
           </button>
@@ -297,12 +311,12 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           <button 
             onClick={() => setShowQrModal(true)}
             title="Play on mobile"
-            className="p-2 sm:p-2.5 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 group"
+            className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 group"
           >
             <Smartphone className="w-4 h-4 group-hover:text-indigo-400" />
           </button>
 
-          <button onClick={toggleFullscreen} title="Toggle Fullscreen" className="p-2 sm:p-2.5 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 hidden md:flex">
+          <button onClick={toggleFullscreen} title="Toggle Fullscreen" className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 hidden md:flex">
             {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
           </button>
         </div>
