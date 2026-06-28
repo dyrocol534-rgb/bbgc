@@ -25,7 +25,8 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
     thumbnailUrl: "",
     playUrl: "",
     developer: "CloudGames",
-    platforms: "Browser (desktop, mobile, tablet)"
+    platforms: "Browser (desktop, mobile, tablet)",
+    isMultiplayer: false
   });
 
   useEffect(() => {
@@ -39,12 +40,13 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
         title: data.title,
         slug: data.slug,
         description: data.description || "",
-        category: data.category?.[0] || "action",
+        category: data.category?.find((c: string) => c !== "multiplayer") || "action",
         buildType: data.buildType || "html5",
         thumbnailUrl: data.thumbnailUrl || "",
         playUrl: data.playUrl || "",
         developer: data.developer || "CloudGames",
-        platforms: data.platforms || "Browser (desktop, mobile, tablet)"
+        platforms: data.platforms || "Browser (desktop, mobile, tablet)",
+        isMultiplayer: data.category?.includes("multiplayer") || false
       });
     } catch (error) {
       console.error("Failed to fetch game", error);
@@ -126,7 +128,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
         title: formData.title,
         slug: formData.slug,
         description: formData.description,
-        category: [formData.category],
+        category: formData.isMultiplayer ? [formData.category, "multiplayer"] : [formData.category],
         buildType: formData.buildType,
         thumbnailUrl: formData.thumbnailUrl,
         developer: formData.developer,
@@ -256,6 +258,20 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
               <option value="sports">Sports</option>
             </select>
           </div>
+          
+          <div className="flex items-center gap-3 mt-8">
+            <input 
+              type="checkbox"
+              id="isMultiplayer"
+              checked={formData.isMultiplayer}
+              onChange={e => setFormData({...formData, isMultiplayer: e.target.checked})}
+              className="w-5 h-5 rounded border-zinc-700 bg-surface-hover text-indigo-600 focus:ring-indigo-500"
+            />
+            <label htmlFor="isMultiplayer" className="text-sm font-medium text-text-secondary cursor-pointer">
+              Is this a multiplayer game?
+            </label>
+          </div>
+          
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-2">Build Type</label>
             <select 

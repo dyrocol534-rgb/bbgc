@@ -88,6 +88,7 @@ export default function Sidebar() {
               <Link
                 key={link.name}
                 href={link.href}
+                onClick={() => setIsExpanded(false)}
                 className={clsx(
                   "flex items-center gap-4 px-3 py-2.5 rounded-xl transition-colors whitespace-nowrap",
                   isActive 
@@ -117,6 +118,7 @@ export default function Sidebar() {
               <Link
                 key={link.name}
                 href={link.href}
+                onClick={() => setIsExpanded(false)}
                 className={clsx(
                   "flex items-center gap-4 px-3 py-2.5 rounded-xl transition-colors whitespace-nowrap",
                   isActive 

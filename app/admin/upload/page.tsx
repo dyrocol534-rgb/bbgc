@@ -19,7 +19,8 @@ export default function UploadGamePage() {
     buildType: "html5",
     developer: "CloudGames",
     platforms: "Browser (desktop, mobile, tablet)",
-    thumbnailUrl: ""
+    thumbnailUrl: "",
+    isMultiplayer: false
   });
 
   const handleUpload = async (e: React.FormEvent) => {
@@ -95,7 +96,7 @@ export default function UploadGamePage() {
         title: formData.title,
         slug: formData.slug,
         description: formData.description,
-        category: [formData.category],
+        category: formData.isMultiplayer ? [formData.category, "multiplayer"] : [formData.category],
         buildType: formData.buildType,
         source: "own",
         playUrl: playUrl || `https://cdn.dummy.com/games/${formData.slug}/index.html`,
@@ -214,6 +215,20 @@ export default function UploadGamePage() {
               <option value="sports">Sports</option>
             </select>
           </div>
+          
+          <div className="flex items-center gap-3 mt-8">
+            <input 
+              type="checkbox"
+              id="isMultiplayerUpload"
+              checked={formData.isMultiplayer}
+              onChange={e => setFormData({...formData, isMultiplayer: e.target.checked})}
+              className="w-5 h-5 rounded border-zinc-700 bg-surface-hover text-indigo-600 focus:ring-indigo-500"
+            />
+            <label htmlFor="isMultiplayerUpload" className="text-sm font-medium text-text-secondary cursor-pointer">
+              Is this a multiplayer game?
+            </label>
+          </div>
+          
           <div>
             <label className="block text-sm font-medium text-text-secondary mb-2">Build Type</label>
             <select 
