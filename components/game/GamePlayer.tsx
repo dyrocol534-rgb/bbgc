@@ -182,13 +182,25 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             <button 
               onClick={() => {
                 setIsPlaying(true);
-                if (window.innerWidth < 640) {
-                  document.documentElement.requestFullscreen().then(() => {
-                    if (screen.orientation && screen.orientation.lock) {
-                      const orientationMode = (game.width && game.height && game.width > game.height) ? 'landscape' : 'portrait';
-                      screen.orientation.lock(orientationMode).catch(e => console.log("Orientation lock failed:", e));
-                    }
-                  }).catch(err => console.log("Fullscreen failed:", err));
+                if (window.innerWidth < 1024 || ('ontouchstart' in window)) {
+                  const docEl = document.documentElement as any;
+                  const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+                  if (requestFS) {
+                    try {
+                      const promise = requestFS.call(docEl);
+                      const lockOrientation = () => {
+                        if (screen.orientation && screen.orientation.lock) {
+                          const orientationMode = (game.width && game.height && game.width > game.height) ? 'landscape' : 'portrait';
+                          screen.orientation.lock(orientationMode).catch(e => console.log("Orientation lock failed:", e));
+                        }
+                      };
+                      if (promise && promise.then) {
+                        promise.then(lockOrientation).catch((err: any) => console.log("Fullscreen failed:", err));
+                      } else {
+                        setTimeout(lockOrientation, 300);
+                      }
+                    } catch(e) { console.log("FS error", e); }
+                  }
                 }
               }}
               className="px-6 py-2 bg-primary hover:bg-primary-hover text-white text-base sm:text-lg font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(108,64,255,0.4)] flex items-center gap-2 group"
@@ -203,7 +215,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         <>
           {/* Mobile Fixed Fullscreen Overlay */}
           <div className={clsx(
-            "sm:hidden fixed inset-0 z-50 bg-black flex flex-col transition-all duration-300",
+            "lg:hidden fixed inset-0 z-50 bg-black flex flex-col transition-all duration-300",
             !isFullscreen ? "translate-y-0" : ""
           )}>
             {/* Top Bar for Mobile */}
@@ -212,8 +224,10 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 <button 
                   onClick={() => {
                     setIsPlaying(false);
-                    if (document.fullscreenElement) {
-                      document.exitFullscreen().catch(err => console.log(err));
+                    const doc = document as any;
+                    const exitFS = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
+                    if (exitFS && (doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement)) {
+                      try { exitFS.call(doc); } catch(e) {}
                     }
                     if (screen.orientation && screen.orientation.unlock) {
                       screen.orientation.unlock();
@@ -261,7 +275,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           <div 
             ref={containerRef}
             className={clsx(
-              "hidden sm:block relative bg-black rounded-xl overflow-hidden shadow-2xl transition-all duration-300",
+              "hidden lg:block relative bg-black rounded-xl overflow-hidden shadow-2xl transition-all duration-300",
               isFullscreen ? "w-screen h-screen rounded-none" : "w-full"
             )}
             style={{ aspectRatio: !isFullscreen ? aspectRatio : 'auto' }}
