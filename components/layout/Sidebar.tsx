@@ -243,7 +243,7 @@ export default function Sidebar() {
         </div>
 
         <div className="text-xs text-text-placeholder">
-          © {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "CloudGames"}
+          © {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}
         </div>
       </div>
       

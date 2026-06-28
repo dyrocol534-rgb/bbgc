@@ -7,7 +7,7 @@ export default function TermsOfServicePage() {
         <p>Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
         
         <p>
-          These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and TapAndPlay ("we," "us" or "our"), concerning your access to and use of the TapAndPlay website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto.
+          These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and Bluebuff Games ("we," "us" or "our"), concerning your access to and use of the Bluebuff Games website as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto.
         </p>
 
         <h2 className="text-2xl font-semibold text-white mt-8 mb-4">1. Intellectual Property Rights</h2>
@@ -27,7 +27,7 @@ export default function TermsOfServicePage() {
 
         <h2 className="text-2xl font-semibold text-white mt-8 mb-4">3. Games and Content</h2>
         <p>
-          TapAndPlay hosts various web-based games. We do not claim ownership over games submitted by third-party developers unless specifically stated. 
+          Bluebuff Games hosts various web-based games. We do not claim ownership over games submitted by third-party developers unless specifically stated. 
           If you are a copyright owner and believe that any content on this site infringes upon your copyrights, please refer to our DMCA Copyright Policy.
         </p>
 
@@ -39,7 +39,7 @@ export default function TermsOfServicePage() {
 
         <h2 className="text-2xl font-semibold text-white mt-8 mb-4">5. Contact Us</h2>
         <p>In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:</p>
-        <p className="font-semibold text-primary">support@tapandplay.com</p>
+        <p className="font-semibold text-primary">support@bluebuff.in</p>
       </div>
     </div>
   );

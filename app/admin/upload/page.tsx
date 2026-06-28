@@ -17,7 +17,7 @@ export default function UploadGamePage() {
     description: "",
     category: "action",
     buildType: "html5",
-    developer: "CloudGames",
+    developer: "Bluebuff Games",
     platforms: "Browser (desktop, mobile, tablet)",
     thumbnailUrl: "",
     isMultiplayer: false,

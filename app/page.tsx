@@ -108,7 +108,7 @@ export default async function Home() {
           <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(var(--primary-rgb),0.15)] border border-primary/20">
             <Gamepad2 className="w-10 h-10 text-primary-light" />
           </div>
-          <h2 className="text-3xl font-bold text-text-main mb-4 tracking-tight">Welcome to {process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay"}!</h2>
+          <h2 className="text-3xl font-bold text-text-main mb-4 tracking-tight">Welcome to {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}!</h2>
           <p className="text-text-secondary max-w-md mx-auto text-lg leading-relaxed">
             Your database is connected, but no published games were found yet. Head over to the admin dashboard to upload and publish some games.
           </p>

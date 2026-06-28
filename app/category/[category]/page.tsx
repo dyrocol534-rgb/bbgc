@@ -43,8 +43,8 @@ async function getCategoryGames(category: string) {
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
   const { category } = await params;
   return {
-    title: `${category.charAt(0).toUpperCase() + category.slice(1)} Games - ${process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay"}`,
-    description: `Play the best free online ${category} games on ${process.env.NEXT_PUBLIC_SITE_NAME || "TapAndPlay"}.`,
+    title: `${category.charAt(0).toUpperCase() + category.slice(1)} Games - ${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}`,
+    description: `Play the best free online ${category} games on ${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}.`,
   };
 }
 

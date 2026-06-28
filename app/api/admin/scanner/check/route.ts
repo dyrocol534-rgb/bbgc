@@ -55,7 +55,7 @@ export async function POST(request: Request) {
           const getResponse = await fetch(url, { 
             method: 'GET',
             signal: controller.signal,
-            headers: { "User-Agent": "Mozilla/5.0 (compatible; TapAndPlayBot/1.0)" }
+            headers: { "User-Agent": "Mozilla/5.0 (compatible; BluebuffBot/1.0)" }
           });
           status = getResponse.status;
           isOk = getResponse.ok;

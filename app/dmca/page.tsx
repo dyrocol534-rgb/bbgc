@@ -5,7 +5,7 @@ export default function DMCAPage() {
       
       <div className="prose prose-invert max-w-none text-zinc-300 space-y-6">
         <p>
-          TapAndPlay respects the intellectual property rights of others and expects its users to do the same. 
+          Bluebuff Games respects the intellectual property rights of others and expects its users to do the same. 
           It is our policy, in appropriate circumstances and at our discretion, to disable and/or terminate the accounts of users who repeatedly infringe or are repeatedly charged with infringing the copyrights or other intellectual property rights of others.
         </p>
 
@@ -14,7 +14,7 @@ export default function DMCAPage() {
           If you are a copyright owner, or are authorized to act on behalf of one, or authorized to act under any exclusive right under copyright, please report alleged copyright infringements taking place on or through the Site by completing the following DMCA Notice of Alleged Infringement and delivering it to our Designated Copyright Agent.
         </p>
         
-        <p>Upon receipt of the Notice as described below, TapAndPlay will take whatever action, in its sole discretion, it deems appropriate, including removal of the challenged material from the Site.</p>
+        <p>Upon receipt of the Notice as described below, Bluebuff Games will take whatever action, in its sole discretion, it deems appropriate, including removal of the challenged material from the Site.</p>
 
         <h3 className="text-xl font-semibold text-white mt-6 mb-3">DMCA Notice of Alleged Infringement ("Notice")</h3>
         <ol className="list-decimal pl-6 space-y-4">
@@ -42,7 +42,7 @@ export default function DMCAPage() {
         <p className="mt-8">Deliver this Notice, with all items completed, to our Designated Copyright Agent at:</p>
         <div className="bg-surface-hover p-6 rounded-xl border border-border-main inline-block mt-4">
           <p className="font-semibold text-white mb-1">Copyright Agent</p>
-          <p className="text-primary">dmca@tapandplay.com</p>
+          <p className="text-primary">dmca@bluebuff.in</p>
         </div>
       </div>
     </div>

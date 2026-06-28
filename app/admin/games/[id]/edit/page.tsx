@@ -24,7 +24,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
     buildType: "html5",
     thumbnailUrl: "",
     playUrl: "",
-    developer: "CloudGames",
+    developer: "Bluebuff Games",
     platforms: "Browser (desktop, mobile, tablet)",
     isMultiplayer: false,
     orientation: "any"
@@ -45,7 +45,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
         buildType: data.buildType || "html5",
         thumbnailUrl: data.thumbnailUrl || "",
         playUrl: data.playUrl || "",
-        developer: data.developer || "CloudGames",
+        developer: data.developer || "Bluebuff Games",
         platforms: data.platforms || "Browser (desktop, mobile, tablet)",
         isMultiplayer: data.category?.includes("multiplayer") || false,
         orientation: data.orientation || "any"

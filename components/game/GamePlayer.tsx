@@ -448,7 +448,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             
             <h3 className="text-2xl font-bold text-white mb-4">Take the fun with you!</h3>
             <p className="text-zinc-300 leading-relaxed text-sm md:text-base">
-              Scan to play <span className="font-semibold text-white">{game.title}</span> on your phone or tablet. You can also get the CloudGames app on iOS or Android.
+              Scan to play <span className="font-semibold text-white">{game.title}</span> on your phone or tablet. You can also get the Bluebuff Games app on iOS or Android.
             </p>
           </div>
         </div>

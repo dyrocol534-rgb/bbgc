@@ -7,7 +7,7 @@ export default function PrivacyPolicyPage() {
         <p>Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
         
         <p>
-          Welcome to TapAndPlay. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.
+          Welcome to Bluebuff Games. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.
           Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.
         </p>
 
@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
 
         <h2 className="text-2xl font-semibold text-white mt-8 mb-4">4. Contact Us</h2>
         <p>If you have questions or comments about this Privacy Policy, please contact us at:</p>
-        <p className="font-semibold text-primary">support@tapandplay.com</p>
+        <p className="font-semibold text-primary">support@bluebuff.in</p>
       </div>
     </div>
   );

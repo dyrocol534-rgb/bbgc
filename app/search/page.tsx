@@ -4,7 +4,7 @@ import Game from '@/models/Game';
 import GameCard from '@/components/game/GameCard';
 
 export const metadata: Metadata = {
-  title: "Search Games - CloudGames",
+  title: "Search Games - Bluebuff Games",
 };
 
 async function searchGames(query: string) {
