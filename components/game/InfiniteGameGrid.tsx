@@ -48,7 +48,9 @@ export default function InfiniteGameGrid({ initialGames }: InfiniteGameGridProps
   const loadMoreGames = async () => {
     setIsLoading(true);
     try {
-      const { data } = await axios.get(`/api/games?page=${page}&limit=24`);
+      const excludeIds = games.map(g => g._id).join(',');
+      const { data } = await axios.get(`/api/games?page=${page}&limit=24&sort=random&exclude=${excludeIds}`);
+      
       if (data.games.length > 0) {
         // filter out any duplicates just in case new games were added during scroll
         const newGames = data.games.filter(

@@ -11,6 +11,8 @@ export async function GET(request: Request) {
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '50', 10);
     const featured = searchParams.get('featured') === 'true';
+    const sort = searchParams.get('sort');
+    const excludeIds = searchParams.get('exclude')?.split(',').filter(Boolean) || [];
     
     let dbQuery: any = { status: "published" };
     if (category) {
@@ -22,18 +24,32 @@ export async function GET(request: Request) {
     if (featured) {
       dbQuery.featured = true;
     }
+    if (excludeIds.length > 0) {
+      const mongoose = (await import('mongoose')).default;
+      dbQuery._id = { $nin: excludeIds.map(id => new mongoose.Types.ObjectId(id)) };
+    }
     
     const skip = (page - 1) * limit;
     
-    const games = await Game.find(dbQuery)
-      .sort({ playCount: -1, createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean();
+    let games;
+    let total;
+    
+    if (sort === 'random') {
+      games = await Game.aggregate([
+        { $match: dbQuery },
+        { $sample: { size: limit } }
+      ]);
+      total = await Game.countDocuments(dbQuery); // total remaining
+    } else {
+      games = await Game.find(dbQuery)
+        .sort({ playCount: -1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+      total = await Game.countDocuments(dbQuery);
+    }
       
-    const total = await Game.countDocuments(dbQuery);
-      
-    return NextResponse.json({ games, total, page, limit, hasMore: skip + games.length < total });
+    return NextResponse.json({ games, total, page, limit, hasMore: sort === 'random' ? games.length === limit : skip + games.length < total });
   } catch (error) {
     console.error("Error fetching games:", error);
     return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });

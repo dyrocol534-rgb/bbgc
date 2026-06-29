@@ -44,10 +44,10 @@ async function getRecentGames() {
 async function getInitialAllGames() {
   try {
     await dbConnect();
-    const games = await Game.find({ status: "published" })
-      .sort({ playCount: -1, createdAt: -1 })
-      .limit(24)
-      .lean();
+    const games = await Game.aggregate([
+      { $match: { status: "published" } },
+      { $sample: { size: 24 } }
+    ]);
     return JSON.parse(JSON.stringify(games));
   } catch (error) {
     console.error(`Error fetching initial games:`, error);
