@@ -17,6 +17,8 @@ interface GameData {
   dislikes?: string[];
   createdAt: string;
   source: string;
+  developer?: string;
+  category?: string[];
 }
 
 export default function AdminGamesPage() {
@@ -137,12 +139,21 @@ export default function AdminGamesPage() {
                   <div className="font-medium text-text-main flex items-center gap-2">
                     {game.title}
                     {game.source === "aggregated" && (
-                      <span className="bg-indigo-500/20 text-indigo-400 text-[10px] uppercase font-bold px-1.5 py-0.5 rounded">
+                      <span className="bg-indigo-500/20 text-indigo-400 text-[10px] uppercase font-bold px-1.5 py-0.5 rounded shrink-0">
                         Imported
                       </span>
                     )}
                   </div>
-                  <div className="text-xs text-text-muted font-mono">{game.slug}</div>
+                  <div className="text-xs text-text-muted font-mono mb-1">{game.slug}</div>
+                  <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                    <span className="text-zinc-500">By <span className="text-zinc-300 font-medium">{game.developer || "Unknown"}</span></span>
+                    {game.category && game.category.length > 0 && (
+                      <>
+                        <span className="text-zinc-600">•</span>
+                        <span className="text-indigo-400/80 font-medium">{game.category.slice(0, 2).join(", ")}{game.category.length > 2 ? '...' : ''}</span>
+                      </>
+                    )}
+                  </div>
                 </td>
                 <td className="py-3 px-4 text-center text-text-secondary text-sm">
                   {game.playCount.toLocaleString()}

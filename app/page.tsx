@@ -2,14 +2,16 @@ import GameCard from "@/components/game/GameCard";
 import CategoryRow from "@/components/game/CategoryRow";
 import FeaturedCarousel from "@/components/game/FeaturedCarousel";
 import ContinuePlayingRow from "@/components/game/ContinuePlayingRow";
+import InfiniteGameGrid from "@/components/game/InfiniteGameGrid";
 import dbConnect from "@/lib/mongodb";
 import Game from "@/models/Game";
 import { Gamepad2 } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
-// Next.js 15 requires server components that access database without passing through 
-// fetch to opt out of static rendering if they want fresh data, or you configure revalidation.
+import { cookies } from "next/headers";
+import GuestSession from "@/models/GuestSession";
+
 export const revalidate = 60; // Revalidate page every 60 seconds
 
 async function getFeaturedGames() {
@@ -23,27 +25,14 @@ async function getFeaturedGames() {
   }
 }
 
-async function getSuggestedGames() {
-  try {
-    await dbConnect();
-    // Sort by play count for popular suggestions
-    const games = await Game.find({ status: "published" })
-      .sort({ playCount: -1 })
-      .limit(24)
-      .lean();
-    return JSON.parse(JSON.stringify(games));
-  } catch (error) {
-    console.error(`Error fetching suggested games:`, error);
-    return [];
-  }
-}
+
 
 async function getRecentGames() {
   try {
     await dbConnect();
     const games = await Game.find({ status: "published" })
       .sort({ createdAt: -1 })
-      .limit(16)
+      .limit(12)
       .lean();
     return JSON.parse(JSON.stringify(games));
   } catch (error) {
@@ -52,19 +41,16 @@ async function getRecentGames() {
   }
 }
 
-async function getCategoryGames(category: string, limit: number = 16) {
+async function getInitialAllGames() {
   try {
     await dbConnect();
-    const games = await Game.find({ 
-      status: "published", 
-      category: { $regex: new RegExp(`^${category}$`, 'i') } 
-    })
-      .sort({ playCount: -1 })
-      .limit(limit)
+    const games = await Game.find({ status: "published" })
+      .sort({ playCount: -1, createdAt: -1 })
+      .limit(24)
       .lean();
     return JSON.parse(JSON.stringify(games));
   } catch (error) {
-    console.error(`Error fetching ${category} games:`, error);
+    console.error(`Error fetching initial games:`, error);
     return [];
   }
 }
@@ -73,33 +59,40 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
   
   const featuredGames = await getFeaturedGames();
-  const suggestedGames = await getSuggestedGames();
-  const recentGames = await getRecentGames();
-  
-  // Fetch specific categories for a richer homepage
-  const actionGames = await getCategoryGames("action", 16);
-  const arcadeGames = await getCategoryGames("arcade", 16);
-  const puzzleGames = await getCategoryGames("puzzle", 16);
-  const racingGames = await getCategoryGames("racing", 16);
 
-  // Fetch user's recently played games if logged in
+  const recentGames = await getRecentGames();
+  const initialAllGames = await getInitialAllGames();
+
+  // Fetch user's or guest's recently played games
   let userRecentGames = [];
-  if (session?.user && (session.user as any).recentlyPlayed?.length > 0) {
-    try {
-      await dbConnect();
-      const recentSlugs = (session.user as any).recentlyPlayed.slice(0, 3);
+  try {
+    await dbConnect();
+    let recentSlugs = [];
+    
+    if (session?.user && (session.user as any).recentlyPlayed?.length > 0) {
+      recentSlugs = (session.user as any).recentlyPlayed.slice(0, 3);
+    } else {
+      // If not logged in, check for guest session
+      const cookieStore = await cookies();
+      const guestIdCookie = cookieStore.get('guestId');
+      if (guestIdCookie?.value) {
+        const guest = await GuestSession.findOne({ guestId: guestIdCookie.value }).lean();
+        if (guest && guest.recentlyPlayed?.length > 0) {
+          recentSlugs = guest.recentlyPlayed.slice(0, 3);
+        }
+      }
+    }
+
+    if (recentSlugs.length > 0) {
       const games = await Game.find({ slug: { $in: recentSlugs } }).lean();
-      
-      // Preserve order
       const gameMap = new Map(games.map(g => [(g as any).slug, g]));
       userRecentGames = recentSlugs.map((slug: string) => gameMap.get(slug)).filter(Boolean);
-    } catch (error) {
-      console.error("Error fetching user recent games:", error);
     }
+  } catch (error) {
+    console.error("Error fetching recent games:", error);
   }
 
-  // If DB is completely empty (no mock data yet), show a friendly message
-  const hasGames = featuredGames.length > 0 || suggestedGames.length > 0 || recentGames.length > 0;
+  const hasGames = featuredGames.length > 0 || recentGames.length > 0 || initialAllGames.length > 0;
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-12">
@@ -125,23 +118,7 @@ export default async function Home() {
         </section>
       )}
 
-      {suggestedGames.length > 0 && (
-        <section>
-          <CategoryRow title="Suggestions for you" games={suggestedGames} />
-        </section>
-      )}
 
-      {actionGames.length > 0 && (
-        <section>
-          <CategoryRow title="Action Games" categorySlug="action" games={actionGames} />
-        </section>
-      )}
-
-      {arcadeGames.length > 0 && (
-        <section>
-          <CategoryRow title="Arcade Classics" categorySlug="arcade" games={arcadeGames} />
-        </section>
-      )}
 
       {recentGames.length > 0 && (
         <section>
@@ -149,15 +126,9 @@ export default async function Home() {
         </section>
       )}
 
-      {puzzleGames.length > 0 && (
+      {initialAllGames.length > 0 && (
         <section>
-          <CategoryRow title="Puzzle Games" categorySlug="puzzle" games={puzzleGames} />
-        </section>
-      )}
-
-      {racingGames.length > 0 && (
-        <section>
-          <CategoryRow title="Racing & Driving" categorySlug="racing" games={racingGames} />
+          <InfiniteGameGrid initialGames={initialAllGames} />
         </section>
       )}
     </div>

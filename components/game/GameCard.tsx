@@ -1,6 +1,6 @@
 import Link from 'next/link';
-
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 interface GameCardProps {
   game: {
@@ -10,12 +10,14 @@ interface GameCardProps {
     playCount: number;
     category: string[];
   };
+  className?: string;
+  imageContainerClassName?: string;
 }
 
-export default function GameCard({ game }: GameCardProps) {
+export default function GameCard({ game, className, imageContainerClassName }: GameCardProps) {
   return (
-    <Link href={`/games/${game.slug}`} className="group block">
-      <div className="relative aspect-square rounded-2xl overflow-hidden bg-surface-hover shadow-lg">
+    <Link href={`/games/${game.slug}`} className={cn("group block flex flex-col h-full", className)}>
+      <div className={cn("relative w-full rounded-2xl overflow-hidden bg-surface-hover shadow-lg flex-1", imageContainerClassName || "aspect-square")}>
         <Image 
           src={game.thumbnailUrl} 
           alt={game.title}
@@ -27,7 +29,7 @@ export default function GameCard({ game }: GameCardProps) {
           <div className="text-white font-medium">{game.title}</div>
         </div>
       </div>
-      <div className="mt-2 px-1 text-center">
+      <div className="mt-2 px-1 text-center shrink-0">
         <h3 className="text-xs sm:text-sm font-medium text-zinc-300 truncate group-hover:text-white transition-colors">{game.title}</h3>
       </div>
     </Link>

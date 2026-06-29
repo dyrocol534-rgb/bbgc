@@ -8,6 +8,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     const query = searchParams.get('q');
+    const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '50', 10);
     const featured = searchParams.get('featured') === 'true';
     
@@ -22,12 +23,17 @@ export async function GET(request: Request) {
       dbQuery.featured = true;
     }
     
+    const skip = (page - 1) * limit;
+    
     const games = await Game.find(dbQuery)
       .sort({ playCount: -1, createdAt: -1 })
+      .skip(skip)
       .limit(limit)
       .lean();
       
-    return NextResponse.json({ games });
+    const total = await Game.countDocuments(dbQuery);
+      
+    return NextResponse.json({ games, total, page, limit, hasMore: skip + games.length < total });
   } catch (error) {
     console.error("Error fetching games:", error);
     return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });

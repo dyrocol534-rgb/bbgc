@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import dbConnect from "@/lib/mongodb";
 import Game from "@/models/Game";
 import User from "@/models/User";
@@ -46,6 +47,38 @@ export async function POST(
           $set: { lastActiveAt: new Date() }
         }
       );
+    } else {
+      // Track anonymous user via guestId cookie
+      const cookieStore = await cookies();
+      const guestIdCookie = cookieStore.get('guestId');
+      if (guestIdCookie?.value) {
+        // Since we cannot easily $pull and $push in an upsert without conflicts if the doc doesn't exist,
+        // we'll do a findOneAndUpdate which handles it cleanly or create it.
+        const guestId = guestIdCookie.value;
+        const GuestSession = (await import('@/models/GuestSession')).default;
+        
+        let guestSession = await GuestSession.findOne({ guestId });
+        if (!guestSession) {
+          await GuestSession.create({
+            guestId,
+            recentlyPlayed: [slug],
+            lastActiveAt: new Date()
+          });
+        } else {
+          // Remove if exists, then push to front
+          await GuestSession.updateOne(
+            { guestId },
+            { $pull: { recentlyPlayed: slug } }
+          );
+          await GuestSession.updateOne(
+            { guestId },
+            { 
+              $push: { recentlyPlayed: { $each: [slug], $position: 0, $slice: 3 } },
+              $set: { lastActiveAt: new Date(), updatedAt: new Date() }
+            }
+          );
+        }
+      }
     }
       
     return NextResponse.json({ success: true, playCount: game.playCount });

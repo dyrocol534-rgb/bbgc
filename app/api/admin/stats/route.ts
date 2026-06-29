@@ -5,6 +5,7 @@ import dbConnect from "@/lib/mongodb";
 import Game from "@/models/Game";
 import User from "@/models/User";
 import Subscriber from "@/models/Subscriber";
+import GuestSession from "@/models/GuestSession";
 
 export const dynamic = "force-dynamic";
 
@@ -22,15 +23,17 @@ export async function GET() {
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    const [totalUsers, totalGames, totalSubscribers, activeUsers24h, newUsers7d, games] = await Promise.all([
+    const [totalUsers, totalGames, totalSubscribers, activeLoggedInUsers, activeGuests, newUsers7d, games] = await Promise.all([
       User.countDocuments(),
       Game.countDocuments(),
       Subscriber.countDocuments(),
       User.countDocuments({ lastActiveAt: { $gte: oneDayAgo } }),
+      GuestSession.countDocuments({ lastActiveAt: { $gte: oneDayAgo } }),
       User.countDocuments({ createdAt: { $gte: sevenDaysAgo } }),
       Game.find({}, 'playCount').lean()
     ]);
     
+    const activeUsers24h = activeLoggedInUsers + activeGuests;
     const totalPlays = games.reduce((sum, game: any) => sum + (game.playCount || 0), 0);
 
     return NextResponse.json({
