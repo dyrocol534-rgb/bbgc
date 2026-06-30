@@ -71,3 +71,48 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #334155 transparent;
 }
+
+/* ─── Shimmer Skeleton ─────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -500% 0; }
+  100% { background-position: 500% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    105deg,
+    #1c1c1c 30%,
+    #3a3a3a 45%,
+    #4f4f4f 50%,
+    #3a3a3a 55%,
+    #1c1c1c 70%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* ─── Game Card Staggered Fade-In ──────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.game-card-enter {
+  animation: fadeInUp 0.4s ease both;
+}
+
+/* ─── Page Transition ──────────────────────────────────── */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+main > * {
+  animation: pageFadeIn 0.35s ease both;
+}

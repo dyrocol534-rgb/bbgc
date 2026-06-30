@@ -111,7 +111,11 @@ export default function InfiniteGameGrid({ initialGames }: InfiniteGameGridProps
           const imageContainerClass = getImageContainerClass(spanClass);
           
           return (
-            <div key={`${game._id}-${index}`} className={spanClass}>
+            <div
+              key={`${game._id}-${index}`}
+              className={`${spanClass} game-card-enter`}
+              style={{ animationDelay: `${Math.min(index % 24, 12) * 40}ms` }}
+            >
               <GameCard 
                 game={game} 
                 className="h-full w-full"
