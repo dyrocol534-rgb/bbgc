@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play, RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -141,14 +142,32 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   }, [isPlaying, game.slug]);
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
-      });
+  const [isLockedFullscreen, setIsLockedFullscreen] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Lock body scroll when in fullscreen
+  useEffect(() => {
+    if (isLockedFullscreen) {
+      document.body.style.overflow = 'hidden';
     } else {
-      document.exitFullscreen();
+      document.body.style.overflow = '';
     }
+    return () => { document.body.style.overflow = ''; };
+  }, [isLockedFullscreen]);
+
+  // ESC key exits fullscreen
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isLockedFullscreen) {
+        setIsLockedFullscreen(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isLockedFullscreen]);
+
+  const toggleFullscreen = () => {
+    setIsLockedFullscreen(prev => !prev);
   };
 
   useEffect(() => {
@@ -159,8 +178,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // For proper aspect ratio handling if width/height are provided
-  const aspectRatio = game.width && game.height ? `${game.width} / ${game.height}` : '16 / 9';
+
 
   const closeQrModal = useCallback(() => setShowQrModal(false), []);
   const closeFeedbackModal = useCallback(() => {
@@ -328,41 +346,85 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           </div>
 
           {/* Desktop Inline Player */}
-          <div 
-            ref={containerRef}
-            className={clsx(
-              "hidden lg:block relative bg-black rounded-xl overflow-hidden shadow-2xl transition-all duration-300",
-              isFullscreen ? "w-screen h-screen rounded-none" : "w-full"
-            )}
-            style={{ aspectRatio: !isFullscreen ? aspectRatio : 'auto' }}
-          >
-            {isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10 text-primary-light">
-                <Loader2 className="w-12 h-12 animate-spin mb-4" />
-                <p className="font-medium animate-pulse">Loading Game Assets...</p>
-              </div>
-            )}
-            
-            <iframe
-              src={game.playUrl}
-              className="w-full h-full border-0"
-              allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
-              onLoad={() => setIsLoading(false)}
-            />
-
-            {/* Floating Fullscreen (kept for convenience when inside fullscreen) */}
-            {isFullscreen && (
-              <button
-                onClick={toggleFullscreen}
-                className="absolute bottom-4 right-4 p-2 bg-black/50 hover:bg-black/80 text-white rounded-lg backdrop-blur-sm transition-colors z-20"
-                title="Exit Fullscreen"
+          {(() => {
+            const aspectRatio = game.width && game.height ? `${game.width} / ${game.height}` : '16 / 9';
+            return (
+              <div
+                ref={containerRef}
+                className="hidden lg:block relative bg-black rounded-xl overflow-hidden shadow-2xl w-full"
+                style={{ aspectRatio }}
               >
-                <Minimize className="w-5 h-5" />
-              </button>
-            )}
-          </div>
+                {isLoading && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10 text-primary-light">
+                    <Loader2 className="w-12 h-12 animate-spin mb-4" />
+                    <p className="font-medium animate-pulse">Loading Game Assets...</p>
+                  </div>
+                )}
+                <iframe
+                  ref={iframeRef}
+                  src={game.playUrl}
+                  className="w-full h-full border-0"
+                  allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+                  onLoad={() => setIsLoading(false)}
+                />
+              </div>
+            );
+          })()}
+
+          {/* ── Locked Fullscreen Overlay — rendered via Portal into body ── */}
+          {isLockedFullscreen && typeof document !== 'undefined' && createPortal(
+            <div
+              style={{
+                position: 'fixed', inset: 0,
+                zIndex: 2147483647,
+                background: '#000',
+              }}
+              className="group/fs"
+            >
+              {/* Game — fills 100% of screen, no header */}
+              {isLoading && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#18181b', zIndex: 10 }}>
+                  <Loader2 style={{ width: 48, height: 48, color: '#8b68ff' }} className="animate-spin" />
+                </div>
+              )}
+              <iframe
+                src={game.playUrl}
+                style={{ width: '100%', height: '100%', border: 'none', display: 'block', position: 'absolute', inset: 0 }}
+                allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+                onLoad={() => setIsLoading(false)}
+              />
+
+              {/* Hover-reveal Exit button — top right, only shows on mouse hover */}
+              <div
+                style={{
+                  position: 'absolute', top: 12, right: 12,
+                  opacity: 0, transition: 'opacity 0.2s ease',
+                  zIndex: 10,
+                }}
+                className="group-hover/fs:!opacity-100"
+              >
+                <button
+                  onClick={() => setIsLockedFullscreen(false)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    padding: '8px 16px',
+                    background: 'rgba(0,0,0,0.7)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    borderRadius: 10,
+                    color: '#fff', fontSize: 13, fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Minimize size={14} /> Exit Fullscreen
+                </button>
+              </div>
+            </div>,
+            document.body
+          )}
         </>
       )}
+
 
       {/* Action Bar */}
       <div className="flex flex-row items-center justify-between bg-zinc-900/80 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 shadow-xl border border-white/5 gap-2 mt-2 overflow-x-auto scrollbar-none">
