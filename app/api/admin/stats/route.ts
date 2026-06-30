@@ -23,18 +23,57 @@ export async function GET() {
     const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    const [totalUsers, totalGames, totalSubscribers, activeLoggedInUsers, activeGuests, newUsers7d, games] = await Promise.all([
+    const [
+      totalUsers,
+      totalGames,
+      totalSubscribers,
+      activeLoggedInUsers24h,
+      activeGuests24h,
+      activeGuests7d,
+      newGuests7d,
+      newUsers7d,
+      games,
+      totalGuestSessions,
+      guestSessionsWithPlays,
+    ] = await Promise.all([
       User.countDocuments(),
-      Game.countDocuments(),
+      Game.countDocuments({ status: "published" }),
       Subscriber.countDocuments(),
       User.countDocuments({ lastActiveAt: { $gte: oneDayAgo } }),
       GuestSession.countDocuments({ lastActiveAt: { $gte: oneDayAgo } }),
+      GuestSession.countDocuments({ lastActiveAt: { $gte: sevenDaysAgo } }),
+      GuestSession.countDocuments({ createdAt: { $gte: sevenDaysAgo } }),
       User.countDocuments({ createdAt: { $gte: sevenDaysAgo } }),
-      Game.find({}, 'playCount').lean()
+      Game.find({}, "playCount title slug").lean(),
+      GuestSession.countDocuments(),
+      GuestSession.find(
+        { recentlyPlayed: { $exists: true, $not: { $size: 0 } } },
+        "recentlyPlayed"
+      ).lean(),
     ]);
-    
-    const activeUsers24h = activeLoggedInUsers + activeGuests;
-    const totalPlays = games.reduce((sum, game: any) => sum + (game.playCount || 0), 0);
+
+    // Count slug frequency across all guest sessions
+    const slugCountMap: Record<string, number> = {};
+    for (const gs of guestSessionsWithPlays) {
+      for (const slug of (gs as any).recentlyPlayed || []) {
+        slugCountMap[slug] = (slugCountMap[slug] || 0) + 1;
+      }
+    }
+
+    const topGuestGameSlugs = Object.entries(slugCountMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([slug, count]) => ({ slug, count }));
+
+    const gameMap = new Map(games.map((g: any) => [g.slug, g.title]));
+    const topGuestGames = topGuestGameSlugs.map(({ slug, count }) => ({
+      slug,
+      title: (gameMap.get(slug) as string) || slug,
+      count,
+    }));
+
+    const activeUsers24h = activeLoggedInUsers24h + activeGuests24h;
+    const totalPlays = games.reduce((sum: number, game: any) => sum + (game.playCount || 0), 0);
 
     return NextResponse.json({
       totalUsers,
@@ -42,7 +81,13 @@ export async function GET() {
       totalPlays,
       activeUsers24h,
       newUsers7d,
-      totalSubscribers
+      totalSubscribers,
+      totalGuestSessions,
+      activeGuests24h,
+      activeGuests7d,
+      newGuests7d,
+      activeLoggedInUsers24h,
+      topGuestGames,
     });
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch stats" }, { status: 500 });
