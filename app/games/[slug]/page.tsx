@@ -70,7 +70,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
     image: game.thumbnailUrl,
     author: {
       '@type': 'Organization',
-      name: game.developer || "Bluebuff Games"
+      name: (game.developer === "GameMonetize" ? "Bluebuff Games" : game.developer) || "Bluebuff Games"
     },
     genre: game.category,
     operatingSystem: game.platforms || "Web browser",
@@ -135,7 +135,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2.5 gap-x-8 max-w-3xl text-sm border-t border-border-main pt-4">
                   <div className="flex justify-between sm:justify-start gap-4">
                     <span className="text-zinc-500 font-medium sm:w-28 shrink-0">Developer:</span>
-                    <span className="text-indigo-400 font-semibold">{game.developer || "Bluebuff Games"}</span>
+                    <span className="text-indigo-400 font-semibold">{game.developer === "GameMonetize" ? "Bluebuff Games" : (game.developer || "Bluebuff Games")}</span>
                   </div>
                   <div className="flex justify-between sm:justify-start gap-4">
                     <span className="text-zinc-500 font-medium sm:w-28 shrink-0">Released:</span>

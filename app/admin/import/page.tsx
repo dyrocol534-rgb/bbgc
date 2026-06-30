@@ -41,7 +41,7 @@ export default function ImportGamesPage() {
       }
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.error || "Failed to fetch games from GameMonetize");
+      setError(err.response?.data?.error || "Failed to fetch games");
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +63,7 @@ export default function ImportGamesPage() {
         playUrl: game.url,
         thumbnailUrl: game.thumb || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
         status: "published",
-        developer: "GameMonetize",
+        developer: "Bluebuff Games",
         platforms: "Browser (desktop, mobile, tablet)"
       });
 
@@ -89,7 +89,7 @@ export default function ImportGamesPage() {
             Instant Game Importer
           </h2>
           <p className="text-text-secondary mt-1">
-            Browse and import thousands of free HTML5 games from GameMonetize instantly.
+            Browse and import thousands of free HTML5 games instantly.
           </p>
         </div>
         
