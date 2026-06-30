@@ -1,6 +1,5 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
 import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play, RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -76,7 +75,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         const isDeviceLandscape = window.innerWidth > window.innerHeight;
         setShowRotateOverlay(isDeviceLandscape);
       } else {
-        // If orientation is 'any', never force them to rotate
         setShowRotateOverlay(false);
       }
     };
@@ -90,8 +88,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     };
   }, [isPlaying, game.width, game.height]);
 
-  // Use a native DOM event listener for the Play button to guarantee Android Chrome 
-  // recognizes the gesture for the Fullscreen API (React synthetic events can sometimes drop the gesture token).
   useEffect(() => {
     const btn = playButtonRef.current;
     if (!btn) return;
@@ -125,10 +121,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
   useEffect(() => {
     if (isPlaying) {
-      // Increment play count when play starts
       axios.post(`/api/games/${game.slug}/play`).catch(err => console.error("Failed to increment play count", err));
       
-      // Also save to recently played in localStorage
       try {
         const stored = localStorage.getItem('recentlyPlayed');
         let recent = stored ? JSON.parse(stored) : [];
@@ -142,32 +136,14 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   }, [isPlaying, game.slug]);
 
-  const [isLockedFullscreen, setIsLockedFullscreen] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  // Lock body scroll when in fullscreen
-  useEffect(() => {
-    if (isLockedFullscreen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
-  }, [isLockedFullscreen]);
-
-  // ESC key exits fullscreen
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isLockedFullscreen) {
-        setIsLockedFullscreen(false);
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isLockedFullscreen]);
-
   const toggleFullscreen = () => {
-    setIsLockedFullscreen(prev => !prev);
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
   };
 
   useEffect(() => {
@@ -177,8 +153,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
-
-
 
   const closeQrModal = useCallback(() => setShowQrModal(false), []);
   const closeFeedbackModal = useCallback(() => {
@@ -221,17 +195,10 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   };
 
-  const totalVotes = likeCount + dislikeCount;
-  const ratingScore = totalVotes > 0 ? ((likeCount / totalVotes) * 10).toFixed(1) : "0.0";
-
   return (
-    <div className="flex flex-col gap-2 relative w-full max-w-[800px]">
-      {/* Desktop/Default Game Container */}
+    <div className="flex flex-col gap-2 relative w-full max-w-[800px] mx-auto">
       {!isPlaying ? (
-        // --- SPLASH SCREEN ---
         <div className="relative flex flex-col items-center justify-center bg-zinc-950 rounded-xl overflow-hidden shadow-2xl py-6 px-4 transition-all duration-300 w-full min-h-[250px] sm:min-h-[300px]">
-          
-          {/* Dynamic Blurred Background */}
           <div 
             className="absolute inset-0 z-0 opacity-40 blur-3xl scale-125"
             style={{
@@ -240,15 +207,11 @@ export default function GamePlayer({ game }: GamePlayerProps) {
               backgroundPosition: 'center',
             }}
           />
-          {/* Gradient Overlay (Top to Bottom Fade) */}
           <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-black/90" />
 
-          {/* Content (needs relative and z-10 to sit above background) */}
           <div className="relative z-10 flex flex-col items-center w-full">
             <img src={game.thumbnailUrl} alt={game.title} className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
-            
             <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 text-center drop-shadow-md">{game.title}</h1>
-            
             <div className="flex items-center justify-center gap-3 mb-4 text-zinc-200 font-medium drop-shadow">
               <div className="flex items-center gap-1 text-xs sm:text-sm">
                 <span className="text-base">🕹️</span>
@@ -270,14 +233,12 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           </div>
         </div>
       ) : (
-        // --- PLAYING STATE ---
         <>
           {/* Mobile Fixed Fullscreen Overlay */}
           <div className={clsx(
             "lg:hidden fixed inset-0 z-50 bg-black flex flex-col transition-all duration-300",
             !isFullscreen ? "translate-y-0" : ""
           )}>
-            {/* Top Bar for Mobile */}
             <div className="h-12 bg-[#121216] flex items-center justify-between px-3 shrink-0">
               <div className="flex items-center gap-2">
                 <button 
@@ -330,7 +291,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 onLoad={() => setIsLoading(false)}
               />
               
-              {/* Rotate Screen Overlay */}
               {showRotateOverlay && (
                 <div className="absolute inset-0 z-40 bg-[#121216] flex flex-col items-center justify-center p-6 text-center">
                   <div className="bg-black/60 p-8 rounded-3xl flex flex-col items-center gap-4 border border-white/10 shadow-2xl backdrop-blur-md">
@@ -345,90 +305,56 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             </div>
           </div>
 
-          {/* Desktop Inline Player */}
-          {(() => {
-            const aspectRatio = game.width && game.height ? `${game.width} / ${game.height}` : '16 / 9';
-            return (
-              <div
-                ref={containerRef}
-                className="hidden lg:block relative bg-black rounded-xl overflow-hidden shadow-2xl w-full"
-                style={{ aspectRatio }}
-              >
-                {isLoading && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10 text-primary-light">
-                    <Loader2 className="w-12 h-12 animate-spin mb-4" />
-                    <p className="font-medium animate-pulse">Loading Game Assets...</p>
-                  </div>
-                )}
-                <iframe
-                  ref={iframeRef}
-                  src={game.playUrl}
-                  className="w-full h-full border-0"
-                  allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
-                  onLoad={() => setIsLoading(false)}
-                />
+          {/* Desktop Inline Player / True Native Fullscreen Container */}
+          <div 
+            ref={containerRef}
+            className={clsx(
+              "hidden lg:flex relative bg-black rounded-xl overflow-hidden shadow-2xl flex-col items-center justify-center transition-all duration-300 group",
+              isFullscreen ? "w-screen h-screen rounded-none" : "w-full"
+            )}
+            style={{ 
+              aspectRatio: !isFullscreen && game.width && game.height ? `${game.width}/${game.height}` : !isFullscreen ? '16/9' : 'auto'
+            }}
+          >
+            {isLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10 text-primary-light">
+                <Loader2 className="w-12 h-12 animate-spin mb-4" />
+                <p className="font-medium animate-pulse">Loading Game Assets...</p>
               </div>
-            );
-          })()}
-
-          {/* ── Locked Fullscreen Overlay — rendered via Portal into body ── */}
-          {isLockedFullscreen && typeof document !== 'undefined' && createPortal(
-            <div
-              style={{
-                position: 'fixed', inset: 0,
-                zIndex: 2147483647,
-                background: '#000',
-              }}
-              className="group/fs"
-            >
-              {/* Game — fills 100% of screen, no header */}
-              {isLoading && (
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#18181b', zIndex: 10 }}>
-                  <Loader2 style={{ width: 48, height: 48, color: '#8b68ff' }} className="animate-spin" />
-                </div>
+            )}
+            
+            <iframe
+              src={game.playUrl}
+              className={clsx(
+                "border-0 transition-all duration-300",
+                isFullscreen ? "w-full h-full max-w-full max-h-full" : "w-full h-full absolute inset-0"
               )}
-              <iframe
-                src={game.playUrl}
-                style={{ width: '100%', height: '100%', border: 'none', display: 'block', position: 'absolute', inset: 0 }}
-                allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
-                onLoad={() => setIsLoading(false)}
-              />
+              style={isFullscreen ? { 
+                aspectRatio: game.width && game.height ? `${game.width}/${game.height}` : '16/9',
+                objectFit: 'contain' 
+              } : {}}
+              allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+              onLoad={() => setIsLoading(false)}
+            />
 
-              {/* Hover-reveal Exit button — top right, only shows on mouse hover */}
-              <div
-                style={{
-                  position: 'absolute', top: 12, right: 12,
-                  opacity: 0, transition: 'opacity 0.2s ease',
-                  zIndex: 10,
-                }}
-                className="group-hover/fs:!opacity-100"
-              >
+            {/* Hover-reveal Native Fullscreen Exit Button */}
+            {isFullscreen && (
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50">
                 <button
-                  onClick={() => setIsLockedFullscreen(false)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 8,
-                    padding: '8px 16px',
-                    background: 'rgba(0,0,0,0.7)',
-                    backdropFilter: 'blur(12px)',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    borderRadius: 10,
-                    color: '#fff', fontSize: 13, fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
+                  onClick={toggleFullscreen}
+                  className="flex items-center gap-2 px-4 py-2 bg-black/60 hover:bg-black/90 text-white rounded-lg backdrop-blur-sm border border-white/10 shadow-xl transition-all"
                 >
-                  <Minimize size={14} /> Exit Fullscreen
+                  <Minimize className="w-4 h-4" />
+                  <span>Exit Fullscreen</span>
                 </button>
               </div>
-            </div>,
-            document.body
-          )}
+            )}
+          </div>
         </>
       )}
 
-
       {/* Action Bar */}
       <div className="flex flex-row items-center justify-between bg-zinc-900/80 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 shadow-xl border border-white/5 gap-2 mt-2 overflow-x-auto scrollbar-none">
-        {/* Left Side: Game Title & Icon */}
         <div className="flex items-center gap-2 min-w-0 shrink">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden flex-shrink-0 shadow-md bg-zinc-800 ml-1">
              <img src={game.thumbnailUrl} alt={game.title} className="w-full h-full object-cover" />
@@ -436,9 +362,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           <h2 className="text-zinc-100 font-bold truncate text-sm sm:text-base">{game.title}</h2>
         </div>
 
-        {/* Right Side: Actions */}
         <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 pr-1">
-          {/* Like/Dislike Group */}
           <div className="flex items-center bg-zinc-800/80 rounded-full border border-white/5 overflow-hidden shrink-0">
             <button 
               onClick={() => handleInteract('like')}
@@ -456,7 +380,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             </button>
           </div>
 
-          {/* Action Buttons */}
           <button 
             onClick={() => handleInteract('favorite')}
             title="Add to Favorites" 
@@ -486,7 +409,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         </div>
       </div>
 
-      {/* QR Code Modal */}
       {showQrModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeQrModal}>
           <div 
@@ -510,12 +432,11 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             
             <h3 className="text-2xl font-bold text-white mb-4">Take the fun with you!</h3>
             <p className="text-zinc-300 leading-relaxed text-sm md:text-base">
-              Scan to play <span className="font-semibold text-white">{game.title}</span> on your phone or tablet. You can also get the Bluebuff Games app on iOS or Android.
+              Scan to play <span className="font-semibold text-white">{game.title}</span> on your phone or tablet.
             </p>
           </div>
         </div>
       )}
-      {/* Feedback Modal */}
       {showFeedbackModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeFeedbackModal}>
           <div 
