@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import dbConnect from '@/lib/mongodb';
 import Game from '@/models/Game';
 import GameCard from '@/components/game/GameCard';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Gamepad2 } from 'lucide-react';
 
 export const revalidate = 3600;
 
@@ -60,9 +62,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
       </div>
 
       {games.length === 0 ? (
-        <div className="text-center py-12 bg-zinc-900 rounded-2xl border border-border-main">
-          <p className="text-zinc-400 text-lg">No games found in this category yet.</p>
-        </div>
+        <EmptyState
+          icon={Gamepad2}
+          title="No Games Yet"
+          description={`We don't have any games in the ${category} category right now. Check back later or explore other categories.`}
+          actionLabel="View All Games"
+          actionHref="/"
+        />
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {games.map((game: Record<string, any>) => (

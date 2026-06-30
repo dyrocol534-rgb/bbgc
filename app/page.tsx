@@ -1,6 +1,4 @@
 import GameCard from "@/components/game/GameCard";
-import CategoryRow from "@/components/game/CategoryRow";
-import FeaturedCarousel from "@/components/game/FeaturedCarousel";
 import ContinuePlayingRow from "@/components/game/ContinuePlayingRow";
 import dynamic from "next/dynamic";
 const InfiniteGameGrid = dynamic(() => import("@/components/game/InfiniteGameGrid"));
@@ -15,32 +13,6 @@ import GuestSession from "@/models/GuestSession";
 
 export const revalidate = 60; // Revalidate page every 60 seconds
 
-async function getFeaturedGames() {
-  try {
-    await dbConnect();
-    const games = await Game.find({ status: "published", featured: true }).lean();
-    return JSON.parse(JSON.stringify(games));
-  } catch (error) {
-    console.error("Error fetching featured games:", error);
-    return [];
-  }
-}
-
-
-
-async function getRecentGames() {
-  try {
-    await dbConnect();
-    const games = await Game.find({ status: "published" })
-      .sort({ createdAt: -1 })
-      .limit(12)
-      .lean();
-    return JSON.parse(JSON.stringify(games));
-  } catch (error) {
-    console.error(`Error fetching recent games:`, error);
-    return [];
-  }
-}
 
 async function getInitialAllGames() {
   try {
@@ -58,10 +30,7 @@ async function getInitialAllGames() {
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-  
-  const featuredGames = await getFeaturedGames();
 
-  const recentGames = await getRecentGames();
   const initialAllGames = await getInitialAllGames();
 
   // Fetch user's or guest's recently played games
@@ -93,7 +62,7 @@ export default async function Home() {
     console.error("Error fetching recent games:", error);
   }
 
-  const hasGames = featuredGames.length > 0 || recentGames.length > 0 || initialAllGames.length > 0;
+  const hasGames = initialAllGames.length > 0;
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-12">
@@ -113,19 +82,6 @@ export default async function Home() {
         <ContinuePlayingRow games={userRecentGames} />
       )}
 
-      {featuredGames.length > 0 && (
-        <section>
-          <FeaturedCarousel games={featuredGames} />
-        </section>
-      )}
-
-
-
-      {recentGames.length > 0 && (
-        <section>
-          <CategoryRow title="New Releases" games={recentGames} />
-        </section>
-      )}
 
       {initialAllGames.length > 0 && (
         <section>

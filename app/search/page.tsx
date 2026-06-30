@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import dbConnect from '@/lib/mongodb';
 import Game from '@/models/Game';
 import GameCard from '@/components/game/GameCard';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { SearchX } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: "Search Games - Bluebuff Games",
@@ -42,9 +44,13 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       </div>
 
       {query && games.length === 0 ? (
-        <div className="text-center py-12 bg-zinc-900 rounded-2xl border border-border-main">
-          <p className="text-zinc-400 text-lg">We couldn't find any games matching your search.</p>
-        </div>
+        <EmptyState 
+          icon={SearchX} 
+          title="No Games Found" 
+          description={`We couldn't find any games matching "${query}". Try searching for a different keyword or genre.`} 
+          actionLabel="Browse All Games"
+          actionHref="/"
+        />
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {games.map((game: any) => (
