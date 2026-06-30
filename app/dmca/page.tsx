@@ -42,7 +42,7 @@ export default function DMCAPage() {
         <p className="mt-8">Deliver this Notice, with all items completed, to our Designated Copyright Agent at:</p>
         <div className="bg-surface-hover p-6 rounded-xl border border-border-main inline-block mt-4">
           <p className="font-semibold text-white mb-1">Copyright Agent</p>
-          <p className="text-primary">dmca@bluebuff.in</p>
+          <p className="text-primary">crew.bluebuffofficial@gmail.com</p>
         </div>
       </div>
     </div>

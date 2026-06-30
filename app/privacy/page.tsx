@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
 
         <h2 className="text-2xl font-semibold text-white mt-8 mb-4">4. Contact Us</h2>
         <p>If you have questions or comments about this Privacy Policy, please contact us at:</p>
-        <p className="font-semibold text-primary">support@bluebuff.in</p>
+        <p className="font-semibold text-primary">crew.bluebuffofficial@gmail.com</p>
       </div>
     </div>
   );

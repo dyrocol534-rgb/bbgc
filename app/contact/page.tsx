@@ -18,8 +18,8 @@ export default function ContactPage() {
           </div>
           <h2 className="text-xl font-bold text-white mb-2">Support & General</h2>
           <p className="text-zinc-400 mb-6 text-sm">For all general inquiries and support questions.</p>
-          <a href="mailto:support@bluebuff.in" className="text-primary hover:text-primary-light font-medium transition-colors">
-            support@bluebuff.in
+          <a href="mailto:crew.bluebuffofficial@gmail.com" className="text-primary hover:text-primary-light font-medium transition-colors">
+            crew.bluebuffofficial@gmail.com
           </a>
         </div>
 
@@ -30,8 +30,8 @@ export default function ContactPage() {
           </div>
           <h2 className="text-xl font-bold text-white mb-2">Legal & DMCA</h2>
           <p className="text-zinc-400 mb-6 text-sm">For copyright notices and legal inquiries.</p>
-          <a href="mailto:dmca@bluebuff.in" className="text-primary hover:text-primary-light font-medium transition-colors">
-            dmca@bluebuff.in
+          <a href="mailto:crew.bluebuffofficial@gmail.com" className="text-primary hover:text-primary-light font-medium transition-colors">
+            crew.bluebuffofficial@gmail.com
           </a>
         </div>
 

@@ -62,8 +62,44 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
 
   const randomGames = await getRandomGames(game.slug);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'VideoGame',
+    name: game.title,
+    description: game.description,
+    image: game.thumbnailUrl,
+    author: {
+      '@type': 'Organization',
+      name: game.developer || "Bluebuff Games"
+    },
+    genre: game.category,
+    operatingSystem: game.platforms || "Web browser",
+    applicationCategory: "Game",
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock'
+    }
+  };
+
+  if (game.rating && game.rating.count > 0) {
+    (jsonLd as any).aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: game.rating.avg.toString(),
+      ratingCount: game.rating.count.toString(),
+      bestRating: '5',
+      worstRating: '1'
+    };
+  }
+
   return (
-    <div className="container mx-auto px-4 py-6 max-w-[1400px]">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="container mx-auto px-4 py-6 max-w-[1400px]">
       <div className="flex flex-col lg:flex-row gap-6">
         
         {/* Main Content (Left on Desktop) */}
@@ -164,5 +200,6 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
         )}
       </div>
     </div>
+    </>
   );
 }

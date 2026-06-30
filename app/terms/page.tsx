@@ -39,7 +39,7 @@ export default function TermsOfServicePage() {
 
         <h2 className="text-2xl font-semibold text-white mt-8 mb-4">5. Contact Us</h2>
         <p>In order to resolve a complaint regarding the Site or to receive further information regarding use of the Site, please contact us at:</p>
-        <p className="font-semibold text-primary">support@bluebuff.in</p>
+        <p className="font-semibold text-primary">crew.bluebuffofficial@gmail.com</p>
       </div>
     </div>
   );
