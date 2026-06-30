@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2 } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -43,7 +44,9 @@ export default function Navbar() {
     <>
       <nav className="fixed top-0 left-0 right-0 z-40 h-16 bg-surface/80 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between px-4 lg:px-8">
         <Link href="/" className="flex items-center text-primary hover:text-primary-light transition-transform hover:scale-105" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
-          <img src="/logo.svg" alt="Logo" className="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(108,64,255,0.6)]" />
+          <div className="relative w-10 h-10 drop-shadow-[0_0_8px_rgba(108,64,255,0.6)]">
+            <Image src="/logo.svg" alt="Logo" fill priority className="object-contain" />
+          </div>
         </Link>
         
         <div className="flex-1 max-w-xl mx-4 hidden sm:block">
@@ -100,7 +103,9 @@ export default function Navbar() {
                 className="focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-full overflow-hidden transition-transform hover:scale-105"
               >
                 {session.user?.image ? (
-                  <img src={session.user.image} alt="User" className="w-8 h-8 rounded-full border border-zinc-700 object-cover" />
+                  <div className="relative w-8 h-8 rounded-full border border-zinc-700 overflow-hidden">
+                    <Image src={session.user.image} alt="User" fill sizes="32px" className="object-cover" />
+                  </div>
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center border border-border-strong">
                     <UserIcon className="w-4 h-4 text-text-muted" />
@@ -158,7 +163,9 @@ export default function Navbar() {
         <div className="p-5 border-b border-zinc-800 flex items-center justify-between bg-surface-hover/30">
           <div className="flex items-center gap-3">
             {session?.user?.image ? (
-              <img src={session.user.image} alt="User" className="w-10 h-10 rounded-full border border-zinc-700 object-cover shadow-sm" />
+              <div className="relative w-10 h-10 rounded-full border border-zinc-700 shadow-sm overflow-hidden">
+                <Image src={session.user.image} alt="User" fill sizes="40px" className="object-cover" />
+              </div>
             ) : (
               <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700 shadow-sm">
                 <UserIcon className="w-5 h-5 text-text-muted" />

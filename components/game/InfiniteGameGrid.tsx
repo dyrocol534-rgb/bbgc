@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
-import { Loader2 } from "lucide-react";
 import GameCard from "@/components/game/GameCard";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface GameData {
   _id: string;
@@ -25,27 +25,7 @@ export default function InfiniteGameGrid({ initialGames }: InfiniteGameGridProps
   const [isLoading, setIsLoading] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const target = observerTarget.current;
-    if (!target) return;
-
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting && hasMore && !isLoading) {
-          loadMoreGames();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(target);
-
-    return () => {
-      if (target) observer.unobserve(target);
-    };
-  }, [hasMore, isLoading, page]);
-
-  const loadMoreGames = async () => {
+  const loadMoreGames = useCallback(async () => {
     setIsLoading(true);
     try {
       const excludeIds = games.map(g => g._id).join(',');
@@ -65,7 +45,27 @@ export default function InfiniteGameGrid({ initialGames }: InfiniteGameGridProps
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [games, page]);
+
+  useEffect(() => {
+    const target = observerTarget.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !isLoading) {
+          loadMoreGames();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(target);
+
+    return () => {
+      if (target) observer.unobserve(target);
+    };
+  }, [hasMore, isLoading, loadMoreGames]);
 
   // Helper to determine the span class for the bento grid
   const getBentoSpanClass = (index: number) => {
@@ -123,14 +123,18 @@ export default function InfiniteGameGrid({ initialGames }: InfiniteGameGridProps
       </div>
 
       {hasMore && (
-        <div ref={observerTarget} className="flex justify-center items-center py-12">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <div ref={observerTarget} className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 sm:gap-3 py-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={`skeleton-${i}`} className="col-span-1 row-span-1 md:col-span-1 md:row-span-1">
+              <Skeleton className="aspect-square w-full rounded-2xl bg-zinc-800/80" />
+            </div>
+          ))}
         </div>
       )}
       
       {!hasMore && games.length > 0 && (
         <div className="text-center py-12 text-zinc-500">
-          You've reached the end! 🎮
+          You&apos;ve reached the end! 🎮
         </div>
       )}
     </div>

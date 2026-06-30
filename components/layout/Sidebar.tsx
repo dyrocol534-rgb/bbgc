@@ -5,10 +5,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 import { 
-  Home, Clock, Sparkles, Flame, RefreshCw, Star, Users, Trophy,
+  Home, RefreshCw, Star, Users, Trophy,
   Zap, Compass, Gamepad2, Grid, Layers, MousePointer2, Car, CircleDot, Puzzle, Crosshair,
   Mail, ChevronRight, ChevronLeft, Menu, X, Dices, Loader2, Rocket, TrendingUp
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const PRIMARY_LINKS = [
   { name: "Home", href: "/", icon: Home },
@@ -45,7 +46,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isRolling, setIsRolling] = useState(false);
-  const [categories, setCategories] = useState<{name: string, href: string, icon: any}[]>([]);
+  const [categories, setCategories] = useState<{name: string, href: string, icon: React.ElementType}[]>([]);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -81,7 +82,7 @@ export default function Sidebar() {
         setIsExpanded(false);
         router.push(`/games/${data.slug}`);
       }
-    } catch (error) {
+    } catch (err) {
       console.error("Failed to fetch random game");
     } finally {
       setIsRolling(false);
@@ -190,8 +191,13 @@ export default function Sidebar() {
 
         <nav className="flex flex-col gap-1 px-2">
           {categories.length === 0 ? (
-            <div className="flex justify-center items-center py-4">
-              <Loader2 className="w-5 h-5 text-zinc-500 animate-spin" />
+            <div className="flex flex-col gap-1 w-full">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={`sidebar-skel-${i}`} className="flex items-center gap-4 px-3 py-2.5">
+                  <Skeleton className="w-5 h-5 rounded-md shrink-0 bg-zinc-800/80" />
+                  <Skeleton className={clsx("h-4 rounded-sm bg-zinc-800/80 transition-all duration-300", isExpanded ? "w-24 opacity-100" : "w-0 opacity-0 hidden")} />
+                </div>
+              ))}
             </div>
           ) : categories.map((link) => {
             const Icon = link.icon;

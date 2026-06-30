@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function FeaturedCarousel({ games }: { games: any[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -20,11 +21,18 @@ export default function FeaturedCarousel({ games }: { games: any[] }) {
 
   return (
     <div className="relative w-full h-[200px] sm:h-[280px] lg:h-[320px] xl:h-[360px] rounded-2xl overflow-hidden bg-surface-hover shadow-2xl">
-      <img 
-        src={game.thumbnailUrl} 
-        alt={game.title} 
-        className="absolute inset-0 w-full h-full object-cover opacity-50"
-      />
+      {games.map((g, i) => (
+        <Image
+          key={g._id || i}
+          src={g.thumbnailUrl}
+          alt={g.title}
+          fill
+          priority={i === 0}
+          className={`object-cover transition-opacity duration-1000 ease-in-out ${
+            i === currentIndex ? "opacity-50" : "opacity-0"
+          }`}
+        />
+      ))}
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent" />
       

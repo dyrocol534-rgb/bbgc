@@ -29,7 +29,8 @@ export default function GameCard({ game, className, imageContainerClassName }: G
             src={game.thumbnailUrl || ''} 
             alt={game.title}
             fill
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 20vw"
+            loading="lazy"
+            sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 16vw, 12vw"
             className="object-cover transform group-hover:scale-105 transition-transform duration-300"
             onError={() => setImgError(true)}
           />
