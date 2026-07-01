@@ -115,11 +115,21 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     setIsPlaying(false);
   };
 
-  const rotateScreen = () => {
-    const orient = screen.orientation as any;
-    if (orient && orient.lock && orient.type) {
-      const newOrientation = orient.type.startsWith('portrait') ? 'landscape' : 'portrait';
-      orient.lock(newOrientation).catch(() => {});
+  const rotateScreen = async () => {
+    try {
+      // Must be in native fullscreen for orientation.lock() to work
+      const docEl = document.documentElement as any;
+      if (!document.fullscreenElement) {
+        const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen;
+        if (requestFS) await requestFS.call(docEl).catch(() => {});
+      }
+      const orient = screen.orientation as any;
+      if (orient && orient.lock && orient.type) {
+        const newOrientation = orient.type.startsWith('portrait') ? 'landscape' : 'portrait';
+        await orient.lock(newOrientation);
+      }
+    } catch (e) {
+      console.log('Orientation lock failed:', e);
     }
   };
 
