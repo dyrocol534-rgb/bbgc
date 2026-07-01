@@ -1,0 +1,32 @@
+{
+  "name": "Bluebuff Games",
+  "short_name": "Bluebuff",
+  "description": "Play the best free online HTML5 browser games. No downloads, instant play!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "entertainment"],
+  "screenshots": [
+    {
+      "src": "/logo.png",
+      "sizes": "800x600",
+      "type": "image/png"
+    }
+  ]
+}
