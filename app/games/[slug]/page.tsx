@@ -36,19 +36,51 @@ async function getRandomGames(currentSlug: string) {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const game = await getGame(slug);
-  
+  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
+
   if (!game) {
     return { title: 'Game Not Found' };
   }
 
+  const title = `Play ${game.title} Free Online – No Download | ${siteName}`;
+  const description = game.description
+    ? `${game.description.slice(0, 120).trim()}... Play ${game.title} free in your browser – no download or registration needed!`
+    : `Play ${game.title} free online on ${siteName}. No download, no login required. Works on PC, mobile, and tablet.`;
+
+  const keywords: string[] = [
+    `${game.title}`,
+    `play ${game.title} online`,
+    `${game.title} free`,
+    `${game.title} no download`,
+    ...(Array.isArray(game.category) ? game.category.map((c: string) => `free ${c} games`) : []),
+    ...(Array.isArray(game.tags) ? game.tags.slice(0, 5) : []),
+    "free online games",
+    "browser games",
+    "no download games",
+  ];
+
   return {
-    title: `${game.title} - Play on Bluebuff Games`,
-    description: game.description,
+    title,
+    description,
+    keywords,
+    alternates: {
+      canonical: `${siteUrl}/games/${slug}`,
+    },
     openGraph: {
-      title: `${game.title} - Play Free Browser Games`,
-      description: game.description,
-      images: [{ url: game.thumbnailUrl }],
-    }
+      title,
+      description,
+      url: `${siteUrl}/games/${slug}`,
+      siteName,
+      type: "website",
+      images: game.thumbnailUrl ? [{ url: game.thumbnailUrl, alt: game.title }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: game.thumbnailUrl ? [game.thumbnailUrl] : [],
+    },
   };
 }
 

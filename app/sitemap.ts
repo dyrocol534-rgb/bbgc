@@ -28,12 +28,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       '/category/popular',
       '/category/updated',
       '/category/originals',
-      '/category/multiplayer'
+      '/category/multiplayer',
+      '/category/action',
+      '/category/puzzle',
+      '/category/racing',
+      '/category/sports',
+      '/category/adventure',
+      '/category/shooting',
+      '/category/io',
+      '/privacy',
+      '/terms',
+      '/contact',
+      '/faq',
     ].map((route) => ({
       url: `${baseUrl}${route}`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: route === '' ? 1 : 0.8,
+      changeFrequency: 'daily' as const,
+      priority: route === '' ? 1 : route.startsWith('/category') ? 0.8 : 0.5,
     }));
 
     // Dynamic game routes

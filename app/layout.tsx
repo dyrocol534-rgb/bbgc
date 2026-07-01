@@ -18,38 +18,72 @@ const geistMono = Geist_Mono({
 });
 
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
-const siteDescription = `Play the best free online HTML5 and Unity WebGL games directly in your browser on ${siteName}. No downloads, instant play!`;
-const siteUrl = "https://games.bluebuff.in/";
+const siteDescription = `Play 1000+ free online games instantly – no download, no login! Action, puzzle, racing, sports & more on ${siteName}. Works on PC, mobile & tablet. New games added daily!`;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in/";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${siteName} - Free HTML5 Browser Games`,
+    default: `${siteName} – Free Online Games, No Download Needed!`,
     template: `%s | ${siteName}`,
   },
   description: siteDescription,
-  keywords: ["free games", "browser games", "html5 games", "unblocked games", "online games", "arcade", "webgl games", "play instantly"],
+  keywords: [
+    // Tier 1 – Primary high-volume
+    "free online games",
+    "play games online",
+    "online games free",
+    "browser games",
+    "free games to play",
+    // Tier 2 – Category keywords
+    "free online puzzle games",
+    "free racing games online",
+    "free shooting games online",
+    "multiplayer games online free",
+    "io games",
+    "2 player games online",
+    "free driving games",
+    "free sports games",
+    "free adventure games online",
+    "free action games online",
+    "free arcade games online",
+    // Tier 3 – Long-tail quick-win keywords
+    "free online games no download no registration",
+    "free browser games to play at school",
+    "free online games for kids no download",
+    "free online games to play when bored",
+    "best free online games for pc",
+    "free multiplayer games no download",
+    "free games to play on phone without downloading",
+    "free 2 player games online same screen",
+    "free online strategy games no download",
+    "html5 games",
+    "webgl games",
+    "unblocked games",
+    "instant play games",
+    "no download games",
+  ],
   authors: [{ name: siteName }],
   creator: siteName,
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    title: `${siteName} - Free HTML5 Browser Games`,
+    title: `${siteName} – Free Online Games, No Download Needed!`,
     description: siteDescription,
     siteName: siteName,
     images: [
       {
         url: "/logo.png",
-        width: 800,
-        height: 600,
-        alt: `${siteName} Logo`,
+        width: 1200,
+        height: 630,
+        alt: `${siteName} – Play 1000+ Free Browser Games`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteName} - Free HTML5 Browser Games`,
+    title: `${siteName} – Free Online Games, No Download Needed!`,
     description: siteDescription,
     images: ["/logo.png"],
   },
@@ -73,6 +107,7 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: siteName,
   },
+  category: "games",
 };
 
 export const viewport = {
@@ -84,8 +119,38 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteUrl}#website`,
+    name: siteName,
+    url: siteUrl,
+    description: siteDescription,
+    inLanguage: "en",
+    publisher: {
+      "@type": "Organization",
+      "@id": `${siteUrl}#organization`,
+      name: siteName,
+      url: siteUrl,
+    },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteUrl}search?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <html lang="en" className="dark h-full antialiased text-zinc-100 bg-background">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col bg-background text-text-main`}>
         {/* Google Analytics */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-XL79QHW97L" strategy="afterInteractive" />

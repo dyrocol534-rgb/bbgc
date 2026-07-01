@@ -5,9 +5,28 @@ import GameCard from '@/components/game/GameCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SearchX } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: "Search Games - Bluebuff Games",
-};
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Bluebuff Games';
+
+export async function generateMetadata(
+  { searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }
+): Promise<Metadata> {
+  const resolvedParams = await searchParams;
+  const query = typeof resolvedParams.q === 'string' ? resolvedParams.q.trim() : '';
+
+  if (!query) {
+    return {
+      title: `Search Free Online Games | ${siteName}`,
+      description: `Search thousands of free browser games on ${siteName}. No download needed – find action, puzzle, racing, sports games and more.`,
+      robots: { index: false, follow: true },
+    };
+  }
+
+  return {
+    title: `"${query}" Games – Play Free Online | ${siteName}`,
+    description: `Find free online ${query} games on ${siteName}. Play instantly in your browser – no download, no registration required.`,
+    robots: { index: false, follow: true }, // search result pages should not be indexed
+  };
+}
 
 async function searchGames(query: string) {
   try {
