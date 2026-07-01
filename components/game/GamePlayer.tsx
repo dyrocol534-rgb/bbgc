@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play, RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -20,30 +21,27 @@ interface GamePlayerProps {
 
 export default function GamePlayer({ game }: GamePlayerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isFakeFullscreen, setIsFakeFullscreen] = useState(false);
+  const [isMobileFS, setIsMobileFS] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
-  
   const [currentUrl, setCurrentUrl] = useState('');
-  
-  // Interaction states
+
   const [likeCount, setLikeCount] = useState(game.likes?.length || 0);
   const [dislikeCount, setDislikeCount] = useState(game.dislikes?.length || 0);
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const playButtonRef = useRef<HTMLButtonElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     setCurrentUrl(window.location.href);
-    
-    // Fetch initial interaction status
     axios.post(`/api/games/${game.slug}/interact`, { action: 'status' })
       .then(res => {
         setIsLiked(res.data.isLiked);
@@ -51,23 +49,19 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         setIsFavorited(res.data.isFavorited);
         setLikeCount(res.data.likeCount);
         setDislikeCount(res.data.dislikeCount);
-      })
-      .catch(console.error);
+      }).catch(console.error);
   }, [game.slug]);
 
   useEffect(() => {
     if (isPlaying) {
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 5000);
+      const timer = setTimeout(() => setIsLoading(false), 5000);
       return () => clearTimeout(timer);
     }
   }, [isPlaying]);
 
   useEffect(() => {
     if (isPlaying) {
-      axios.post(`/api/games/${game.slug}/play`).catch(err => console.error("Failed to increment play count", err));
-      
+      axios.post(`/api/games/${game.slug}/play`).catch(console.error);
       try {
         const stored = localStorage.getItem('recentlyPlayed');
         let recent = stored ? JSON.parse(stored) : [];
@@ -75,76 +69,73 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         recent.unshift(game.slug);
         if (recent.length > 20) recent.pop();
         localStorage.setItem('recentlyPlayed', JSON.stringify(recent));
-      } catch (e) {
-        console.error("Local storage error:", e);
-      }
+      } catch (e) {}
     }
   }, [isPlaying, game.slug]);
 
-  // On mobile, auto-enter fake fullscreen when play starts
+  // Auto-enter mobile fullscreen on play
   useEffect(() => {
     if (isPlaying && typeof window !== 'undefined' && window.innerWidth < 1024) {
-      setIsFakeFullscreen(true);
+      setIsMobileFS(true);
     }
   }, [isPlaying]);
 
-  // Handle fake fullscreen UI locks
+  // Hide/show page elements during mobile FS by direct DOM manipulation
   useEffect(() => {
-    if (isFakeFullscreen) {
+    // Find the layout elements
+    const navbar = document.querySelector('nav.fixed') as HTMLElement | null;
+    const sidebar = document.querySelector('aside') as HTMLElement | null;
+    const mobileToggle = document.querySelector('button.md\\:hidden.fixed') as HTMLElement | null;
+    const footer = document.querySelector('footer') as HTMLElement | null;
+
+    if (isMobileFS) {
       document.body.style.overflow = 'hidden';
-      document.body.classList.add('hide-ui');
+      if (navbar) navbar.style.display = 'none';
+      if (sidebar) sidebar.style.display = 'none';
+      if (mobileToggle) mobileToggle.style.display = 'none';
+      if (footer) footer.style.display = 'none';
     } else {
       document.body.style.overflow = '';
-      document.body.classList.remove('hide-ui');
+      if (navbar) navbar.style.display = '';
+      if (sidebar) sidebar.style.display = '';
+      if (mobileToggle) mobileToggle.style.display = '';
+      if (footer) footer.style.display = '';
     }
     return () => {
       document.body.style.overflow = '';
-      document.body.classList.remove('hide-ui');
+      if (navbar) navbar.style.display = '';
+      if (sidebar) sidebar.style.display = '';
+      if (mobileToggle) mobileToggle.style.display = '';
+      if (footer) footer.style.display = '';
     };
-  }, [isFakeFullscreen]);
+  }, [isMobileFS]);
 
+  const exitMobileFS = () => {
+    setIsMobileFS(false);
+    setIsPlaying(false);
+  };
+
+  const rotateScreen = () => {
+    const orient = screen.orientation as any;
+    if (orient && orient.lock && orient.type) {
+      const newOrientation = orient.type.startsWith('portrait') ? 'landscape' : 'portrait';
+      orient.lock(newOrientation).catch(() => {});
+    }
+  };
+
+  // Desktop fullscreen
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement && !isFakeFullscreen) {
-      const el = containerRef.current as any;
-      if (el?.requestFullscreen) {
-        el.requestFullscreen().catch(() => setIsFakeFullscreen(true));
-      } else if (el?.webkitRequestFullscreen) {
-        el.webkitRequestFullscreen();
-      } else {
-        setIsFakeFullscreen(true); // iOS Safari fallback
-      }
-      
-      // Try to lock orientation to game's preferred orientation
-      try {
-        const orient = screen.orientation as any;
-        if (orient && orient.lock && game.orientation && game.orientation !== 'any') {
-          orient.lock(game.orientation).catch(() => {});
-        }
-      } catch (e) {}
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen().catch(console.error);
     } else {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      }
-      if (isFakeFullscreen) {
-        setIsFakeFullscreen(false);
-      }
-      try {
-        const orient = screen.orientation as any;
-        if (orient && orient.unlock) orient.unlock();
-      } catch (e) {}
+      document.exitFullscreen();
     }
   };
 
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-    };
+    const handler = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', handler);
+    return () => document.removeEventListener('fullscreenchange', handler);
   }, []);
 
   const closeQrModal = useCallback(() => setShowQrModal(false), []);
@@ -162,11 +153,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       setLikeCount(res.data.likeCount);
       setDislikeCount(res.data.dislikeCount);
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        alert("Please log in to perform this action.");
-      } else if (error.response?.data?.error) {
-        alert(error.response.data.error);
-      }
+      if (error.response?.status === 401) alert("Please log in to perform this action.");
     }
   };
 
@@ -178,253 +165,230 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       alert("Feedback submitted successfully!");
       closeFeedbackModal();
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        alert("Please log in to submit feedback.");
-      } else {
-        alert("Failed to submit feedback.");
-      }
+      if (error.response?.status === 401) alert("Please log in to submit feedback.");
+      else alert("Failed to submit feedback.");
     } finally {
       setIsSubmittingFeedback(false);
     }
   };
 
-  const isAnyFullscreen = isFullscreen || isFakeFullscreen;
+  const aspectRatio = game.width && game.height ? `${game.width}/${game.height}` : '16/9';
 
   return (
-    <div className="flex flex-col gap-2 relative w-full max-w-[800px] mx-auto">
-      {!isPlaying ? (
-        <div className="relative flex flex-col items-center justify-center bg-zinc-950 rounded-xl overflow-hidden shadow-2xl py-6 px-4 transition-all duration-300 w-full min-h-[250px] sm:min-h-[300px]">
-          <div 
-            className="absolute inset-0 z-0 opacity-40 blur-3xl scale-125"
-            style={{
-              backgroundImage: `url(${game.thumbnailUrl})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
-          <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-black/90" />
+    <>
+      {/* ── MOBILE FULLSCREEN PORTAL ─────────────────────────────── */}
+      {isMobileFS && typeof document !== 'undefined' && createPortal(
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 2147483647,
+          background: '#000', display: 'flex', flexDirection: 'column',
+        }}>
+          {/* Mini top bar — Exit + Rotate only */}
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '8px 12px', background: '#0a0a0f',
+            borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
+            paddingTop: 'max(8px, env(safe-area-inset-top))',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <img src={game.thumbnailUrl} alt="" style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }} />
+              <span style={{ color: '#fff', fontSize: 13, fontWeight: 700, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.title}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {/* Rotate */}
+              <button
+                onClick={rotateScreen}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '7px 12px', background: '#27272a',
+                  border: 'none', borderRadius: 10,
+                  color: '#a1a1aa', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                }}
+              >
+                <RotateCcw size={13} />
+                Rotate
+              </button>
+              {/* Exit */}
+              <button
+                onClick={exitMobileFS}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '7px 14px', background: '#6c40ff',
+                  border: 'none', borderRadius: 10,
+                  color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                }}
+              >
+                <X size={13} />
+                Exit
+              </button>
+            </div>
+          </div>
 
-          <div className="relative z-10 flex flex-col items-center w-full">
-            <img src={game.thumbnailUrl} alt={game.title} className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
-            <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 text-center drop-shadow-md">{game.title}</h1>
-            <div className="flex items-center justify-center gap-3 mb-4 text-zinc-200 font-medium drop-shadow">
-              <div className="flex items-center gap-1 text-xs sm:text-sm">
+          {/* Game iframe */}
+          <div style={{ flex: 1, position: 'relative', background: '#000' }}>
+            {isLoading && (
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#18181b', zIndex: 10 }}>
+                <Loader2 style={{ width: 40, height: 40, color: '#8b68ff' }} className="animate-spin" />
+              </div>
+            )}
+            <iframe
+              ref={iframeRef}
+              src={game.playUrl}
+              style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+              allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+              onLoad={() => setIsLoading(false)}
+            />
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* ── MAIN PAGE CONTENT ─────────────────────────────────────── */}
+      <div className="flex flex-col gap-2 relative w-full max-w-[800px] mx-auto">
+        {!isPlaying ? (
+          /* Splash Screen */
+          <div className="relative flex flex-col items-center justify-center bg-zinc-950 rounded-xl overflow-hidden shadow-2xl py-6 px-4 w-full min-h-[250px] sm:min-h-[300px]">
+            <div className="absolute inset-0 z-0 opacity-40 blur-3xl scale-125" style={{ backgroundImage: `url(${game.thumbnailUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+            <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-black/90" />
+            <div className="relative z-10 flex flex-col items-center w-full">
+              <img src={game.thumbnailUrl} alt={game.title} className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
+              <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 text-center drop-shadow-md">{game.title}</h1>
+              <div className="flex items-center gap-1 text-xs sm:text-sm text-zinc-200 mb-4">
                 <span className="text-base">🕹️</span>
                 <span className="capitalize">Arcade</span>
               </div>
-            </div>
-            
-            <button 
-              ref={playButtonRef}
-              onClick={(e) => {
-                e.preventDefault();
-                setIsPlaying(true);
-              }}
-              className="px-6 py-2 bg-primary hover:bg-primary-hover text-white text-base sm:text-lg font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(108,64,255,0.4)] flex items-center gap-2 group"
-            >
-              <Play className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
-              Play now
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div 
-          ref={containerRef}
-          className={clsx(
-            "relative bg-black overflow-hidden flex-col items-center justify-center transition-all duration-300 group flex",
-            isFakeFullscreen ? "fixed inset-0 z-[9999] w-full h-[100dvh] rounded-none" : "rounded-xl shadow-2xl w-full",
-            isFullscreen ? "w-screen h-screen rounded-none" : ""
-          )}
-          style={{ 
-            aspectRatio: !isAnyFullscreen && game.width && game.height ? `${game.width}/${game.height}` : !isAnyFullscreen ? '16/9' : 'auto'
-          }}
-        >
-          {isLoading && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10 text-primary-light">
-              <Loader2 className="w-12 h-12 animate-spin mb-4" />
-              <p className="font-medium animate-pulse">Loading Game Assets...</p>
-            </div>
-          )}
-          
-          <iframe
-            src={game.playUrl}
-            className={clsx(
-              "border-0 transition-all duration-300",
-              isAnyFullscreen ? "w-full h-full max-w-full max-h-full" : "w-full h-full absolute inset-0"
-            )}
-            style={isAnyFullscreen ? { 
-              aspectRatio: game.width && game.height ? `${game.width}/${game.height}` : '16/9',
-              objectFit: 'contain' 
-            } : {}}
-            allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
-            onLoad={() => setIsLoading(false)}
-          />
-
-          {/* Fullscreen Exit Button */}
-          {isAnyFullscreen && (
-            <div className={clsx(
-              "absolute z-50 transition-all duration-200",
-              isFakeFullscreen
-                ? "top-3 right-3 opacity-100" // always visible on mobile fake-fs
-                : "top-4 right-4 opacity-0 group-hover:opacity-100" // hover-reveal on desktop
-            )}>
               <button
-                onClick={() => {
-                  if (isFakeFullscreen) {
-                    setIsFakeFullscreen(false);
-                    setIsPlaying(false);
-                  } else {
-                    toggleFullscreen();
-                  }
-                }}
-                className={clsx(
-                  "flex items-center gap-2 font-bold backdrop-blur-md border border-white/15 shadow-xl transition-all active:scale-95",
-                  isFakeFullscreen
-                    ? "px-4 py-2 bg-zinc-900/90 text-white text-sm rounded-xl"
-                    : "px-4 py-2 bg-black/60 hover:bg-black/90 text-white rounded-lg"
-                )}
-                title="Exit"
+                ref={playButtonRef}
+                onClick={() => setIsPlaying(true)}
+                className="px-6 py-2 bg-primary hover:bg-primary-hover text-white text-base sm:text-lg font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(108,64,255,0.4)] flex items-center gap-2 group"
               >
-                <Minimize className="w-4 h-4" />
-                <span>Exit</span>
+                <Play className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
+                Play now
               </button>
             </div>
-          )}
-        </div>
-      )}
-
-
-      {/* Action Bar */}
-      <div className="flex flex-row items-center justify-between bg-zinc-900/80 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 shadow-xl border border-white/5 gap-2 mt-2 overflow-x-auto scrollbar-none">
-        <div className="flex items-center gap-2 min-w-0 shrink">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden flex-shrink-0 shadow-md bg-zinc-800 ml-1">
-             <img src={game.thumbnailUrl} alt={game.title} className="w-full h-full object-cover" />
           </div>
-          <h2 className="text-zinc-100 font-bold truncate text-sm sm:text-base">{game.title}</h2>
-        </div>
-
-        <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 pr-1">
-          <div className="flex items-center bg-zinc-800/80 rounded-full border border-white/5 overflow-hidden shrink-0">
-            <button 
-              onClick={() => handleInteract('like')}
-              className={clsx("flex items-center gap-1.5 px-3 py-1.5 sm:py-2 hover:bg-zinc-700 transition-colors group", isLiked ? "text-indigo-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}
-            >
-              <ThumbsUp className={clsx("w-4 h-4 transition-transform", isLiked ? "fill-current" : "group-hover:scale-110")} />
-              {likeCount > 0 && <span className="text-sm font-bold transition-colors">{likeCount > 999 ? (likeCount/1000).toFixed(1)+'k' : likeCount}</span>}
-            </button>
-            <div className="w-px h-4 bg-white/10"></div>
-            <button 
-              onClick={() => handleInteract('dislike')}
-              className={clsx("flex items-center gap-1.5 px-3 py-1.5 sm:py-2 hover:bg-zinc-700 transition-colors group", isDisliked ? "text-red-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}
-            >
-              <ThumbsDown className={clsx("w-4 h-4 transition-transform", isDisliked ? "fill-current" : "group-hover:scale-110")} />
-            </button>
-          </div>
-
-          <button 
-            onClick={() => handleInteract('favorite')}
-            title="Add to Favorites" 
-            className={clsx("p-1.5 sm:p-2 rounded-full border border-white/5 transition-colors shrink-0 group hover:border-pink-500/50 hover:bg-zinc-700", isFavorited ? "bg-zinc-700 text-pink-500 border-pink-500/30" : "bg-zinc-800/80 text-zinc-300 hover:text-white")}
+        ) : (
+          /* Desktop Inline Player */
+          <div
+            ref={containerRef}
+            className={clsx(
+              "hidden lg:flex relative bg-black rounded-xl overflow-hidden shadow-2xl flex-col items-center justify-center group",
+              isFullscreen ? "w-screen h-screen rounded-none" : "w-full"
+            )}
+            style={{ aspectRatio: !isFullscreen ? aspectRatio : 'auto' }}
           >
-            <Heart className={clsx("w-4 h-4 transition-colors", isFavorited ? "fill-current" : "group-hover:text-pink-500")} />
-          </button>
-          <button 
-            onClick={() => setShowFeedbackModal(true)}
-            title="Report / Feedback" 
-            className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0"
-          >
-            <MessageSquareWarning className="w-4 h-4" />
-          </button>
-          
-          <button 
-            onClick={() => setShowQrModal(true)}
-            title="Play on mobile"
-            className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 group"
-          >
-            <Smartphone className="w-4 h-4 group-hover:text-indigo-400" />
-          </button>
-
-          <button onClick={toggleFullscreen} title="Toggle Fullscreen" className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 flex">
-            {isAnyFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
-          </button>
-        </div>
-      </div>
-
-      {showQrModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeQrModal}>
-          <div 
-            className="relative bg-[#1f1f2e] border border-border-main rounded-3xl p-8 md:p-12 max-w-md w-full shadow-2xl flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200"
-            onClick={e => e.stopPropagation()}
-          >
-            <button 
-              onClick={closeQrModal}
-              className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            
-            <div className="bg-white p-4 rounded-3xl mb-8 shadow-xl">
-              <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}&margin=0`} 
-                alt="QR Code to play on mobile"
-                className="w-48 h-48 rounded-xl"
-              />
-            </div>
-            
-            <h3 className="text-2xl font-bold text-white mb-4">Take the fun with you!</h3>
-            <p className="text-zinc-300 leading-relaxed text-sm md:text-base">
-              Scan to play <span className="font-semibold text-white">{game.title}</span> on your phone or tablet.
-            </p>
-          </div>
-        </div>
-      )}
-      {showFeedbackModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeFeedbackModal}>
-          <div 
-            className="relative bg-zinc-900 border border-border-main rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200"
-            onClick={e => e.stopPropagation()}
-          >
-            <button 
-              onClick={closeFeedbackModal}
-              className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-              <MessageSquareWarning className="w-5 h-5 text-indigo-400" />
-              Provide Feedback
-            </h3>
-            <p className="text-zinc-400 text-sm mb-6">
-              Let us know what you think about <strong>{game.title}</strong>, or report any issues you encountered.
-            </p>
-            
-            <textarea
-              value={feedbackText}
-              onChange={e => setFeedbackText(e.target.value)}
-              placeholder="Your message here..."
-              className="w-full bg-surface-hover border border-border-main rounded-xl p-4 text-zinc-100 min-h-[120px] focus:outline-none focus:border-indigo-500 transition-colors mb-4"
+            {isLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10 text-primary-light">
+                <Loader2 className="w-12 h-12 animate-spin mb-4" />
+                <p className="font-medium animate-pulse">Loading Game Assets...</p>
+              </div>
+            )}
+            <iframe
+              src={game.playUrl}
+              className="w-full h-full absolute inset-0 border-0"
+              allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+              onLoad={() => setIsLoading(false)}
             />
-            
-            <div className="flex justify-end gap-3">
-              <button 
-                onClick={closeFeedbackModal}
-                className="px-5 py-2.5 text-zinc-300 hover:text-white font-medium rounded-xl hover:bg-white/5 transition-colors"
-              >
-                Cancel
+            {isFullscreen && (
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                <button onClick={toggleFullscreen} className="flex items-center gap-2 px-4 py-2 bg-black/70 backdrop-blur-sm text-white rounded-lg border border-white/10 text-sm font-bold">
+                  <Minimize className="w-4 h-4" /> Exit Fullscreen
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Mobile placeholder while in FS (keeps layout from collapsing) */}
+        {isPlaying && isMobileFS && (
+          <div className="lg:hidden w-full rounded-xl bg-zinc-950 flex items-center justify-center" style={{ aspectRatio }}>
+            <p className="text-zinc-600 text-sm">Playing in fullscreen…</p>
+          </div>
+        )}
+
+        {/* Mobile inline player (when NOT in mobile FS) */}
+        {isPlaying && !isMobileFS && (
+          <div className="lg:hidden relative bg-black rounded-xl overflow-hidden shadow-2xl w-full" style={{ aspectRatio }}>
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10">
+                <Loader2 className="w-10 h-10 animate-spin text-primary" />
+              </div>
+            )}
+            <iframe
+              src={game.playUrl}
+              className="w-full h-full absolute inset-0 border-0"
+              allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+              onLoad={() => setIsLoading(false)}
+            />
+          </div>
+        )}
+
+        {/* ── ACTION BAR (always visible below the player) ─── */}
+        <div className="flex flex-row items-center justify-between bg-zinc-900/80 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 shadow-xl border border-white/5 gap-2 mt-2 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-2 min-w-0 shrink">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden flex-shrink-0 shadow-md bg-zinc-800 ml-1">
+              <img src={game.thumbnailUrl} alt={game.title} className="w-full h-full object-cover" />
+            </div>
+            <h2 className="text-zinc-100 font-bold truncate text-sm sm:text-base">{game.title}</h2>
+          </div>
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 pr-1">
+            {/* Like/Dislike */}
+            <div className="flex items-center bg-zinc-800/80 rounded-full border border-white/5 overflow-hidden shrink-0">
+              <button onClick={() => handleInteract('like')} className={clsx("flex items-center gap-1.5 px-3 py-1.5 sm:py-2 hover:bg-zinc-700 transition-colors group", isLiked ? "text-indigo-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}>
+                <ThumbsUp className={clsx("w-4 h-4", isLiked ? "fill-current" : "group-hover:scale-110")} />
+                {likeCount > 0 && <span className="text-sm font-bold">{likeCount > 999 ? (likeCount/1000).toFixed(1)+'k' : likeCount}</span>}
               </button>
-              <button 
-                onClick={submitFeedback}
-                disabled={isSubmittingFeedback || !feedbackText.trim()}
-                className="px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {isSubmittingFeedback ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                Submit
+              <div className="w-px h-4 bg-white/10" />
+              <button onClick={() => handleInteract('dislike')} className={clsx("flex items-center gap-1.5 px-3 py-1.5 sm:py-2 hover:bg-zinc-700 transition-colors group", isDisliked ? "text-red-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}>
+                <ThumbsDown className={clsx("w-4 h-4", isDisliked ? "fill-current" : "group-hover:scale-110")} />
               </button>
             </div>
+            <button onClick={() => handleInteract('favorite')} className={clsx("p-1.5 sm:p-2 rounded-full border border-white/5 transition-colors shrink-0 group", isFavorited ? "bg-zinc-700 text-pink-500 border-pink-500/30" : "bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-white")}>
+              <Heart className={clsx("w-4 h-4", isFavorited ? "fill-current" : "group-hover:text-pink-500")} />
+            </button>
+            <button onClick={() => setShowFeedbackModal(true)} className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0">
+              <MessageSquareWarning className="w-4 h-4" />
+            </button>
+            <button onClick={() => setShowQrModal(true)} className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 group">
+              <Smartphone className="w-4 h-4 group-hover:text-indigo-400" />
+            </button>
+            <button onClick={toggleFullscreen} className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 hidden md:flex">
+              {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+            </button>
           </div>
         </div>
-      )}
-    </div>
+
+        {/* QR Modal */}
+        {showQrModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeQrModal}>
+            <div className="relative bg-[#1f1f2e] border border-border-main rounded-3xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+              <button onClick={closeQrModal} className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"><X className="w-6 h-6" /></button>
+              <div className="bg-white p-4 rounded-3xl mb-8 shadow-xl">
+                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}&margin=0`} alt="QR" className="w-48 h-48 rounded-xl" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">Take the fun with you!</h3>
+              <p className="text-zinc-300 text-sm">Scan to play <strong>{game.title}</strong> on your phone or tablet.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Feedback Modal */}
+        {showFeedbackModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeFeedbackModal}>
+            <div className="relative bg-zinc-900 border border-border-main rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+              <button onClick={closeFeedbackModal} className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
+              <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2"><MessageSquareWarning className="w-5 h-5 text-indigo-400" />Provide Feedback</h3>
+              <p className="text-zinc-400 text-sm mb-6">Let us know what you think about <strong>{game.title}</strong>, or report any issues.</p>
+              <textarea value={feedbackText} onChange={e => setFeedbackText(e.target.value)} placeholder="Your message here..." className="w-full bg-surface-hover border border-border-main rounded-xl p-4 text-zinc-100 min-h-[120px] focus:outline-none focus:border-indigo-500 transition-colors mb-4" />
+              <div className="flex justify-end gap-3">
+                <button onClick={closeFeedbackModal} className="px-5 py-2.5 text-zinc-300 hover:text-white font-medium rounded-xl hover:bg-white/5 transition-colors">Cancel</button>
+                <button onClick={submitFeedback} disabled={isSubmittingFeedback || !feedbackText.trim()} className="px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2">
+                  {isSubmittingFeedback ? <Loader2 className="w-4 h-4 animate-spin" /> : null}Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
