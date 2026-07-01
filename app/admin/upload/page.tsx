@@ -4,6 +4,11 @@ import JSZip from "jszip";
 import axios from "axios";
 import { UploadCloud, Loader2, CheckCircle } from "lucide-react";
 
+const CATEGORIES = [
+  "action", "adventure", "arcade", "board", "card", "clicker", 
+  "driving", "io", "puzzle", "shooting", "sports", "multiplayer"
+];
+
 export default function UploadGamePage() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -15,18 +20,18 @@ export default function UploadGamePage() {
     title: "",
     slug: "",
     description: "",
-    category: "action",
+    categories: ["action"] as string[],
     buildType: "html5",
     developer: "Bluebuff Games",
     platforms: "Browser (desktop, mobile, tablet)",
     thumbnailUrl: "",
-    isMultiplayer: false,
     gameUrl: ""
   });
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.slug) return setMessage("Title and Slug are required");
+    if (formData.categories.length === 0) return setMessage("At least one category is required");
 
     // Handle Embed/Iframe type
     if (formData.buildType === 'iframe-external') {
@@ -46,7 +51,7 @@ export default function UploadGamePage() {
           title: formData.title,
           slug: formData.slug,
           description: formData.description,
-          category: formData.isMultiplayer ? [formData.category, "multiplayer"] : [formData.category],
+          category: formData.categories,
           buildType: formData.buildType,
           source: "aggregated",
           playUrl: finalUrl,
@@ -139,7 +144,7 @@ export default function UploadGamePage() {
         title: formData.title,
         slug: formData.slug,
         description: formData.description,
-        category: formData.isMultiplayer ? [formData.category, "multiplayer"] : [formData.category],
+        category: formData.categories,
         buildType: formData.buildType,
         source: "own",
         playUrl: playUrl || `https://cdn.dummy.com/games/${formData.slug}/index.html`,
@@ -237,39 +242,33 @@ export default function UploadGamePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-2">Category</label>
-            <select 
-              value={formData.category}
-              onChange={e => setFormData({...formData, category: e.target.value})}
-              className="w-full bg-surface-hover border border-border-main rounded-lg p-3 text-text-main focus:ring-2 focus:ring-primary-hover outline-none transition-all"
-            >
-              <option value="action">Action</option>
-              <option value="adventure">Adventure</option>
-              <option value="arcade">Arcade</option>
-              <option value="board">Board</option>
-              <option value="card">Card</option>
-              <option value="clicker">Clicker</option>
-              <option value="driving">Driving</option>
-              <option value="io">.io</option>
-              <option value="puzzle">Puzzle</option>
-              <option value="shooting">Shooting</option>
-              <option value="sports">Sports</option>
-            </select>
-          </div>
-          
-          <div className="flex items-center gap-3 mt-8">
-            <input 
-              type="checkbox"
-              id="isMultiplayerUpload"
-              checked={formData.isMultiplayer}
-              onChange={e => setFormData({...formData, isMultiplayer: e.target.checked})}
-              className="w-5 h-5 rounded border-zinc-700 bg-surface-hover text-indigo-600 focus:ring-indigo-500"
-            />
-            <label htmlFor="isMultiplayerUpload" className="text-sm font-medium text-text-secondary cursor-pointer">
-              Is this a multiplayer game?
-            </label>
+            <label className="block text-sm font-medium text-text-secondary mb-3">Categories (Select Multiple)</label>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => {
+                    const newCats = formData.categories.includes(cat) 
+                      ? formData.categories.filter(c => c !== cat)
+                      : [...formData.categories, cat];
+                    setFormData({...formData, categories: newCats});
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-colors ${
+                    formData.categories.includes(cat)
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'bg-surface-hover text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 border border-zinc-700/50'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            {formData.categories.length === 0 && (
+              <p className="text-xs text-red-400 mt-2">Please select at least one category.</p>
+            )}
           </div>
           
           <div>
@@ -348,7 +347,7 @@ export default function UploadGamePage() {
 
         <button 
           type="submit" 
-          disabled={isUploading}
+          disabled={isUploading || formData.categories.length === 0}
           className="w-full bg-primary hover:bg-primary-hover text-text-main font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isUploading ? (

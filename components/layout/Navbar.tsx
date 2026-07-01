@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import clsx from "clsx";
 import PWAInstallButton from "./PWAInstallButton";
+import GoogleTranslate from "./GoogleTranslate";
 
 
 export default function Navbar() {
@@ -97,6 +98,7 @@ export default function Navbar() {
             </span>
           </button>
 
+          <GoogleTranslate />
           <PWAInstallButton />
 
           {session ? (
