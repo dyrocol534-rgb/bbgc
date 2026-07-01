@@ -14,24 +14,40 @@ import GuestSession from "@/models/GuestSession";
 export const revalidate = 60; // Revalidate page every 60 seconds
 
 
-async function getInitialAllGames() {
+async function getInitialAllGames(page: number = 1) {
   try {
     await dbConnect();
-    const games = await Game.aggregate([
-      { $match: { status: "published" } },
-      { $sample: { size: 24 } }
-    ]);
-    return JSON.parse(JSON.stringify(games));
+    const limit = 24;
+    const skip = (page - 1) * limit;
+
+    if (page === 1) {
+      const games = await Game.aggregate([
+        { $match: { status: "published" } },
+        { $sample: { size: limit } }
+      ]);
+      return JSON.parse(JSON.stringify(games));
+    } else {
+      const games = await Game.find({ status: "published" })
+        .sort({ playCount: -1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+      return JSON.parse(JSON.stringify(games));
+    }
   } catch (error) {
     console.error(`Error fetching initial games:`, error);
     return [];
   }
 }
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const session = await getServerSession(authOptions);
+  
+  const resolvedParams = await searchParams;
+  const pageParam = typeof resolvedParams.page === 'string' ? parseInt(resolvedParams.page, 10) : 1;
+  const page = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
 
-  const initialAllGames = await getInitialAllGames();
+  const initialAllGames = await getInitialAllGames(page);
 
   // Fetch user's or guest's recently played games
   let userRecentGames = [];
@@ -85,7 +101,19 @@ export default async function Home() {
 
       {initialAllGames.length > 0 && (
         <section>
-          <InfiniteGameGrid initialGames={initialAllGames} />
+          <InfiniteGameGrid 
+            initialGames={initialAllGames} 
+            initialPage={page} 
+            sortType={page === 1 ? 'random' : 'popular'} 
+          />
+          
+          {/* SEO Bot Pagination */}
+          <div className="sr-only">
+            <nav aria-label="Pagination">
+              {page > 1 && <a href={`/?page=${page - 1}`}>Previous Page</a>}
+              {initialAllGames.length === 24 && <a href={`/?page=${page + 1}`}>Next Page</a>}
+            </nav>
+          </div>
         </section>
       )}
     </div>

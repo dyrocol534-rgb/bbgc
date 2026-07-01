@@ -16,12 +16,14 @@ interface GameData {
 
 interface InfiniteGameGridProps {
   initialGames: GameData[];
+  initialPage?: number;
+  sortType?: 'random' | 'popular';
 }
 
-export default function InfiniteGameGrid({ initialGames }: InfiniteGameGridProps) {
+export default function InfiniteGameGrid({ initialGames, initialPage = 1, sortType = 'random' }: InfiniteGameGridProps) {
   const [games, setGames] = useState<GameData[]>(initialGames);
-  const [page, setPage] = useState(2); // Since page 1 is loaded initially
-  const [hasMore, setHasMore] = useState(initialGames.length >= 24); // Assume true if initial batch was full
+  const [page, setPage] = useState(initialPage + 1); // Start fetching the *next* page
+  const [hasMore, setHasMore] = useState(initialGames.length >= 24);
   const [isLoading, setIsLoading] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -29,7 +31,7 @@ export default function InfiniteGameGrid({ initialGames }: InfiniteGameGridProps
     setIsLoading(true);
     try {
       const excludeIds = games.map(g => g._id).join(',');
-      const { data } = await axios.get(`/api/games?page=${page}&limit=24&sort=random&exclude=${excludeIds}`);
+      const { data } = await axios.get(`/api/games?page=${page}&limit=24&sort=${sortType}&exclude=${excludeIds}`);
       
       if (data.games.length > 0) {
         // filter out any duplicates just in case new games were added during scroll
@@ -105,7 +107,7 @@ export default function InfiniteGameGrid({ initialGames }: InfiniteGameGridProps
         </h2>
       </div>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 auto-rows-[minmax(100px,auto)] md:auto-rows-[minmax(120px,auto)] gap-2 sm:gap-3 grid-flow-dense">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 auto-rows-[minmax(100px,auto)] md:auto-rows-[minmax(120px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
         {games.map((game, index) => {
           const spanClass = getBentoSpanClass(index);
           const imageContainerClass = getImageContainerClass(spanClass);
@@ -124,18 +126,24 @@ export default function InfiniteGameGrid({ initialGames }: InfiniteGameGridProps
             </div>
           );
         })}
+
+        {hasMore && Array.from({ length: 8 }).map((_, i) => {
+          const index = games.length + i;
+          const spanClass = getBentoSpanClass(index);
+          const imageContainerClass = getImageContainerClass(spanClass);
+          
+          return (
+            <div 
+              key={`skeleton-${i}`} 
+              className={spanClass}
+              ref={i === 0 ? observerTarget : null}
+            >
+              <Skeleton className={`${imageContainerClass} w-full rounded-2xl bg-zinc-800/80`} />
+            </div>
+          );
+        })}
       </div>
 
-      {hasMore && (
-        <div ref={observerTarget} className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 sm:gap-3 py-6">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={`skeleton-${i}`} className="col-span-1 row-span-1 md:col-span-1 md:row-span-1">
-              <Skeleton className="aspect-square w-full rounded-2xl bg-zinc-800/80" />
-            </div>
-          ))}
-        </div>
-      )}
-      
       {!hasMore && games.length > 0 && (
         <div className="text-center py-12 text-zinc-500">
           You&apos;ve reached the end! 🎮
