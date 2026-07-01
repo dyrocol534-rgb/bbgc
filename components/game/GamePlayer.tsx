@@ -20,13 +20,13 @@ interface GamePlayerProps {
 
 export default function GamePlayer({ game }: GamePlayerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFakeFullscreen, setIsFakeFullscreen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
-  const [showRotateOverlay, setShowRotateOverlay] = useState(false);
   
   const [currentUrl, setCurrentUrl] = useState('');
   
@@ -65,61 +65,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   }, [isPlaying]);
 
   useEffect(() => {
-    if (!isPlaying) return;
-    
-    const checkOrientation = () => {
-      if (game.orientation === 'landscape') {
-        const isDevicePortrait = window.innerHeight > window.innerWidth;
-        setShowRotateOverlay(isDevicePortrait);
-      } else if (game.orientation === 'portrait') {
-        const isDeviceLandscape = window.innerWidth > window.innerHeight;
-        setShowRotateOverlay(isDeviceLandscape);
-      } else {
-        setShowRotateOverlay(false);
-      }
-    };
-
-    checkOrientation();
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
-    return () => {
-      window.removeEventListener('resize', checkOrientation);
-      window.removeEventListener('orientationchange', checkOrientation);
-    };
-  }, [isPlaying, game.width, game.height]);
-
-  useEffect(() => {
-    const btn = playButtonRef.current;
-    if (!btn) return;
-
-    const handleNativePlayClick = () => {
-      if (window.innerWidth < 1024 || ('ontouchstart' in window)) {
-        const docEl = document.documentElement as any;
-        const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-        if (requestFS) {
-          try {
-            const promise = requestFS.call(docEl);
-            const lockOrientation = () => {
-              const orient = screen.orientation as any;
-              if (orient && orient.lock && game.orientation && game.orientation !== 'any') {
-                orient.lock(game.orientation).catch((e: any) => console.log("Orientation lock failed:", e));
-              }
-            };
-            if (promise && promise.then) {
-              promise.then(lockOrientation).catch((err: any) => console.log("Fullscreen failed:", err));
-            } else {
-              setTimeout(lockOrientation, 300);
-            }
-          } catch(e) { console.log("FS error", e); }
-        }
-      }
-    };
-
-    btn.addEventListener('click', handleNativePlayClick);
-    return () => btn.removeEventListener('click', handleNativePlayClick);
-  }, [game.width, game.height]);
-
-  useEffect(() => {
     if (isPlaying) {
       axios.post(`/api/games/${game.slug}/play`).catch(err => console.error("Failed to increment play count", err));
       
@@ -136,13 +81,50 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   }, [isPlaying, game.slug]);
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
-      });
+  // Handle fake fullscreen UI locks
+  useEffect(() => {
+    if (isFakeFullscreen) {
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('hide-ui');
     } else {
-      document.exitFullscreen();
+      document.body.style.overflow = '';
+      document.body.classList.remove('hide-ui');
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.classList.remove('hide-ui');
+    };
+  }, [isFakeFullscreen]);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement && !isFakeFullscreen) {
+      const el = containerRef.current as any;
+      if (el?.requestFullscreen) {
+        el.requestFullscreen().catch(() => setIsFakeFullscreen(true));
+      } else if (el?.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+      } else {
+        setIsFakeFullscreen(true); // iOS Safari fallback
+      }
+      
+      // Try to lock orientation to game's preferred orientation
+      try {
+        const orient = screen.orientation as any;
+        if (orient && orient.lock && game.orientation && game.orientation !== 'any') {
+          orient.lock(game.orientation).catch(() => {});
+        }
+      } catch (e) {}
+    } else {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+      if (isFakeFullscreen) {
+        setIsFakeFullscreen(false);
+      }
+      try {
+        const orient = screen.orientation as any;
+        if (orient && orient.unlock) orient.unlock();
+      } catch (e) {}
     }
   };
 
@@ -151,7 +133,11 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       setIsFullscreen(!!document.fullscreenElement);
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+    };
   }, []);
 
   const closeQrModal = useCallback(() => setShowQrModal(false), []);
@@ -195,6 +181,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   };
 
+  const isAnyFullscreen = isFullscreen || isFakeFullscreen;
+
   return (
     <div className="flex flex-col gap-2 relative w-full max-w-[800px] mx-auto">
       {!isPlaying ? (
@@ -233,124 +221,52 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           </div>
         </div>
       ) : (
-        <>
-          {/* Mobile Fixed Fullscreen Overlay */}
-          <div className={clsx(
-            "lg:hidden fixed inset-0 z-50 bg-black flex flex-col transition-all duration-300",
-            !isFullscreen ? "translate-y-0" : ""
-          )}>
-            <div className="h-12 bg-[#121216] flex items-center justify-between px-3 shrink-0">
-              <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => {
-                    setIsPlaying(false);
-                    const doc = document as any;
-                    const exitFS = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
-                    if (exitFS && (doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement)) {
-                      try { exitFS.call(doc); } catch(e) {}
-                    }
-                    const orient = screen.orientation as any;
-                    if (orient && orient.unlock) {
-                      orient.unlock();
-                    }
-                  }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#6c40ff] text-white text-sm font-bold rounded-md"
-                >
-                  <div className="w-3 h-4 border border-white rounded-sm border-l-4"></div>
-                  Exit
-                </button>
-                <button 
-                  onClick={() => {
-                    const orient = screen.orientation as any;
-                    if (orient && orient.lock && orient.type) {
-                      const newOrientation = orient.type.startsWith('portrait') ? 'landscape' : 'portrait';
-                      orient.lock(newOrientation).catch((e: any) => console.log("Manual lock failed", e));
-                    }
-                  }}
-                  className="p-1.5 bg-zinc-800 text-zinc-300 hover:text-white rounded-md"
-                  title="Rotate Screen"
-                >
-                  <RotateCcw className="w-5 h-5" />
-                </button>
-              </div>
-              <button onClick={() => setShowFeedbackModal(true)} className="p-2">
-                <MessageSquareWarning className="w-5 h-5 text-red-500" />
+        <div 
+          ref={containerRef}
+          className={clsx(
+            "relative bg-black overflow-hidden flex-col items-center justify-center transition-all duration-300 group flex",
+            isFakeFullscreen ? "fixed inset-0 z-[9999] w-full h-[100dvh] rounded-none" : "rounded-xl shadow-2xl w-full",
+            isFullscreen ? "w-screen h-screen rounded-none" : ""
+          )}
+          style={{ 
+            aspectRatio: !isAnyFullscreen && game.width && game.height ? `${game.width}/${game.height}` : !isAnyFullscreen ? '16/9' : 'auto'
+          }}
+        >
+          {isLoading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10 text-primary-light">
+              <Loader2 className="w-12 h-12 animate-spin mb-4" />
+              <p className="font-medium animate-pulse">Loading Game Assets...</p>
+            </div>
+          )}
+          
+          <iframe
+            src={game.playUrl}
+            className={clsx(
+              "border-0 transition-all duration-300",
+              isAnyFullscreen ? "w-full h-full max-w-full max-h-full" : "w-full h-full absolute inset-0"
+            )}
+            style={isAnyFullscreen ? { 
+              aspectRatio: game.width && game.height ? `${game.width}/${game.height}` : '16/9',
+              objectFit: 'contain' 
+            } : {}}
+            allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+            onLoad={() => setIsLoading(false)}
+          />
+
+          {/* Fullscreen Exit Button - Visible when screen is touched/hovered in FS */}
+          {isAnyFullscreen && (
+            <div className="absolute top-4 right-4 opacity-30 hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300 z-50">
+              <button
+                onClick={toggleFullscreen}
+                className="flex items-center justify-center p-3 md:px-4 md:py-2 bg-black/60 hover:bg-black/90 text-white rounded-full md:rounded-lg backdrop-blur-sm border border-white/10 shadow-xl transition-all"
+                title="Exit Fullscreen"
+              >
+                <Minimize className="w-5 h-5 md:w-4 md:h-4" />
+                <span className="hidden md:inline md:ml-2 font-medium">Exit Fullscreen</span>
               </button>
             </div>
-            
-            <div className="flex-1 relative w-full h-full">
-              {isLoading && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10 text-primary-light">
-                  <Loader2 className="w-12 h-12 animate-spin mb-4" />
-                </div>
-              )}
-              <iframe
-                src={game.playUrl}
-                className="w-full h-full border-0"
-                allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
-                onLoad={() => setIsLoading(false)}
-              />
-              
-              {showRotateOverlay && (
-                <div className="absolute inset-0 z-40 bg-[#121216] flex flex-col items-center justify-center p-6 text-center">
-                  <div className="bg-black/60 p-8 rounded-3xl flex flex-col items-center gap-4 border border-white/10 shadow-2xl backdrop-blur-md">
-                    <RotateCcw className="w-16 h-16 text-indigo-400 animate-[spin_3s_ease-in-out_infinite]" />
-                    <h3 className="text-white font-bold text-2xl tracking-tight">Rotate your screen</h3>
-                    <p className="text-zinc-400 text-sm max-w-[200px]">
-                      This game requires you to play in {game.orientation === 'landscape' ? 'landscape' : 'portrait'} mode.
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Desktop Inline Player / True Native Fullscreen Container */}
-          <div 
-            ref={containerRef}
-            className={clsx(
-              "hidden lg:flex relative bg-black rounded-xl overflow-hidden shadow-2xl flex-col items-center justify-center transition-all duration-300 group",
-              isFullscreen ? "w-screen h-screen rounded-none" : "w-full"
-            )}
-            style={{ 
-              aspectRatio: !isFullscreen && game.width && game.height ? `${game.width}/${game.height}` : !isFullscreen ? '16/9' : 'auto'
-            }}
-          >
-            {isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10 text-primary-light">
-                <Loader2 className="w-12 h-12 animate-spin mb-4" />
-                <p className="font-medium animate-pulse">Loading Game Assets...</p>
-              </div>
-            )}
-            
-            <iframe
-              src={game.playUrl}
-              className={clsx(
-                "border-0 transition-all duration-300",
-                isFullscreen ? "w-full h-full max-w-full max-h-full" : "w-full h-full absolute inset-0"
-              )}
-              style={isFullscreen ? { 
-                aspectRatio: game.width && game.height ? `${game.width}/${game.height}` : '16/9',
-                objectFit: 'contain' 
-              } : {}}
-              allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
-              onLoad={() => setIsLoading(false)}
-            />
-
-            {/* Hover-reveal Native Fullscreen Exit Button */}
-            {isFullscreen && (
-              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50">
-                <button
-                  onClick={toggleFullscreen}
-                  className="flex items-center gap-2 px-4 py-2 bg-black/60 hover:bg-black/90 text-white rounded-lg backdrop-blur-sm border border-white/10 shadow-xl transition-all"
-                >
-                  <Minimize className="w-4 h-4" />
-                  <span>Exit Fullscreen</span>
-                </button>
-              </div>
-            )}
-          </div>
-        </>
+          )}
+        </div>
       )}
 
       {/* Action Bar */}
@@ -403,8 +319,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             <Smartphone className="w-4 h-4 group-hover:text-indigo-400" />
           </button>
 
-          <button onClick={toggleFullscreen} title="Toggle Fullscreen" className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 hidden md:flex">
-            {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+          <button onClick={toggleFullscreen} title="Toggle Fullscreen" className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 flex">
+            {isAnyFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
           </button>
         </div>
       </div>

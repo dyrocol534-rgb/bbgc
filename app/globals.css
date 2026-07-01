@@ -119,3 +119,11 @@ main > * {
 
 
 
+
+/* Hide layout elements when game is in fake fullscreen (iOS fallback) */
+body.hide-ui nav,
+body.hide-ui aside,
+body.hide-ui footer,
+body.hide-ui button.md\:hidden.fixed.top-1\/2 {
+  display: none !important;
+}
