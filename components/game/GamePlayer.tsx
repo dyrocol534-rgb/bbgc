@@ -81,6 +81,13 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   }, [isPlaying, game.slug]);
 
+  // On mobile, auto-enter fake fullscreen when play starts
+  useEffect(() => {
+    if (isPlaying && typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsFakeFullscreen(true);
+    }
+  }, [isPlaying]);
+
   // Handle fake fullscreen UI locks
   useEffect(() => {
     if (isFakeFullscreen) {
@@ -253,21 +260,39 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             onLoad={() => setIsLoading(false)}
           />
 
-          {/* Fullscreen Exit Button - Visible when screen is touched/hovered in FS */}
+          {/* Fullscreen Exit Button */}
           {isAnyFullscreen && (
-            <div className="absolute top-4 right-4 opacity-30 hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300 z-50">
+            <div className={clsx(
+              "absolute z-50 transition-all duration-200",
+              isFakeFullscreen
+                ? "top-3 right-3 opacity-100" // always visible on mobile fake-fs
+                : "top-4 right-4 opacity-0 group-hover:opacity-100" // hover-reveal on desktop
+            )}>
               <button
-                onClick={toggleFullscreen}
-                className="flex items-center justify-center p-3 md:px-4 md:py-2 bg-black/60 hover:bg-black/90 text-white rounded-full md:rounded-lg backdrop-blur-sm border border-white/10 shadow-xl transition-all"
-                title="Exit Fullscreen"
+                onClick={() => {
+                  if (isFakeFullscreen) {
+                    setIsFakeFullscreen(false);
+                    setIsPlaying(false);
+                  } else {
+                    toggleFullscreen();
+                  }
+                }}
+                className={clsx(
+                  "flex items-center gap-2 font-bold backdrop-blur-md border border-white/15 shadow-xl transition-all active:scale-95",
+                  isFakeFullscreen
+                    ? "px-4 py-2 bg-zinc-900/90 text-white text-sm rounded-xl"
+                    : "px-4 py-2 bg-black/60 hover:bg-black/90 text-white rounded-lg"
+                )}
+                title="Exit"
               >
-                <Minimize className="w-5 h-5 md:w-4 md:h-4" />
-                <span className="hidden md:inline md:ml-2 font-medium">Exit Fullscreen</span>
+                <Minimize className="w-4 h-4" />
+                <span>Exit</span>
               </button>
             </div>
           )}
         </div>
       )}
+
 
       {/* Action Bar */}
       <div className="flex flex-row items-center justify-between bg-zinc-900/80 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 shadow-xl border border-white/5 gap-2 mt-2 overflow-x-auto scrollbar-none">
