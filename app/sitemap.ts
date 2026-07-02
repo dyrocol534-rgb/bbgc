@@ -6,7 +6,7 @@ export const revalidate = 86400; // Revalidate every 24 hours
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Replace with your actual domain when you deploy!
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cloud-games-demo.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://games.bluebuff.in';
   
   try {
     await dbConnect();
