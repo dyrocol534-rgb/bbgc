@@ -40,14 +40,14 @@ function StatCard({
   sub?: string;
 }) {
   return (
-    <div className="bg-surface border border-zinc-800 p-6 rounded-xl flex items-center gap-4 hover:border-zinc-700 transition-colors shadow-lg">
-      <div className={`p-4 rounded-xl ${color}`}>
-        <Icon className="w-7 h-7" />
+    <div className="bg-surface border border-zinc-800 p-4 rounded-xl flex items-center gap-3 hover:border-zinc-700 transition-colors shadow-sm">
+      <div className={`p-2.5 rounded-lg ${color}`}>
+        <Icon className="w-5 h-5" />
       </div>
-      <div>
-        <p className="text-sm font-medium text-text-muted">{label}</p>
-        <p className="text-3xl font-bold text-text-main">{value}</p>
-        {sub && <p className="text-xs text-zinc-500 mt-0.5">{sub}</p>}
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-medium text-text-muted">{label}</p>
+        <p className="text-xl font-bold text-text-main leading-tight">{value}</p>
+        {sub && <p className="text-[10px] leading-tight text-zinc-500 mt-0.5">{sub}</p>}
       </div>
     </div>
   );
@@ -88,30 +88,30 @@ export default function AdminAnalytics() {
 
       {/* ── Platform Overview ─────────────────────────────── */}
       <section>
-        <h2 className="text-2xl font-bold text-text-main mb-6">Platform Overview</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h2 className="text-xl font-bold text-text-main mb-4">Platform Overview</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           <StatCard icon={Activity}   label="Active Users (24h)"    value={stats?.activeUsers24h || 0}    color="bg-emerald-500/10 text-emerald-400" sub="Guests + Members combined" />
-          <StatCard icon={UserPlus}   label="New Members (7 Days)"  value={stats?.newUsers7d || 0}         color="bg-blue-500/10 text-blue-400" />
+          <StatCard icon={UserPlus}   label="New Members (7d)"      value={stats?.newUsers7d || 0}         color="bg-blue-500/10 text-blue-400" />
           <StatCard icon={Mail}       label="Total Subscribers"     value={stats?.totalSubscribers || 0}   color="bg-pink-500/10 text-pink-400" />
           <StatCard icon={Users}      label="Total Members"         value={stats?.totalUsers || 0}         color="bg-indigo-500/10 text-indigo-400" />
           <StatCard icon={Gamepad2}   label="Published Games"       value={stats?.totalGames || 0}         color="bg-green-500/10 text-green-400" />
-          <StatCard icon={PlaySquare} label="Total Lifetime Plays"  value={stats?.totalPlays?.toLocaleString() || 0}  color="bg-orange-500/10 text-orange-400" />
+          <StatCard icon={PlaySquare} label="Lifetime Plays"        value={stats?.totalPlays?.toLocaleString() || 0}  color="bg-orange-500/10 text-orange-400" />
         </div>
       </section>
 
       {/* ── Guest Insights ────────────────────────────────── */}
       <section>
-        <div className="flex items-center gap-3 mb-6">
-          <Ghost className="w-6 h-6 text-violet-400" />
-          <h2 className="text-2xl font-bold text-text-main">Guest Insights</h2>
-          <span className="text-xs bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2 py-0.5 rounded-full font-medium">Anonymous Visitors</span>
+        <div className="flex items-center gap-3 mb-4">
+          <Ghost className="w-5 h-5 text-violet-400" />
+          <h2 className="text-xl font-bold text-text-main">Guest Insights</h2>
+          <span className="text-[10px] bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2 py-0.5 rounded-full font-medium">Anonymous Visitors</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <StatCard icon={Ghost}      label="Total Guest Sessions"  value={stats?.totalGuestSessions || 0} color="bg-violet-500/10 text-violet-400" sub="Unique browsers ever" />
-          <StatCard icon={Eye}        label="Guests Active (24h)"   value={stats?.activeGuests24h || 0}    color="bg-fuchsia-500/10 text-fuchsia-400" sub="Played in last 24 hours" />
-          <StatCard icon={TrendingUp} label="Guests Active (7d)"    value={stats?.activeGuests7d || 0}     color="bg-purple-500/10 text-purple-400" sub="Played in last 7 days" />
-          <StatCard icon={UserPlus}   label="New Guests (7 Days)"   value={stats?.newGuests7d || 0}        color="bg-rose-500/10 text-rose-400" sub="First visit this week" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <StatCard icon={Ghost}      label="Total Sessions"        value={stats?.totalGuestSessions || 0} color="bg-violet-500/10 text-violet-400" sub="Unique browsers ever" />
+          <StatCard icon={Eye}        label="Guests Active (24h)"   value={stats?.activeGuests24h || 0}    color="bg-fuchsia-500/10 text-fuchsia-400" sub="Played in last 24h" />
+          <StatCard icon={TrendingUp} label="Guests Active (7d)"    value={stats?.activeGuests7d || 0}     color="bg-purple-500/10 text-purple-400" sub="Played in last 7d" />
+          <StatCard icon={UserPlus}   label="New Guests (7d)"       value={stats?.newGuests7d || 0}        color="bg-rose-500/10 text-rose-400" sub="First visit this week" />
         </div>
 
         {/* Guest vs Member ratio bar */}

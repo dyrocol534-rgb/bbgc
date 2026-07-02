@@ -91,6 +91,26 @@ export default function Sidebar() {
 
   return (
     <>
+      {/* Full-screen Loader Overlay for "Surprise Me" */}
+      {isRolling && (
+        <div className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex flex-col items-center justify-center">
+          <div className="relative flex items-center justify-center w-32 h-32 mb-8">
+            <div className="absolute inset-0 border-4 border-zinc-800 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-t-indigo-500 rounded-full animate-spin"></div>
+            <div className="absolute inset-4 border-4 border-zinc-800 rounded-full"></div>
+            <div className="absolute inset-4 border-4 border-b-purple-500 rounded-full animate-spin" style={{ animationDirection: "reverse", animationDuration: "1.5s" }}></div>
+            <div className="absolute inset-0 bg-indigo-600/20 rounded-full animate-pulse blur-2xl"></div>
+            <Dices className="w-12 h-12 text-indigo-400 animate-bounce relative z-10" />
+          </div>
+          <h3 className="text-3xl font-bold text-white mb-3 tracking-wide">
+            Rolling the Dice...
+          </h3>
+          <p className="text-zinc-400 text-lg">
+            Finding your next favorite game
+          </p>
+        </div>
+      )}
+
       {/* Mobile Backdrop */}
       {isExpanded && (
         <div 
