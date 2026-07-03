@@ -53,5 +53,10 @@ const GameSchema: Schema<IGame> = new Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
+// Apply indexes to optimize database queries
+GameSchema.index({ status: 1, playCount: -1, createdAt: -1 });
+GameSchema.index({ status: 1, category: 1 });
+GameSchema.index({ status: 1, featured: 1 });
+
 const Game: Model<IGame> = mongoose.models.Game || mongoose.model<IGame>('Game', GameSchema);
 export default Game;
