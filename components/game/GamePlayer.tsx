@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
+import { createPortal, preconnect, dnsPrefetch } from 'react-dom';
 import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play, RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -20,6 +20,12 @@ interface GamePlayerProps {
 }
 
 export default function GamePlayer({ game }: GamePlayerProps) {
+  try {
+    const origin = new URL(game.playUrl).origin;
+    preconnect(origin, { crossOrigin: 'anonymous' });
+    dnsPrefetch(origin);
+  } catch (e) {}
+
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMobileFS, setIsMobileFS] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -257,8 +263,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         {!isPlaying ? (
           /* Splash Screen */
           <div className="relative flex flex-col items-center justify-center bg-zinc-950 rounded-xl overflow-hidden shadow-2xl py-6 px-4 w-full min-h-[250px] sm:min-h-[300px]">
-            <div className="absolute inset-0 z-0 opacity-40 blur-3xl scale-125" style={{ backgroundImage: `url(${game.thumbnailUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
-            <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/10 via-black/60 to-black/90" />
+            <div className="absolute inset-0 z-0 opacity-60 blur-3xl scale-125" style={{ backgroundImage: `url(${game.thumbnailUrl})`, backgroundSize: 'cover', backgroundPosition: 'top' }} />
+            <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-black/70 to-black" />
             <div className="relative z-10 flex flex-col items-center w-full">
               <img src={game.thumbnailUrl} alt={game.title} className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
               <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 text-center drop-shadow-md">{game.title}</h1>

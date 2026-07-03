@@ -23,11 +23,13 @@ async function getInitialAllGames(page: number = 1) {
     if (page === 1) {
       const games = await Game.aggregate([
         { $match: { status: "published" } },
-        { $sample: { size: limit } }
+        { $sample: { size: limit } },
+        { $project: { _id: 1, slug: 1, title: 1, thumbnailUrl: 1, category: 1, playCount: 1 } }
       ]);
       return JSON.parse(JSON.stringify(games));
     } else {
       const games = await Game.find({ status: "published" })
+        .select('_id slug title thumbnailUrl category playCount')
         .sort({ playCount: -1, createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -70,7 +72,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
     }
 
     if (recentSlugs.length > 0) {
-      const games = await Game.find({ slug: { $in: recentSlugs } }).lean();
+      const games = await Game.find({ slug: { $in: recentSlugs } })
+        .select('_id slug title thumbnailUrl category playCount')
+        .lean();
       const gameMap = new Map(games.map(g => [(g as any).slug, g]));
       userRecentGames = recentSlugs.map((slug: string) => gameMap.get(slug)).filter(Boolean);
     }

@@ -41,11 +41,13 @@ export async function GET(request: Request) {
     if (sort === 'random') {
       games = await Game.aggregate([
         { $match: dbQuery },
-        { $sample: { size: limit } }
+        { $sample: { size: limit } },
+        { $project: { _id: 1, slug: 1, title: 1, thumbnailUrl: 1, category: 1, playCount: 1 } }
       ]);
       total = await Game.countDocuments(dbQuery); // total remaining
     } else {
       games = await Game.find(dbQuery)
+        .select('_id slug title thumbnailUrl category playCount')
         .sort({ playCount: -1, createdAt: -1 })
         .skip(skip)
         .limit(limit)
