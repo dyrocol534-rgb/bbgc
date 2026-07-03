@@ -19,7 +19,11 @@ export async function GET(request: Request) {
       dbQuery.category = { $regex: new RegExp(`^${category}$`, 'i') };
     }
     if (query) {
-      dbQuery.title = { $regex: new RegExp(query, 'i') };
+      dbQuery.$or = [
+        { title: { $regex: new RegExp(query, 'i') } },
+        { slug: { $regex: new RegExp(query, 'i') } },
+        { category: { $regex: new RegExp(query, 'i') } }
+      ];
     }
     if (featured) {
       dbQuery.featured = true;

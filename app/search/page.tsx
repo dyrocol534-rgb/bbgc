@@ -33,7 +33,11 @@ async function searchGames(query: string) {
     await dbConnect();
     const games = await Game.find({ 
       status: "published",
-      title: { $regex: new RegExp(query, 'i') }
+      $or: [
+        { title: { $regex: new RegExp(query, 'i') } },
+        { slug: { $regex: new RegExp(query, 'i') } },
+        { category: { $regex: new RegExp(query, 'i') } }
+      ]
     })
       .sort({ playCount: -1 })
       .limit(50)
@@ -53,12 +57,12 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="mb-8 border-b border-zinc-800 pb-4">
-        <h1 className="text-3xl md:text-4xl font-bold text-text-main">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-zinc-800 pb-3 gap-2">
+        <h1 className="text-xl md:text-2xl font-bold text-text-main truncate">
           {query ? `Search results for "${query}"` : "Search Games"}
         </h1>
-        <p className="text-zinc-400 mt-2">
-          {query ? `Found ${games.length} games` : "Enter a search term in the navigation bar to find games."}
+        <p className="text-zinc-400 text-sm whitespace-nowrap">
+          {query ? `Found ${games.length} games` : "Enter a search term in the navigation bar"}
         </p>
       </div>
 

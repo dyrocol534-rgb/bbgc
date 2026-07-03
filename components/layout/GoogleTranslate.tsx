@@ -15,14 +15,24 @@ declare global {
 
 // Limited selection of popular languages for a cleaner UI
 const LANGUAGES = [
+  // Indian Subcontinent
   { code: 'en', name: 'English' },
+  { code: 'hi', name: 'हिन्दी' },
+  { code: 'ta', name: 'தமிழ்' },
+  { code: 'te', name: 'తెలుగు' },
+  { code: 'bn', name: 'বাংলা' },
+  { code: 'mr', name: 'मराठी' },
+  // International Global
   { code: 'es', name: 'Español' },
+  { code: 'pt', name: 'Português' },
   { code: 'fr', name: 'Français' },
   { code: 'de', name: 'Deutsch' },
-  { code: 'pt', name: 'Português' },
   { code: 'ru', name: 'Русский' },
-  { code: 'hi', name: 'हिन्दी' },
-  { code: 'zh-CN', name: '中文' }
+  { code: 'zh-CN', name: '中文' },
+  { code: 'ja', name: '日本語' },
+  { code: 'ko', name: '한국어' },
+  { code: 'ar', name: 'العربية' },
+  { code: 'id', name: 'Bahasa Indonesia' }
 ];
 
 export default function GoogleTranslate() {
@@ -108,7 +118,7 @@ export default function GoogleTranslate() {
             new window.google.translate.TranslateElement(
               { 
                 pageLanguage: 'en',
-                includedLanguages: 'en,es,fr,de,pt,ru,hi,zh-CN',
+                includedLanguages: 'en,hi,ta,te,bn,mr,es,pt,fr,de,ru,zh-CN,ja,ko,ar,id',
                 layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
                 autoDisplay: false
               },

@@ -9,12 +9,12 @@ import { useState } from "react";
 import clsx from "clsx";
 import PWAInstallButton from "./PWAInstallButton";
 import GoogleTranslate from "./GoogleTranslate";
+import SearchBar from "./SearchBar";
 
 
 export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [query, setQuery] = useState("");
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
@@ -35,14 +35,6 @@ export default function Navbar() {
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
-      setIsMobileSearchOpen(false);
-    }
-  };
-
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-40 h-16 bg-surface/80 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between px-4 lg:px-8">
@@ -53,22 +45,7 @@ export default function Navbar() {
         </Link>
         
         <div className="flex-1 max-w-xl mx-4 hidden sm:block">
-          <form onSubmit={handleSearch} className="relative group">
-            <button 
-              type="submit"
-              className="absolute left-3 top-1/2 -translate-y-1/2 p-1 text-text-muted hover:text-primary-light transition-colors z-10"
-              title="Search"
-            >
-              <Search className="w-4 h-4" />
-            </button>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search games..."
-              className="w-full bg-surface-hover/50 border border-zinc-700 rounded-full py-2 pl-11 pr-4 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all group-hover:bg-surface-hover"
-            />
-          </form>
+          <SearchBar />
         </div>
         
         <div className="flex items-center gap-2 sm:gap-4">
@@ -134,23 +111,7 @@ export default function Navbar() {
       {/* Mobile Search Overlay */}
       {isMobileSearchOpen && (
         <div className="fixed top-16 left-0 right-0 z-30 bg-zinc-900 border-b border-zinc-800 p-4 sm:hidden shadow-lg animate-in slide-in-from-top-2">
-          <form onSubmit={handleSearch} className="relative group">
-            <button 
-              type="submit"
-              className="absolute left-3 top-1/2 -translate-y-1/2 p-1 text-text-muted hover:text-primary-light transition-colors z-10"
-              title="Search"
-            >
-              <Search className="w-4 h-4" />
-            </button>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search games..."
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-lg py-2 pl-11 pr-4 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-primary-hover transition-colors"
-              autoFocus
-            />
-          </form>
+          <SearchBar isMobile={true} onClose={() => setIsMobileSearchOpen(false)} />
         </div>
       )}
 
@@ -232,7 +193,7 @@ export default function Navbar() {
               className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-zinc-800 hover:bg-red-500/10 text-zinc-300 hover:text-red-400 transition-colors rounded-lg font-medium border border-zinc-700 hover:border-red-500/20"
             >
               <LogOut className="w-4 h-4" />
-              Sign Out
+              <span>Sign Out</span>
             </button>
           ) : (
             <button
@@ -240,7 +201,7 @@ export default function Navbar() {
               className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white transition-colors rounded-lg font-medium"
             >
               <UserIcon className="w-4 h-4" />
-              Sign In with Google
+              <span>Sign In with Google</span>
             </button>
           )}
         </div>
