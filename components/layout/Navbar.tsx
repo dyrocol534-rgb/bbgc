@@ -178,10 +178,17 @@ export default function Navbar() {
                   </Link>
                 </div>
               )}
+
+              <div className="px-3 mt-1">
+                <PWAInstallButton variant="menuItem" onInstall={() => setIsSidebarOpen(false)} />
+              </div>
             </>
           ) : (
             <div className="px-5 py-4 text-center">
               <p className="text-zinc-400 text-sm mb-4">Sign in to save your favorite games and track your recent plays!</p>
+              <div className="-mx-2 text-left">
+                <PWAInstallButton variant="menuItem" onInstall={() => setIsSidebarOpen(false)} />
+              </div>
             </div>
           )}
         </div>

@@ -75,6 +75,34 @@ export async function GET() {
     const activeUsers24h = activeLoggedInUsers24h + activeGuests24h;
     const totalPlays = games.reduce((sum: number, game: any) => sum + (game.playCount || 0), 0);
 
+    // Get Top 5 games overall
+    const topGamesOverall = [...games]
+      .sort((a, b) => (b.playCount || 0) - (a.playCount || 0))
+      .slice(0, 5)
+      .map(g => ({ slug: g.slug, title: g.title, playCount: g.playCount || 0 }));
+
+    // Get Recent Signups Trend (Last 7 days)
+    const recentUsersDocs = await User.find({ createdAt: { $gte: sevenDaysAgo } }, "createdAt").lean();
+    const signupsByDate: Record<string, number> = {};
+    
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      const dateStr = d.toISOString().split("T")[0];
+      signupsByDate[dateStr] = 0;
+    }
+
+    recentUsersDocs.forEach((u: any) => {
+      if (u.createdAt) {
+        const d = new Date(u.createdAt);
+        const dateStr = d.toISOString().split("T")[0];
+        if (signupsByDate[dateStr] !== undefined) {
+          signupsByDate[dateStr]++;
+        }
+      }
+    });
+
+    const recentSignups = Object.entries(signupsByDate).map(([date, count]) => ({ date, count }));
+
     return NextResponse.json({
       totalUsers,
       totalGames,
@@ -88,6 +116,8 @@ export async function GET() {
       newGuests7d,
       activeLoggedInUsers24h,
       topGuestGames,
+      topGamesOverall,
+      recentSignups
     });
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch stats" }, { status: 500 });

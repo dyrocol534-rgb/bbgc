@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, Filter } from "lucide-react";
+import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 interface GameData {
@@ -24,27 +24,47 @@ interface GameData {
 export default function AdminGamesPage() {
   const [games, setGames] = useState<GameData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalGames, setTotalGames] = useState(0);
 
-  const filteredGames = games.filter(game => {
-    const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase()) || game.slug.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || game.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, statusFilter]);
 
   useEffect(() => {
     fetchGames();
-  }, []);
+  }, [page, debouncedSearch, statusFilter]);
 
   async function fetchGames() {
+    setIsFetching(true);
     try {
-      const { data } = await axios.get('/api/admin/games');
-      setGames(data);
+      const { data } = await axios.get('/api/admin/games', {
+        params: {
+          page,
+          limit: 50,
+          search: debouncedSearch,
+          status: statusFilter
+        }
+      });
+      setGames(data.games);
+      setTotalPages(data.totalPages);
+      setTotalGames(data.total);
     } catch (error) {
       console.error("Failed to fetch games", error);
     } finally {
       setIsLoading(false);
+      setIsFetching(false);
     }
   }
 
@@ -92,7 +112,10 @@ export default function AdminGamesPage() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h2 className="text-xl font-bold text-text-main">Manage Games ({filteredGames.length})</h2>
+        <h2 className="text-xl font-bold text-text-main flex items-center gap-2">
+          Manage Games ({totalGames}) 
+          {isFetching && !isLoading && <Loader2 className="w-4 h-4 text-text-muted animate-spin" />}
+        </h2>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <div className="relative flex-1 sm:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
@@ -130,7 +153,7 @@ export default function AdminGamesPage() {
             </tr>
           </thead>
           <tbody>
-            {filteredGames.map((game) => (
+            {games.map((game) => (
               <tr key={game._id} className={`border-b border-border-main transition-colors ${game.status === 'draft' ? 'bg-background/50' : 'hover:bg-surface-hover/50'}`}>
                 <td className="py-3 px-4">
                   <img src={game.thumbnailUrl} alt={game.title} className="w-10 h-10 rounded-lg object-cover bg-background" />
@@ -206,9 +229,9 @@ export default function AdminGamesPage() {
                 </td>
               </tr>
             ))}
-            {filteredGames.length === 0 && (
+            {games.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-12 text-center text-text-muted">
+                <td colSpan={7} className="py-12 text-center text-text-muted">
                   No games found. Time to upload some!
                 </td>
               </tr>
@@ -216,6 +239,33 @@ export default function AdminGamesPage() {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6 px-4">
+          <p className="text-sm text-text-muted">
+            Showing {(page - 1) * 50 + 1} to {Math.min(page * 50, totalGames)} of {totalGames} results
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1 || isFetching}
+              className="p-2 rounded-lg bg-surface border border-border-main text-text-main hover:bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <div className="flex items-center px-4 bg-surface border border-border-main rounded-lg text-sm text-text-main font-medium">
+              Page {page} of {totalPages}
+            </div>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages || isFetching}
+              className="p-2 rounded-lg bg-surface border border-border-main text-text-main hover:bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

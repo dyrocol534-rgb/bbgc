@@ -22,7 +22,7 @@ function AppInstallIcon({ className }: { className?: string }) {
   );
 }
 
-export default function PWAInstallButton() {
+export default function PWAInstallButton({ variant = "icon", onInstall }: { variant?: "icon" | "menuItem", onInstall?: () => void }) {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState(false);
 
@@ -41,10 +41,26 @@ export default function PWAInstallButton() {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === "accepted") { setIsInstalled(true); setDeferredPrompt(null); }
+    if (outcome === "accepted") { 
+      setIsInstalled(true); 
+      setDeferredPrompt(null); 
+      if (onInstall) onInstall();
+    }
   };
 
   if (isInstalled || !deferredPrompt) return null;
+
+  if (variant === "menuItem") {
+    return (
+      <button
+        onClick={handleInstall}
+        className="w-full flex items-center gap-3 px-4 py-3 text-zinc-300 hover:bg-primary/10 hover:text-primary-light transition-colors rounded-lg font-medium group text-left"
+      >
+        <AppInstallIcon className="w-5 h-5 text-zinc-500 group-hover:text-primary-light" />
+        Install App
+      </button>
+    );
+  }
 
   return (
     <button

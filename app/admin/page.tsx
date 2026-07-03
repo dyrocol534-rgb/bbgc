@@ -4,11 +4,18 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Users, Gamepad2, PlaySquare, Loader2, Activity, UserPlus, Mail, Ghost, TrendingUp, Eye, Gamepad } from "lucide-react";
 import Link from "next/link";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
 interface TopGuestGame {
   slug: string;
   title: string;
   count: number;
+}
+
+interface TopGame {
+  slug: string;
+  title: string;
+  playCount: number;
 }
 
 interface Stats {
@@ -24,6 +31,8 @@ interface Stats {
   newGuests7d: number;
   activeLoggedInUsers24h: number;
   topGuestGames: TopGuestGame[];
+  topGamesOverall?: TopGame[];
+  recentSignups?: { date: string; count: number }[];
 }
 
 function StatCard({
@@ -96,6 +105,53 @@ export default function AdminAnalytics() {
           <StatCard icon={Users}      label="Total Members"         value={stats?.totalUsers || 0}         color="bg-indigo-500/10 text-indigo-400" />
           <StatCard icon={Gamepad2}   label="Published Games"       value={stats?.totalGames || 0}         color="bg-green-500/10 text-green-400" />
           <StatCard icon={PlaySquare} label="Lifetime Plays"        value={stats?.totalPlays?.toLocaleString() || 0}  color="bg-orange-500/10 text-orange-400" />
+        </div>
+      </section>
+
+      {/* ── Visual Analytics ──────────────────────────────── */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-surface border border-zinc-800 rounded-xl p-6">
+          <h3 className="text-sm font-semibold text-text-main mb-6">New Members Growth (7d)</h3>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={stats?.recentSignups || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                <XAxis dataKey="date" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => new Date(val).toLocaleDateString('en-US', { weekday: 'short' })} />
+                <YAxis stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
+                <RechartsTooltip 
+                  contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '0.5rem', fontSize: '12px', color: '#fff' }}
+                  itemStyle={{ color: '#3b82f6' }}
+                  labelStyle={{ color: '#a1a1aa', marginBottom: '0.25rem' }}
+                />
+                <Area type="monotone" dataKey="count" name="Signups" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorCount)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="bg-surface border border-zinc-800 rounded-xl p-6">
+          <h3 className="text-sm font-semibold text-text-main mb-6">Most Played Games</h3>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats?.topGamesOverall || []} layout="vertical" margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" horizontal={false} />
+                <XAxis type="number" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="title" stroke="#71717a" fontSize={11} tickLine={false} axisLine={false} width={100} />
+                <RechartsTooltip 
+                  cursor={{ fill: '#27272a', opacity: 0.4 }}
+                  contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '0.5rem', fontSize: '12px', color: '#fff' }}
+                  itemStyle={{ color: '#10b981' }}
+                />
+                <Bar dataKey="playCount" name="Plays" fill="#10b981" radius={[0, 4, 4, 0]} barSize={24} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </section>
 
