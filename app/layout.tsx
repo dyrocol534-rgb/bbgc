@@ -188,7 +188,7 @@ export default async function RootLayout({
           `}
         </Script>
         
-        {!isAdmin && isProd && <DisableInspect />}
+        <DisableInspect />
         
         <Providers>
           <Navbar />
