@@ -195,39 +195,39 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           {/* Mini top bar — Exit + Rotate only */}
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '8px 12px', background: '#0a0a0f',
+            padding: '4px 10px', background: '#0a0a0f',
             borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
-            paddingTop: 'max(8px, env(safe-area-inset-top))',
+            paddingTop: 'max(4px, env(safe-area-inset-top))',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <img src={game.thumbnailUrl} alt="" style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover' }} />
-              <span style={{ color: '#fff', fontSize: 13, fontWeight: 700, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.title}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <img src={game.thumbnailUrl} alt="" style={{ width: 20, height: 20, borderRadius: 4, objectFit: 'cover' }} />
+              <span style={{ color: '#fff', fontSize: 12, fontWeight: 700, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.title}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               {/* Rotate */}
               <button
                 onClick={rotateScreen}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '7px 12px', background: '#27272a',
-                  border: 'none', borderRadius: 10,
-                  color: '#a1a1aa', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '5px 10px', background: '#27272a',
+                  border: 'none', borderRadius: 8,
+                  color: '#a1a1aa', fontSize: 11, fontWeight: 600, cursor: 'pointer',
                 }}
               >
-                <RotateCcw size={13} />
+                <RotateCcw size={12} />
                 Rotate
               </button>
               {/* Exit */}
               <button
                 onClick={exitMobileFS}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  padding: '7px 14px', background: '#6c40ff',
-                  border: 'none', borderRadius: 10,
-                  color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '5px 12px', background: '#6c40ff',
+                  border: 'none', borderRadius: 8,
+                  color: '#fff', fontSize: 11, fontWeight: 700, cursor: 'pointer',
                 }}
               >
-                <X size={13} />
+                <X size={12} />
                 Exit
               </button>
             </div>

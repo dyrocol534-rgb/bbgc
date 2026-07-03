@@ -38,7 +38,10 @@ export default function PWAInstallButton({ variant = "icon", onInstall }: { vari
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      alert("App installation is not available on this device or browser, or it's already installed.");
+      return;
+    }
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === "accepted") { 
@@ -48,16 +51,24 @@ export default function PWAInstallButton({ variant = "icon", onInstall }: { vari
     }
   };
 
-  if (isInstalled || !deferredPrompt) return null;
+  if (isInstalled) return null;
 
   if (variant === "menuItem") {
     return (
       <button
         onClick={handleInstall}
-        className="w-full flex items-center gap-3 px-4 py-3 text-zinc-300 hover:bg-primary/10 hover:text-primary-light transition-colors rounded-lg font-medium group text-left"
+        className="relative w-full overflow-hidden flex items-center gap-3 px-4 py-3 rounded-xl font-semibold group text-left transition-all hover:scale-[1.02] active:scale-95 shadow-sm"
       >
-        <AppInstallIcon className="w-5 h-5 text-zinc-500 group-hover:text-primary-light" />
-        Install App
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors" />
+        <div className="absolute inset-0 border border-indigo-500/20 group-hover:border-indigo-500/40 rounded-xl transition-colors" />
+        
+        <div className="relative flex items-center justify-center p-2 rounded-lg bg-indigo-500/20 text-indigo-400 group-hover:text-indigo-300 group-hover:bg-indigo-500/30 transition-colors shadow-inner">
+          <AppInstallIcon className="w-5 h-5" />
+        </div>
+        <div className="relative flex flex-col">
+          <span className="text-sm text-indigo-100 group-hover:text-white transition-colors leading-tight">Install Web App</span>
+          <span className="text-[10px] text-indigo-300/70 font-medium mt-0.5">Play instantly from home screen</span>
+        </div>
       </button>
     );
   }

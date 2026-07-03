@@ -76,7 +76,6 @@ export default function Navbar() {
           </button>
 
           <GoogleTranslate />
-          <PWAInstallButton />
 
           {session ? (
             <div className="flex items-center gap-3">
