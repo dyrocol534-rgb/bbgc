@@ -4,6 +4,7 @@ import { createPortal, preconnect, prefetchDNS } from 'react-dom';
 import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play, RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
+import { ConsoleLoader } from '@/components/ui/ConsoleLoader';
 
 interface GamePlayerProps {
   game: {
@@ -243,7 +244,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           <div style={{ flex: 1, position: 'relative', background: '#000' }}>
             {isLoading && (
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#18181b', zIndex: 10 }}>
-                <Loader2 style={{ width: 40, height: 40, color: '#8b68ff' }} className="animate-spin" />
+                <ConsoleLoader className="w-12 h-12 text-[#8b68ff]" label="Loading Game..." />
               </div>
             )}
             <iframe
@@ -293,9 +294,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             style={{ aspectRatio: !isFullscreen ? aspectRatio : 'auto' }}
           >
             {isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10 text-primary-light">
-                <Loader2 className="w-12 h-12 animate-spin mb-4" />
-                <p className="font-medium animate-pulse">Loading Game Assets...</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10">
+                <ConsoleLoader className="w-20 h-20 text-primary-light" label="Loading Game Assets..." />
               </div>
             )}
             <iframe
