@@ -18,13 +18,17 @@ async function getCategoryGames(category: string) {
     
     if (cat === 'new') {
       sort = { createdAt: -1 };
-      limitAmount = 6;
+      limitAmount = 18;
     } else if (cat === 'popular') {
       sort = { playCount: -1 };
-      limitAmount = 6;
+      limitAmount = 18;
     } else if (cat === 'updated') {
       sort = { updatedAt: -1 };
-      limitAmount = 6;
+      limitAmount = 18;
+    } else if (cat === 'featured') {
+      sort = { playCount: -1 };
+      query.featured = true;
+      limitAmount = 18;
     } else {
       query.category = { $regex: new RegExp(`^${category}$`, 'i') };
     }
@@ -136,10 +140,32 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
           actionHref="/"
         />
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-          {games.map((game: Record<string, any>) => (
-            <GameCard key={game._id?.toString() || game.slug} game={game as any} />
-          ))}
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 auto-rows-[minmax(100px,auto)] md:auto-rows-[minmax(120px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
+          {games.map((game: Record<string, any>, index: number) => {
+            const pattern = index % 14; 
+            let spanClass = "col-span-1 row-span-1 md:col-span-1 md:row-span-1";
+            if (pattern === 0 || pattern === 7) spanClass = "col-span-2 row-span-2 md:col-span-2 md:row-span-2";
+            else if (pattern === 4 || pattern === 11) spanClass = "col-span-1 row-span-2 md:col-span-1 md:row-span-2";
+            else if (pattern === 3 || pattern === 13) spanClass = "col-span-2 row-span-1 md:col-span-2 md:row-span-1";
+            
+            const imageContainerClass = (spanClass.includes("row-span-2") || spanClass.includes("col-span-2")) 
+              ? "h-full w-full" 
+              : "aspect-square";
+              
+            return (
+              <div
+                key={game._id?.toString() || game.slug}
+                className={`${spanClass} game-card-enter`}
+                style={{ animationDelay: `${Math.min(index % 24, 12) * 40}ms` }}
+              >
+                <GameCard 
+                  game={game as any} 
+                  className="h-full w-full"
+                  imageContainerClassName={imageContainerClass}
+                />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

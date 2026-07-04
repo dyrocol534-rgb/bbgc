@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, Filter, ChevronLeft, ChevronRight, ArrowUp, ArrowDown } from "lucide-react";
 import Link from "next/link";
 
 interface GameData {
@@ -28,6 +28,8 @@ export default function AdminGamesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sortField, setSortField] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState("desc");
   
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -40,11 +42,11 @@ export default function AdminGamesPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, statusFilter]);
+  }, [debouncedSearch, statusFilter, sortField, sortOrder]);
 
   useEffect(() => {
     fetchGames();
-  }, [page, debouncedSearch, statusFilter]);
+  }, [page, debouncedSearch, statusFilter, sortField, sortOrder]);
 
   async function fetchGames() {
     setIsFetching(true);
@@ -54,7 +56,9 @@ export default function AdminGamesPage() {
           page,
           limit: 50,
           search: debouncedSearch,
-          status: statusFilter
+          status: statusFilter,
+          sortField,
+          sortOrder
         }
       });
       setGames(data.games);
@@ -109,6 +113,20 @@ export default function AdminGamesPage() {
     );
   }
 
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("desc");
+    }
+  };
+
+  const renderSortIcon = (field: string) => {
+    if (sortField !== field) return <ArrowDown className="w-3 h-3 opacity-0 group-hover:opacity-30 transition-opacity" />;
+    return sortOrder === "asc" ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />;
+  };
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 bg-zinc-900/50 p-3 rounded-xl border border-zinc-800">
@@ -144,10 +162,30 @@ export default function AdminGamesPage() {
           <thead>
             <tr className="border-b border-zinc-800 bg-zinc-900/30 text-zinc-400 text-[11px] uppercase tracking-wider">
               <th className="py-2 px-3 font-semibold w-12">Icon</th>
-              <th className="py-2 px-3 font-semibold">Title</th>
-              <th className="py-2 px-3 font-semibold text-center">Plays</th>
-              <th className="py-2 px-3 font-semibold text-center">Rating</th>
-              <th className="py-2 px-3 font-semibold text-center w-16">Feat</th>
+              <th 
+                className="py-2 px-3 font-semibold cursor-pointer group hover:text-zinc-200"
+                onClick={() => handleSort('title')}
+              >
+                <div className="flex items-center gap-1">Title {renderSortIcon('title')}</div>
+              </th>
+              <th 
+                className="py-2 px-3 font-semibold text-center cursor-pointer group hover:text-zinc-200"
+                onClick={() => handleSort('playCount')}
+              >
+                <div className="flex items-center justify-center gap-1">Plays {renderSortIcon('playCount')}</div>
+              </th>
+              <th 
+                className="py-2 px-3 font-semibold text-center cursor-pointer group hover:text-zinc-200"
+                onClick={() => handleSort('rating')}
+              >
+                <div className="flex items-center justify-center gap-1">Rating {renderSortIcon('rating')}</div>
+              </th>
+              <th 
+                className="py-2 px-3 font-semibold text-center cursor-pointer group hover:text-zinc-200 w-16"
+                onClick={() => handleSort('featured')}
+              >
+                <div className="flex items-center justify-center gap-1">Feat {renderSortIcon('featured')}</div>
+              </th>
               <th className="py-2 px-3 font-semibold text-center">Visibility</th>
               <th className="py-2 px-3 font-semibold text-right w-20">Actions</th>
             </tr>

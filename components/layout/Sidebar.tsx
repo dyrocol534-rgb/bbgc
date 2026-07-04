@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 import { 
-  Home, RefreshCw, Star, Users, Trophy,
+  Home, RefreshCw, Star, Users, Trophy, Crown,
   Zap, Compass, Gamepad2, Grid, Layers, MousePointer2, Car, CircleDot, Puzzle, Crosshair,
   Mail, ChevronRight, ChevronLeft, Menu, X, Dices, Loader2, Rocket, TrendingUp
 } from "lucide-react";
@@ -17,7 +17,7 @@ const PRIMARY_LINKS = [
   { name: "Popular Games", href: "/category/popular", icon: TrendingUp },
   { name: "Updated", href: "/category/updated", icon: RefreshCw },
   { name: "Originals", href: "/category/originals", icon: Star },
-  { name: "Multiplayer", href: "/category/multiplayer", icon: Users },
+  { name: "Featured", href: "/category/featured", icon: Crown },
 ];
 
 const getCategoryIcon = (category: string) => {
