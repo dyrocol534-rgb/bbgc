@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "50");
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "all";
+    const source = searchParams.get("source") || "all";
     const sortField = searchParams.get("sortField") || "createdAt";
     const sortOrder = searchParams.get("sortOrder") === "asc" ? 1 : -1;
 
@@ -33,6 +34,9 @@ export async function GET(req: NextRequest) {
     }
     if (status !== "all") {
       query.status = status;
+    }
+    if (source !== "all") {
+      query.source = source;
     }
 
     const skip = (page - 1) * limit;

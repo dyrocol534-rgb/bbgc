@@ -100,8 +100,7 @@ export default function AdminAnalytics() {
   const memberPct = 100 - guestPct;
 
   let chartData = stats.signupsTrend;
-  if (timeframe === "24h") chartData = stats.signupsTrend.slice(-2);
-  else if (timeframe === "7d") chartData = stats.signupsTrend.slice(-7);
+  if (timeframe === "24h" || timeframe === "7d") chartData = stats.signupsTrend.slice(-7);
 
   const deviceData = [
     { name: 'Mobile', value: currentStats.deviceSplit.mobile },
@@ -190,6 +189,34 @@ export default function AdminAnalytics() {
           label={isLifetime ? "Total Guests" : `New Guests (${timeframe})`}
           value={currentStats.newGuests.toLocaleString()}
           color="bg-zinc-500/20 text-zinc-400"
+        />
+        <StatCard
+          icon={PlaySquare}
+          label={`Total Game Plays (${timeframe})`}
+          value={currentStats.totalPlays.toLocaleString()}
+          sub="Total clicks across all games"
+          color="bg-blue-500/20 text-blue-400"
+        />
+        <StatCard
+          icon={UserPlus}
+          label={isLifetime ? "Total Users" : `New Users (${timeframe})`}
+          value={currentStats.newUsers.toLocaleString()}
+          sub="Registered accounts"
+          color="bg-pink-500/20 text-pink-400"
+        />
+        <StatCard
+          icon={Mail}
+          label={isLifetime ? "Total Subscribers" : `New Subscribers (${timeframe})`}
+          value={currentStats.newSubscribers.toLocaleString()}
+          sub="Newsletter signups"
+          color="bg-purple-500/20 text-purple-400"
+        />
+        <StatCard
+          icon={Gamepad2}
+          label={isLifetime ? "Total Games" : `New Games (${timeframe})`}
+          value={currentStats.totalGames.toLocaleString()}
+          sub="Published games"
+          color="bg-cyan-500/20 text-cyan-400"
         />
       </div>
 
@@ -280,7 +307,7 @@ export default function AdminAnalytics() {
       </div>
 
       {/* Top Games Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <div className="bg-surface border border-zinc-800 rounded-xl p-4 shadow-sm">
           <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
             <PlaySquare className="w-4 h-4 text-indigo-400" />
@@ -307,37 +334,13 @@ export default function AdminAnalytics() {
           )}
         </div>
 
-        <div className="bg-surface border border-zinc-800 rounded-xl p-4 shadow-sm">
-          <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
-            <Rocket className="w-4 h-4 text-amber-400" />
-            Top Guest Games ({timeframes.find(t => t.id === timeframe)?.label})
-          </h2>
-          {currentStats.topGuestGames.length === 0 ? (
-             <div className="p-4 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed text-center">
-             <p className="text-xs text-zinc-500">No guest events recorded.</p>
-           </div>
-          ) : (
-            <div className="space-y-2">
-              {currentStats.topGuestGames.map((game, i) => (
-                <div key={game.slug} className="flex items-center justify-between p-2 bg-zinc-900/30 hover:bg-zinc-800/50 rounded-lg transition-colors border border-transparent hover:border-zinc-700">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-zinc-500 text-xs font-bold w-4">{i + 1}.</span>
-                    <p className="text-zinc-200 text-sm font-medium truncate">{game.title}</p>
-                  </div>
-                  <div className="text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded text-xs shrink-0">
-                    {game.count.toLocaleString()} guests
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+
       </div>
 
       {/* Community Pulse */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
-        {/* Top Rated Games */}
+        {/* Top Rated Games (Lifetime) */}
         <div className="bg-surface border border-zinc-800 rounded-xl p-4 shadow-sm">
           <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
             <Star className="w-4 h-4 text-yellow-500" />

@@ -28,6 +28,7 @@ export default function AdminGamesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sourceFilter, setSourceFilter] = useState("all");
   const [sortField, setSortField] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("desc");
   
@@ -42,11 +43,11 @@ export default function AdminGamesPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, statusFilter, sortField, sortOrder]);
+  }, [debouncedSearch, statusFilter, sourceFilter, sortField, sortOrder]);
 
   useEffect(() => {
     fetchGames();
-  }, [page, debouncedSearch, statusFilter, sortField, sortOrder]);
+  }, [page, debouncedSearch, statusFilter, sourceFilter, sortField, sortOrder]);
 
   async function fetchGames() {
     setIsFetching(true);
@@ -57,6 +58,7 @@ export default function AdminGamesPage() {
           limit: 50,
           search: debouncedSearch,
           status: statusFilter,
+          source: sourceFilter,
           sortField,
           sortOrder
         }
@@ -145,6 +147,15 @@ export default function AdminGamesPage() {
               className="w-full pl-8 pr-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
             />
           </div>
+          <select 
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value)}
+            className="px-2 py-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors outline-none cursor-pointer"
+          >
+            <option value="all">All Sources</option>
+            <option value="aggregated">Imported</option>
+            <option value="own">Uploaded</option>
+          </select>
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
