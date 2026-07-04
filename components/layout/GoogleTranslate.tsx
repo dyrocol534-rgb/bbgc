@@ -66,7 +66,6 @@ export default function GoogleTranslate() {
       // To properly revert to the original language, we must delete the translation cookies
       document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
-      // Fallback for some subdomains
       document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=." + window.location.hostname + "; path=/;";
       
       window.location.reload();
