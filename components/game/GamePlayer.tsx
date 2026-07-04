@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { createPortal, preconnect, dnsPrefetch } from 'react-dom';
+import { createPortal, preconnect, prefetchDNS } from 'react-dom';
 import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play, RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -23,7 +23,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   try {
     const origin = new URL(game.playUrl).origin;
     preconnect(origin, { crossOrigin: 'anonymous' });
-    dnsPrefetch(origin);
+    prefetchDNS(origin);
   } catch (e) {}
 
   const [isFullscreen, setIsFullscreen] = useState(false);
