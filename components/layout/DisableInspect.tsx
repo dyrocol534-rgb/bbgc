@@ -4,6 +4,9 @@ import { useEffect } from "react";
 
 export default function DisableInspect() {
   useEffect(() => {
+    // Do not block inspect during local development
+    if (process.env.NODE_ENV === "development") return;
+
     // Disable right-click
     const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault();

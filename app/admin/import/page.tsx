@@ -129,14 +129,14 @@ export default function ImportGamesPage() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {games.map((game, idx) => {
               const isImporting = importingUrls.has(game.url);
               const isImported = importedUrls.has(game.url);
 
               return (
                 <div key={`${game.id}-${idx}`} className="bg-surface border border-border-main rounded-xl overflow-hidden shadow-lg group hover:border-primary-light transition-colors flex flex-col">
-                  <div className="relative aspect-video w-full bg-surface-hover">
+                  <div className="relative h-28 w-full bg-surface-hover">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={game.thumb}
@@ -144,42 +144,42 @@ export default function ImportGamesPage() {
                       className="w-full h-full object-cover"
                       loading="lazy"
                     />
-                    <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md backdrop-blur-md">
+                    <div className="absolute top-1.5 right-1.5 bg-black/60 text-white text-[9px] font-medium px-1.5 py-0.5 rounded backdrop-blur-md">
                       {game.category || "Game"}
                     </div>
                   </div>
                   
-                  <div className="p-4 flex flex-col flex-1">
-                    <h3 className="font-bold text-text-main text-lg line-clamp-1 mb-1">{game.title}</h3>
-                    <p className="text-sm text-text-secondary line-clamp-2 mb-4 flex-1">
+                  <div className="p-2.5 flex flex-col flex-1">
+                    <h3 className="font-bold text-text-main text-sm line-clamp-1 mb-0.5">{game.title}</h3>
+                    <p className="text-[10px] text-text-secondary line-clamp-2 mb-2.5 flex-1 leading-tight">
                       {game.description}
                     </p>
                     
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       <a 
                         href={game.url} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="p-2.5 bg-surface-hover hover:bg-surface-active text-text-muted rounded-lg transition-colors"
+                        className="p-1.5 bg-surface-hover hover:bg-surface-active text-text-muted rounded-md transition-colors"
                         title="Preview Game"
                       >
-                        <ExternalLink className="w-4 h-4" />
+                        <ExternalLink className="w-3.5 h-3.5" />
                       </a>
                       <button
                         onClick={() => handleImport(game)}
                         disabled={isImporting || isImported}
-                        className={`flex-1 py-2.5 px-4 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-colors ${
+                        className={`flex-1 py-1.5 px-2 rounded-md font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors ${
                           isImported 
                             ? 'bg-green-500/20 text-green-400 cursor-default'
                             : 'bg-primary hover:bg-primary-hover text-text-main disabled:opacity-50'
                         }`}
                       >
                         {isImporting ? (
-                          <><Loader2 className="w-4 h-4 animate-spin" /> Importing...</>
+                          <><Loader2 className="w-3.5 h-3.5 animate-spin" /> ...</>
                         ) : isImported ? (
-                          <><CheckCircle className="w-4 h-4" /> Imported</>
+                          <><CheckCircle className="w-3.5 h-3.5" /> Imported</>
                         ) : (
-                          <><DownloadCloud className="w-4 h-4" /> Import</>
+                          <><DownloadCloud className="w-3.5 h-3.5" /> Import</>
                         )}
                       </button>
                     </div>

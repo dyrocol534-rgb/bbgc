@@ -12,7 +12,7 @@ interface UsersTabsProps {
 const ITEMS_PER_PAGE = 10;
 
 export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
-  const [activeTab, setActiveTab] = useState<"subscribers" | "users">("subscribers");
+  const [activeTab, setActiveTab] = useState<"subscribers" | "users">("users");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -55,17 +55,6 @@ export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
       <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-4 border-b border-border-main pb-2 sm:pb-0">
         <div className="flex overflow-x-auto custom-scrollbar pb-2 sm:pb-0 w-full sm:w-auto">
           <button
-            onClick={() => handleTabChange("subscribers")}
-            className={clsx(
-              "flex-1 sm:flex-none whitespace-nowrap px-4 sm:px-6 py-3 text-sm font-medium transition-colors border-b-2 text-center",
-              activeTab === "subscribers" 
-                ? "border-primary text-primary" 
-                : "border-transparent text-zinc-400 hover:text-white"
-            )}
-          >
-            Subscribers ({subscribers.length})
-          </button>
-          <button
             onClick={() => handleTabChange("users")}
             className={clsx(
               "flex-1 sm:flex-none whitespace-nowrap px-4 sm:px-6 py-3 text-sm font-medium transition-colors border-b-2 text-center",
@@ -75,6 +64,17 @@ export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
             )}
           >
             Users ({users.length})
+          </button>
+          <button
+            onClick={() => handleTabChange("subscribers")}
+            className={clsx(
+              "flex-1 sm:flex-none whitespace-nowrap px-4 sm:px-6 py-3 text-sm font-medium transition-colors border-b-2 text-center",
+              activeTab === "subscribers" 
+                ? "border-primary text-primary" 
+                : "border-transparent text-zinc-400 hover:text-white"
+            )}
+          >
+            Subscribers ({subscribers.length})
           </button>
         </div>
         
@@ -135,15 +135,16 @@ export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
 
         {/* Desktop View (Table) */}
         <div className="hidden sm:block overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[600px]">
+          <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="bg-background border-b border-border-main text-zinc-400 text-sm">
-                {activeTab === "users" && <th className="p-4 font-medium w-1/3">Name</th>}
-                <th className="p-4 font-medium w-1/2">Email Address</th>
-                <th className="p-4 font-medium">{activeTab === "users" ? "Joined Date" : "Subscribed Date"}</th>
+              <tr className="bg-zinc-900/50 border-b border-zinc-800 text-zinc-400 text-xs uppercase tracking-wider">
+                {activeTab === "users" && <th className="px-3 py-2 font-medium w-1/4">Name</th>}
+                <th className="px-3 py-2 font-medium w-1/3">Email Address</th>
+                <th className="px-3 py-2 font-medium">{activeTab === "users" ? "Joined Date" : "Subscribed Date"}</th>
+                {activeTab === "users" && <th className="px-3 py-2 font-medium">Last Login</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-border-main text-sm">
+            <tbody className="divide-y divide-zinc-800/50 text-sm">
               {paginatedData.length === 0 ? (
                 <tr>
                   <td colSpan={activeTab === "users" ? 3 : 2} className="p-12 text-center text-zinc-500">
@@ -152,14 +153,14 @@ export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
                 </tr>
               ) : (
                 paginatedData.map((item: any) => (
-                  <tr key={item._id} className="hover:bg-background/50 transition-colors">
+                  <tr key={item._id} className="hover:bg-zinc-800/30 transition-colors">
                     {activeTab === "users" && (
-                      <td className="p-4 text-white font-medium">
-                        <div className="flex items-center gap-3">
+                      <td className="px-3 py-2 text-zinc-200 font-medium text-xs">
+                        <div className="flex items-center gap-2">
                           {item.image ? (
-                            <img src={item.image} alt={item.name} className="w-8 h-8 rounded-full" />
+                            <img src={item.image} alt={item.name} className="w-6 h-6 rounded-full" />
                           ) : (
-                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">
+                            <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold shrink-0 text-[10px]">
                               {item.name?.charAt(0) || '?'}
                             </div>
                           )}
@@ -167,12 +168,18 @@ export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
                         </div>
                       </td>
                     )}
-                    <td className={clsx("p-4", activeTab === "subscribers" ? "text-white" : "text-zinc-400")}>
+                    <td className={clsx("px-3 py-2 text-xs", activeTab === "subscribers" ? "text-zinc-200" : "text-zinc-400")}>
                       {item.email}
                     </td>
-                    <td className="p-4 text-zinc-400 whitespace-nowrap">
+                    <td className="px-3 py-2 text-zinc-400 whitespace-nowrap text-xs">
                       {new Date(activeTab === "users" ? item.createdAt : item.subscribedAt).toLocaleDateString()}
                     </td>
+                    {activeTab === "users" && (
+                      <td className="px-3 py-2 text-zinc-400 whitespace-nowrap text-xs">
+                        {item.lastActiveAt ? new Date(item.lastActiveAt).toLocaleString() : 'Never'}
+                        <span className="ml-2 text-[9px] text-zinc-600">(IP not logged)</span>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
