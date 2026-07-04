@@ -2,238 +2,408 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Users, Gamepad2, PlaySquare, Loader2, Activity, UserPlus, Mail, Ghost, TrendingUp, Eye, Gamepad } from "lucide-react";
+import { Gamepad2, PlaySquare, Loader2, Activity, UserPlus, Mail, Ghost, TrendingUp, Zap, Rocket, RefreshCw, Smartphone, Star, MessageSquare } from "lucide-react";
 import Link from "next/link";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import clsx from 'clsx';
 
-interface TopGuestGame {
-  slug: string;
-  title: string;
-  count: number;
+interface DeviceSplit {
+  mobile: number;
+  desktop: number;
+  tablet: number;
+  unknown: number;
 }
 
-interface TopGame {
-  slug: string;
-  title: string;
-  playCount: number;
+interface TimeframeStats {
+  newUsers: number;
+  newGuests: number;
+  activeUsers: number;
+  activeGuests: number;
+  newSubscribers: number;
+  totalGames: number;
+  totalPlays: number;
+  topGames: { slug: string; title: string; playCount: number }[];
+  topGuestGames: { slug: string; title: string; count: number }[];
+  deviceSplit: DeviceSplit;
+  avgPlaysPerActive: string | number;
 }
 
 interface Stats {
-  totalUsers: number;
-  totalGames: number;
-  totalPlays: number;
-  activeUsers24h: number;
-  newUsers7d: number;
-  totalSubscribers: number;
-  totalGuestSessions: number;
-  activeGuests24h: number;
-  activeGuests7d: number;
-  newGuests7d: number;
-  activeLoggedInUsers24h: number;
-  topGuestGames: TopGuestGame[];
-  topGamesOverall?: TopGame[];
-  recentSignups?: { date: string; count: number }[];
+  "24h": TimeframeStats;
+  "7d": TimeframeStats;
+  "30d": TimeframeStats;
+  lifetime: TimeframeStats & {
+    retentionRate: number;
+    topRatedGames: { slug: string; title: string; ratio: number; totalVotes: number }[];
+    recentFeedback: { gameSlug: string; userEmail: string; message: string; status: string; date: string }[];
+  };
+  signupsTrend: { date: string; users: number; guests: number }[];
 }
 
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  color,
-  sub,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string | number;
-  color: string;
-  sub?: string;
-}) {
+function StatCard({ icon: Icon, label, value, color, sub }: { icon: React.ElementType; label: string; value: string | number; color: string; sub?: string }) {
   return (
-    <div className="bg-surface border border-zinc-800 p-4 rounded-xl flex items-center gap-3 hover:border-zinc-700 transition-colors shadow-sm">
-      <div className={`p-2.5 rounded-lg ${color}`}>
+    <div className="bg-surface border border-zinc-800 p-3 rounded-xl flex items-center gap-3 hover:border-zinc-700 transition-colors shadow-sm relative overflow-hidden group">
+      <div className={`p-2 rounded-lg ${color} shadow-inner z-10 transition-transform group-hover:scale-105`}>
         <Icon className="w-5 h-5" />
       </div>
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 z-10">
         <p className="text-xs font-medium text-text-muted">{label}</p>
-        <p className="text-xl font-bold text-text-main leading-tight">{value}</p>
+        <p className="text-xl font-bold text-text-main leading-tight tracking-tight">{value}</p>
         {sub && <p className="text-[10px] leading-tight text-zinc-500 mt-0.5">{sub}</p>}
       </div>
+      <div className={clsx("absolute -bottom-6 -right-6 w-20 h-20 rounded-full blur-2xl opacity-10 group-hover:opacity-20 transition-opacity", color.split(" ")[0])} />
     </div>
   );
 }
 
+const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#71717a'];
+
 export default function AdminAnalytics() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [timeframe, setTimeframe] = useState<"24h" | "7d" | "30d" | "lifetime">("7d");
+
+  const fetchStats = async (force = false) => {
+    try {
+      if (force) setIsRefreshing(true);
+      const { data } = await axios.get(`/api/admin/stats${force ? '?refresh=true' : ''}`);
+      setStats(data);
+    } catch (error) {
+      console.error("Failed to fetch stats", error);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchStats() {
-      try {
-        const { data } = await axios.get("/api/admin/stats");
-        setStats(data);
-      } catch (error) {
-        console.error("Failed to fetch stats", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
     fetchStats();
   }, []);
 
-  if (isLoading) {
+  if (isLoading && !stats) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <div className="flex flex-col justify-center items-center py-20">
+        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin mb-3" />
+        <p className="text-sm text-zinc-400 font-medium animate-pulse">Loading Analytics Engine...</p>
       </div>
     );
   }
 
-  const totalActive = (stats?.activeLoggedInUsers24h || 0) + (stats?.activeGuests24h || 0);
-  const guestPct = totalActive > 0 ? Math.round(((stats?.activeGuests24h || 0) / totalActive) * 100) : 0;
+  if (!stats) return null;
+
+  const isLifetime = timeframe === "lifetime";
+  const currentStats = stats[timeframe];
+  
+  const totalActive = currentStats.activeUsers + currentStats.activeGuests;
+  const guestPct = totalActive > 0 ? Math.round((currentStats.activeGuests / totalActive) * 100) : 0;
   const memberPct = 100 - guestPct;
 
+  let chartData = stats.signupsTrend;
+  if (timeframe === "24h") chartData = stats.signupsTrend.slice(-2);
+  else if (timeframe === "7d") chartData = stats.signupsTrend.slice(-7);
+
+  const deviceData = [
+    { name: 'Mobile', value: currentStats.deviceSplit.mobile },
+    { name: 'Desktop', value: currentStats.deviceSplit.desktop },
+    { name: 'Tablet', value: currentStats.deviceSplit.tablet },
+    { name: 'Unknown', value: currentStats.deviceSplit.unknown },
+  ].filter(d => d.value > 0);
+
+  const timeframes: { id: "24h" | "7d" | "30d" | "lifetime", label: string }[] = [
+    { id: "24h", label: "24h" },
+    { id: "7d", label: "7d" },
+    { id: "30d", label: "30d" },
+    { id: "lifetime", label: "All Time" },
+  ];
+
   return (
-    <div className="space-y-10">
-
-      {/* ── Platform Overview ─────────────────────────────── */}
-      <section>
-        <h2 className="text-xl font-bold text-text-main mb-4">Platform Overview</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <StatCard icon={Activity}   label="Active Users (24h)"    value={stats?.activeUsers24h || 0}    color="bg-emerald-500/10 text-emerald-400" sub="Guests + Members combined" />
-          <StatCard icon={UserPlus}   label="New Members (7d)"      value={stats?.newUsers7d || 0}         color="bg-blue-500/10 text-blue-400" />
-          <StatCard icon={Mail}       label="Total Subscribers"     value={stats?.totalSubscribers || 0}   color="bg-pink-500/10 text-pink-400" />
-          <StatCard icon={Users}      label="Total Members"         value={stats?.totalUsers || 0}         color="bg-indigo-500/10 text-indigo-400" />
-          <StatCard icon={Gamepad2}   label="Published Games"       value={stats?.totalGames || 0}         color="bg-green-500/10 text-green-400" />
-          <StatCard icon={PlaySquare} label="Lifetime Plays"        value={stats?.totalPlays?.toLocaleString() || 0}  color="bg-orange-500/10 text-orange-400" />
+    <div className="space-y-6 pb-10 max-w-[1400px] mx-auto animate-in fade-in duration-300">
+      
+      {/* Header & Controls */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-zinc-900/50 p-3 rounded-xl border border-zinc-800">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-indigo-500/10 rounded-lg">
+            <Activity className="w-5 h-5 text-indigo-400" />
+          </div>
+          <div>
+            <h1 className="text-lg font-bold text-white leading-tight">Analytics Dashboard</h1>
+            <p className="text-xs text-zinc-400">Time-series tracking & cache-enabled</p>
+          </div>
         </div>
-      </section>
 
-      {/* ── Visual Analytics ──────────────────────────────── */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-surface border border-zinc-800 rounded-xl p-6">
-          <h3 className="text-sm font-semibold text-text-main mb-6">New Members Growth (7d)</h3>
-          <div className="h-64 w-full">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => fetchStats(true)}
+            disabled={isRefreshing}
+            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors border border-zinc-700 disabled:opacity-50"
+            title="Force refresh data from database (bypasses 10m cache)"
+          >
+            <RefreshCw className={clsx("w-3.5 h-3.5", isRefreshing && "animate-spin")} />
+            Refresh
+          </button>
+
+          <div className="flex p-0.5 bg-zinc-950 border border-zinc-800 rounded-lg">
+            {timeframes.map((tf) => (
+              <button
+                key={tf.id}
+                onClick={() => setTimeframe(tf.id)}
+                className={clsx(
+                  "px-3 py-1.5 text-xs font-medium rounded-md transition-all",
+                  timeframe === tf.id
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
+                )}
+              >
+                {tf.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Engagement KPIs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatCard
+          icon={Zap}
+          label={`Active Users (${timeframe})`}
+          value={totalActive.toLocaleString()}
+          sub={`${memberPct}% Members / ${guestPct}% Guests`}
+          color="bg-indigo-500/20 text-indigo-400"
+        />
+        <StatCard
+          icon={Gamepad2}
+          label={`Avg Plays Per User (${timeframe})`}
+          value={currentStats.avgPlaysPerActive}
+          sub="Game clicks per active user"
+          color="bg-emerald-500/20 text-emerald-400"
+        />
+        <StatCard
+          icon={UserPlus}
+          label="Weekly Retention Rate"
+          value={`${stats.lifetime.retentionRate}%`}
+          sub="% of old users active this week"
+          color="bg-amber-500/20 text-amber-400"
+        />
+        <StatCard
+          icon={Ghost}
+          label={isLifetime ? "Total Guests" : `New Guests (${timeframe})`}
+          value={currentStats.newGuests.toLocaleString()}
+          color="bg-zinc-500/20 text-zinc-400"
+        />
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Trend Chart */}
+        <div className="lg:col-span-2 bg-surface border border-zinc-800 rounded-xl p-4 shadow-sm relative overflow-hidden">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-sm font-bold text-white flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-indigo-400" />
+              Acquisition Trend
+            </h2>
+          </div>
+          <div className="h-[240px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={stats?.recentSignups || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={chartData} margin={{ top: 5, right: 0, left: -25, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorGuests" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
                   </linearGradient>
                 </defs>
+                <XAxis dataKey="date" stroke="#52525b" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#52525b" fontSize={11} tickLine={false} axisLine={false} />
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
-                <XAxis dataKey="date" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => new Date(val).toLocaleDateString('en-US', { weekday: 'short' })} />
-                <YAxis stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} allowDecimals={false} />
                 <RechartsTooltip 
-                  contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '0.5rem', fontSize: '12px', color: '#fff' }}
-                  itemStyle={{ color: '#3b82f6' }}
-                  labelStyle={{ color: '#a1a1aa', marginBottom: '0.25rem' }}
+                  contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '8px', fontSize: '12px' }}
+                  itemStyle={{ fontWeight: 'bold' }}
                 />
-                <Area type="monotone" dataKey="count" name="Signups" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorCount)" />
+                <Area type="monotone" dataKey="users" name="Registered" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#colorUsers)" />
+                <Area type="monotone" dataKey="guests" name="Guests" stroke="#f59e0b" strokeWidth={2} fillOpacity={1} fill="url(#colorGuests)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-surface border border-zinc-800 rounded-xl p-6">
-          <h3 className="text-sm font-semibold text-text-main mb-6">Most Played Games</h3>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats?.topGamesOverall || []} layout="vertical" margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#27272a" horizontal={false} />
-                <XAxis type="number" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis type="category" dataKey="title" stroke="#71717a" fontSize={11} tickLine={false} axisLine={false} width={100} />
-                <RechartsTooltip 
-                  cursor={{ fill: '#27272a', opacity: 0.4 }}
-                  contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '0.5rem', fontSize: '12px', color: '#fff' }}
-                  itemStyle={{ color: '#10b981' }}
-                />
-                <Bar dataKey="playCount" name="Plays" fill="#10b981" radius={[0, 4, 4, 0]} barSize={24} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Guest Insights ────────────────────────────────── */}
-      <section>
-        <div className="flex items-center gap-3 mb-4">
-          <Ghost className="w-5 h-5 text-violet-400" />
-          <h2 className="text-xl font-bold text-text-main">Guest Insights</h2>
-          <span className="text-[10px] bg-violet-500/20 text-violet-300 border border-violet-500/30 px-2 py-0.5 rounded-full font-medium">Anonymous Visitors</span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <StatCard icon={Ghost}      label="Total Sessions"        value={stats?.totalGuestSessions || 0} color="bg-violet-500/10 text-violet-400" sub="Unique browsers ever" />
-          <StatCard icon={Eye}        label="Guests Active (24h)"   value={stats?.activeGuests24h || 0}    color="bg-fuchsia-500/10 text-fuchsia-400" sub="Played in last 24h" />
-          <StatCard icon={TrendingUp} label="Guests Active (7d)"    value={stats?.activeGuests7d || 0}     color="bg-purple-500/10 text-purple-400" sub="Played in last 7d" />
-          <StatCard icon={UserPlus}   label="New Guests (7d)"       value={stats?.newGuests7d || 0}        color="bg-rose-500/10 text-rose-400" sub="First visit this week" />
-        </div>
-
-        {/* Guest vs Member ratio bar */}
-        <div className="bg-surface border border-zinc-800 rounded-xl p-6 mb-6">
-          <p className="text-sm font-semibold text-text-muted mb-3">Active Users Breakdown (24h)</p>
-          <div className="flex rounded-full overflow-hidden h-4 bg-zinc-800 mb-3">
-            <div
-              className="bg-gradient-to-r from-violet-600 to-fuchsia-500 transition-all duration-700"
-              style={{ width: `${guestPct}%` }}
-            />
-            <div
-              className="bg-gradient-to-r from-indigo-500 to-blue-400 transition-all duration-700"
-              style={{ width: `${memberPct}%` }}
-            />
-          </div>
-          <div className="flex items-center gap-6 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-violet-500 inline-block" />
-              <span className="text-zinc-300">Guests — <strong>{stats?.activeGuests24h || 0}</strong> ({guestPct}%)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-indigo-500 inline-block" />
-              <span className="text-zinc-300">Members — <strong>{stats?.activeLoggedInUsers24h || 0}</strong> ({memberPct}%)</span>
+        {/* Device Split Chart */}
+        <div className="bg-surface border border-zinc-800 rounded-xl p-4 shadow-sm flex flex-col justify-between">
+          <div>
+            <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-4">
+              <Smartphone className="w-4 h-4 text-indigo-400" />
+              Device Platform ({timeframes.find(t => t.id === timeframe)?.label})
+            </h2>
+            {deviceData.length === 0 ? (
+              <div className="h-[180px] flex items-center justify-center text-xs text-zinc-500">
+                No device data found
+              </div>
+            ) : (
+              <div className="h-[180px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={deviceData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={70}
+                      paddingAngle={5}
+                      dataKey="value"
+                      stroke="none"
+                    >
+                      {deviceData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <RechartsTooltip 
+                      contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '8px', fontSize: '12px' }}
+                      itemStyle={{ color: '#fff', fontWeight: 'bold' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+            <div className="flex flex-wrap justify-center gap-3 mt-2">
+              {deviceData.map((d, i) => (
+                <div key={d.name} className="flex items-center gap-1.5 text-xs text-zinc-400">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                  {d.name} ({Math.round((d.value / currentStats.totalPlays) * 100) || 0}%)
+                </div>
+              ))}
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Top games played by guests */}
-        <div className="bg-surface border border-zinc-800 rounded-xl p-6">
-          <div className="flex items-center gap-2 mb-5">
-            <Gamepad className="w-5 h-5 text-violet-400" />
-            <p className="text-sm font-semibold text-white">Top Games Played by Guests</p>
-          </div>
-          {stats?.topGuestGames && stats.topGuestGames.length > 0 ? (
-            <div className="space-y-3">
-              {stats.topGuestGames.map((game, i) => {
-                const max = stats.topGuestGames[0]?.count || 1;
-                const pct = Math.round((game.count / max) * 100);
-                return (
-                  <div key={game.slug}>
-                    <div className="flex items-center justify-between mb-1">
-                      <Link
-                        href={`/games/${game.slug}`}
-                        target="_blank"
-                        className="text-sm text-zinc-200 hover:text-violet-400 transition-colors font-medium truncate max-w-[70%]"
-                      >
-                        {i + 1}. {game.title}
-                      </Link>
-                      <span className="text-xs text-zinc-500 shrink-0 ml-2">{game.count} guest{game.count !== 1 ? "s" : ""}</span>
-                    </div>
-                    <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-violet-600 to-fuchsia-500 rounded-full transition-all duration-700"
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+      {/* Top Games Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-surface border border-zinc-800 rounded-xl p-4 shadow-sm">
+          <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
+            <PlaySquare className="w-4 h-4 text-indigo-400" />
+            Top Games ({timeframes.find(t => t.id === timeframe)?.label})
+          </h2>
+          {currentStats.topGames.length === 0 ? (
+            <div className="p-4 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed text-center">
+              <p className="text-xs text-zinc-500">No play events recorded.</p>
             </div>
           ) : (
-            <p className="text-sm text-zinc-500 text-center py-4">No guest play data yet. Once guests start playing games, their top picks will appear here.</p>
+            <div className="space-y-2">
+              {currentStats.topGames.map((game, i) => (
+                <div key={game.slug} className="flex items-center justify-between p-2 bg-zinc-900/30 hover:bg-zinc-800/50 rounded-lg transition-colors border border-transparent hover:border-zinc-700">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-zinc-500 text-xs font-bold w-4">{i + 1}.</span>
+                    <p className="text-zinc-200 text-sm font-medium truncate">{game.title}</p>
+                  </div>
+                  <div className="text-indigo-400 font-bold bg-indigo-500/10 px-2.5 py-0.5 rounded text-xs shrink-0">
+                    {game.playCount.toLocaleString()} plays
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
-      </section>
 
+        <div className="bg-surface border border-zinc-800 rounded-xl p-4 shadow-sm">
+          <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
+            <Rocket className="w-4 h-4 text-amber-400" />
+            Top Guest Games ({timeframes.find(t => t.id === timeframe)?.label})
+          </h2>
+          {currentStats.topGuestGames.length === 0 ? (
+             <div className="p-4 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed text-center">
+             <p className="text-xs text-zinc-500">No guest events recorded.</p>
+           </div>
+          ) : (
+            <div className="space-y-2">
+              {currentStats.topGuestGames.map((game, i) => (
+                <div key={game.slug} className="flex items-center justify-between p-2 bg-zinc-900/30 hover:bg-zinc-800/50 rounded-lg transition-colors border border-transparent hover:border-zinc-700">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-zinc-500 text-xs font-bold w-4">{i + 1}.</span>
+                    <p className="text-zinc-200 text-sm font-medium truncate">{game.title}</p>
+                  </div>
+                  <div className="text-amber-400 font-bold bg-amber-500/10 px-2.5 py-0.5 rounded text-xs shrink-0">
+                    {game.count.toLocaleString()} guests
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Community Pulse */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        
+        {/* Top Rated Games */}
+        <div className="bg-surface border border-zinc-800 rounded-xl p-4 shadow-sm">
+          <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
+            <Star className="w-4 h-4 text-yellow-500" />
+            Highest Rated Games (Lifetime)
+          </h2>
+          {stats.lifetime.topRatedGames.length === 0 ? (
+            <div className="p-4 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed text-center">
+              <p className="text-xs text-zinc-500">No games have been rated yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {stats.lifetime.topRatedGames.map((game, i) => (
+                <div key={game.slug} className="flex items-center justify-between p-2 bg-zinc-900/30 hover:bg-zinc-800/50 rounded-lg transition-colors border border-transparent hover:border-zinc-700">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-zinc-500 text-xs font-bold w-4">{i + 1}.</span>
+                    <p className="text-zinc-200 text-sm font-medium truncate">{game.title}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-yellow-500 font-bold bg-yellow-500/10 px-2 py-0.5 rounded text-xs shrink-0 flex items-center gap-1">
+                      <Star className="w-3 h-3 fill-yellow-500" />
+                      {game.ratio}%
+                    </div>
+                    <span className="text-zinc-500 text-[10px] w-12 text-right">{game.totalVotes} votes</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Live Feedback Feed */}
+        <div className="bg-surface border border-zinc-800 rounded-xl p-4 shadow-sm flex flex-col">
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-sm font-bold text-white flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-emerald-400" />
+              Live Feedback Feed
+            </h2>
+            <Link href="/admin/feedback" className="text-xs text-indigo-400 hover:text-indigo-300">View All</Link>
+          </div>
+          
+          <div className="flex-1 overflow-y-auto max-h-[300px] space-y-3 pr-2 custom-scrollbar">
+            {stats.lifetime.recentFeedback.length === 0 ? (
+              <div className="p-4 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed text-center">
+                <p className="text-xs text-zinc-500">No feedback submitted yet.</p>
+              </div>
+            ) : (
+              stats.lifetime.recentFeedback.map((fb, i) => (
+                <div key={i} className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-3">
+                  <div className="flex justify-between items-start mb-1">
+                    <p className="text-xs font-bold text-zinc-300 truncate max-w-[200px]">{fb.userEmail}</p>
+                    <span className="text-[10px] text-zinc-500">{fb.date}</span>
+                  </div>
+                  <p className="text-xs text-zinc-400 mb-2 line-clamp-2">{fb.message}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-medium text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">Game: {fb.gameSlug}</span>
+                    <span className={clsx("text-[10px] font-medium px-2 py-0.5 rounded", fb.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400')}>
+                      {fb.status}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }

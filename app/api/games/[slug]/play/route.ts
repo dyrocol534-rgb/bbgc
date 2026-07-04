@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import dbConnect from "@/lib/mongodb";
 import Game from "@/models/Game";
 import User from "@/models/User";
+import PlayEvent from "@/models/PlayEvent";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -24,6 +25,18 @@ export async function POST(
     if (!game) {
       return NextResponse.json({ error: "Game not found" }, { status: 404 });
     }
+
+    const userAgent = request.headers.get("user-agent") || "";
+    let deviceType: "mobile" | "desktop" | "tablet" | "unknown" = "desktop";
+    
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(userAgent)) {
+      deviceType = "tablet";
+    } else if (/Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(userAgent)) {
+      deviceType = "mobile";
+    }
+
+    // Log the play event for time-series analytics (24h/7d/30d)
+    await PlayEvent.create({ gameSlug: slug, deviceType });
 
     // Update user's recentlyPlayed history if logged in
     const session = await getServerSession(authOptions);

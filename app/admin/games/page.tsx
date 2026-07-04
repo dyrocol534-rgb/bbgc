@@ -111,26 +111,26 @@ export default function AdminGamesPage() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h2 className="text-xl font-bold text-text-main flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 bg-zinc-900/50 p-3 rounded-xl border border-zinc-800">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">
           Manage Games ({totalGames}) 
-          {isFetching && !isLoading && <Loader2 className="w-4 h-4 text-text-muted animate-spin" />}
+          {isFetching && !isLoading && <Loader2 className="w-4 h-4 text-zinc-500 animate-spin" />}
         </h2>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <div className="relative flex-1 sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-56">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
             <input 
               type="text" 
               placeholder="Search games..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-surface border border-border-main rounded-lg text-sm text-text-main focus:border-primary focus:outline-none transition-colors"
+              className="w-full pl-8 pr-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
             />
           </div>
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-surface border border-border-main rounded-lg text-sm text-text-main focus:border-primary focus:outline-none transition-colors outline-none"
+            className="px-2 py-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors outline-none cursor-pointer"
           >
             <option value="all">All Status</option>
             <option value="published">Published</option>
@@ -139,91 +139,91 @@ export default function AdminGamesPage() {
         </div>
       </div>
       
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-surface border border-zinc-800 rounded-xl shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-border-strong text-text-muted text-sm">
-              <th className="py-3 px-4 font-medium w-16">Icon</th>
-              <th className="py-3 px-4 font-medium">Title</th>
-              <th className="py-3 px-4 font-medium text-center">Plays</th>
-              <th className="py-3 px-4 font-medium text-center">Rating</th>
-              <th className="py-3 px-4 font-medium text-center">Featured</th>
-              <th className="py-3 px-4 font-medium text-center">Visibility</th>
-              <th className="py-3 px-4 font-medium text-right">Actions</th>
+            <tr className="border-b border-zinc-800 bg-zinc-900/30 text-zinc-400 text-[11px] uppercase tracking-wider">
+              <th className="py-2 px-3 font-semibold w-12">Icon</th>
+              <th className="py-2 px-3 font-semibold">Title</th>
+              <th className="py-2 px-3 font-semibold text-center">Plays</th>
+              <th className="py-2 px-3 font-semibold text-center">Rating</th>
+              <th className="py-2 px-3 font-semibold text-center w-16">Feat</th>
+              <th className="py-2 px-3 font-semibold text-center">Visibility</th>
+              <th className="py-2 px-3 font-semibold text-right w-20">Actions</th>
             </tr>
           </thead>
           <tbody>
             {games.map((game) => (
-              <tr key={game._id} className={`border-b border-border-main transition-colors ${game.status === 'draft' ? 'bg-background/50' : 'hover:bg-surface-hover/50'}`}>
-                <td className="py-3 px-4">
-                  <img src={game.thumbnailUrl} alt={game.title} className="w-10 h-10 rounded-lg object-cover bg-background" />
+              <tr key={game._id} className={`border-b border-zinc-800/50 transition-colors ${game.status === 'draft' ? 'bg-zinc-950/50 opacity-60' : 'hover:bg-zinc-800/30'}`}>
+                <td className="py-1.5 px-3">
+                  <img src={game.thumbnailUrl} alt={game.title} className="w-8 h-8 rounded-md object-cover bg-zinc-900 border border-zinc-800" />
                 </td>
-                <td className="py-3 px-4">
-                  <div className="font-medium text-text-main flex items-center gap-2">
+                <td className="py-1.5 px-3">
+                  <div className="font-semibold text-zinc-200 flex items-center gap-2 text-sm leading-tight">
                     {game.title}
                     {game.source === "aggregated" && (
-                      <span className="bg-indigo-500/20 text-indigo-400 text-[10px] uppercase font-bold px-1.5 py-0.5 rounded shrink-0">
-                        Imported
+                      <span className="bg-indigo-500/10 text-indigo-400 text-[9px] uppercase font-bold px-1 py-0.5 rounded shrink-0 border border-indigo-500/20">
+                        Import
                       </span>
                     )}
                   </div>
-                  <div className="text-xs text-text-muted font-mono mb-1">{game.slug}</div>
-                  <div className="flex flex-wrap items-center gap-2 text-[11px]">
-                    <span className="text-zinc-500">By <span className="text-zinc-300 font-medium">{game.developer || "Unknown"}</span></span>
+                  <div className="text-[10px] text-zinc-500 font-mono mb-0.5 leading-tight">{game.slug}</div>
+                  <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                    <span className="text-zinc-600">By <span className="text-zinc-400 font-medium">{game.developer || "Unknown"}</span></span>
                     {game.category && game.category.length > 0 && (
                       <>
-                        <span className="text-zinc-600">•</span>
+                        <span className="text-zinc-700">•</span>
                         <span className="text-indigo-400/80 font-medium">{game.category.slice(0, 2).join(", ")}{game.category.length > 2 ? '...' : ''}</span>
                       </>
                     )}
                   </div>
                 </td>
-                <td className="py-3 px-4 text-center text-text-secondary text-sm">
+                <td className="py-1.5 px-3 text-center text-zinc-300 text-xs font-medium">
                   {game.playCount.toLocaleString()}
                 </td>
-                <td className="py-3 px-4 text-center text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-green-400 font-medium">+{game.likes?.length || 0}</span>
-                    <span className="text-text-muted">/</span>
+                <td className="py-1.5 px-3 text-center text-xs">
+                  <div className="flex items-center justify-center gap-1.5">
+                    <span className="text-emerald-400 font-medium">+{game.likes?.length || 0}</span>
+                    <span className="text-zinc-700">/</span>
                     <span className="text-red-400 font-medium">-{game.dislikes?.length || 0}</span>
                   </div>
                 </td>
-                <td className="py-3 px-4 text-center">
+                <td className="py-1.5 px-3 text-center">
                   <button 
                     onClick={() => toggleFeatured(game._id, game.featured)}
-                    className={`p-2 rounded-lg transition-colors ${game.featured ? 'text-yellow-400 bg-yellow-400/10 hover:bg-yellow-400/20' : 'text-text-muted hover:bg-surface-hover hover:text-text-main'}`}
+                    className={`p-1.5 rounded-md transition-colors ${game.featured ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20' : 'text-zinc-600 hover:bg-zinc-800 hover:text-zinc-300'}`}
                     title={game.featured ? "Remove from Featured" : "Feature on Homepage"}
                   >
-                    <Star className={`w-5 h-5 ${game.featured ? 'fill-current' : ''}`} />
+                    <Star className={`w-3.5 h-3.5 ${game.featured ? 'fill-current' : ''}`} />
                   </button>
                 </td>
-                <td className="py-3 px-4 text-center">
+                <td className="py-1.5 px-3 text-center">
                   <button 
                     onClick={() => toggleStatus(game._id, game.status)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide transition-colors ${
                       game.status === 'published' 
-                        ? 'bg-green-500/10 text-green-400 hover:bg-green-500/20' 
-                        : 'bg-orange-500/10 text-orange-400 hover:bg-orange-500/20'
+                        ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20' 
+                        : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 border border-zinc-700'
                     }`}
                   >
-                    {game.status === 'published' ? <><Eye className="w-3.5 h-3.5" /> Published</> : <><EyeOff className="w-3.5 h-3.5" /> Draft / Hidden</>}
+                    {game.status === 'published' ? <><Eye className="w-3 h-3" /> Live</> : <><EyeOff className="w-3 h-3" /> Draft</>}
                   </button>
                 </td>
-                <td className="py-3 px-4 text-right">
-                  <div className="flex justify-end gap-2">
+                <td className="py-1.5 px-3 text-right">
+                  <div className="flex justify-end gap-1">
                     <Link 
                       href={`/admin/games/${game._id}/edit`}
-                      className="p-2 text-text-muted hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-colors"
+                      className="p-1.5 text-zinc-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-md transition-colors"
                       title="Edit Game"
                     >
-                      <Pencil className="w-5 h-5" />
+                      <Pencil className="w-3.5 h-3.5" />
                     </Link>
                     <button 
                       onClick={() => deleteGame(game._id)}
-                      className="p-2 text-text-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors"
                       title="Delete Game"
                     >
-                      <Trash2 className="w-5 h-5" />
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </td>
