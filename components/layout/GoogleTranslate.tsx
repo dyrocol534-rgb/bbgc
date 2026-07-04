@@ -62,6 +62,17 @@ export default function GoogleTranslate() {
     setCurrentLang(langCode);
     setIsOpen(false);
     
+    if (langCode === 'en') {
+      // To properly revert to the original language, we must delete the translation cookies
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+      // Fallback for some subdomains
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=." + window.location.hostname + "; path=/;";
+      
+      window.location.reload();
+      return;
+    }
+
     // The native google translate dropdown is actually a select element buried inside
     const select = document.querySelector('.goog-te-combo') as HTMLSelectElement;
     if (select) {
