@@ -33,7 +33,10 @@ async function getCategoryGames(category: string) {
       query.category = { $regex: new RegExp(`^${category}$`, 'i') };
     }
 
-    const queryBuilder = Game.find(query).sort(sort);
+    const queryBuilder = Game.find(query)
+      .sort(sort)
+      .select('_id slug title thumbnailUrl category playCount');
+      
     if (limitAmount > 0) {
       queryBuilder.limit(limitAmount);
     }

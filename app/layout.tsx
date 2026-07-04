@@ -157,6 +157,10 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
       </head>
+      <head>
+        <link rel="preconnect" href="https://img.gamedistribution.com" />
+        <link rel="preconnect" href="https://images.unsplash.com" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col bg-background text-text-main`}>
         {/* Google Analytics */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-XL79QHW97L" strategy="afterInteractive" />
