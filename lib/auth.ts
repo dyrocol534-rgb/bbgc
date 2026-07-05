@@ -82,6 +82,7 @@ export const authOptions: NextAuthOptions = {
             (session.user as any).currentStreak = dbUser.currentStreak || 0;
             (session.user as any).referralCode = referralCode;
             (session.user as any).phone = dbUser.phone || "";
+            (session.user as any).profileCompleted = dbUser.profileCompleted || !!dbUser.phone || false;
           }
         } catch (error) {
           console.error("Error fetching user data for session", error);

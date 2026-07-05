@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import clsx from "clsx";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 interface UsersTabsProps {
   users: any[];
@@ -107,7 +108,7 @@ export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
                 {activeTab === "users" && (
                   <div className="flex items-center gap-3">
                     {item.image ? (
-                      <img src={item.image} alt={item.name} className="w-10 h-10 rounded-full" />
+                      <Image src={item.image} alt={item.name} width={40} height={40} className="w-10 h-10 rounded-full object-cover" />
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">
                         {item.name?.charAt(0) || '?'}
@@ -168,7 +169,7 @@ export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
                       <td className="px-3 py-2 text-zinc-200 font-medium text-xs">
                         <div className="flex items-center gap-2">
                           {item.image ? (
-                            <img src={item.image} alt={item.name} className="w-6 h-6 rounded-full" />
+                            <Image src={item.image} alt={item.name} width={24} height={24} className="w-6 h-6 rounded-full object-cover" />
                           ) : (
                             <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold shrink-0 text-[10px]">
                               {item.name?.charAt(0) || '?'}

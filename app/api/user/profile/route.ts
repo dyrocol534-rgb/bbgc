@@ -11,17 +11,17 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { bio } = await request.json();
+    const { bio, phone } = await request.json();
 
-    if (typeof bio !== 'string') {
-      return NextResponse.json({ error: "Invalid data" }, { status: 400 });
-    }
+    const updates: any = {};
+    if (typeof bio === 'string') updates.bio = bio;
+    if (typeof phone === 'string') updates.phone = phone;
 
     await dbConnect();
 
     const user = await User.findOneAndUpdate(
       { email: session.user.email },
-      { bio },
+      { $set: updates },
       { new: true }
     );
 
@@ -29,7 +29,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, bio: user.bio });
+    return NextResponse.json({ success: true, bio: user.bio, phone: user.phone });
   } catch (error) {
     console.error("Error updating profile:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

@@ -6,6 +6,7 @@ import Game from "@/models/Game";
 import GameCard from "@/components/game/GameCard";
 import ProfileClient from "./ProfileClient";
 import { Clock, Heart, Gamepad2, Settings } from "lucide-react";
+import Image from "next/image";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -52,9 +53,11 @@ export default async function ProfilePage() {
             <div className="px-4 pb-4 relative">
               <div className="flex flex-col items-center text-center -mt-8">
                 {session.user.image ? (
-                  <img 
+                  <Image 
                     src={session.user.image} 
                     alt={session.user.name || "User"} 
+                    width={64}
+                    height={64}
                     className="w-16 h-16 rounded-full mb-2 border-4 border-zinc-900 shadow-xl object-cover bg-zinc-800 relative z-10" 
                   />
                 ) : (
@@ -93,7 +96,10 @@ export default async function ProfilePage() {
                 <div className="w-full h-px bg-zinc-800 mb-6"></div>
   
                 <div className="w-full text-left">
-                  <ProfileClient initialBio={(session.user as any).bio || ""} />
+                  <ProfileClient 
+                    initialBio={(session.user as any).bio || ""} 
+                    initialPhone={(session.user as any).phone || ""}
+                  />
                 </div>
               </div>
             </div>

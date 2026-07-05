@@ -126,7 +126,7 @@ export default async function ReferralPage() {
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             {user.image ? (
-                              <img src={user.image} alt={user.name} className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700" />
+                              <Image src={user.image} alt={user.name} width={32} height={32} className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 object-cover" />
                             ) : (
                               <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-xs text-zinc-500">
                                 {user.name.charAt(0).toUpperCase()}

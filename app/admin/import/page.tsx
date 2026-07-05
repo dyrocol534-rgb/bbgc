@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { DownloadCloud, CheckCircle, Loader2, ExternalLink } from "lucide-react";
+import Image from "next/image";
 
 interface GMGame {
   id: string;
@@ -137,12 +138,13 @@ export default function ImportGamesPage() {
               return (
                 <div key={`${game.id}-${idx}`} className="bg-surface border border-border-main rounded-xl overflow-hidden shadow-lg group hover:border-primary-light transition-colors flex flex-col">
                   <div className="relative h-28 w-full bg-surface-hover">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={game.thumb}
                       alt={game.title}
+                      width={200}
+                      height={200}
                       className="w-full h-full object-cover"
-                      loading="lazy"
+                      unoptimized
                     />
                     <div className="absolute top-1.5 right-1.5 bg-black/60 text-white text-[9px] font-medium px-1.5 py-0.5 rounded backdrop-blur-md">
                       {game.category || "Game"}

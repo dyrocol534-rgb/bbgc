@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, Filter, ChevronLeft, ChevronRight, ArrowUp, ArrowDown } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface GameData {
   _id: string;
@@ -205,7 +206,7 @@ export default function AdminGamesPage() {
             {games.map((game) => (
               <tr key={game._id} className={`border-b border-zinc-800/50 transition-colors ${game.status === 'draft' ? 'bg-zinc-950/50 opacity-60' : 'hover:bg-zinc-800/30'}`}>
                 <td className="py-1.5 px-3">
-                  <img src={game.thumbnailUrl} alt={game.title} className="w-8 h-8 rounded-md object-cover bg-zinc-900 border border-zinc-800" />
+                  <Image src={game.thumbnailUrl} alt={game.title} width={32} height={32} className="w-8 h-8 rounded-md object-cover bg-zinc-900 border border-zinc-800" />
                 </td>
                 <td className="py-1.5 px-3">
                   <div className="font-semibold text-zinc-200 flex items-center gap-2 text-sm leading-tight">

@@ -17,6 +17,7 @@ export interface IUser extends Document {
   referredBy?: mongoose.Types.ObjectId;
   referralRewardPaid: boolean;
   phone?: string;
+  profileCompleted: boolean;
   createdAt: Date;
   lastActiveAt: Date;
 }
@@ -38,6 +39,7 @@ const UserSchema: Schema<IUser> = new Schema({
   referredBy: { type: Schema.Types.ObjectId, ref: 'User' },
   referralRewardPaid: { type: Boolean, default: false },
   phone: { type: String },
+  profileCompleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   lastActiveAt: { type: Date, default: Date.now },
 });

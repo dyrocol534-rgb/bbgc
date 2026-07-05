@@ -4,6 +4,7 @@ import dbConnect from '@/lib/mongodb';
 import Game from '@/models/Game';
 import GamePlayer from '@/components/game/GamePlayer';
 import Link from 'next/link';
+import Image from 'next/image';
 
 // Revalidate every hour since game pages don't change often
 export const revalidate = 3600;
@@ -215,9 +216,11 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                 {randomGames.map((g: any) => (
                   <Link key={g.slug} href={`/games/${g.slug}`} className="group block">
                     <div className="relative aspect-square rounded-xl overflow-hidden bg-zinc-800 shadow-md border border-border-main group-hover:border-indigo-500/50 transition-colors">
-                      <img 
+                      <Image 
                         src={g.thumbnailUrl} 
                         alt={g.title} 
+                        width={200}
+                        height={200}
                         className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2 pt-6">

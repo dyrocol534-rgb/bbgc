@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     const updates: any = {};
+    updates.profileCompleted = true;
     
     if (phone && phone.trim() !== "") {
       updates.phone = phone.trim();

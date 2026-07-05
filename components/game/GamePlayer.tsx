@@ -5,6 +5,7 @@ import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquare
 import clsx from 'clsx';
 import axios from 'axios';
 import { ConsoleLoader } from '@/components/ui/ConsoleLoader';
+import Image from 'next/image';
 
 interface GamePlayerProps {
   game: {
@@ -223,7 +224,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             paddingTop: 'max(4px, env(safe-area-inset-top))',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <img src={game.thumbnailUrl} alt="" style={{ width: 20, height: 20, borderRadius: 4, objectFit: 'cover' }} />
+              <Image src={game.thumbnailUrl} alt="" width={20} height={20} style={{ width: 20, height: 20, borderRadius: 4, objectFit: 'cover' }} />
               <span style={{ color: '#fff', fontSize: 12, fontWeight: 700, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.title}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -283,7 +284,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             <div className="absolute inset-0 z-0 opacity-60 blur-3xl scale-125" style={{ backgroundImage: `url(${game.thumbnailUrl})`, backgroundSize: 'cover', backgroundPosition: 'top' }} />
             <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-black/70 to-black" />
             <div className="relative z-10 flex flex-col items-center w-full">
-              <img src={game.thumbnailUrl} alt={game.title} className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
+              <Image src={game.thumbnailUrl} alt={game.title} width={128} height={128} className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
               <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 text-center drop-shadow-md">{game.title}</h1>
               <div className="flex items-center gap-1 text-xs sm:text-sm text-zinc-200 mb-4">
                 <span className="text-base">🕹️</span>
@@ -358,7 +359,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         <div className="flex flex-row items-center justify-between bg-zinc-900/80 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 shadow-xl border border-white/5 gap-2 mt-2 overflow-x-auto scrollbar-none">
           <div className="flex items-center gap-2 min-w-0 shrink">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden flex-shrink-0 shadow-md bg-zinc-800 ml-1">
-              <img src={game.thumbnailUrl} alt={game.title} className="w-full h-full object-cover" />
+              <Image src={game.thumbnailUrl} alt={game.title} width={32} height={32} className="w-full h-full object-cover" />
             </div>
             <h2 className="text-zinc-100 font-bold truncate text-sm sm:text-base">{game.title}</h2>
           </div>
@@ -395,7 +396,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             <div className="relative bg-[#1f1f2e] border border-border-main rounded-3xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
               <button onClick={closeQrModal} className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"><X className="w-6 h-6" /></button>
               <div className="bg-white p-4 rounded-3xl mb-8 shadow-xl">
-                <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}&margin=0`} alt="QR" className="w-48 h-48 rounded-xl" />
+                <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}&margin=0`} alt="QR" width={192} height={192} className="w-48 h-48 rounded-xl" unoptimized />
               </div>
               <h3 className="text-2xl font-bold text-white mb-4">Take the fun with you!</h3>
               <p className="text-zinc-300 text-sm">Scan to play <strong>{game.title}</strong> on your phone or tablet.</p>

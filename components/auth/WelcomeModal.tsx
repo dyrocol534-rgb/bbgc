@@ -20,9 +20,9 @@ export default function WelcomeModal() {
     // We can use a local storage flag or check if phone/referral is already set
     // For simplicity, we check if they just signed up (we can use a query param or session check)
     // In a real app, you might want a 'profileCompleted' boolean on the user model.
-    // For this implementation, we will show it if they have no phone number and we haven't shown it yet this session.
+    // For this implementation, we will show it if they haven't completed their profile and we haven't shown it yet this session.
     
-    if (session?.user && !(session.user as any).phone) {
+    if (session?.user && !(session.user as any).profileCompleted) {
       const hasSeenModal = sessionStorage.getItem("hasSeenWelcomeModal");
       if (!hasSeenModal) {
         setIsOpen(true);
