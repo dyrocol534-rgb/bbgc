@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import clsx from "clsx";
 import { 
   Home, RefreshCw, Star, Users, Trophy, Crown,
@@ -15,8 +16,7 @@ const PRIMARY_LINKS = [
   { name: "Home", href: "/", icon: Home },
   { name: "New", href: "/category/new", icon: Rocket },
   { name: "Popular Games", href: "/category/popular", icon: TrendingUp },
-  { name: "Updated", href: "/category/updated", icon: RefreshCw },
-  { name: "Originals", href: "/category/originals", icon: Star },
+  { name: "Global Leaderboard", href: "/leaderboard", icon: Trophy },
   { name: "Featured", href: "/category/featured", icon: Crown },
 ];
 
@@ -42,6 +42,7 @@ const getCategoryIcon = (category: string) => {
 };
 
 export default function Sidebar() {
+  const { data: session } = useSession();
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -204,6 +205,29 @@ export default function Sidebar() {
             );
           })}
         </nav>
+
+        {/* Refer & Earn Button in Sidebar */}
+        {session?.user && (
+          <div className="px-3 mb-6">
+            <Link
+              href="/referral"
+              onClick={() => setIsExpanded(false)}
+              className={clsx(
+                "w-full flex items-center justify-between px-3 py-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 hover:from-indigo-500/20 hover:to-purple-500/20 border border-indigo-500/20 hover:border-indigo-500/40 transition-all rounded-xl font-medium group overflow-hidden",
+                !isExpanded && "justify-center"
+              )}
+              title={!isExpanded ? "Refer & Earn +50 XP" : undefined}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-lg shrink-0">🤝</span>
+                <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+                  <span className="text-indigo-300 font-bold text-sm group-hover:text-indigo-200 transition-colors">Refer & Earn</span>
+                  <span className="text-zinc-400 text-[10px] uppercase tracking-wider font-bold">+50 XP</span>
+                </div>
+              </div>
+            </Link>
+          </div>
+        )}
 
         <div className="px-5 mb-2">
           <div className="h-px bg-zinc-800 w-full" />

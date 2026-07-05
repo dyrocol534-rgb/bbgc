@@ -40,14 +40,19 @@ export async function POST(
 
     // Update user's recentlyPlayed history if logged in
     const session = await getServerSession(authOptions);
+    let xpAwarded = 0;
+    
     if (session?.user?.email) {
       // First, remove the game if it already exists to avoid duplicates
       await User.updateOne(
         { email: session.user.email },
         { $pull: { recentlyPlayed: slug } }
       );
-      // Then, push it to the front and keep only the last 3
-      await User.updateOne(
+      
+      const { XP_CONFIG, awardXP } = await import("@/lib/xp");
+      
+      // Push it to front, update activity, add 1 XP, increment games played
+      const updatedUser = await User.findOneAndUpdate(
         { email: session.user.email },
         { 
           $push: { 
@@ -57,9 +62,35 @@ export async function POST(
               $slice: 3 
             } 
           },
-          $set: { lastActiveAt: new Date() }
-        }
+          $set: { lastActiveAt: new Date() },
+          $inc: { 
+            xp: XP_CONFIG.PLAY_GAME, 
+            lifetimeXp: XP_CONFIG.PLAY_GAME,
+            gamesPlayedCount: 1 
+          }
+        },
+        { new: true }
       );
+      
+      xpAwarded = XP_CONFIG.PLAY_GAME;
+      
+      // Referral Logic Check
+      if (
+        updatedUser && 
+        updatedUser.gamesPlayedCount === XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL &&
+        updatedUser.referredBy &&
+        !updatedUser.referralRewardPaid
+      ) {
+        // Award the referrer 50 XP
+        await awardXP(updatedUser.referredBy.toString(), XP_CONFIG.REFERRAL_REWARD);
+        // Award the current user an extra 50 XP
+        await User.findByIdAndUpdate(updatedUser._id, {
+          $inc: { xp: XP_CONFIG.REFERRAL_REWARD, lifetimeXp: XP_CONFIG.REFERRAL_REWARD },
+          $set: { referralRewardPaid: true }
+        });
+        xpAwarded += XP_CONFIG.REFERRAL_REWARD;
+      }
+      
     } else {
       // Track anonymous user via guestId cookie
       const cookieStore = await cookies();
@@ -94,7 +125,7 @@ export async function POST(
       }
     }
       
-    return NextResponse.json({ success: true, playCount: game.playCount });
+    return NextResponse.json({ success: true, playCount: game.playCount, xpAwarded });
   } catch (error) {
     console.error("Error incrementing play count:", error);
     return NextResponse.json({ error: "Failed to increment play count" }, { status: 500 });

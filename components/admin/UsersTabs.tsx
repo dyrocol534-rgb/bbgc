@@ -122,6 +122,15 @@ export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
                 
                 <div className={clsx("flex flex-col gap-1", activeTab === "users" && "pl-13")}>
                   <div className="text-sm text-zinc-300 break-all">{item.email}</div>
+                  {activeTab === "users" && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">🪙 {item.xp || 0} XP</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-400">🔥 {item.currentStreak || 0} Streak</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400">⏱️ {Math.floor((item.playtimeSeconds || 0)/60)}m play</span>
+                      {item.phone && <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400">📱 {item.phone}</span>}
+                      {item.referralCode && <span className="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">Ref: {item.referralCode}</span>}
+                    </div>
+                  )}
                   {activeTab === "subscribers" && (
                     <div className="text-xs text-zinc-400">
                       Subscribed: {new Date(item.subscribedAt).toLocaleDateString()}
@@ -141,6 +150,7 @@ export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
                 {activeTab === "users" && <th className="px-3 py-2 font-medium w-1/4">Name</th>}
                 <th className="px-3 py-2 font-medium w-1/3">Email Address</th>
                 <th className="px-3 py-2 font-medium">{activeTab === "users" ? "Joined Date" : "Subscribed Date"}</th>
+                {activeTab === "users" && <th className="px-3 py-2 font-medium">Gamification</th>}
                 {activeTab === "users" && <th className="px-3 py-2 font-medium">Last Login</th>}
               </tr>
             </thead>
@@ -174,6 +184,17 @@ export default function UsersTabs({ users, subscribers }: UsersTabsProps) {
                     <td className="px-3 py-2 text-zinc-400 whitespace-nowrap text-xs">
                       {new Date(activeTab === "users" ? item.createdAt : item.subscribedAt).toLocaleDateString()}
                     </td>
+                    {activeTab === "users" && (
+                      <td className="px-3 py-2">
+                        <div className="flex flex-wrap gap-1 max-w-[180px]">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">🪙 {item.xp || 0} XP</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 border border-orange-500/30">🔥 {item.currentStreak || 0}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">⏱️ {Math.floor((item.playtimeSeconds || 0)/60)}m</span>
+                          {item.phone && <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 border border-green-500/30">📱 {item.phone}</span>}
+                          {item.referralCode && <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/30">Ref: {item.referralCode}</span>}
+                        </div>
+                      </td>
+                    )}
                     {activeTab === "users" && (
                       <td className="px-3 py-2 text-zinc-400 whitespace-nowrap text-xs">
                         {item.lastActiveAt ? new Date(item.lastActiveAt).toLocaleString() : 'Never'}

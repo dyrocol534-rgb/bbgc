@@ -80,6 +80,22 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   }, [isPlaying, game.slug]);
 
+  // Playtime Tracker: Ping server every 60 seconds while playing
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        // Send elapsedSeconds = 60 to the server
+        axios.post('/api/user/playtime', { elapsedSeconds: 60 }).catch(() => {
+          // Ignore errors (user might not be logged in)
+        });
+      }, 60000); // 60 seconds
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPlaying]);
+
   // Auto-enter mobile fullscreen on play
   useEffect(() => {
     if (isPlaying && typeof window !== 'undefined' && window.innerWidth < 1024) {

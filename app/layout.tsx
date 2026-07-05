@@ -9,6 +9,7 @@ import Script from "next/script";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import DisableInspect from "@/components/layout/DisableInspect";
+import WelcomeModal from "@/components/auth/WelcomeModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -196,6 +197,7 @@ export default async function RootLayout({
         
         <Providers>
           <Navbar />
+          <WelcomeModal />
           <div className="flex flex-1 pt-16 w-full">
             <Sidebar />
             <main className="flex-1 min-w-0 flex flex-col">

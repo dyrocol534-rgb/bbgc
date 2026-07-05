@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2 } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import PWAInstallButton from "./PWAInstallButton";
 import GoogleTranslate from "./GoogleTranslate";
@@ -18,6 +18,18 @@ export default function Navbar() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      // Silently check and update daily streak
+      const hasCheckedStreak = sessionStorage.getItem("hasCheckedStreak");
+      if (!hasCheckedStreak) {
+        fetch("/api/user/streak", { method: "POST" })
+          .then(() => sessionStorage.setItem("hasCheckedStreak", "true"))
+          .catch(console.error);
+      }
+    }
+  }, [session]);
 
   const handleSurpriseMe = async () => {
     if (isRolling) return;
@@ -79,6 +91,18 @@ export default function Navbar() {
 
           {session ? (
             <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2 mr-2">
+                {/* Streak Badge */}
+                <div className="flex items-center gap-1 bg-black/40 border border-orange-500/30 px-2 py-1 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.2)]">
+                  <span className="text-orange-500 text-sm">🔥</span>
+                  <span className="text-orange-400 text-xs font-bold">{(session.user as any).currentStreak || 0}</span>
+                </div>
+                {/* XP Badge */}
+                <div className="flex items-center gap-1 bg-black/40 border border-amber-500/30 px-3 py-1 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+                  <span className="text-amber-500 text-xs font-bold">🪙</span>
+                  <span className="text-amber-400 text-xs font-bold">{(session.user as any).xp || 0} XP</span>
+                </div>
+              </div>
               <span className="text-sm font-medium text-zinc-300 hidden sm:block">{session.user?.name}</span>
               <button 
                 onClick={() => setIsSidebarOpen(true)} 
@@ -162,6 +186,45 @@ export default function Navbar() {
                 >
                   <UserIcon className="w-5 h-5 text-zinc-500 group-hover:text-primary-light" />
                   My Profile
+                </Link>
+              </div>
+
+              {/* Gamification Stats */}
+              <div className="px-4 py-3 mx-3 mb-2 bg-black/40 border border-zinc-800 rounded-xl flex items-center justify-between">
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">XP Balance</span>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="text-amber-500 text-sm">🪙</span>
+                    <span className="text-amber-400 font-bold">{(session.user as any).xp || 0}</span>
+                  </div>
+                </div>
+                <div className="w-px h-8 bg-zinc-800"></div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Daily Streak</span>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className="text-orange-500 text-sm">🔥</span>
+                    <span className="text-orange-400 font-bold">{(session.user as any).currentStreak || 0}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Refer and Earn Button */}
+              <div className="px-3 mb-2">
+                <Link
+                  href="/referral"
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 hover:from-indigo-500/20 hover:to-purple-500/20 border border-indigo-500/20 hover:border-indigo-500/40 transition-all rounded-lg font-medium group"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">🤝</span>
+                    <div className="flex flex-col items-start">
+                      <span className="text-indigo-300 font-semibold text-sm group-hover:text-indigo-200 transition-colors">Refer & Earn +50 XP</span>
+                      <span className="text-zinc-500 text-xs">View dashboard & link</span>
+                    </div>
+                  </div>
+                  <span className="text-indigo-400 font-mono bg-indigo-500/10 px-2 py-0.5 rounded text-xs group-hover:bg-indigo-500/20 transition-colors">
+                    {(session.user as any).referralCode || "CODE"}
+                  </span>
                 </Link>
               </div>
               

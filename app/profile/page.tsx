@@ -66,6 +66,30 @@ export default async function ProfilePage() {
                 <h2 className="text-xl font-bold text-white mb-1">{session.user.name}</h2>
                 <p className="text-xs text-zinc-400 font-mono mb-6">{session.user.email}</p>
                 
+                {/* Gamification Stats */}
+                <div className="w-full bg-black/40 border border-zinc-800 rounded-xl p-4 mb-6 flex flex-col gap-3 text-left">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-zinc-400">Total XP</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-amber-500 text-sm">🪙</span>
+                      <span className="font-bold text-amber-400">{(session.user as any).xp || 0}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-zinc-400">Daily Streak</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-orange-500 text-sm">🔥</span>
+                      <span className="font-bold text-orange-400">{(session.user as any).currentStreak || 0}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-sm font-medium text-zinc-400">Referral Code</span>
+                    <span className="font-mono font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded text-xs tracking-wider">
+                      {(session.user as any).referralCode || "NONE"}
+                    </span>
+                  </div>
+                </div>
+
                 <div className="w-full h-px bg-zinc-800 mb-6"></div>
   
                 <div className="w-full text-left">
