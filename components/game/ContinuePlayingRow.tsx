@@ -25,6 +25,7 @@ export default function ContinuePlayingRow({ games }: ContinuePlayingRowProps) {
                 src={game.thumbnailUrl} 
                 alt={game.title}
                 fill
+                priority={true}
                 sizes="(max-width: 640px) 96px, 128px"
                 className="object-cover group-hover:scale-110 transition-transform duration-300" 
               />

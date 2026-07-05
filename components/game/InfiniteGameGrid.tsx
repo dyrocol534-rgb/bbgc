@@ -122,6 +122,7 @@ export default function InfiniteGameGrid({ initialGames, initialPage = 1, sortTy
                 game={game} 
                 className="h-full w-full"
                 imageContainerClassName={imageContainerClass}
+                priority={index < 8}
               />
             </div>
           );

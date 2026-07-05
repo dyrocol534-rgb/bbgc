@@ -164,6 +164,9 @@ export default function GoogleTranslate() {
         body > .skiptranslate {
             display: none !important;
         }
+        img.goog-te-gadget-icon {
+            display: none !important;
+        }
       `}</style>
     </div>
   );

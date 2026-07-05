@@ -6,9 +6,10 @@ interface CategoryRowProps {
   title: string;
   categorySlug?: string;
   games: any[];
+  priority?: boolean;
 }
 
-export default function CategoryRow({ title, categorySlug, games }: CategoryRowProps) {
+export default function CategoryRow({ title, categorySlug, games, priority = false }: CategoryRowProps) {
   if (!games || games.length === 0) return null;
   
   return (
@@ -22,9 +23,9 @@ export default function CategoryRow({ title, categorySlug, games }: CategoryRowP
         )}
       </div>
       <div className="grid grid-rows-2 grid-flow-col gap-3 sm:gap-4 overflow-x-auto pb-2 snap-x auto-cols-[85px] sm:auto-cols-[105px] md:auto-cols-[125px] lg:auto-cols-[145px] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
-        {games.map(game => (
+        {games.map((game, index) => (
           <div key={game._id} className="snap-start h-full">
-            <GameCard game={game} />
+            <GameCard game={game} priority={priority && index < 6} />
           </div>
         ))}
       </div>

@@ -127,6 +127,7 @@ export default function Sidebar() {
           "md:hidden fixed top-1/2 -translate-y-1/2 z-50 bg-[#6c40ff] border-y border-r border-[#8b68ff] rounded-r-xl py-4 pl-1 pr-1.5 text-white shadow-[0_0_15px_rgba(108,64,255,0.5)] transition-all duration-300",
           isExpanded ? "left-60" : "left-0"
         )}
+        aria-label={isExpanded ? "Close sidebar" : "Open sidebar"}
       >
         {isExpanded ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>

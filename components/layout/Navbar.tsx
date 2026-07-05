@@ -94,6 +94,7 @@ export default function Navbar() {
               <button 
                 onClick={() => setIsSidebarOpen(true)} 
                 className="flex items-center gap-1.5 bg-zinc-800/40 hover:bg-zinc-700/60 border border-zinc-700/50 hover:border-zinc-500 pl-2.5 pr-1 py-1 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                aria-label="User Profile"
               >
                 <ChevronDown className="w-4 h-4 text-zinc-400" />
                 {session.user?.image ? (
@@ -111,6 +112,7 @@ export default function Navbar() {
             <button
               onClick={() => setIsSidebarOpen(true)}
               className="text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white w-10 h-10 sm:w-auto sm:h-auto sm:px-4 sm:py-2 rounded-full transition-colors flex items-center justify-center gap-2"
+              aria-label="Sign In"
             >
               <UserIcon className="w-5 h-5 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">Sign In</span>
@@ -159,6 +161,7 @@ export default function Navbar() {
           <button 
             onClick={() => setIsSidebarOpen(false)} 
             className="text-zinc-400 hover:text-white p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+            aria-label="Close sidebar"
           >
             <X className="w-5 h-5" />
           </button>

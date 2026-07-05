@@ -16,9 +16,10 @@ interface GameCardProps {
   };
   className?: string;
   imageContainerClassName?: string;
+  priority?: boolean;
 }
 
-export default function GameCard({ game, className, imageContainerClassName }: GameCardProps) {
+export default function GameCard({ game, className, imageContainerClassName, priority = false }: GameCardProps) {
   const [imgError, setImgError] = useState(false);
 
   return (
@@ -29,7 +30,7 @@ export default function GameCard({ game, className, imageContainerClassName }: G
             src={game.thumbnailUrl || ''} 
             alt={game.title}
             fill
-            loading="lazy"
+            priority={priority}
             sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, (max-width: 1024px) 16vw, 12vw"
             className="object-cover transform group-hover:scale-105 transition-transform duration-300"
             onError={() => setImgError(true)}
