@@ -1,7 +1,6 @@
 # Browserslist configuration to target modern browsers and avoid legacy polyfills
-> 0.5%
-last 2 versions
-Firefox ESR
-not dead
-not IE 11
-not op_mini all
+chrome >= 94
+firefox >= 93
+safari >= 15.4
+edge >= 94
+ios >= 15.4
