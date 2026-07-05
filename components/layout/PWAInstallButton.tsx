@@ -48,6 +48,18 @@ export default function PWAInstallButton({ variant = "icon", onInstall }: { vari
       setIsInstalled(true); 
       setDeferredPrompt(null); 
       if (onInstall) onInstall();
+      
+      try {
+        const ua = navigator.userAgent;
+        const deviceType = /Mobi|Android/i.test(ua) ? "Mobile" : /Tablet|iPad/i.test(ua) ? "Tablet" : "Desktop";
+        await fetch("/api/pwa-install", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ deviceType, userAgent: ua })
+        });
+      } catch (e) {
+        console.error("Failed to track install", e);
+      }
     }
   };
 

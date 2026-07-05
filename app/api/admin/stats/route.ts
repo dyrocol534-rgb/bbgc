@@ -8,6 +8,7 @@ import Subscriber from "@/models/Subscriber";
 import GuestSession from "@/models/GuestSession";
 import PlayEvent from "@/models/PlayEvent";
 import Feedback from "@/models/Feedback";
+import AppInstall from "@/models/AppInstall";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +43,7 @@ export async function GET(req: NextRequest) {
       totalGuests,
       totalGames,
       totalSubscribers,
+      totalPwaInstalls,
       games,
       guestSessionsWithPlays,
       recentFeedback
@@ -50,6 +52,7 @@ export async function GET(req: NextRequest) {
       GuestSession.countDocuments(),
       Game.countDocuments({ status: "published" }),
       Subscriber.countDocuments(),
+      AppInstall.countDocuments(),
       Game.find({}, "playCount title slug likes dislikes").lean(),
       GuestSession.find({ recentlyPlayed: { $exists: true, $not: { $size: 0 } } }, "recentlyPlayed").lean(),
       Feedback.find().sort({ createdAt: -1 }).limit(10).lean() // Last 10 feedbacks
@@ -71,36 +74,39 @@ export async function GET(req: NextRequest) {
       .slice(0, 5);
 
     // 24h Stats
-    const [newUsers24h, newGuests24h, activeUsers24h, activeGuests24h, newSubs24h, newGames24h, newPlays24h] = await Promise.all([
+    const [newUsers24h, newGuests24h, activeUsers24h, activeGuests24h, newSubs24h, newGames24h, newPlays24h, pwaInstalls24h] = await Promise.all([
       User.countDocuments({ createdAt: { $gte: ago24h } }),
       GuestSession.countDocuments({ createdAt: { $gte: ago24h } }),
       User.countDocuments({ lastActiveAt: { $gte: ago24h } }),
       GuestSession.countDocuments({ lastActiveAt: { $gte: ago24h } }),
       Subscriber.countDocuments({ createdAt: { $gte: ago24h } }),
       Game.countDocuments({ status: "published", createdAt: { $gte: ago24h } }),
-      PlayEvent.countDocuments({ createdAt: { $gte: ago24h } })
+      PlayEvent.countDocuments({ createdAt: { $gte: ago24h } }),
+      AppInstall.countDocuments({ installedAt: { $gte: ago24h } })
     ]);
 
     // 7d Stats
-    const [newUsers7d, newGuests7d, activeUsers7d, activeGuests7d, newSubs7d, newGames7d, newPlays7d] = await Promise.all([
+    const [newUsers7d, newGuests7d, activeUsers7d, activeGuests7d, newSubs7d, newGames7d, newPlays7d, pwaInstalls7d] = await Promise.all([
       User.countDocuments({ createdAt: { $gte: ago7d } }),
       GuestSession.countDocuments({ createdAt: { $gte: ago7d } }),
       User.countDocuments({ lastActiveAt: { $gte: ago7d } }),
       GuestSession.countDocuments({ lastActiveAt: { $gte: ago7d } }),
       Subscriber.countDocuments({ createdAt: { $gte: ago7d } }),
       Game.countDocuments({ status: "published", createdAt: { $gte: ago7d } }),
-      PlayEvent.countDocuments({ createdAt: { $gte: ago7d } })
+      PlayEvent.countDocuments({ createdAt: { $gte: ago7d } }),
+      AppInstall.countDocuments({ installedAt: { $gte: ago7d } })
     ]);
 
     // 30d Stats
-    const [newUsers30d, newGuests30d, activeUsers30d, activeGuests30d, newSubs30d, newGames30d, newPlays30d] = await Promise.all([
+    const [newUsers30d, newGuests30d, activeUsers30d, activeGuests30d, newSubs30d, newGames30d, newPlays30d, pwaInstalls30d] = await Promise.all([
       User.countDocuments({ createdAt: { $gte: ago30d } }),
       GuestSession.countDocuments({ createdAt: { $gte: ago30d } }),
       User.countDocuments({ lastActiveAt: { $gte: ago30d } }),
       GuestSession.countDocuments({ lastActiveAt: { $gte: ago30d } }),
       Subscriber.countDocuments({ createdAt: { $gte: ago30d } }),
       Game.countDocuments({ status: "published", createdAt: { $gte: ago30d } }),
-      PlayEvent.countDocuments({ createdAt: { $gte: ago30d } })
+      PlayEvent.countDocuments({ createdAt: { $gte: ago30d } }),
+      AppInstall.countDocuments({ installedAt: { $gte: ago30d } })
     ]);
 
     // Engagement & Retention (7d based)
@@ -211,6 +217,7 @@ export async function GET(req: NextRequest) {
         newSubscribers: newSubs24h,
         totalGames: newGames24h,
         totalPlays: newPlays24h,
+        pwaInstalls: pwaInstalls24h,
         topGames: topGames24h,
         topGuestGames: topGuestGames24h,
         deviceSplit: devices24h,
@@ -224,6 +231,7 @@ export async function GET(req: NextRequest) {
         newSubscribers: newSubs7d,
         totalGames: newGames7d,
         totalPlays: newPlays7d,
+        pwaInstalls: pwaInstalls7d,
         topGames: topGames7d,
         topGuestGames: topGuestGames7d,
         deviceSplit: devices7d,
@@ -237,6 +245,7 @@ export async function GET(req: NextRequest) {
         newSubscribers: newSubs30d,
         totalGames: newGames30d,
         totalPlays: newPlays30d,
+        pwaInstalls: pwaInstalls30d,
         topGames: topGames30d,
         topGuestGames: topGuestGames30d,
         deviceSplit: devices30d,
@@ -248,6 +257,7 @@ export async function GET(req: NextRequest) {
         totalGames,
         totalPlays,
         totalSubscribers,
+        pwaInstalls: totalPwaInstalls,
         topGames: topGamesLifetime,
         topGuestGames: topGuestGamesLifetime,
         deviceSplit: devicesLifetime,

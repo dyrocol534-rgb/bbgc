@@ -16,7 +16,7 @@ const PRIMARY_LINKS = [
   { name: "Home", href: "/", icon: Home },
   { name: "New", href: "/category/new", icon: Rocket },
   { name: "Popular Games", href: "/category/popular", icon: TrendingUp },
-  { name: "Global Leaderboard", href: "/leaderboard", icon: Trophy },
+  // { name: "Global Leaderboard", href: "/leaderboard", icon: Trophy },
   { name: "Featured", href: "/category/featured", icon: Crown },
 ];
 

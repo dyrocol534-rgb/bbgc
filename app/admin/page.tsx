@@ -20,6 +20,7 @@ interface TimeframeStats {
   activeUsers: number;
   activeGuests: number;
   newSubscribers: number;
+  pwaInstalls: number;
   totalGames: number;
   totalPlays: number;
   topGames: { slug: string; title: string; playCount: number }[];
@@ -210,6 +211,13 @@ export default function AdminAnalytics() {
           value={currentStats.newSubscribers.toLocaleString()}
           sub="Newsletter signups"
           color="bg-purple-500/20 text-purple-400"
+        />
+        <StatCard
+          icon={Smartphone}
+          label={isLifetime ? "Total PWA Installs" : `New Installs (${timeframe})`}
+          value={currentStats.pwaInstalls?.toLocaleString() || "0"}
+          sub="Added to homescreen"
+          color="bg-indigo-500/20 text-indigo-400"
         />
         <StatCard
           icon={Gamepad2}
