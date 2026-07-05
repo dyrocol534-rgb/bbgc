@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { 
   Home, RefreshCw, Star, Users, Trophy, Crown,
   Zap, Compass, Gamepad2, Grid, Layers, MousePointer2, Car, CircleDot, Puzzle, Crosshair,
-  Mail, ChevronRight, ChevronLeft, Menu, X, Dices, Loader2, Rocket, TrendingUp
+  Mail, ChevronRight, ChevronLeft, Menu, X, Dices, Loader2, Rocket, TrendingUp, Flame, Handshake
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/Skeleton";
 
@@ -206,31 +206,69 @@ export default function Sidebar() {
           })}
         </nav>
 
-        {/* Refer & Earn Button in Sidebar */}
-        {session?.user && (
-          <div className="px-3 mb-6">
-            <Link
-              href="/referral"
-              onClick={() => setIsExpanded(false)}
-              className={clsx(
-                "w-full flex items-center justify-between px-3 py-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 hover:from-indigo-500/20 hover:to-purple-500/20 border border-indigo-500/20 hover:border-indigo-500/40 transition-all rounded-xl font-medium group overflow-hidden",
-                !isExpanded && "justify-center"
-              )}
-              title={!isExpanded ? "Refer & Earn +50 XP" : undefined}
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-lg shrink-0">🤝</span>
-                <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                  <span className="text-indigo-300 font-bold text-sm group-hover:text-indigo-200 transition-colors">Refer & Earn</span>
-                  <span className="text-zinc-400 text-[10px] uppercase tracking-wider font-bold">+50 XP</span>
-                </div>
-              </div>
-            </Link>
+        {/* Rewards & Referral Buttons in Sidebar */}
+        <div className="px-3 mb-4 flex flex-col gap-1.5">
+          <div className={clsx("flex items-center gap-2 mb-1 px-1 text-zinc-500 transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Rewards</span>
           </div>
-        )}
+          {/* Refer & Earn */}
+          <Link
+            href="/referral"
+            onClick={(e) => {
+              if (!session?.user) {
+                e.preventDefault();
+                router.push("/login");
+              }
+              setIsExpanded(false);
+            }}
+            className={clsx(
+              "w-full flex items-center justify-between px-3 py-2.5 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 hover:from-indigo-500/20 hover:to-purple-500/20 border border-indigo-500/20 hover:border-indigo-500/40 transition-all rounded-xl font-medium group overflow-hidden",
+              !isExpanded && "justify-center"
+            )}
+            title={!isExpanded ? "Refer & Earn +50 XP" : undefined}
+          >
+            <div className="flex items-center gap-3">
+              <Handshake className="w-5 h-5 text-indigo-400 shrink-0" />
+              <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+                <span className="text-indigo-300 font-bold text-sm group-hover:text-indigo-200 transition-colors">Refer & Earn</span>
+                <span className="text-zinc-400 text-[10px] uppercase tracking-wider font-bold">+50 XP</span>
+              </div>
+            </div>
+          </Link>
 
-        <div className="px-5 mb-2">
-          <div className="h-px bg-zinc-800 w-full" />
+          {/* Daily Streak */}
+          <Link
+            href="/rewards"
+            onClick={(e) => {
+              if (!session?.user) {
+                e.preventDefault();
+                router.push("/login");
+              }
+              setIsExpanded(false);
+            }}
+            className={clsx(
+              "w-full flex items-center justify-between px-3 py-2.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/20 hover:border-orange-500/40 transition-all rounded-xl font-medium group overflow-hidden",
+              !isExpanded && "justify-center"
+            )}
+            title={!isExpanded ? "Daily Streak & XP" : undefined}
+          >
+            <div className="flex items-center gap-3">
+              <Flame className="w-5 h-5 text-orange-500 shrink-0" />
+              <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+                <span className="text-orange-300 font-bold text-sm group-hover:text-orange-200 transition-colors">Daily Streak</span>
+                <span className="text-zinc-400 text-[10px] uppercase tracking-wider font-bold">
+                  {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
+                </span>
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        <div className="px-5 mb-3">
+          <div className="h-px bg-zinc-800 w-full mb-3" />
+          <div className={clsx("flex items-center gap-2 px-1 text-zinc-500 transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+            <span className="text-[10px] font-bold uppercase tracking-widest">Tags</span>
+          </div>
         </div>
 
         <nav className="flex flex-col gap-1 px-2">
@@ -270,17 +308,8 @@ export default function Sidebar() {
       </div>
 
       {/* Footer Area */}
-      <div className={clsx("border-t border-zinc-800 p-4 overflow-hidden transition-all duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-        <div className="flex items-center gap-2 mb-4 text-text-muted">
-          <span className="text-xs font-semibold uppercase tracking-wider">Tags</span>
-        </div>
-        
-        <button className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 px-4 rounded-xl font-medium transition-colors mb-6 text-sm">
-          <Mail className="w-4 h-4" />
-          Contact us
-        </button>
-
-        <div className="flex flex-wrap gap-3 mb-6">
+      <div className={clsx("border-t border-zinc-800 p-4 overflow-hidden transition-all duration-300 flex flex-col items-center justify-center gap-4", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+        <div className="flex flex-wrap gap-3">
           <a 
             href="https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y" 
             target="_blank" 

@@ -157,8 +157,6 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
-      </head>
-      <head>
         <link rel="preconnect" href="https://img.gamedistribution.com" />
         <link rel="preconnect" href="https://images.unsplash.com" />
       </head>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2 } from "lucide-react";
+import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronDown, ChevronRight } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -91,29 +91,17 @@ export default function Navbar() {
 
           {session ? (
             <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 mr-2">
-                {/* Streak Badge */}
-                <div className="flex items-center gap-1 bg-black/40 border border-orange-500/30 px-2 py-1 rounded-full shadow-[0_0_10px_rgba(249,115,22,0.2)]">
-                  <span className="text-orange-500 text-sm">🔥</span>
-                  <span className="text-orange-400 text-xs font-bold">{(session.user as any).currentStreak || 0}</span>
-                </div>
-                {/* XP Badge */}
-                <div className="flex items-center gap-1 bg-black/40 border border-amber-500/30 px-3 py-1 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)]">
-                  <span className="text-amber-500 text-xs font-bold">🪙</span>
-                  <span className="text-amber-400 text-xs font-bold">{(session.user as any).xp || 0} XP</span>
-                </div>
-              </div>
-              <span className="text-sm font-medium text-zinc-300 hidden sm:block">{session.user?.name}</span>
               <button 
                 onClick={() => setIsSidebarOpen(true)} 
-                className="focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-full overflow-hidden transition-transform hover:scale-105"
+                className="flex items-center gap-1.5 bg-zinc-800/40 hover:bg-zinc-700/60 border border-zinc-700/50 hover:border-zinc-500 pl-2.5 pr-1 py-1 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
+                <ChevronDown className="w-4 h-4 text-zinc-400" />
                 {session.user?.image ? (
-                  <div className="relative w-8 h-8 rounded-full border border-zinc-700 overflow-hidden">
+                  <div className="relative w-8 h-8 rounded-full border border-zinc-700 overflow-hidden shrink-0">
                     <Image src={session.user.image} alt="User" fill sizes="32px" className="object-cover" />
                   </div>
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center border border-border-strong">
+                  <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center border border-border-strong shrink-0">
                     <UserIcon className="w-4 h-4 text-text-muted" />
                   </div>
                 )}
@@ -176,97 +164,112 @@ export default function Navbar() {
           </button>
         </div>
         <div className="flex-1 overflow-y-auto py-4">
-          {session ? (
-            <>
-              <div className="px-3 mb-2">
-                <Link 
-                  href="/profile" 
-                  onClick={() => setIsSidebarOpen(false)} 
-                  className="flex items-center gap-3 px-4 py-3 text-zinc-300 hover:bg-primary/10 hover:text-primary-light transition-colors rounded-lg font-medium group"
-                >
-                  <UserIcon className="w-5 h-5 text-zinc-500 group-hover:text-primary-light" />
-                  My Profile
-                </Link>
-              </div>
+          {session && (
+            <div className="px-3 mb-2">
+              <Link 
+                href="/profile" 
+                onClick={() => setIsSidebarOpen(false)} 
+                className="flex items-center gap-3 px-4 py-3 text-zinc-300 hover:bg-primary/10 hover:text-primary-light transition-colors rounded-lg font-medium group"
+              >
+                <UserIcon className="w-5 h-5 text-zinc-500 group-hover:text-primary-light" />
+                My Profile
+              </Link>
+            </div>
+          )}
 
-              {/* Gamification Stats */}
-              <div className="px-4 py-3 mx-3 mb-2 bg-black/40 border border-zinc-800 rounded-xl flex items-center justify-between">
-                <div className="flex flex-col">
-                  <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">XP Balance</span>
-                  <div className="flex items-center gap-1.5 mt-0.5">
+          {/* Gamification Stats */}
+          <div className="px-3 mb-2">
+            <Link 
+              href="/rewards" 
+              onClick={(e) => {
+                if (!session) {
+                  e.preventDefault();
+                  router.push("/login");
+                }
+                setIsSidebarOpen(false);
+              }}
+            >
+              <div className="flex gap-2">
+                <div className="flex-1 bg-black/40 border border-zinc-800 rounded-lg p-3 hover:border-amber-500/50 transition-colors group relative overflow-hidden">
+                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">XP Balance</p>
+                  <div className="flex items-center justify-between">
                     <span className="text-amber-500 text-sm">🪙</span>
-                    <span className="text-amber-400 font-bold">{(session.user as any).xp || 0}</span>
+                    <ChevronRight className="w-4 h-4 text-amber-500/50 group-hover:text-amber-400 transition-colors" />
                   </div>
                 </div>
-                <div className="w-px h-8 bg-zinc-800"></div>
-                <div className="flex flex-col">
-                  <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Daily Streak</span>
-                  <div className="flex items-center gap-1.5 mt-0.5">
+                <div className="flex-1 bg-black/40 border border-zinc-800 rounded-lg p-3 hover:border-orange-500/50 transition-colors group relative overflow-hidden">
+                  <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Daily Streak</p>
+                  <div className="flex items-center justify-between">
                     <span className="text-orange-500 text-sm">🔥</span>
-                    <span className="text-orange-400 font-bold">{(session.user as any).currentStreak || 0}</span>
+                    <ChevronRight className="w-4 h-4 text-orange-500/50 group-hover:text-orange-400 transition-colors" />
                   </div>
                 </div>
               </div>
+            </Link>
+          </div>
 
-              {/* Refer and Earn Button */}
-              <div className="px-3 mb-2">
-                <Link
-                  href="/referral"
-                  onClick={() => setIsSidebarOpen(false)}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 hover:from-indigo-500/20 hover:to-purple-500/20 border border-indigo-500/20 hover:border-indigo-500/40 transition-all rounded-lg font-medium group"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-lg">🤝</span>
-                    <div className="flex flex-col items-start">
-                      <span className="text-indigo-300 font-semibold text-sm group-hover:text-indigo-200 transition-colors">Refer & Earn +50 XP</span>
-                      <span className="text-zinc-500 text-xs">View dashboard & link</span>
-                    </div>
-                  </div>
-                  <span className="text-indigo-400 font-mono bg-indigo-500/10 px-2 py-0.5 rounded text-xs group-hover:bg-indigo-500/20 transition-colors">
-                    {(session.user as any).referralCode || "CODE"}
-                  </span>
-                </Link>
-              </div>
-              
-              {session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") && (
-                <div className="px-3">
-                  <Link 
-                    href="/admin" 
-                    onClick={() => setIsSidebarOpen(false)} 
-                    className="flex items-center gap-3 px-4 py-3 text-zinc-300 hover:bg-primary/10 hover:text-primary-light transition-colors rounded-lg font-medium group"
-                  >
-                    <UploadCloud className="w-5 h-5 text-indigo-500 group-hover:text-primary-light" />
-                    Admin Dashboard
-                  </Link>
+          {/* Refer and Earn Button */}
+          <div className="px-3 mb-2">
+            <Link
+              href="/referral"
+              onClick={(e) => {
+                if (!session) {
+                  e.preventDefault();
+                  router.push("/login");
+                }
+                setIsSidebarOpen(false);
+              }}
+              className="w-full flex items-center justify-between px-4 py-3 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 hover:from-indigo-500/20 hover:to-purple-500/20 border border-indigo-500/20 hover:border-indigo-500/40 transition-all rounded-lg font-medium group"
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-lg">🤝</span>
+                <div className="flex flex-col items-start">
+                  <span className="text-indigo-300 font-semibold text-sm group-hover:text-indigo-200 transition-colors">Refer & Earn +50 XP</span>
+                  <span className="text-zinc-500 text-xs">View dashboard & link</span>
                 </div>
-              )}
+              </div>
+              <ChevronRight className="w-4 h-4 text-indigo-500/50 group-hover:text-indigo-400 transition-colors" />
+            </Link>
+          </div>
+          
+          <div className="px-3 mt-1">
+            <PWAInstallButton variant="menuItem" onInstall={() => setIsSidebarOpen(false)} />
+          </div>
 
-              <div className="px-3 mt-1">
-                <PWAInstallButton variant="menuItem" onInstall={() => setIsSidebarOpen(false)} />
-              </div>
-            </>
-          ) : (
-            <div className="px-5 py-4 text-center">
-              <p className="text-zinc-400 text-sm mb-4">Sign in to save your favorite games and track your recent plays!</p>
-              <div className="-mx-2 text-left">
-                <PWAInstallButton variant="menuItem" onInstall={() => setIsSidebarOpen(false)} />
-              </div>
+          {!session && (
+            <div className="px-5 py-4 mt-2 text-center border-t border-zinc-800/50">
+              <p className="text-zinc-400 text-sm">Sign in to save your favorite games and track your recent plays!</p>
             </div>
           )}
         </div>
 
         <div className="p-4 border-t border-zinc-800 bg-surface">
           {session ? (
-            <button
-              onClick={() => signOut()}
-              className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-zinc-800 hover:bg-red-500/10 text-zinc-300 hover:text-red-400 transition-colors rounded-lg font-medium border border-zinc-700 hover:border-red-500/20"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
-            </button>
+            <div className="flex flex-col gap-2">
+              {session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") && (
+                <Link 
+                  href="/admin" 
+                  onClick={() => setIsSidebarOpen(false)} 
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white transition-colors rounded-lg font-medium border border-indigo-500/20"
+                >
+                  <UploadCloud className="w-4 h-4" />
+                  <span>Admin Dashboard</span>
+                </Link>
+              )}
+              <button
+                onClick={() => signOut()}
+                className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white transition-colors rounded-lg font-medium border border-red-500/20"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Sign Out</span>
+              </button>
+            </div>
           ) : (
             <button
-              onClick={() => signIn("google")}
+              onClick={() => {
+                setIsSidebarOpen(false);
+                router.push("/login");
+              }}
               className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white transition-colors rounded-lg font-medium"
             >
               <UserIcon className="w-4 h-4" />

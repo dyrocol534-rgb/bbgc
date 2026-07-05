@@ -12,7 +12,7 @@ export default function ReferralClient({ referralCode }: ReferralClientProps) {
   
   // Ensure we have a valid origin for the link, fallback to empty string if SSR
   const origin = typeof window !== "undefined" ? window.location.origin : "";
-  const referralLink = `${origin}/?ref=${referralCode}`;
+  const referralLink = `${origin}/login?ref=${referralCode}`;
 
   const handleCopy = async () => {
     try {
@@ -27,43 +27,39 @@ export default function ReferralClient({ referralCode }: ReferralClientProps) {
   const shareText = `Play thousands of free games instantly on Bluebuff! Use my invite code ${referralCode} to get started and earn rewards!`;
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full">
       {/* Code Display Card */}
-      <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-indigo-500/30 rounded-3xl p-8 mb-8 text-center relative overflow-hidden shadow-[0_0_40px_rgba(99,102,241,0.15)]">
+      <div className="bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-indigo-500/30 rounded-2xl p-5 mb-8 relative overflow-hidden shadow-[0_0_40px_rgba(99,102,241,0.15)] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         
-        <p className="text-indigo-200 font-medium mb-3 relative z-10">Your Unique Referral Link</p>
-        
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 relative z-10 mb-6">
-          <div className="bg-black/50 border border-zinc-700 rounded-xl px-6 py-4 w-full sm:w-auto font-mono text-xl md:text-2xl text-white font-black tracking-wider break-all flex-1">
-            {referralLink}
+        <div className="flex-1 w-full relative z-10">
+          <p className="text-indigo-200 font-medium mb-2 text-xs uppercase tracking-wider">Your Unique Referral Link</p>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <div className="bg-black/50 border border-zinc-700 rounded-xl px-4 py-2.5 w-full font-mono text-sm text-zinc-300 font-medium truncate shadow-inner flex-1 text-left">
+              {referralLink}
+            </div>
+            <button 
+              onClick={handleCopy}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-indigo-500/25 whitespace-nowrap text-sm"
+            >
+              {copied ? (
+                <><Check className="w-4 h-4" /> Copied!</>
+              ) : (
+                <><Copy className="w-4 h-4" /> Copy Link</>
+              )}
+            </button>
           </div>
-          <button 
-            onClick={handleCopy}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-indigo-500/25 whitespace-nowrap"
-          >
-            {copied ? (
-              <>
-                <Check className="w-5 h-5" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="w-5 h-5" />
-                Copy Link
-              </>
-            )}
-          </button>
         </div>
 
-        <div className="flex items-center justify-center gap-4 relative z-10">
-          <span className="text-sm text-zinc-400">Share via:</span>
+        {/* Share Buttons aligned to the right on desktop */}
+        <div className="flex items-center gap-3 w-full md:w-auto relative z-10 pt-5 md:pt-0 border-t border-indigo-500/20 md:border-t-0 md:border-l md:border-indigo-500/30 md:pl-6 justify-center md:justify-start">
+          <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider hidden md:block mr-1">Share</span>
           
           <a 
             href={`https://wa.me/?text=${encodeURIComponent(shareText + " " + referralLink)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-3 bg-green-600/20 text-green-500 hover:bg-green-600 hover:text-white rounded-full transition-colors border border-green-600/30 hover:border-green-600"
+            className="p-2.5 bg-green-600/20 text-green-500 hover:bg-green-600 hover:text-white rounded-xl transition-colors border border-green-600/30 hover:border-green-600 flex-1 md:flex-none flex justify-center"
             title="Share on WhatsApp"
           >
             <MessageCircle className="w-5 h-5" />
@@ -73,12 +69,10 @@ export default function ReferralClient({ referralCode }: ReferralClientProps) {
             href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(referralLink)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-3 bg-sky-500/20 text-sky-400 hover:bg-sky-500 hover:text-white rounded-full transition-colors border border-sky-500/30 hover:border-sky-500"
+            className="p-2.5 bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white rounded-xl transition-colors border border-blue-500/30 hover:border-blue-500 flex-1 md:flex-none flex justify-center"
             title="Share on Twitter"
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-              <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-            </svg>
+            <Share2 className="w-5 h-5" />
           </a>
         </div>
       </div>

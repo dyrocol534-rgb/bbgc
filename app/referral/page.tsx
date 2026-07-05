@@ -37,13 +37,13 @@ export default async function ReferralPage() {
   const totalXpEarned = rewardsUnlocked * XP_CONFIG.REFERRAL_REWARD;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl min-h-screen">
+    <div className="container mx-auto px-4 py-8 space-y-12 min-h-screen">
       {/* Hero Section */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-amber-400 mb-4 tracking-tight drop-shadow-[0_0_15px_rgba(167,139,250,0.3)]">
-          Invite Friends. <br className="sm:hidden" /> Earn Massive XP.
+      <div>
+        <h1 className="text-2xl font-bold text-white mb-2">
+          Invite Friends. Earn Massive XP.
         </h1>
-        <p className="text-lg text-zinc-400 max-w-2xl mx-auto mb-8">
+        <p className="text-sm text-zinc-400">
           Share your unique code with friends. When they sign up and play their first {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games, you <span className="font-bold text-amber-400">BOTH</span> earn a massive <span className="font-bold text-amber-400">+{XP_CONFIG.REFERRAL_REWARD} XP</span> bonus!
         </p>
       </div>
@@ -54,48 +54,48 @@ export default async function ReferralPage() {
       {/* Stats Dashboard */}
       <h2 className="text-2xl font-bold text-white mb-6">Your Referral Dashboard</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
         
         {/* Total Invited */}
-        <div className="bg-surface border border-zinc-800 rounded-2xl p-6 relative overflow-hidden group hover:border-indigo-500/50 transition-colors">
+        <div className="bg-surface border border-zinc-800 rounded-2xl p-5 relative overflow-hidden group hover:border-indigo-500/50 transition-colors">
           <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 transition-transform group-hover:scale-150" />
           <div className="relative z-10 flex items-start justify-between">
             <div>
-              <p className="text-sm font-medium text-zinc-400 mb-1">Total Friends Invited</p>
-              <h3 className="text-3xl font-black text-white">{totalInvited}</h3>
+              <p className="text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Total Invited</p>
+              <h3 className="text-2xl font-black text-white">{totalInvited}</h3>
             </div>
-            <div className="p-3 bg-indigo-500/20 rounded-xl border border-indigo-500/30 text-indigo-400">
-              <Users className="w-6 h-6" />
+            <div className="p-2.5 bg-indigo-500/20 rounded-xl border border-indigo-500/30 text-indigo-400">
+              <Users className="w-5 h-5" />
             </div>
           </div>
         </div>
 
         {/* Rewards Unlocked */}
-        <div className="bg-surface border border-zinc-800 rounded-2xl p-6 relative overflow-hidden group hover:border-amber-500/50 transition-colors">
+        <div className="bg-surface border border-zinc-800 rounded-2xl p-5 relative overflow-hidden group hover:border-amber-500/50 transition-colors">
           <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 transition-transform group-hover:scale-150" />
           <div className="relative z-10 flex items-start justify-between">
             <div>
-              <p className="text-sm font-medium text-zinc-400 mb-1">Rewards Unlocked</p>
-              <h3 className="text-3xl font-black text-white">{rewardsUnlocked}</h3>
-              <p className="text-xs font-bold text-amber-500 mt-2">+{totalXpEarned} XP Earned</p>
+              <p className="text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Rewards Unlocked</p>
+              <h3 className="text-2xl font-black text-white">{rewardsUnlocked}</h3>
+              <p className="text-[11px] font-bold text-amber-500 mt-1.5">+{totalXpEarned} XP Earned</p>
             </div>
-            <div className="p-3 bg-amber-500/20 rounded-xl border border-amber-500/30 text-amber-400">
-              <Coins className="w-6 h-6" />
+            <div className="p-2.5 bg-amber-500/20 rounded-xl border border-amber-500/30 text-amber-400">
+              <Coins className="w-5 h-5" />
             </div>
           </div>
         </div>
 
         {/* Pending Invites */}
-        <div className="bg-surface border border-zinc-800 rounded-2xl p-6 relative overflow-hidden group hover:border-orange-500/50 transition-colors">
+        <div className="bg-surface border border-zinc-800 rounded-2xl p-5 relative overflow-hidden group hover:border-orange-500/50 transition-colors">
           <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 transition-transform group-hover:scale-150" />
           <div className="relative z-10 flex items-start justify-between">
             <div>
-              <p className="text-sm font-medium text-zinc-400 mb-1">Pending Unlocks</p>
-              <h3 className="text-3xl font-black text-white">{pendingInvites}</h3>
-              <p className="text-xs text-zinc-500 mt-2">Friends must play 10 games</p>
+              <p className="text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Pending Unlocks</p>
+              <h3 className="text-2xl font-black text-white">{pendingInvites}</h3>
+              <p className="text-[11px] text-zinc-500 mt-1.5">Friends must play 10 games</p>
             </div>
-            <div className="p-3 bg-orange-500/20 rounded-xl border border-orange-500/30 text-orange-400">
-              <Hourglass className="w-6 h-6" />
+            <div className="p-2.5 bg-orange-500/20 rounded-xl border border-orange-500/30 text-orange-400">
+              <Hourglass className="w-5 h-5" />
             </div>
           </div>
         </div>

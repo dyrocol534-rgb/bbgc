@@ -10,6 +10,9 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  pages: {
+    signIn: '/login',
+  },
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
@@ -78,6 +81,7 @@ export const authOptions: NextAuthOptions = {
             (session.user as any).xp = dbUser.xp || 0;
             (session.user as any).currentStreak = dbUser.currentStreak || 0;
             (session.user as any).referralCode = referralCode;
+            (session.user as any).phone = dbUser.phone || "";
           }
         } catch (error) {
           console.error("Error fetching user data for session", error);
