@@ -107,7 +107,7 @@ export default function InfiniteGameGrid({ initialGames, initialPage = 1, sortTy
         </h2>
       </div>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 auto-rows-[minmax(100px,auto)] md:auto-rows-[minmax(120px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
+      <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 auto-rows-[minmax(80px,auto)] md:auto-rows-[minmax(100px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
         {games.map((game, index) => {
           const spanClass = getBentoSpanClass(index);
           const imageContainerClass = getImageContainerClass(spanClass);
