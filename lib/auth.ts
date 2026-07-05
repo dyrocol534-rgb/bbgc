@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
             const prefix = (email || "US").substring(0, 2).toUpperCase().replace(/[^A-Z0-9]/g, "X");
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let randomPart = '';
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 8; i++) {
               randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             return `${prefix}${randomPart}XBUFF`;
@@ -66,7 +66,7 @@ export const authOptions: NextAuthOptions = {
               const prefix = (dbUser.email || "US").substring(0, 2).toUpperCase().replace(/[^A-Z0-9]/g, "X");
               const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
               let randomPart = '';
-              for (let i = 0; i < 5; i++) {
+              for (let i = 0; i < 8; i++) {
                 randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
               }
               referralCode = `${prefix}${randomPart}XBUFF`;
