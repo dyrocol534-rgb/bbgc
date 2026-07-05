@@ -22,7 +22,7 @@ export default function WelcomeModal() {
     // In a real app, you might want a 'profileCompleted' boolean on the user model.
     // For this implementation, we will show it if they have no phone number and we haven't shown it yet this session.
     
-    if (session?.user && !session.user.phone) {
+    if (session?.user && !(session.user as any).phone) {
       const hasSeenModal = sessionStorage.getItem("hasSeenWelcomeModal");
       if (!hasSeenModal) {
         setIsOpen(true);

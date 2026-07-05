@@ -5,7 +5,7 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { XP_CONFIG } from "@/lib/xp";
 import ReferralClient from "./ReferralClient";
-import { Users, Coins, Hourglass, HelpCircle } from "lucide-react";
+import { Users, Coins, Hourglass, HelpCircle, Check } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
