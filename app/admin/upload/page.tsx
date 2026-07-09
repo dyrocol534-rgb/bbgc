@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import JSZip from "jszip";
 import axios from "axios";
 import { UploadCloud, Loader2, CheckCircle } from "lucide-react";
@@ -15,6 +15,11 @@ export default function UploadGamePage() {
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [randomSuffix, setRandomSuffix] = useState("");
+  
+  useEffect(() => {
+    setRandomSuffix(Math.random().toString(36).substring(2, 7));
+  }, []);
   
   const [formData, setFormData] = useState({
     title: "",
@@ -65,6 +70,14 @@ export default function UploadGamePage() {
         setTimeout(() => {
           setMessage("");
         }, 3000);
+        
+        // Reset form and suffix
+        setFormData({
+          title: "", slug: "", description: "", categories: ["action"], 
+          buildType: "html5", developer: "Bluebuff Games", 
+          platforms: "Browser (desktop, mobile, tablet)", thumbnailUrl: "", gameUrl: ""
+        });
+        setRandomSuffix(Math.random().toString(36).substring(2, 7));
       } catch (error: any) {
         console.error(error);
         setMessage(`Error: ${error.message}`);
@@ -158,6 +171,14 @@ export default function UploadGamePage() {
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       
+      // Reset form and suffix
+      setFormData({
+        title: "", slug: "", description: "", categories: ["action"], 
+        buildType: "html5", developer: "Bluebuff Games", 
+        platforms: "Browser (desktop, mobile, tablet)", thumbnailUrl: "", gameUrl: ""
+      });
+      setRandomSuffix(Math.random().toString(36).substring(2, 7));
+      
     } catch (error: any) {
       console.error(error);
       setMessage(`Error: ${error.message}`);
@@ -185,7 +206,7 @@ export default function UploadGamePage() {
               type="text" 
               required
               value={formData.title}
-              onChange={e => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-')})}
+              onChange={e => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-') + (e.target.value ? '-' + randomSuffix : '')})}
               className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
             />
           </div>

@@ -58,25 +58,22 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const description = `Play the best free online ${catTitle.toLowerCase()} games instantly – no download, no registration required. Browse our full collection of ${catTitle.toLowerCase()} games on ${siteName}.`;
 
   return {
-    title,
+    title: { absolute: title },
     description,
     keywords: [
-      `free ${catTitle.toLowerCase()} games`,
-      `free ${catTitle.toLowerCase()} games online`,
-      `play ${catTitle.toLowerCase()} games free`,
-      `${catTitle.toLowerCase()} games no download`,
-      `best free ${catTitle.toLowerCase()} games`,
-      "browser games",
-      "free online games",
-      "no download games",
+      `${catTitle.toLowerCase()} games unblocked`,
+      `play ${catTitle.toLowerCase()} games free online`,
+      `unblocked ${catTitle.toLowerCase()} games at school`,
+      `${catTitle.toLowerCase()} games without downloading`,
+      `${catTitle.toLowerCase()} browser games unblocked`,
     ],
     alternates: {
-      canonical: `${siteUrl}/category/${category}`,
+      canonical: `/category/${category}`,
     },
     openGraph: {
       title,
       description,
-      url: `${siteUrl}/category/${category}`,
+      url: `/category/${category}`,
       siteName,
       type: "website",
     },

@@ -52,7 +52,8 @@ export default function ImportGamesPage() {
     try {
       setImportingUrls(prev => new Set(prev).add(game.url));
       
-      const slug = game.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const randomSuffix = Math.random().toString(36).substring(2, 7);
+      const slug = game.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + randomSuffix;
       
       await axios.post('/api/games', {
         title: game.title,

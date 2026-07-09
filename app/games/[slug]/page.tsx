@@ -50,28 +50,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     : `Play ${game.title} free online on ${siteName}. No download, no login required. Works on PC, mobile, and tablet.`;
 
   const keywords: string[] = [
-    `${game.title}`,
-    `play ${game.title} online`,
-    `${game.title} free`,
-    `${game.title} no download`,
-    ...(Array.isArray(game.category) ? game.category.map((c: string) => `free ${c} games`) : []),
-    ...(Array.isArray(game.tags) ? game.tags.slice(0, 5) : []),
-    "free online games",
-    "browser games",
-    "no download games",
+    `${game.title.toLowerCase()} play free online`,
+    `${game.title.toLowerCase()} unblocked`,
+    `play ${game.title.toLowerCase()} unblocked online`,
+    `${game.title.toLowerCase()} game free`,
+    `${game.title.toLowerCase()} without downloading`,
+    ...(Array.isArray(game.category) ? game.category.map((c: string) => `${c.toLowerCase()} games unblocked`) : []),
+    ...(Array.isArray(game.tags) ? game.tags.slice(0, 5).map((t: string) => `${t.toLowerCase()} unblocked games`) : []),
   ];
 
   return {
-    title,
+    title: { absolute: title },
     description,
     keywords,
     alternates: {
-      canonical: `${siteUrl}/games/${slug}`,
+      canonical: `/games/${slug}`,
     },
     openGraph: {
       title,
       description,
-      url: `${siteUrl}/games/${slug}`,
+      url: `/games/${slug}`,
       siteName,
       type: "website",
       images: game.thumbnailUrl ? [{ url: game.thumbnailUrl, alt: game.title }] : [],
