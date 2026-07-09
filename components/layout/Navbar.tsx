@@ -52,7 +52,7 @@ export default function Navbar() {
       <nav className="fixed top-0 left-0 right-0 z-40 h-16 bg-surface/80 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between px-4 lg:px-8">
         <Link href="/" className="flex items-center text-primary hover:text-primary-light transition-transform hover:scale-105" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
           <div className="relative w-10 h-10 drop-shadow-[0_0_8px_rgba(108,64,255,0.6)]">
-            <Image src="/logo.png" alt="Logo" fill priority className="object-contain" />
+            <Image src="/logo.png" alt="Logo" fill sizes="40px" priority className="object-contain" />
           </div>
         </Link>
         

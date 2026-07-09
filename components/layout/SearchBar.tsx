@@ -118,7 +118,7 @@ export default function SearchBar({ isMobile = false, onClose }: { isMobile?: bo
                   className="flex items-center gap-3 p-3 hover:bg-zinc-800 transition-colors border-b border-zinc-800/50 last:border-0"
                 >
                   <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-zinc-800">
-                    <Image src={game.thumbnailUrl} alt={game.title} fill className="object-cover" />
+                    <Image src={game.thumbnailUrl} alt={game.title} fill sizes="48px" className="object-cover" />
                   </div>
                   <div className="flex flex-col min-w-0">
                     <span className="font-semibold text-sm text-white truncate">{game.title}</span>

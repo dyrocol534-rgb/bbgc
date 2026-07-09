@@ -4,6 +4,7 @@ import Game from '@/models/Game';
 import GameCard from '@/components/game/GameCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Gamepad2 } from 'lucide-react';
+import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
 
 export const revalidate = 3600;
 
@@ -142,15 +143,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
       ) : (
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 auto-rows-[minmax(100px,auto)] md:auto-rows-[minmax(120px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
           {games.map((game: Record<string, any>, index: number) => {
-            const pattern = index % 14; 
-            let spanClass = "col-span-1 row-span-1 md:col-span-1 md:row-span-1";
-            if (pattern === 0 || pattern === 7) spanClass = "col-span-2 row-span-2 md:col-span-2 md:row-span-2";
-            else if (pattern === 4 || pattern === 11) spanClass = "col-span-1 row-span-2 md:col-span-1 md:row-span-2";
-            else if (pattern === 3 || pattern === 13) spanClass = "col-span-2 row-span-1 md:col-span-2 md:row-span-1";
-            
-            const imageContainerClass = (spanClass.includes("row-span-2") || spanClass.includes("col-span-2")) 
-              ? "h-full w-full" 
-              : "aspect-square";
+            const spanClass = getBentoSpanClass(index);
+            const imageContainerClass = getImageContainerClass(spanClass);
               
             return (
               <div

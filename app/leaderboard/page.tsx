@@ -79,7 +79,7 @@ export default async function LeaderboardPage() {
                         <div className="flex items-center gap-3">
                           <div className={`relative w-10 h-10 rounded-full overflow-hidden border-2 ${borderStyle || "border-zinc-700"}`}>
                             {user.image ? (
-                              <Image src={user.image} alt={user.name} fill className="object-cover" />
+                              <Image src={user.image} alt={user.name} fill sizes="40px" className="object-cover" />
                             ) : (
                               <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
                                 <span className="text-zinc-500 font-bold">{user.name.charAt(0).toUpperCase()}</span>

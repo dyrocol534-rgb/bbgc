@@ -5,6 +5,7 @@ const InfiniteGameGrid = dynamic(() => import("@/components/game/InfiniteGameGri
 import dbConnect from "@/lib/mongodb";
 import Game from "@/models/Game";
 import { Gamepad2 } from "lucide-react";
+import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
@@ -104,12 +105,42 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
 
 
       {initialAllGames.length > 0 && (
-        <section>
-          <InfiniteGameGrid 
-            initialGames={initialAllGames} 
-            initialPage={page} 
-            sortType={page === 1 ? 'random' : 'popular'} 
-          />
+        <section className="space-y-6">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-2xl font-bold text-text-main flex items-center gap-3">
+              All Games
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 auto-rows-[minmax(80px,auto)] md:auto-rows-[minmax(100px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
+            {initialAllGames.map((game: any, index: number) => {
+              const spanClass = getBentoSpanClass(index);
+              const imageContainerClass = getImageContainerClass(spanClass);
+              
+              return (
+                <div
+                  key={`${game._id}-${index}`}
+                  className={`${spanClass} game-card-enter`}
+                  style={{ animationDelay: `${Math.min(index % 24, 12) * 40}ms` }}
+                >
+                  <GameCard 
+                    game={game} 
+                    className="h-full w-full"
+                    imageContainerClassName={imageContainerClass}
+                    priority={index < 8}
+                  />
+                </div>
+              );
+            })}
+            
+            <InfiniteGameGrid 
+              initialPage={page} 
+              sortType={page === 1 ? 'random' : 'popular'} 
+              startIndex={initialAllGames.length}
+              excludeIds={initialAllGames.map((g: any) => g._id).join(',')}
+              hasMoreInitial={initialAllGames.length >= 24}
+            />
+          </div>
           
           {/* SEO Bot Pagination */}
           <div className="sr-only">

@@ -122,7 +122,7 @@ export default function GoogleTranslate() {
       )}
 
       {/* Google Translate Init Script */}
-      <Script id="google-translate-script" strategy="afterInteractive">
+      <Script id="google-translate-script" strategy="lazyOnload">
         {`
           window.googleTranslateElementInit = function() {
             new window.google.translate.TranslateElement(
@@ -139,7 +139,7 @@ export default function GoogleTranslate() {
       </Script>
       <Script 
         src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
       
       {/* Hide the annoying top bar and popup that Google injects */}
