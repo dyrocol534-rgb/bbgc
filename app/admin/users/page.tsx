@@ -1,6 +1,7 @@
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import Subscriber from "@/models/Subscriber";
+import GuestSession from "@/models/GuestSession";
 import UsersTabs from "@/components/admin/UsersTabs";
 
 export const dynamic = "force-dynamic";
@@ -14,14 +15,18 @@ export default async function AdminUsersPage() {
   // Fetch all newsletter subscribers
   const subscribersRaw = await Subscriber.find({}).sort({ subscribedAt: -1 }).lean();
 
+  // Fetch all guest sessions
+  const guestsRaw = await GuestSession.find({}).sort({ lastActiveAt: -1 }).lean();
+
   // Serialize MongoDB object IDs and dates to plain JSON
   const users = JSON.parse(JSON.stringify(usersRaw));
   const subscribers = JSON.parse(JSON.stringify(subscribersRaw));
+  const guests = JSON.parse(JSON.stringify(guestsRaw));
 
   return (
     <div>
       <h2 className="text-2xl font-bold text-text-main mb-6">Users & Subscribers</h2>
-      <UsersTabs users={users} subscribers={subscribers} />
+      <UsersTabs users={users} subscribers={subscribers} guests={guests} />
     </div>
   );
 }

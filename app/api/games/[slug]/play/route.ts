@@ -106,7 +106,8 @@ export async function POST(
           await GuestSession.create({
             guestId,
             recentlyPlayed: [slug],
-            lastActiveAt: new Date()
+            lastActiveAt: new Date(),
+            gamesPlayedCount: 1
           });
         } else {
           // Remove if exists, then push to front
@@ -118,7 +119,8 @@ export async function POST(
             { guestId },
             { 
               $push: { recentlyPlayed: { $each: [slug], $position: 0, $slice: 3 } },
-              $set: { lastActiveAt: new Date(), updatedAt: new Date() }
+              $set: { lastActiveAt: new Date(), updatedAt: new Date() },
+              $inc: { gamesPlayedCount: 1 }
             }
           );
         }
