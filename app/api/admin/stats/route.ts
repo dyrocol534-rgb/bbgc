@@ -252,11 +252,13 @@ export async function GET(req: NextRequest) {
         avgPlaysPerActive: (activeUsers30d + activeGuests30d) > 0 ? (newPlays30d / (activeUsers30d + activeGuests30d)).toFixed(1) : 0
       },
       lifetime: {
-        totalUsers,
-        totalGuests,
+        newUsers: totalUsers,
+        newGuests: totalGuests,
+        activeUsers: totalUsers,
+        activeGuests: totalGuests,
+        newSubscribers: totalSubscribers,
         totalGames,
         totalPlays,
-        totalSubscribers,
         pwaInstalls: totalPwaInstalls,
         topGames: topGamesLifetime,
         topGuestGames: topGuestGamesLifetime,

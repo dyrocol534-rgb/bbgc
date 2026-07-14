@@ -63,7 +63,7 @@ export default function AdminAnalytics() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [timeframe, setTimeframe] = useState<"24h" | "7d" | "30d" | "lifetime">("7d");
+  const [timeframe, setTimeframe] = useState<"24h" | "7d" | "30d" | "lifetime">("24h");
 
   const fetchStats = async (force = false) => {
     try {
@@ -121,35 +121,35 @@ export default function AdminAnalytics() {
     <div className="space-y-6 pb-10 max-w-[1400px] mx-auto animate-in fade-in duration-300">
       
       {/* Header & Controls */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-zinc-900/50 p-3 rounded-xl border border-zinc-800">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-indigo-500/10 rounded-lg">
+      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 bg-zinc-900/50 p-4 rounded-xl border border-zinc-800 w-full">
+        <div className="flex items-center gap-3 min-w-0 w-full xl:w-auto">
+          <div className="p-2 bg-indigo-500/10 rounded-lg shrink-0">
             <Activity className="w-5 h-5 text-indigo-400" />
           </div>
-          <div>
-            <h1 className="text-lg font-bold text-white leading-tight">Analytics Dashboard</h1>
-            <p className="text-xs text-zinc-400">Time-series tracking & cache-enabled</p>
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg font-bold text-white leading-tight truncate">Analytics Dashboard</h1>
+            <p className="text-xs text-zinc-400 truncate">Time-series tracking & cache-enabled</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full xl:w-auto mt-2 xl:mt-0">
           <button
             onClick={() => fetchStats(true)}
             disabled={isRefreshing}
-            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors border border-zinc-700 disabled:opacity-50"
+            className="flex items-center justify-center gap-2 px-3 py-2 sm:py-1.5 text-xs font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 rounded-lg transition-colors border border-zinc-700 disabled:opacity-50 shrink-0 w-full sm:w-auto"
             title="Force refresh data from database (bypasses 10m cache)"
           >
             <RefreshCw className={clsx("w-3.5 h-3.5", isRefreshing && "animate-spin")} />
-            Refresh
+            <span>Refresh Data</span>
           </button>
 
-          <div className="flex p-0.5 bg-zinc-950 border border-zinc-800 rounded-lg">
+          <div className="flex p-0.5 bg-zinc-950 border border-zinc-800 rounded-lg shrink-0 w-full sm:w-auto">
             {timeframes.map((tf) => (
               <button
                 key={tf.id}
                 onClick={() => setTimeframe(tf.id)}
                 className={clsx(
-                  "px-3 py-1.5 text-xs font-medium rounded-md transition-all",
+                  "px-2 sm:px-3 py-2 sm:py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap flex-1 text-center",
                   timeframe === tf.id
                     ? "bg-indigo-600 text-white shadow-sm"
                     : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"

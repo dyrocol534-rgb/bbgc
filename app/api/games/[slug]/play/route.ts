@@ -38,6 +38,8 @@ export async function POST(
     // Log the play event for time-series analytics (24h/7d/30d)
     await PlayEvent.create({ gameSlug: slug, deviceType });
 
+    const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || request.headers.get("cf-connecting-ip") || "Unknown";
+
     // Update user's recentlyPlayed history if logged in
     const session = await getServerSession(authOptions);
     let xpAwarded = 0;
@@ -62,7 +64,7 @@ export async function POST(
               $slice: 3 
             } 
           },
-          $set: { lastActiveAt: new Date() },
+          $set: { lastActiveAt: new Date(), lastIp: ip },
           $inc: { 
             xp: XP_CONFIG.PLAY_GAME, 
             lifetimeXp: XP_CONFIG.PLAY_GAME,
@@ -107,7 +109,8 @@ export async function POST(
             guestId,
             recentlyPlayed: [slug],
             lastActiveAt: new Date(),
-            gamesPlayedCount: 1
+            gamesPlayedCount: 1,
+            lastIp: ip
           });
         } else {
           // Remove if exists, then push to front
@@ -119,7 +122,7 @@ export async function POST(
             { guestId },
             { 
               $push: { recentlyPlayed: { $each: [slug], $position: 0, $slice: 3 } },
-              $set: { lastActiveAt: new Date(), updatedAt: new Date() },
+              $set: { lastActiveAt: new Date(), updatedAt: new Date(), lastIp: ip },
               $inc: { gamesPlayedCount: 1 }
             }
           );

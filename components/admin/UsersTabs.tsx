@@ -154,7 +154,6 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                       <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-500/20 text-orange-400 whitespace-nowrap">🔥 {item.currentStreak || 0}</span>
                       <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 whitespace-nowrap">⏱️ {Math.floor((item.playtimeSeconds || 0)/60)}m</span>
                       {item.phone && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500/20 text-green-400 whitespace-nowrap">📱 {item.phone}</span>}
-                      {item.referralCode && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-400 max-w-[100px] truncate" title={item.referralCode}>Ref: {item.referralCode}</span>}
                     </div>
                   )}
                   {activeTab === "guests" && (
@@ -182,9 +181,9 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
               <tr className="bg-zinc-900/50 border-b border-zinc-800 text-zinc-400 text-[11px] uppercase tracking-wider">
-                {activeTab === "users" && <th className="px-3 py-2 font-medium w-2/12">Name</th>}
+                {activeTab === "users" && <th className="px-3 py-2 font-medium w-4/12">User</th>}
                 {activeTab === "guests" && <th className="px-3 py-2 font-medium w-2/12">Guest ID</th>}
-                {activeTab !== "guests" && <th className="px-3 py-2 font-medium w-3/12">Email Address</th>}
+                {activeTab === "subscribers" && <th className="px-3 py-2 font-medium w-3/12">Email Address</th>}
                 <th className="px-3 py-2 font-medium w-2/12">{activeTab === "subscribers" ? "Subscribed Date" : (activeTab === "guests" ? "First Visit" : "Joined Date")}</th>
                 {(activeTab === "users" || activeTab === "guests") && <th className="px-3 py-2 font-medium w-3/12">Stats</th>}
                 {(activeTab === "users" || activeTab === "guests") && <th className="px-3 py-2 font-medium w-2/12">Last Active</th>}
@@ -193,7 +192,7 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
             <tbody className="divide-y divide-zinc-800/50 text-xs">
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={activeTab === "users" ? 5 : (activeTab === "guests" ? 4 : 2)} className="p-8 text-center text-zinc-500 text-sm">
+                  <td colSpan={activeTab === "subscribers" ? 2 : 4} className="p-8 text-center text-zinc-500 text-sm">
                     {searchTerm ? "No results found matching your search." : `No ${activeTab} found.`}
                   </td>
                 </tr>
@@ -202,15 +201,19 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                   <tr key={item._id} className="hover:bg-zinc-800/30 transition-colors">
                     {activeTab === "users" && (
                       <td className="px-3 py-2 text-zinc-200 font-medium">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-start gap-2">
                           {item.image ? (
-                            <Image src={item.image} alt={item.name} width={20} height={20} className="w-5 h-5 rounded-full object-cover shrink-0" />
+                            <Image src={item.image} alt={item.name} width={24} height={24} className="w-6 h-6 rounded-full object-cover shrink-0 mt-0.5" />
                           ) : (
-                            <div className="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold shrink-0 text-[9px]">
+                            <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold shrink-0 text-[10px] mt-0.5">
                               {item.name?.charAt(0) || '?'}
                             </div>
                           )}
-                          <span className="truncate max-w-[120px] lg:max-w-[150px]" title={item.name}>{item.name}</span>
+                          <div className="flex flex-col min-w-0">
+                            <span className="truncate max-w-[150px] lg:max-w-[200px]" title={item.name}>{item.name}</span>
+                            <span className="text-[10px] text-zinc-400 font-normal truncate max-w-[150px] lg:max-w-[200px]" title={item.email}>{item.email}</span>
+                            {item.phone && <span className="text-[10px] text-green-400 font-normal truncate max-w-[150px] lg:max-w-[200px]" title={item.phone}>📱 {item.phone}</span>}
+                          </div>
                         </div>
                       </td>
                     )}
@@ -224,13 +227,13 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                         </div>
                       </td>
                     )}
-                    {activeTab !== "guests" && (
-                      <td className={clsx("px-3 py-2 truncate max-w-[150px] lg:max-w-[200px]", activeTab === "subscribers" ? "text-zinc-200" : "text-zinc-400")} title={item.email}>
+                    {activeTab === "subscribers" && (
+                      <td className="px-3 py-2 text-zinc-200 truncate max-w-[150px] lg:max-w-[200px]" title={item.email}>
                         {item.email}
                       </td>
                     )}
                     <td className="px-3 py-2 text-zinc-400 whitespace-nowrap">
-                      {new Date(activeTab === "subscribers" ? item.subscribedAt : item.createdAt).toLocaleDateString()}
+                      {new Date(activeTab === "subscribers" ? item.subscribedAt : item.createdAt).toLocaleDateString() + ' ' + new Date(activeTab === "subscribers" ? item.subscribedAt : item.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </td>
                     {(activeTab === "users" || activeTab === "guests") && (
                       <td className="px-3 py-1.5">
@@ -245,8 +248,6 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                           {activeTab === "guests" && (
                             <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex-shrink-0">🎮 {item.gamesPlayedCount || 0} plays</span>
                           )}
-                          {activeTab === "users" && item.phone && <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/20 text-green-400 border border-green-500/30 flex-shrink-0 truncate max-w-[80px]" title={item.phone}>📱 {item.phone}</span>}
-                          {activeTab === "users" && item.referralCode && <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/30 flex-shrink-0 truncate max-w-[80px]" title={item.referralCode}>Ref: {item.referralCode}</span>}
                         </div>
                       </td>
                     )}
@@ -254,7 +255,7 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                       <td className="px-3 py-2 text-zinc-400 whitespace-nowrap">
                         <div className="flex flex-col">
                           <span>{item.lastActiveAt ? new Date(item.lastActiveAt).toLocaleDateString() + ' ' + new Date(item.lastActiveAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Never'}</span>
-                          <span className="text-[9px] text-zinc-600">(IP not logged)</span>
+                          <span className="text-[9px] text-zinc-600">{item.lastIp ? item.lastIp : '(IP not logged)'}</span>
                         </div>
                       </td>
                     )}

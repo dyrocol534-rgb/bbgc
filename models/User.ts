@@ -20,6 +20,7 @@ export interface IUser extends Document {
   profileCompleted: boolean;
   createdAt: Date;
   lastActiveAt: Date;
+  lastIp?: string;
 }
 
 const UserSchema: Schema<IUser> = new Schema({
@@ -42,6 +43,7 @@ const UserSchema: Schema<IUser> = new Schema({
   profileCompleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   lastActiveAt: { type: Date, default: Date.now },
+  lastIp: { type: String },
 });
 
 const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);

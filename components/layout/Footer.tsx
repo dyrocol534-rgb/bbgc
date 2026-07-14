@@ -63,23 +63,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="md:col-span-2 grid grid-cols-2 gap-6">
-            {/* Games Links */}
-            <div>
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-3">Games</h3>
-              <ul className="space-y-2 text-xs">
-                <li>
-                  <Link href="/category/action" className="text-zinc-400 hover:text-indigo-400 transition-colors">Action Games</Link>
-                </li>
-                <li>
-                  <Link href="/category/puzzle" className="text-zinc-400 hover:text-indigo-400 transition-colors">Puzzle Games</Link>
-                </li>
-                <li>
-                  <Link href="/category/arcade" className="text-zinc-400 hover:text-indigo-400 transition-colors">Arcade Games</Link>
-                </li>
-              </ul>
-            </div>
-
+          <div className="md:col-span-2 flex md:justify-center">
             {/* Legal Links */}
             <div>
               <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-3">Legal</h3>

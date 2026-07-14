@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
       const oldHours = Math.floor((user.playtimeSeconds || 0) / 3600);
       const newHours = Math.floor(newPlaytime / 3600);
       
+      const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || req.headers.get("cf-connecting-ip") || "Unknown";
+      
       let xpAwarded = 0;
       
       if (newHours > oldHours) {
@@ -38,12 +40,12 @@ export async function POST(req: NextRequest) {
         xpAwarded = hoursCrossed * XP_CONFIG.PLAYTIME_PER_HOUR;
         
         await User.findByIdAndUpdate(user._id, {
-          $set: { playtimeSeconds: newPlaytime, lastActiveAt: new Date() },
+          $set: { playtimeSeconds: newPlaytime, lastActiveAt: new Date(), lastIp: ip },
           $inc: { xp: xpAwarded, lifetimeXp: xpAwarded }
         });
       } else {
         await User.findByIdAndUpdate(user._id, {
-          $set: { playtimeSeconds: newPlaytime, lastActiveAt: new Date() }
+          $set: { playtimeSeconds: newPlaytime, lastActiveAt: new Date(), lastIp: ip }
         });
       }
 
@@ -57,6 +59,8 @@ export async function POST(req: NextRequest) {
         const guestId = guestIdCookie.value;
         const GuestSession = (await import('@/models/GuestSession')).default;
         
+        const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || req.headers.get("cf-connecting-ip") || "Unknown";
+        
         let guestSession = await GuestSession.findOne({ guestId });
         
         if (!guestSession) {
@@ -64,14 +68,15 @@ export async function POST(req: NextRequest) {
             guestId,
             playtimeSeconds: elapsedSeconds,
             lastActiveAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
+            lastIp: ip
           });
         } else {
           await GuestSession.updateOne(
             { guestId },
             { 
               $inc: { playtimeSeconds: elapsedSeconds },
-              $set: { lastActiveAt: new Date(), updatedAt: new Date() }
+              $set: { lastActiveAt: new Date(), updatedAt: new Date(), lastIp: ip }
             }
           );
         }

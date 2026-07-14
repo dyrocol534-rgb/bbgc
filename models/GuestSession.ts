@@ -8,6 +8,7 @@ export interface IGuestSession extends Document {
   gamesPlayedCount: number;
   createdAt: Date;
   updatedAt: Date;
+  lastIp?: string;
 }
 
 const GuestSessionSchema: Schema<IGuestSession> = new Schema({
@@ -18,6 +19,7 @@ const GuestSessionSchema: Schema<IGuestSession> = new Schema({
   gamesPlayedCount: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  lastIp: { type: String },
 });
 
 const GuestSession: Model<IGuestSession> = mongoose.models.GuestSession || mongoose.model<IGuestSession>('GuestSession', GuestSessionSchema);
