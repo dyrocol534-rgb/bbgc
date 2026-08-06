@@ -41,13 +41,13 @@ export default function AdminNav() {
             key={link.name}
             href={link.href}
             className={clsx(
-              "flex items-center gap-2 lg:gap-2.5 px-3 lg:px-3 py-2 lg:py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap shrink-0",
+              "flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap shrink-0",
               isActive 
-                ? "bg-indigo-500/10 text-indigo-400 shadow-[inset_0_-2px_0_0_rgba(99,102,241,1)] lg:shadow-none lg:border-l-2 lg:border-indigo-500 lg:rounded-l-none" 
-                : "text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-100"
+                ? "bg-[#121214] text-white shadow-md shadow-black/40 border-b-2 lg:border-b-0 lg:border-l-2 border-indigo-500 lg:rounded-l-none" 
+                : "text-zinc-500 hover:bg-[#121214]/50 hover:text-zinc-300 border-b-2 lg:border-b-0 lg:border-l-2 border-transparent"
             )}
           >
-            <Icon className={clsx("w-4 h-4 lg:w-5 lg:h-5", isActive ? "text-indigo-400" : "text-zinc-500")} />
+            <Icon className={clsx("w-4 h-4", isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]" : "text-zinc-500")} />
             {link.name}
           </Link>
         );

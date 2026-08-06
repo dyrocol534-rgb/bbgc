@@ -132,81 +132,83 @@ export default function AdminGamesPage() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 bg-zinc-900/50 p-3 rounded-xl border border-zinc-800">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 bg-[#0c0c0e] p-3 rounded-xl border border-[#1f1f22] shadow-lg shadow-black/40">
         <h2 className="text-lg font-bold text-white flex items-center gap-2">
           Manage Games ({totalGames}) 
           {isFetching && !isLoading && <Loader2 className="w-4 h-4 text-zinc-500 animate-spin" />}
         </h2>
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="relative flex-1 sm:w-56">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-56">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
             <input 
               type="text" 
               placeholder="Search games..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
+              className="w-full pl-8 pr-3 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-[#333339] focus:bg-[#1a1a1f] focus:outline-none transition-all shadow-inner"
             />
           </div>
-          <select 
-            value={sourceFilter}
-            onChange={(e) => setSourceFilter(e.target.value)}
-            className="px-2 py-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors outline-none cursor-pointer"
-          >
-            <option value="all">All Sources</option>
-            <option value="aggregated">Imported</option>
-            <option value="own">Uploaded</option>
-          </select>
-          <select 
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-2 py-1.5 bg-zinc-950 border border-zinc-800 rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors outline-none cursor-pointer"
-          >
-            <option value="all">All Status</option>
-            <option value="published">Published</option>
-            <option value="draft">Drafts</option>
-          </select>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <select 
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+              className="flex-1 sm:flex-none px-2 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors outline-none cursor-pointer shadow-inner"
+            >
+              <option value="all">All Sources</option>
+              <option value="aggregated">Imported</option>
+              <option value="own">Uploaded</option>
+            </select>
+            <select 
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="flex-1 sm:flex-none px-2 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors outline-none cursor-pointer shadow-inner"
+            >
+              <option value="all">All Status</option>
+              <option value="published">Published</option>
+              <option value="draft">Drafts</option>
+            </select>
+          </div>
         </div>
       </div>
       
-      <div className="overflow-x-auto bg-surface border border-zinc-800 rounded-xl shadow-sm">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-x-auto bg-[#0c0c0e] border border-[#1f1f22] rounded-xl shadow-lg shadow-black/40 custom-scrollbar">
+        <table className="w-full text-left border-collapse min-w-[900px]">
           <thead>
-            <tr className="border-b border-zinc-800 bg-zinc-900/30 text-zinc-400 text-[11px] uppercase tracking-wider">
-              <th className="py-2 px-3 font-semibold w-12">Icon</th>
+            <tr className="border-b border-[#1f1f22] bg-[#121214] text-zinc-500 text-[10px] uppercase tracking-widest">
+              <th className="py-2.5 px-3 font-bold w-12">Icon</th>
               <th 
-                className="py-2 px-3 font-semibold cursor-pointer group hover:text-zinc-200"
+                className="py-2.5 px-3 font-bold cursor-pointer group hover:text-zinc-300 transition-colors"
                 onClick={() => handleSort('title')}
               >
                 <div className="flex items-center gap-1">Title {renderSortIcon('title')}</div>
               </th>
               <th 
-                className="py-2 px-3 font-semibold text-center cursor-pointer group hover:text-zinc-200"
+                className="py-2.5 px-3 font-bold text-center cursor-pointer group hover:text-zinc-300 transition-colors"
                 onClick={() => handleSort('playCount')}
               >
                 <div className="flex items-center justify-center gap-1">Plays {renderSortIcon('playCount')}</div>
               </th>
               <th 
-                className="py-2 px-3 font-semibold text-center cursor-pointer group hover:text-zinc-200"
+                className="py-2.5 px-3 font-bold text-center cursor-pointer group hover:text-zinc-300 transition-colors"
                 onClick={() => handleSort('rating')}
               >
                 <div className="flex items-center justify-center gap-1">Rating {renderSortIcon('rating')}</div>
               </th>
               <th 
-                className="py-2 px-3 font-semibold text-center cursor-pointer group hover:text-zinc-200 w-16"
+                className="py-2.5 px-3 font-bold text-center cursor-pointer group hover:text-zinc-300 transition-colors w-16"
                 onClick={() => handleSort('featured')}
               >
                 <div className="flex items-center justify-center gap-1">Feat {renderSortIcon('featured')}</div>
               </th>
-              <th className="py-2 px-3 font-semibold text-center">Visibility</th>
-              <th className="py-2 px-3 font-semibold text-right w-20">Actions</th>
+              <th className="py-2.5 px-3 font-bold text-center">Visibility</th>
+              <th className="py-2.5 px-3 font-bold text-right w-20">Actions</th>
             </tr>
           </thead>
           <tbody>
             {games.map((game) => (
-              <tr key={game._id} className={`border-b border-zinc-800/50 transition-colors ${game.status === 'draft' ? 'bg-zinc-950/50 opacity-60' : 'hover:bg-zinc-800/30'}`}>
+              <tr key={game._id} className={`border-b border-[#1f1f22] transition-colors ${game.status === 'draft' ? 'bg-[#08080a] opacity-60' : 'hover:bg-[#121214]'}`}>
                 <td className="py-1.5 px-3">
-                  <Image src={game.thumbnailUrl} alt={game.title} width={32} height={32} className="w-8 h-8 rounded-md object-cover bg-zinc-900 border border-zinc-800" />
+                  <Image src={game.thumbnailUrl} alt={game.title} width={32} height={32} className="w-8 h-8 rounded-md object-cover bg-zinc-900 border border-[#1f1f22] shadow-sm" />
                 </td>
                 <td className="py-1.5 px-3">
                   <div className="font-semibold text-zinc-200 flex items-center gap-2 text-sm leading-tight">
@@ -291,27 +293,27 @@ export default function AdminGamesPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-6 px-4">
-          <p className="text-sm text-text-muted">
+        <div className="flex items-center justify-between mt-4 px-2">
+          <p className="text-[11px] text-zinc-500 font-medium">
             Showing {(page - 1) * 50 + 1} to {Math.min(page * 50, totalGames)} of {totalGames} results
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1 || isFetching}
-              className="p-2 rounded-lg bg-surface border border-border-main text-text-main hover:bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg bg-[#121214] border border-[#1f1f22] text-zinc-400 hover:text-white hover:bg-[#1a1a1f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
             </button>
-            <div className="flex items-center px-4 bg-surface border border-border-main rounded-lg text-sm text-text-main font-medium">
+            <div className="flex items-center px-3 bg-[#121214] border border-[#1f1f22] rounded-lg text-[11px] text-zinc-300 font-bold shadow-inner">
               Page {page} of {totalPages}
             </div>
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages || isFetching}
-              className="p-2 rounded-lg bg-surface border border-border-main text-text-main hover:bg-surface-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg bg-[#121214] border border-[#1f1f22] text-zinc-400 hover:text-white hover:bg-[#1a1a1f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>

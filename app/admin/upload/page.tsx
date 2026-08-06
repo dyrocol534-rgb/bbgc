@@ -192,96 +192,85 @@ export default function UploadGamePage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto bg-surface border border-zinc-800 rounded-xl p-6 shadow-sm">
-      <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-        <UploadCloud className="w-5 h-5 text-indigo-400" />
+    <div className="max-w-5xl mx-auto bg-[#0c0c0e] border border-[#1f1f22] rounded-xl p-6 md:p-8 shadow-lg shadow-black/40">
+      <h2 className="text-lg font-bold text-white flex items-center gap-2 mb-6">
+        <UploadCloud className="w-5 h-5 text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
         Upload New Game
       </h2>
       
-      <form onSubmit={handleUpload} className="space-y-4">
+      <form onSubmit={handleUpload} className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Game Title</label>
+            <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">Game Title</label>
             <input 
               type="text" 
               required
               value={formData.title}
               onChange={e => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-') + (e.target.value ? '-' + randomSuffix : '')})}
-              className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
+              className="w-full bg-[#121214] border border-[#1f1f22] rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors shadow-inner"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">URL Slug</label>
+            <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">URL Slug</label>
             <input 
               type="text" 
               required
               value={formData.slug}
               onChange={e => setFormData({...formData, slug: e.target.value})}
-              className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
+              className="w-full bg-[#121214] border border-[#1f1f22] rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors shadow-inner"
             />
           </div>
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-text-secondary mb-2">URL Slug</label>
-          <input 
-            type="text" 
-            required
-            value={formData.slug}
-            onChange={e => setFormData({...formData, slug: e.target.value})}
-            className="w-full bg-surface-hover border border-border-main rounded-lg p-3 text-text-main focus:ring-2 focus:ring-primary-hover outline-none transition-all"
-          />
-        </div>
         
         <div>
-          <label className="block text-xs font-medium text-zinc-400 mb-1">Thumbnail URL</label>
+          <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">Thumbnail URL</label>
           <input 
             type="url" 
             required
             value={formData.thumbnailUrl}
             onChange={e => setFormData({...formData, thumbnailUrl: e.target.value})}
             placeholder="https://..."
-            className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
+            className="w-full bg-[#121214] border border-[#1f1f22] rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors shadow-inner"
           />
         </div>
         
         <div>
-          <label className="block text-xs font-medium text-zinc-400 mb-1">Description</label>
+          <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">Description</label>
           <textarea 
             required
             value={formData.description}
             onChange={e => setFormData({...formData, description: e.target.value})}
-            className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none h-16 transition-colors resize-y"
+            className="w-full bg-[#121214] border border-[#1f1f22] rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-200 focus:border-[#333339] focus:outline-none h-20 transition-colors resize-y shadow-inner"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Developer</label>
+            <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">Developer</label>
             <input 
               type="text" 
               required
               value={formData.developer}
               onChange={e => setFormData({...formData, developer: e.target.value})}
-              className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
+              className="w-full bg-[#121214] border border-[#1f1f22] rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors shadow-inner"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Platforms</label>
+            <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">Platforms</label>
             <input 
               type="text" 
               required
               value={formData.platforms}
               onChange={e => setFormData({...formData, platforms: e.target.value})}
-              className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
+              className="w-full bg-[#121214] border border-[#1f1f22] rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors shadow-inner"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Categories (Select Multiple)</label>
+            <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">Categories</label>
             <div className="flex flex-wrap gap-1.5">
               {CATEGORIES.map(cat => (
                 <button
@@ -293,10 +282,10 @@ export default function UploadGamePage() {
                       : [...formData.categories, cat];
                     setFormData({...formData, categories: newCats});
                   }}
-                  className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors border ${
+                  className={`px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors border shadow-sm ${
                     formData.categories.includes(cat)
-                      ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30'
-                      : 'bg-zinc-900/50 text-zinc-500 hover:text-zinc-300 border-zinc-800'
+                      ? 'bg-indigo-600/20 text-indigo-400 border-indigo-500/30'
+                      : 'bg-[#121214] text-zinc-500 hover:text-zinc-300 border-[#1f1f22] hover:border-[#333339]'
                   }`}
                 >
                   {cat}
@@ -304,16 +293,16 @@ export default function UploadGamePage() {
               ))}
             </div>
             {formData.categories.length === 0 && (
-              <p className="text-[10px] text-red-400 mt-1">Please select at least one category.</p>
+              <p className="text-[10px] font-bold text-red-400 mt-2">Please select at least one category.</p>
             )}
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Build Type</label>
+            <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">Build Type</label>
             <select 
               value={formData.buildType}
               onChange={e => setFormData({...formData, buildType: e.target.value})}
-              className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
+              className="w-full bg-[#121214] border border-[#1f1f22] rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors shadow-inner cursor-pointer"
             >
               <option value="html5">HTML5 (zip with index.html)</option>
               <option value="unity-webgl">Unity WebGL (zip)</option>
@@ -324,26 +313,26 @@ export default function UploadGamePage() {
 
         {formData.buildType === 'iframe-external' ? (
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Game URL or Iframe Code</label>
+            <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">Game URL or Iframe</label>
             <input 
               type="text" 
               required
               value={formData.gameUrl}
               onChange={e => setFormData({...formData, gameUrl: e.target.value})}
-              placeholder='https://html5.gamedistribution.com/... OR <iframe src="...">'
-              className="w-full bg-zinc-900/50 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors"
+              placeholder='https://... OR <iframe src="...">'
+              className="w-full bg-[#121214] border border-[#1f1f22] rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors shadow-inner"
             />
-            <p className="text-[10px] text-zinc-500 mt-1">
+            <p className="text-[10px] font-medium text-zinc-500 mt-1.5">
               Paste the "Example URL" or the full "Embed" iframe code from the provider.
             </p>
           </div>
         ) : (
           <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1">Game Files (ZIP)</label>
-            <div className={`border-2 rounded-lg p-4 text-center transition-colors relative overflow-hidden ${
+            <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">Game Files (ZIP)</label>
+            <div className={`border rounded-xl p-5 text-center transition-all relative overflow-hidden shadow-sm ${
               file 
-                ? 'border-solid border-emerald-500/50 bg-emerald-500/10' 
-                : 'border-dashed border-zinc-700 hover:border-zinc-500 bg-zinc-900/30'
+                ? 'border-emerald-500/50 bg-emerald-500/10 shadow-[inset_0_0_20px_rgba(16,185,129,0.1)]' 
+                : 'border-dashed border-[#333339] hover:border-indigo-500/50 bg-[#121214]'
             }`}>
               <input 
                 type="file" 
@@ -355,15 +344,15 @@ export default function UploadGamePage() {
               />
               <div className="pointer-events-none flex items-center justify-center gap-3">
                 {file ? (
-                  <CheckCircle className="w-5 h-5 text-emerald-400" />
+                  <CheckCircle className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
                 ) : (
-                  <UploadCloud className="w-5 h-5 text-zinc-400" />
+                  <UploadCloud className="w-5 h-5 text-zinc-500" />
                 )}
                 <div className="flex flex-col items-start">
                   <span className={`text-sm font-bold ${file ? 'text-emerald-400' : 'text-zinc-300'}`}>
                     {file ? file.name : "Click or drag ZIP file here"}
                   </span>
-                  <span className={`text-[10px] ${file ? 'text-emerald-500/70' : 'text-zinc-500'}`}>
+                  <span className={`text-[10px] font-bold ${file ? 'text-emerald-500/70' : 'text-zinc-500'}`}>
                     {file ? "Ready to upload!" : "Must contain index.html at root"}
                   </span>
                 </div>
@@ -373,21 +362,21 @@ export default function UploadGamePage() {
         )}
 
         {message && (
-          <div className={`p-4 rounded-lg text-sm font-medium ${message.includes('Error') ? 'bg-red-900/50 text-red-200' : 'bg-surface-hover text-text-secondary'}`}>
+          <div className={`p-4 rounded-xl text-sm font-bold shadow-md border ${message.includes('Error') ? 'bg-red-900/20 text-red-400 border-red-500/20' : 'bg-[#121214] text-zinc-300 border-[#1f1f22]'}`}>
             {message}
           </div>
         )}
 
         {isUploading && progress > 0 && (
-          <div className="w-full bg-surface-hover rounded-full h-2 mb-4">
-            <div className="bg-primary-hover h-2 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+          <div className="w-full bg-[#121214] border border-[#1f1f22] rounded-full h-2.5 mb-4 shadow-inner overflow-hidden">
+            <div className="bg-indigo-500 h-full rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(99,102,241,0.5)]" style={{ width: `${progress}%` }} />
           </div>
         )}
 
         <button 
           type="submit" 
           disabled={isUploading || formData.categories.length === 0}
-          className="w-full bg-primary hover:bg-primary-hover text-text-main font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isUploading ? (
             <><Loader2 className="w-5 h-5 animate-spin" /> Uploading...</>

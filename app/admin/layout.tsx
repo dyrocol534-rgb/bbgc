@@ -42,7 +42,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         </aside>
         
         <main className="flex-1 min-w-0 w-full">
-          <div className="bg-surface border border-border-main rounded-2xl p-6 lg:p-8 shadow-xl">
+          <div className="bg-[#0c0c0e] border border-[#1f1f22] rounded-2xl p-4 sm:p-6 lg:p-8 shadow-2xl shadow-black/50">
             {children}
           </div>
         </main>

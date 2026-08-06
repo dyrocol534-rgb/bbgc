@@ -124,7 +124,7 @@ export default function Sidebar() {
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
         className={clsx(
-          "md:hidden fixed top-1/2 -translate-y-1/2 z-50 bg-[#6c40ff] border-y border-r border-[#8b68ff] rounded-r-xl py-4 pl-1 pr-1.5 text-white shadow-[0_0_15px_rgba(108,64,255,0.5)] transition-all duration-300",
+          "md:hidden fixed top-1/2 -translate-y-1/2 z-50 bg-[#6c40ff] border-y border-r border-[#8b68ff] rounded-r-xl py-4 pl-1 pr-1.5 text-white shadow-[0_0_15px_rgba(108,64,255,0.5)] transition-all duration-300 transform-gpu",
           isExpanded ? "left-60" : "left-0"
         )}
         aria-label={isExpanded ? "Close sidebar" : "Open sidebar"}
@@ -134,7 +134,7 @@ export default function Sidebar() {
 
       <aside 
         className={clsx(
-          "flex flex-col bg-zinc-900 border-zinc-800 transition-all duration-300 ease-in-out z-40",
+          "flex flex-col bg-[#0c0c0e] border-[#1f1f22] transition-all duration-300 ease-in-out z-40 transform-gpu",
           // Desktop styles
           "md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:translate-x-0",
           isExpanded ? "w-60" : "md:w-16 w-0 md:border-r", 
@@ -161,19 +161,18 @@ export default function Sidebar() {
             disabled={isRolling}
             className={clsx(
               "w-full flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap",
-              "bg-gradient-to-r from-indigo-600/20 to-purple-600/20 hover:from-indigo-600/30 hover:to-purple-600/30",
-              "border border-indigo-500/30 hover:border-indigo-400/50 shadow-[0_0_15px_rgba(99,102,241,0.1)]",
+              "bg-[#1a1727] border border-[#2b2540] hover:bg-[#201d32] hover:border-[#3d345c] shadow-lg shadow-indigo-500/5",
               !isExpanded && "justify-center px-0"
             )}
             title={!isExpanded ? "Surprise Me (Random Game)" : undefined}
           >
             {isRolling ? (
-              <Loader2 className="w-5 h-5 shrink-0 text-indigo-400 animate-spin" />
+              <Loader2 className="w-[18px] h-[18px] shrink-0 text-indigo-400 animate-spin" />
             ) : (
-              <Dices className="w-5 h-5 shrink-0 text-indigo-400" />
+              <Dices className="w-[18px] h-[18px] shrink-0 text-indigo-400 drop-shadow-[0_0_6px_rgba(99,102,241,0.4)]" />
             )}
             <span className={clsx(
-              "font-bold text-sm bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent transition-opacity duration-300", 
+              "font-bold text-[14px] text-indigo-200 hover:text-indigo-100 transition-all duration-300", 
               isExpanded ? "opacity-100" : "opacity-0 hidden"
             )}>
               Surprise Me!
@@ -193,12 +192,12 @@ export default function Sidebar() {
                 className={clsx(
                   "flex items-center gap-4 px-3 py-2.5 rounded-xl transition-colors whitespace-nowrap",
                   isActive 
-                    ? "bg-primary/10 text-primary-light" 
-                    : "text-zinc-400 hover:bg-surface-hover/50 hover:text-zinc-200"
+                    ? "bg-[#121214] text-zinc-100" 
+                    : "text-zinc-400 hover:bg-[#121214] hover:text-zinc-200"
                 )}
                 title={!isExpanded ? link.name : undefined}
               >
-                <Icon className={clsx("w-5 h-5 shrink-0", isActive ? "text-primary-hover" : "text-text-placeholder")} />
+                <Icon className={clsx("w-5 h-5 shrink-0", isActive ? "text-zinc-300" : "text-zinc-500")} />
                 <span className={clsx("font-medium text-sm transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
                   {link.name}
                 </span>
@@ -223,16 +222,16 @@ export default function Sidebar() {
               setIsExpanded(false);
             }}
             className={clsx(
-              "w-full flex items-center justify-between px-3 py-2.5 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 hover:from-indigo-500/20 hover:to-purple-500/20 border border-indigo-500/20 hover:border-indigo-500/40 transition-all rounded-xl font-medium group overflow-hidden",
+              "w-full flex items-center justify-between px-3 py-2.5 bg-[#1a1727] border border-[#2b2540] hover:bg-[#201d32] hover:border-[#3d345c] transition-all rounded-xl font-medium group overflow-hidden",
               !isExpanded && "justify-center"
             )}
             title={!isExpanded ? "Refer & Earn +50 XP" : undefined}
           >
             <div className="flex items-center gap-3">
-              <Handshake className="w-5 h-5 text-indigo-400 shrink-0" />
+              <Handshake className="w-5 h-5 text-indigo-400 shrink-0 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
               <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                <span className="text-indigo-300 font-bold text-sm group-hover:text-indigo-200 transition-colors">Refer & Earn</span>
-                <span className="text-zinc-400 text-[10px] uppercase tracking-wider font-bold">+50 XP</span>
+                <span className="text-indigo-200 font-bold text-[14px] group-hover:text-indigo-100 transition-colors">Refer & Earn</span>
+                <span className="text-indigo-400/70 text-[10px] uppercase tracking-wider font-bold">+50 XP</span>
               </div>
             </div>
           </Link>
@@ -248,16 +247,16 @@ export default function Sidebar() {
               setIsExpanded(false);
             }}
             className={clsx(
-              "w-full flex items-center justify-between px-3 py-2.5 bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/20 hover:to-orange-500/20 border border-amber-500/20 hover:border-orange-500/40 transition-all rounded-xl font-medium group overflow-hidden",
+              "w-full flex items-center justify-between px-3 py-2.5 bg-[#1c140a] border border-[#3b2713] hover:bg-[#241a0d] hover:border-[#4d3319] transition-all rounded-xl font-medium group overflow-hidden",
               !isExpanded && "justify-center"
             )}
             title={!isExpanded ? "Daily Streak & XP" : undefined}
           >
             <div className="flex items-center gap-3">
-              <Flame className="w-5 h-5 text-orange-500 shrink-0" />
+              <Flame className="w-5 h-5 text-orange-500 shrink-0 drop-shadow-[0_0_6px_rgba(249,115,22,0.4)]" />
               <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                <span className="text-orange-300 font-bold text-sm group-hover:text-orange-200 transition-colors">Daily Streak</span>
-                <span className="text-zinc-400 text-[10px] uppercase tracking-wider font-bold">
+                <span className="text-orange-300 font-bold text-[14px] group-hover:text-orange-200 transition-colors">Daily Streak</span>
+                <span className="text-orange-500/70 text-[10px] uppercase tracking-wider font-bold">
                   {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
                 </span>
               </div>
@@ -277,8 +276,8 @@ export default function Sidebar() {
             <div className="flex flex-col gap-1 w-full">
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={`sidebar-skel-${i}`} className="flex items-center gap-4 px-3 py-2.5">
-                  <Skeleton className="w-5 h-5 rounded-md shrink-0 bg-zinc-800/80" />
-                  <Skeleton className={clsx("h-4 rounded-sm bg-zinc-800/80 transition-all duration-300", isExpanded ? "w-24 opacity-100" : "w-0 opacity-0 hidden")} />
+                  <Skeleton className="w-5 h-5 rounded-md shrink-0" />
+                  <Skeleton className={clsx("h-4 rounded-sm transition-all duration-300", isExpanded ? "w-24 opacity-100" : "w-0 opacity-0 hidden")} />
                 </div>
               ))}
             </div>
@@ -315,11 +314,24 @@ export default function Sidebar() {
             href="https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y" 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-full transition-colors flex items-center justify-center w-8 h-8"
+            className="p-2 bg-zinc-800 hover:bg-green-900/50 hover:text-green-500 rounded-full transition-colors flex items-center justify-center w-8 h-8 text-zinc-400"
             aria-label="WhatsApp"
           >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-text-muted">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
               <path d="M12.031 21.054c-1.845 0-3.623-.473-5.221-1.372l-.375-.213-3.87.102 1.041-3.771-.233-.37c-.985-1.573-1.503-3.39-1.503-5.26 0-5.465 4.453-9.914 9.932-9.914 2.65 0 5.143 1.033 7.018 2.909 1.874 1.877 2.908 4.368 2.908 7.022 0 5.466-4.453 9.914-9.931 9.914h.202zm5.728-7.795c-.314-.158-1.859-.918-2.146-1.023-.287-.105-.497-.158-.707.158-.21.314-.808 1.023-1.002 1.231-.194.208-.388.234-.702.076-2.023-1.008-3.32-2.142-4.135-4.264-.105-.285.105-.436.26-.59.139-.14.314-.367.472-.55.158-.184.21-.314.314-.525.105-.21.052-.394-.026-.552-.079-.158-.707-1.705-.968-2.336-.254-.616-.511-.532-.707-.542-.184-.01-.394-.01-.604-.01-.21 0-.551.079-.84.394-.288.315-1.101 1.076-1.101 2.624 0 1.549 1.127 3.045 1.285 3.255.158.21 2.217 3.385 5.372 4.747 3.155 1.362 3.155.918 3.731.866.577-.052 1.859-.761 2.121-1.496.262-.735.262-1.365.184-1.496-.078-.131-.288-.21-.603-.368z" />
+            </svg>
+          </a>
+          <a 
+            href="https://instagram.com/mlbbtopup.in" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="p-2 bg-zinc-800 hover:bg-pink-900/40 hover:text-pink-500 rounded-full transition-colors flex items-center justify-center w-8 h-8 text-zinc-400"
+            aria-label="Instagram"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
             </svg>
           </a>
         </div>

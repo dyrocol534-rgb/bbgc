@@ -69,17 +69,14 @@ export default function PWAInstallButton({ variant = "icon", onInstall }: { vari
     return (
       <button
         onClick={handleInstall}
-        className="relative w-full overflow-hidden flex items-center gap-3 px-4 py-3 rounded-xl font-semibold group text-left transition-all hover:scale-[1.02] active:scale-95 shadow-sm"
+        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-semibold group text-left transition-all bg-[#12111a] border border-[#282142] hover:bg-[#161521] hover:border-[#382e5c]"
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors" />
-        <div className="absolute inset-0 border border-indigo-500/20 group-hover:border-indigo-500/40 rounded-xl transition-colors" />
-        
-        <div className="relative flex items-center justify-center p-2 rounded-lg bg-indigo-500/20 text-indigo-400 group-hover:text-indigo-300 group-hover:bg-indigo-500/30 transition-colors shadow-inner">
-          <AppInstallIcon className="w-5 h-5" />
+        <div className="relative flex items-center justify-center w-8 h-8 shrink-0 rounded bg-[#1f1d2e] border border-[#312d4a] text-indigo-400 group-hover:text-indigo-300 transition-colors">
+          <AppInstallIcon className="w-4 h-4" />
         </div>
-        <div className="relative flex flex-col">
-          <span className="text-sm text-indigo-100 group-hover:text-white transition-colors leading-tight">Install Web App</span>
-          <span className="text-[10px] text-indigo-300/70 font-medium mt-0.5">Play instantly from home screen</span>
+        <div className="flex flex-col">
+          <span className="text-sm font-bold text-zinc-100 group-hover:text-white transition-colors mb-0.5">Install Web App</span>
+          <span className="text-[10px] text-[#716a93] font-medium leading-tight">Play instantly from home screen</span>
         </div>
       </button>
     );

@@ -111,7 +111,7 @@ export default function InfiniteGameGrid({
             className={spanClass}
             ref={i === 0 ? observerTarget : null}
           >
-            <Skeleton className={`${imageContainerClass} w-full rounded-2xl bg-zinc-800/80`} />
+            <Skeleton className={`${imageContainerClass} w-full rounded-2xl`} />
           </div>
         );
       })}

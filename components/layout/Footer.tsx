@@ -52,13 +52,21 @@ export default function Footer() {
               <span className="text-lg font-bold tracking-tight text-white">{siteName}</span>
             </Link>
             <p className="text-zinc-400 text-xs leading-relaxed mb-4">
-              Play the best free online HTML5 and Unity WebGL games directly in your browser. No downloads, instant play!
+              Discover and play the best free online HTML5 and Unity WebGL games directly in your browser. From action-packed multiplayer shooters to relaxing puzzle games, enjoy seamless gaming with no downloads or installations required. Instant play anytime, anywhere on Bluebuff Games.
             </p>
-            <div className="flex gap-3">
-              <a href="https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-green-500 transition-colors" aria-label="WhatsApp">
+            <div className="flex gap-4">
+              <a href="https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-green-500 transition-colors flex items-center" aria-label="WhatsApp">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12.031 21.054c-1.845 0-3.623-.473-5.221-1.372l-.375-.213-3.87.102 1.041-3.771-.233-.37c-.985-1.573-1.503-3.39-1.503-5.26 0-5.465 4.453-9.914 9.932-9.914 2.65 0 5.143 1.033 7.018 2.909 1.874 1.877 2.908 4.368 2.908 7.022 0 5.466-4.453 9.914-9.931 9.914h.202zm5.728-7.795c-.314-.158-1.859-.918-2.146-1.023-.287-.105-.497-.158-.707.158-.21.314-.808 1.023-1.002 1.231-.194.208-.388.234-.702.076-2.023-1.008-3.32-2.142-4.135-4.264-.105-.285.105-.436.26-.59.139-.14.314-.367.472-.55.158-.184.21-.314.314-.525.105-.21.052-.394-.026-.552-.079-.158-.707-1.705-.968-2.336-.254-.616-.511-.532-.707-.542-.184-.01-.394-.01-.604-.01-.21 0-.551.079-.84.394-.288.315-1.101 1.076-1.101 2.624 0 1.549 1.127 3.045 1.285 3.255.158.21 2.217 3.385 5.372 4.747 3.155 1.362 3.155.918 3.731.866.577-.052 1.859-.761 2.121-1.496.262-.735.262-1.365.184-1.496-.078-.131-.288-.21-.603-.368z" />
                 </svg>
+              </a>
+              <a href="https://instagram.com/mlbbtopup.in" target="_blank" rel="noopener noreferrer" className="text-zinc-500 hover:text-pink-500 transition-colors flex items-center" aria-label="Instagram">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                </svg>
+                <span className="sr-only">@mlbbtopup.in</span>
               </a>
             </div>
           </div>
