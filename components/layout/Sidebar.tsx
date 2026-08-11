@@ -160,19 +160,19 @@ export default function Sidebar() {
             onClick={handleSurpriseMe}
             disabled={isRolling}
             className={clsx(
-              "w-full flex items-center gap-4 px-3 py-3 rounded-xl transition-all whitespace-nowrap",
-              "bg-[#1a1727] border border-[#2b2540] hover:bg-[#201d32] hover:border-[#3d345c] shadow-lg shadow-indigo-500/5",
+              "w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all whitespace-nowrap",
+              "bg-[#121214] border border-[#1f1f22] hover:border-indigo-500/50 hover:bg-[#1a1a24] shadow-md shadow-black/40",
               !isExpanded && "justify-center px-0"
             )}
             title={!isExpanded ? "Surprise Me (Random Game)" : undefined}
           >
             {isRolling ? (
-              <Loader2 className="w-[18px] h-[18px] shrink-0 text-indigo-400 animate-spin" />
+              <Loader2 className="w-5 h-5 shrink-0 text-indigo-400 animate-spin" />
             ) : (
-              <Dices className="w-[18px] h-[18px] shrink-0 text-indigo-400 drop-shadow-[0_0_6px_rgba(99,102,241,0.4)]" />
+              <Dices className="w-5 h-5 shrink-0 text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]" />
             )}
             <span className={clsx(
-              "font-bold text-[14px] text-indigo-200 hover:text-indigo-100 transition-all duration-300", 
+              "font-bold text-sm text-indigo-100 transition-all duration-300", 
               isExpanded ? "opacity-100" : "opacity-0 hidden"
             )}>
               Surprise Me!
@@ -190,15 +190,15 @@ export default function Sidebar() {
                 href={link.href}
                 onClick={() => setIsExpanded(false)}
                 className={clsx(
-                  "flex items-center gap-4 px-3 py-2.5 rounded-xl transition-colors whitespace-nowrap",
+                  "flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
                   isActive 
-                    ? "bg-[#121214] text-zinc-100" 
-                    : "text-zinc-400 hover:bg-[#121214] hover:text-zinc-200"
+                    ? "bg-[#121214] text-white shadow-md shadow-black/40 border-l-2 border-indigo-500 rounded-l-none" 
+                    : "text-zinc-400 hover:bg-[#121214]/50 hover:text-zinc-200 border-l-2 border-transparent"
                 )}
                 title={!isExpanded ? link.name : undefined}
               >
-                <Icon className={clsx("w-5 h-5 shrink-0", isActive ? "text-zinc-300" : "text-zinc-500")} />
-                <span className={clsx("font-medium text-sm transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+                <Icon className={clsx("w-5 h-5 shrink-0", isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]" : "text-zinc-500")} />
+                <span className={clsx("transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
                   {link.name}
                 </span>
               </Link>
@@ -222,7 +222,7 @@ export default function Sidebar() {
               setIsExpanded(false);
             }}
             className={clsx(
-              "w-full flex items-center justify-between px-3 py-2.5 bg-[#1a1727] border border-[#2b2540] hover:bg-[#201d32] hover:border-[#3d345c] transition-all rounded-xl font-medium group overflow-hidden",
+              "w-full flex items-center justify-between px-4 py-3 bg-[#121214] border border-[#1f1f22] hover:border-indigo-500/30 hover:bg-[#1a1a24] transition-all rounded-xl font-bold group overflow-hidden shadow-sm",
               !isExpanded && "justify-center"
             )}
             title={!isExpanded ? "Refer & Earn +50 XP" : undefined}
@@ -230,8 +230,8 @@ export default function Sidebar() {
             <div className="flex items-center gap-3">
               <Handshake className="w-5 h-5 text-indigo-400 shrink-0 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
               <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                <span className="text-indigo-200 font-bold text-[14px] group-hover:text-indigo-100 transition-colors">Refer & Earn</span>
-                <span className="text-indigo-400/70 text-[10px] uppercase tracking-wider font-bold">+50 XP</span>
+                <span className="text-white text-sm group-hover:text-indigo-200 transition-colors">Refer & Earn</span>
+                <span className="text-indigo-400/80 text-[10px] uppercase tracking-wider font-bold">+50 XP</span>
               </div>
             </div>
           </Link>
@@ -247,16 +247,16 @@ export default function Sidebar() {
               setIsExpanded(false);
             }}
             className={clsx(
-              "w-full flex items-center justify-between px-3 py-2.5 bg-[#1c140a] border border-[#3b2713] hover:bg-[#241a0d] hover:border-[#4d3319] transition-all rounded-xl font-medium group overflow-hidden",
+              "w-full flex items-center justify-between px-4 py-3 bg-[#121214] border border-[#1f1f22] hover:border-orange-500/30 hover:bg-[#1a1512] transition-all rounded-xl font-bold group overflow-hidden shadow-sm",
               !isExpanded && "justify-center"
             )}
             title={!isExpanded ? "Daily Streak & XP" : undefined}
           >
             <div className="flex items-center gap-3">
-              <Flame className="w-5 h-5 text-orange-500 shrink-0 drop-shadow-[0_0_6px_rgba(249,115,22,0.4)]" />
+              <Flame className="w-5 h-5 text-orange-500 shrink-0 drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]" />
               <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                <span className="text-orange-300 font-bold text-[14px] group-hover:text-orange-200 transition-colors">Daily Streak</span>
-                <span className="text-orange-500/70 text-[10px] uppercase tracking-wider font-bold">
+                <span className="text-white text-sm group-hover:text-orange-200 transition-colors">Daily Streak</span>
+                <span className="text-orange-500/80 text-[10px] uppercase tracking-wider font-bold">
                   {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
                 </span>
               </div>
@@ -290,15 +290,15 @@ export default function Sidebar() {
                 href={link.href}
                 onClick={() => setIsExpanded(false)}
                 className={clsx(
-                  "flex items-center gap-4 px-3 py-2.5 rounded-xl transition-colors whitespace-nowrap",
+                  "flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-bold transition-all whitespace-nowrap",
                   isActive 
-                    ? "bg-primary/10 text-primary-light" 
-                    : "text-zinc-400 hover:bg-surface-hover/50 hover:text-zinc-200"
+                    ? "bg-[#121214] text-white shadow-md shadow-black/40 border-l-2 border-indigo-500 rounded-l-none" 
+                    : "text-zinc-500 hover:bg-[#121214]/50 hover:text-zinc-300 border-l-2 border-transparent"
                 )}
                 title={!isExpanded ? link.name : undefined}
               >
-                <Icon className={clsx("w-5 h-5 shrink-0", isActive ? "text-primary-hover" : "text-text-placeholder")} />
-                <span className={clsx("font-medium text-sm transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+                <Icon className={clsx("w-5 h-5 shrink-0", isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]" : "text-zinc-500")} />
+                <span className={clsx("transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
                   {link.name}
                 </span>
               </Link>

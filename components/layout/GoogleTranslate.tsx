@@ -92,7 +92,7 @@ export default function GoogleTranslate() {
       {/* Our Custom Premium UI */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+        className="flex items-center gap-2 px-2.5 py-2 text-zinc-200 hover:text-white bg-zinc-800/60 hover:bg-zinc-700/70 border border-zinc-700/50 hover:border-zinc-500/70 rounded-lg transition-all shadow-sm"
         title="Change Language"
       >
         <Globe className="w-5 h-5" />

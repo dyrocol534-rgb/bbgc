@@ -5,193 +5,154 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { XP_CONFIG } from "@/lib/xp";
 import ReferralClient from "./ReferralClient";
-import { Users, Coins, Hourglass, HelpCircle, Check } from "lucide-react";
-import Link from "next/link";
+import { Users, Coins, Hourglass, Check } from "lucide-react";
 import Image from "next/image";
 
 export default async function ReferralPage() {
   const session = await getServerSession(authOptions);
-
-  if (!session || !session.user) {
-    redirect("/");
-  }
+  if (!session || !session.user) redirect("/");
 
   await dbConnect();
-  
-  // The user should have a referral code since auth.ts auto-generates it in the session callback
   const currentUser = await User.findById((session.user as any).id).lean();
-  
-  if (!currentUser) {
-    redirect("/");
-  }
-  
-  const referralCode = currentUser.referralCode || "NONE";
+  if (!currentUser) redirect("/");
 
-  // Fetch all users who used this user's referral code
+  const referralCode = currentUser.referralCode || "NONE";
   const referredUsers = await User.find({ referredBy: currentUser._id }).lean();
-  
+
   const totalInvited = referredUsers.length;
   const rewardsUnlocked = referredUsers.filter(u => u.referralRewardPaid).length;
   const pendingInvites = totalInvited - rewardsUnlocked;
-  
   const totalXpEarned = rewardsUnlocked * XP_CONFIG.REFERRAL_REWARD;
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-12 min-h-screen">
-      {/* Hero Section */}
+    <div className="max-w-3xl mx-auto px-4 py-6 space-y-5">
+
+      {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white mb-2">
-          Invite Friends. Earn Massive XP.
-        </h1>
-        <p className="text-sm text-zinc-400">
-          Share your unique code with friends. When they sign up and play their first {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games, you <span className="font-bold text-amber-400">BOTH</span> earn a massive <span className="font-bold text-amber-400">+{XP_CONFIG.REFERRAL_REWARD} XP</span> bonus!
+        <h1 className="text-xl font-bold text-white tracking-tight">Refer &amp; Earn</h1>
+        <p className="text-xs text-zinc-500 mt-0.5">
+          Invite friends — you <span className="font-bold text-amber-400">both</span> earn{" "}
+          <span className="font-bold text-amber-400">+{XP_CONFIG.REFERRAL_REWARD} XP</span> when they play {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games.
         </p>
       </div>
 
-      {/* Referral Client Component (Link & Copy button) */}
+      {/* Referral Link Card */}
       <ReferralClient referralCode={referralCode} />
 
-      {/* Stats Dashboard */}
-      <h2 className="text-2xl font-bold text-white mb-6">Your Referral Dashboard</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-        
-        {/* Total Invited */}
-        <div className="bg-surface border border-zinc-800 rounded-2xl p-5 relative overflow-hidden group hover:border-indigo-500/50 transition-colors">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 transition-transform group-hover:scale-150" />
-          <div className="relative z-10 flex items-start justify-between">
-            <div>
-              <p className="text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Total Invited</p>
-              <h3 className="text-2xl font-black text-white">{totalInvited}</h3>
+      {/* Stats row */}
+      <div className="grid grid-cols-3 gap-2.5">
+        <div className="relative overflow-hidden rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-3.5 group hover:border-indigo-500/40 transition-colors">
+          <div className="absolute -top-4 -right-4 w-16 h-16 bg-indigo-500/15 rounded-full blur-2xl group-hover:scale-150 transition-transform" />
+          <div className="relative">
+            <div className="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center mb-2">
+              <Users className="w-3.5 h-3.5 text-indigo-400" />
             </div>
-            <div className="p-2.5 bg-indigo-500/20 rounded-xl border border-indigo-500/30 text-indigo-400">
-              <Users className="w-5 h-5" />
-            </div>
+            <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest mb-0.5">Invited</p>
+            <p className="text-2xl font-black text-white leading-none">{totalInvited}</p>
           </div>
         </div>
 
-        {/* Rewards Unlocked */}
-        <div className="bg-surface border border-zinc-800 rounded-2xl p-5 relative overflow-hidden group hover:border-amber-500/50 transition-colors">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 transition-transform group-hover:scale-150" />
-          <div className="relative z-10 flex items-start justify-between">
-            <div>
-              <p className="text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Rewards Unlocked</p>
-              <h3 className="text-2xl font-black text-white">{rewardsUnlocked}</h3>
-              <p className="text-[11px] font-bold text-amber-500 mt-1.5">+{totalXpEarned} XP Earned</p>
+        <div className="relative overflow-hidden rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3.5 group hover:border-amber-500/40 transition-colors">
+          <div className="absolute -top-4 -right-4 w-16 h-16 bg-amber-500/15 rounded-full blur-2xl group-hover:scale-150 transition-transform" />
+          <div className="relative">
+            <div className="w-7 h-7 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mb-2">
+              <Coins className="w-3.5 h-3.5 text-amber-400" />
             </div>
-            <div className="p-2.5 bg-amber-500/20 rounded-xl border border-amber-500/30 text-amber-400">
-              <Coins className="w-5 h-5" />
-            </div>
+            <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest mb-0.5">Unlocked</p>
+            <p className="text-2xl font-black text-white leading-none">{rewardsUnlocked}</p>
+            {totalXpEarned > 0 && (
+              <p className="text-[10px] text-amber-400 font-semibold mt-1">+{totalXpEarned} XP</p>
+            )}
           </div>
         </div>
 
-        {/* Pending Invites */}
-        <div className="bg-surface border border-zinc-800 rounded-2xl p-5 relative overflow-hidden group hover:border-orange-500/50 transition-colors">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 transition-transform group-hover:scale-150" />
-          <div className="relative z-10 flex items-start justify-between">
-            <div>
-              <p className="text-xs font-medium text-zinc-400 mb-1 uppercase tracking-wider">Pending Unlocks</p>
-              <h3 className="text-2xl font-black text-white">{pendingInvites}</h3>
-              <p className="text-[11px] text-zinc-500 mt-1.5">Friends must play 10 games</p>
+        <div className="relative overflow-hidden rounded-2xl border border-orange-500/20 bg-orange-500/5 p-3.5 group hover:border-orange-500/40 transition-colors">
+          <div className="absolute -top-4 -right-4 w-16 h-16 bg-orange-500/15 rounded-full blur-2xl group-hover:scale-150 transition-transform" />
+          <div className="relative">
+            <div className="w-7 h-7 rounded-lg bg-orange-500/20 border border-orange-500/30 flex items-center justify-center mb-2">
+              <Hourglass className="w-3.5 h-3.5 text-orange-400" />
             </div>
-            <div className="p-2.5 bg-orange-500/20 rounded-xl border border-orange-500/30 text-orange-400">
-              <Hourglass className="w-5 h-5" />
-            </div>
+            <p className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest mb-0.5">Pending</p>
+            <p className="text-2xl font-black text-white leading-none">{pendingInvites}</p>
+            <p className="text-[10px] text-zinc-600 mt-1">needs {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games</p>
           </div>
         </div>
       </div>
 
-      {/* Friends List Table */}
+      {/* Friends List */}
       {referredUsers.length > 0 && (
-        <>
-          <h3 className="text-xl font-bold text-white mb-4">Your Invited Friends</h3>
-          <div className="bg-surface border border-zinc-800 rounded-2xl overflow-hidden mb-12">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-black/40 border-b border-zinc-800">
-                    <th className="p-4 text-sm font-semibold text-zinc-400">Friend</th>
-                    <th className="p-4 text-sm font-semibold text-zinc-400 text-center">Games Played</th>
-                    <th className="p-4 text-sm font-semibold text-zinc-400 text-right">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-800/50">
-                  {referredUsers.map(user => {
-                    const gamesPlayed = user.gamesPlayedCount || 0;
-                    const isCompleted = user.referralRewardPaid;
-                    const progress = Math.min(100, Math.round((gamesPlayed / XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL) * 100));
+        <div>
+          <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2.5">Invited Friends</p>
+          <div className="rounded-2xl border border-zinc-800/60 bg-zinc-900/30 overflow-hidden">
+            {referredUsers.map((user, i) => {
+              const gamesPlayed = user.gamesPlayedCount || 0;
+              const isCompleted = user.referralRewardPaid;
+              const progress = Math.min(100, Math.round((gamesPlayed / XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL) * 100));
+              return (
+                <div
+                  key={user._id.toString()}
+                  className={`flex items-center gap-3 px-4 py-3 hover:bg-white/[0.03] transition-colors ${i !== 0 ? "border-t border-zinc-800/50" : ""}`}
+                >
+                  {/* Avatar */}
+                  {user.image ? (
+                    <Image src={user.image} alt={user.name} width={32} height={32} className="w-8 h-8 rounded-full border border-zinc-700/60 object-cover shrink-0" />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-xs text-zinc-400 shrink-0">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
 
-                    return (
-                      <tr key={user._id.toString()} className="hover:bg-white/5 transition-colors">
-                        <td className="p-4">
-                          <div className="flex items-center gap-3">
-                            {user.image ? (
-                              <Image src={user.image} alt={user.name} width={32} height={32} className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 object-cover" />
-                            ) : (
-                              <div className="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center font-bold text-xs text-zinc-500">
-                                {user.name.charAt(0).toUpperCase()}
-                              </div>
-                            )}
-                            <span className="font-medium text-zinc-200">{user.name}</span>
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex flex-col items-center max-w-[150px] mx-auto gap-1.5">
-                            <span className="text-xs font-medium text-zinc-400">{gamesPlayed} / {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games</span>
-                            <div className="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-                              <div 
-                                className={`h-full rounded-full transition-all ${isCompleted ? 'bg-amber-400' : 'bg-indigo-500'}`}
-                                style={{ width: `${progress}%` }}
-                              />
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-4 text-right">
-                          {isCompleted ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-bold bg-amber-500/20 text-amber-400 px-2 py-1 rounded-md border border-amber-500/30">
-                              <Check className="w-3 h-3" /> Paid (+50 XP)
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 text-xs font-medium bg-zinc-800 text-zinc-400 px-2 py-1 rounded-md border border-zinc-700">
-                              <Hourglass className="w-3 h-3" /> Pending
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                  {/* Name + progress */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-zinc-200 truncate">{user.name}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className="flex-1 bg-zinc-800 h-1 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all ${isCompleted ? "bg-amber-400" : "bg-indigo-500"}`}
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-zinc-500 shrink-0">{gamesPlayed}/{XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL}</span>
+                    </div>
+                  </div>
+
+                  {/* Status badge */}
+                  {isCompleted ? (
+                    <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold bg-amber-500/15 text-amber-400 px-2 py-1 rounded-full border border-amber-500/25">
+                      <Check className="w-2.5 h-2.5" /> +{XP_CONFIG.REFERRAL_REWARD} XP
+                    </span>
+                  ) : (
+                    <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-medium bg-zinc-800/60 text-zinc-500 px-2 py-1 rounded-full border border-zinc-700/50">
+                      <Hourglass className="w-2.5 h-2.5" /> Pending
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        </>
+        </div>
       )}
 
-      {/* FAQ / How it works */}
-      <div className="bg-black/30 border border-zinc-800 rounded-2xl p-8">
-        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-          <HelpCircle className="w-5 h-5 text-indigo-400" />
-          How does the Referral Program work?
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-black mb-3">1</div>
-            <h4 className="font-bold text-zinc-200 mb-2">Share Your Link</h4>
-            <p className="text-sm text-zinc-500">Send your unique link to friends. When they visit, your code is automatically applied when they sign in.</p>
-          </div>
-          <div>
-            <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-black mb-3">2</div>
-            <h4 className="font-bold text-zinc-200 mb-2">They Play Games</h4>
-            <p className="text-sm text-zinc-500">Your friend needs to play {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} unique games to verify they are a real, active player.</p>
-          </div>
-          <div>
-            <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-black mb-3">3</div>
-            <h4 className="font-bold text-amber-300 mb-2">Both Get Rewarded!</h4>
-            <p className="text-sm text-amber-500/70">The moment they play their 10th game, both of your accounts instantly receive +{XP_CONFIG.REFERRAL_REWARD} XP!</p>
-          </div>
+      {/* How it works */}
+      <div className="rounded-2xl border border-zinc-800/60 bg-zinc-900/30 p-4">
+        <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3">How it works</p>
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { step: "1", color: "indigo", title: "Share Link", desc: "Send your unique link — your code auto-applies on sign in." },
+            { step: "2", color: "indigo", title: "They Play", desc: `Friend plays ${XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games to confirm they're active.` },
+            { step: "3", color: "amber", title: "Both Earn!", desc: `You both instantly get +${XP_CONFIG.REFERRAL_REWARD} XP.` },
+          ].map(({ step, color, title, desc }) => (
+            <div key={step} className="flex flex-col gap-2">
+              <div className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center ${color === "amber" ? "bg-amber-500/20 text-amber-400" : "bg-indigo-500/20 text-indigo-400"}`}>
+                {step}
+              </div>
+              <p className={`text-xs font-bold ${color === "amber" ? "text-amber-300" : "text-zinc-200"}`}>{title}</p>
+              <p className="text-[11px] text-zinc-500 leading-snug">{desc}</p>
+            </div>
+          ))}
         </div>
       </div>
+
     </div>
   );
 }

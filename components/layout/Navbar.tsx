@@ -62,7 +62,7 @@ export default function Navbar() {
         
         <div className="flex items-center gap-2 sm:gap-4">
           <button 
-            className="sm:hidden text-zinc-400 hover:text-white p-2 transition-colors"
+            className="sm:hidden text-zinc-200 hover:text-white p-2 rounded-lg bg-zinc-800/60 hover:bg-zinc-700/70 border border-zinc-700/50 hover:border-zinc-500/70 transition-all shadow-sm"
             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
             title="Search"
           >
@@ -72,13 +72,13 @@ export default function Navbar() {
           <button
             onClick={handleSurpriseMe}
             disabled={isRolling}
-            className="group relative flex items-center justify-center p-2 rounded-full bg-gradient-to-tr from-indigo-600/20 to-purple-500/20 hover:from-indigo-600/40 hover:to-purple-500/40 border border-indigo-500/30 hover:border-indigo-400/50 transition-all shadow-[0_0_15px_rgba(99,102,241,0.15)] hover:shadow-[0_0_20px_rgba(99,102,241,0.3)] disabled:opacity-50"
+            className="group relative flex items-center justify-center p-2 rounded-full bg-gradient-to-tr from-indigo-600/30 to-purple-500/30 hover:from-indigo-600/50 hover:to-purple-500/50 border border-indigo-400/50 hover:border-indigo-300/70 transition-all shadow-[0_0_18px_rgba(99,102,241,0.25)] hover:shadow-[0_0_26px_rgba(99,102,241,0.45)] disabled:opacity-50"
             title="Surprise Me!"
           >
             {isRolling ? (
-              <Loader2 className="w-5 h-5 text-indigo-400 animate-spin" />
+              <Loader2 className="w-5 h-5 text-indigo-200 animate-spin" />
             ) : (
-              <Dices className="w-5 h-5 text-indigo-400 group-hover:text-indigo-300 transition-colors transform group-hover:rotate-12" />
+              <Dices className="w-5 h-5 text-indigo-200 group-hover:text-white transition-colors transform group-hover:rotate-12" />
             )}
             
             {/* Tooltip for desktop */}
@@ -93,17 +93,17 @@ export default function Navbar() {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setIsSidebarOpen(true)} 
-                className="flex items-center gap-1.5 bg-zinc-800/40 hover:bg-zinc-700/60 border border-zinc-700/50 hover:border-zinc-500 pl-2.5 pr-1 py-1 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex items-center gap-1.5 bg-zinc-800/60 hover:bg-zinc-700/80 border border-zinc-600/70 hover:border-zinc-400/80 pl-2.5 pr-1 py-1 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-[0_0_10px_rgba(0,0,0,0.4)]"
                 aria-label="User Profile"
               >
-                <ChevronDown className="w-4 h-4 text-zinc-400" />
+                <ChevronDown className="w-4 h-4 text-zinc-200" />
                 {session.user?.image ? (
-                  <div className="relative w-8 h-8 rounded-full border border-zinc-700 overflow-hidden shrink-0">
+                  <div className="relative w-8 h-8 rounded-full border-2 border-indigo-500/60 overflow-hidden shrink-0 shadow-[0_0_8px_rgba(99,102,241,0.35)]">
                     <Image src={session.user.image} alt="User" fill sizes="32px" className="object-cover" />
                   </div>
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center border border-border-strong shrink-0">
-                    <UserIcon className="w-4 h-4 text-text-muted" />
+                  <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center border-2 border-zinc-500 shrink-0">
+                    <UserIcon className="w-4 h-4 text-zinc-200" />
                   </div>
                 )}
               </button>
