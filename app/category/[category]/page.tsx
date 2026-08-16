@@ -141,7 +141,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
           actionHref="/"
         />
       ) : (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 auto-rows-[minmax(100px,auto)] md:auto-rows-[minmax(120px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
+        <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 auto-rows-[minmax(100px,auto)] md:auto-rows-[minmax(120px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
           {games.map((game: Record<string, any>, index: number) => {
             const spanClass = getBentoSpanClass(index);
             const imageContainerClass = getImageContainerClass(spanClass);

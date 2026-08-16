@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronDown, ChevronRight, Coins, Flame, HeartHandshake } from "lucide-react";
+import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronDown, ChevronRight, Coins, Flame, HeartHandshake, ExternalLink, ShoppingBag, Trophy, Globe } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -140,50 +140,52 @@ export default function Navbar() {
         "fixed top-0 right-0 h-full w-72 bg-[#0c0c0e] border-l border-[#1f1f22] z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl",
         isSidebarOpen ? "translate-x-0" : "translate-x-full"
       )}>
-        <div className="p-4 border-b border-[#1f1f22] flex items-center justify-between">
+        <div className="p-4 bg-gradient-to-r from-indigo-950/40 via-[#121217] to-[#0c0c0e] border-b border-zinc-800/80 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {session?.user?.image ? (
-              <div className="relative w-10 h-10 rounded-full border border-zinc-700/50 shadow-sm overflow-hidden shrink-0">
+              <div className="relative w-10 h-10 rounded-full border border-indigo-500/40 shadow-md shadow-indigo-500/20 overflow-hidden shrink-0">
                 <Image src={session.user.image} alt="User" fill sizes="40px" className="object-cover" />
               </div>
             ) : (
-              <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700 shadow-sm shrink-0">
-                <UserIcon className="w-5 h-5 text-text-muted" />
+              <div className="w-10 h-10 rounded-full bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center shrink-0 text-indigo-400 shadow-[0_0_12px_rgba(99,102,241,0.25)]">
+                <UserIcon className="w-5 h-5" />
               </div>
             )}
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-zinc-100 tracking-wide truncate max-w-[140px]">{session?.user?.name || "Guest"}</span>
-              {session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") && (
-                <span className="text-[10px] font-bold text-indigo-400 tracking-widest uppercase mt-0.5">Admin</span>
-              )}
+              <span className="text-sm font-bold text-white tracking-wide truncate max-w-[140px]">{session?.user?.name || "Guest Player"}</span>
+              <span className="text-[10px] text-zinc-400 font-medium">
+                {session ? (session.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") ? "Administrator" : "Member") : "Play & Earn Rewards"}
+              </span>
             </div>
           </div>
           <button 
             onClick={() => setIsSidebarOpen(false)} 
-            className="text-zinc-500 hover:text-zinc-300 p-1.5 hover:bg-[#1f1f22] rounded-lg transition-colors"
+            className="text-zinc-400 hover:text-white p-1.5 hover:bg-zinc-800/60 rounded-lg transition-colors"
             aria-label="Close sidebar"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-3">
+
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
           {session && (
-            <div>
-              <Link 
-                href="/profile" 
-                onClick={() => setIsSidebarOpen(false)} 
-                className="flex items-center gap-3 text-zinc-200 hover:text-white transition-colors font-medium group"
-              >
-                <div className="w-7 h-7 rounded flex items-center justify-center border border-zinc-800 bg-[#121214] group-hover:border-zinc-600 transition-colors">
-                  <UserIcon className="w-3.5 h-3.5 text-zinc-400 group-hover:text-zinc-300" />
+            <Link 
+              href="/profile" 
+              onClick={() => setIsSidebarOpen(false)} 
+              className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/60 border border-zinc-800/80 hover:border-zinc-700 text-zinc-200 hover:text-white transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-300 group-hover:text-indigo-400 transition-colors">
+                  <UserIcon className="w-4 h-4" />
                 </div>
-                <span className="text-[14px]">My Profile</span>
-              </Link>
-            </div>
+                <span className="text-xs font-semibold">My Profile</span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+            </Link>
           )}
 
           {/* Gamification Stats */}
-          <div>
+          <div className="grid grid-cols-2 gap-2.5">
             <Link 
               href="/rewards" 
               onClick={(e) => {
@@ -193,27 +195,42 @@ export default function Navbar() {
                 }
                 setIsSidebarOpen(false);
               }}
-              className="flex gap-2"
+              className="bg-gradient-to-b from-[#141418] to-[#0f0f12] border border-zinc-800/80 hover:border-amber-500/40 rounded-xl p-3 transition-all group relative overflow-hidden"
             >
-              <div className="flex-1 bg-[#121214] border border-[#1f1f22] rounded-lg p-2.5 hover:border-[#333339] transition-colors group relative">
-                <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-1">XP Balance</p>
-                <div className="flex items-center justify-between">
-                  <Coins className="w-4 h-4 text-amber-500 drop-shadow-[0_0_6px_rgba(245,158,11,0.4)]" />
-                  <ChevronRight className="w-3 h-3 text-amber-600/70 group-hover:text-amber-500 transition-colors" />
-                </div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">XP Balance</span>
+                <Coins className="w-4 h-4 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
               </div>
-              <div className="flex-1 bg-[#121214] border border-[#1f1f22] rounded-lg p-2.5 hover:border-[#333339] transition-colors group relative">
-                <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Daily Streak</p>
-                <div className="flex items-center justify-between">
-                  <Flame className="w-4 h-4 text-orange-500 drop-shadow-[0_0_6px_rgba(249,115,22,0.4)]" />
-                  <ChevronRight className="w-3 h-3 text-orange-600/70 group-hover:text-orange-500 transition-colors" />
-                </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-amber-300">0 XP</span>
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-amber-400 transition-colors" />
+              </div>
+            </Link>
+
+            <Link 
+              href="/rewards" 
+              onClick={(e) => {
+                if (!session) {
+                  e.preventDefault();
+                  router.push("/login");
+                }
+                setIsSidebarOpen(false);
+              }}
+              className="bg-gradient-to-b from-[#141418] to-[#0f0f12] border border-zinc-800/80 hover:border-orange-500/40 rounded-xl p-3 transition-all group relative overflow-hidden"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Streak</span>
+                <Flame className="w-4 h-4 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-orange-400">0 Days</span>
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-orange-400 transition-colors" />
               </div>
             </Link>
           </div>
 
-          {/* Refer and Earn Button */}
-          <div>
+          {/* Menu Actions Group */}
+          <div className="flex flex-col gap-2 bg-[#0e0e11] border border-zinc-800/70 rounded-xl p-1.5">
             <Link
               href="/referral"
               onClick={(e) => {
@@ -223,64 +240,83 @@ export default function Navbar() {
                 }
                 setIsSidebarOpen(false);
               }}
-              className="w-full flex items-center justify-between px-3 py-2.5 bg-[#1a1727] border border-[#2b2540] hover:bg-[#201d32] hover:border-[#3d345c] transition-all rounded-lg group"
+              className="flex items-center justify-between p-2.5 hover:bg-zinc-800/50 rounded-lg transition-all group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-md bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
-                  <HeartHandshake className="w-4 h-4 text-indigo-300 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
+                <div className="w-7 h-7 rounded-md bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                  <HeartHandshake className="w-4 h-4" />
                 </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-indigo-200 font-bold text-[14px] tracking-wide mb-0.5 group-hover:text-indigo-100 transition-colors">Refer & Earn +50 XP</span>
-                  <span className="text-[#847da3] text-[10px] font-medium leading-tight">View dashboard & link</span>
+                <div className="flex flex-col text-left">
+                  <span className="text-xs font-semibold text-zinc-200 group-hover:text-white transition-colors">Refer & Earn</span>
+                  <span className="text-[10px] text-zinc-500">Get +50 XP per invite</span>
                 </div>
               </div>
-              <ChevronRight className="w-3.5 h-3.5 text-[#5c4e91] group-hover:text-[#796bb0] transition-colors" />
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                +50 XP
+              </span>
             </Link>
-          </div>
-          
-          <div>
-            <PWAInstallButton variant="menuItem" onInstall={() => setIsSidebarOpen(false)} />
-          </div>
 
-          {!session && (
-            <div className="py-4 mt-2 text-center border-t border-[#1f1f22]">
-              <p className="text-zinc-500 text-xs">Sign in to save your favorite games and track your recent plays!</p>
+            <div className="px-1">
+              <PWAInstallButton variant="menuItem" onInstall={() => setIsSidebarOpen(false)} />
             </div>
-          )}
+          </div>
         </div>
 
-        <div className="p-3 flex flex-col gap-2 mt-auto border-t border-[#1f1f22]">
-          {session ? (
-            <>
+        {/* Drawer Footer - Minimalist Brand Mention & Sign-In CTA */}
+        <div className="p-4 border-t border-zinc-800/80 bg-[#0b0b0d] flex flex-col gap-3">
+          {/* Unique Pill Badge for bluebuff.in Product */}
+          <a 
+            href="https://bluebuff.in" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            onClick={() => setIsSidebarOpen(false)}
+            className="flex items-center justify-between px-3 py-2 rounded-lg bg-zinc-900/80 border border-zinc-800 hover:border-indigo-500/40 text-zinc-400 hover:text-indigo-300 transition-all group"
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+              <span className="text-xs font-bold text-zinc-200 group-hover:text-white">bluebuff.in</span>
+              <span className="text-zinc-600 text-[10px]">&bull;</span>
+              <span className="text-[10px] text-zinc-400 font-medium">Official Product</span>
+            </div>
+            <ExternalLink className="w-3.5 h-3.5 text-zinc-600 group-hover:text-indigo-400 transition-colors" />
+          </a>
+
+          {!session ? (
+            <div className="flex flex-col gap-2 pt-1">
+              <p className="text-zinc-500 text-[11px] text-center leading-tight">
+                Sign in to sync XP, unlock rewards & save favorites!
+              </p>
+              <button
+                onClick={() => {
+                  setIsSidebarOpen(false);
+                  router.push("/login");
+                }}
+                className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold text-xs transition-all rounded-xl shadow-lg shadow-indigo-600/25 active:scale-[0.98]"
+              >
+                <UserIcon className="w-4 h-4" />
+                <span>Sign In with Google</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2 pt-1">
               {session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") && (
                 <Link 
                   href="/admin" 
                   onClick={() => setIsSidebarOpen(false)} 
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#0f0e15] text-[#7572d4] hover:text-[#8885f0] hover:bg-[#13121b] transition-colors rounded-lg font-medium border border-[#242145] hover:border-[#302b5e]"
+                  className="flex items-center justify-center gap-2 w-full py-2 bg-indigo-950/40 text-indigo-300 hover:bg-indigo-900/50 transition-colors rounded-lg text-xs font-bold border border-indigo-800/40"
                 >
-                  <UploadCloud className="w-[16px] h-[16px]" />
-                  <span className="text-[13px]">Admin Dashboard</span>
+                  <UploadCloud className="w-3.5 h-3.5" />
+                  <span>Admin Dashboard</span>
                 </Link>
               )}
               <button
                 onClick={() => signOut()}
-                className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#150e0e] text-[#d45656] hover:text-[#f06262] hover:bg-[#1a1111] transition-colors rounded-lg font-medium border border-[#3d1c1c] hover:border-[#522525]"
+                className="flex items-center justify-center gap-2 w-full py-2 bg-red-950/30 text-red-400 hover:bg-red-900/40 transition-colors rounded-lg text-xs font-bold border border-red-900/30"
               >
-                <LogOut className="w-[16px] h-[16px]" />
-                <span className="text-[13px]">Sign Out</span>
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign Out</span>
               </button>
-            </>
-          ) : (
-            <button
-              onClick={() => {
-                setIsSidebarOpen(false);
-                router.push("/login");
-              }}
-              className="flex items-center justify-center gap-2 w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white transition-colors rounded-lg font-medium shadow-md shadow-indigo-500/20"
-            >
-              <UserIcon className="w-[16px] h-[16px]" />
-              <span className="text-[13px]">Sign In with Google</span>
-            </button>
+            </div>
           )}
         </div>
       </div>

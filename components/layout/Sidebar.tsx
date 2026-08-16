@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { 
   Home, RefreshCw, Star, Users, Trophy, Crown,
   Zap, Compass, Gamepad2, Grid, Layers, MousePointer2, Car, CircleDot, Puzzle, Crosshair,
-  Mail, ChevronRight, ChevronLeft, Menu, X, Dices, Loader2, Rocket, TrendingUp, Flame, Handshake
+  Mail, ChevronRight, ChevronLeft, Menu, X, Dices, Loader2, Rocket, TrendingUp, Flame, Handshake, ExternalLink
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/Skeleton";
 
@@ -334,10 +334,31 @@ export default function Sidebar() {
               <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
             </svg>
           </a>
+          <a 
+            href="https://www.linkedin.com/company/bluebuffesports/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="p-2 bg-zinc-800 hover:bg-blue-900/40 hover:text-blue-400 rounded-full transition-colors flex items-center justify-center w-8 h-8 text-zinc-400"
+            aria-label="LinkedIn"
+            title="Follow Bluebuff Esports on LinkedIn"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.74a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z" />
+            </svg>
+          </a>
         </div>
 
-        <div className="text-xs text-text-placeholder">
-          © {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}
+        <div className="text-xs text-text-placeholder text-center flex flex-col items-center gap-0.5">
+          <p>© {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}</p>
+          <a 
+            href="https://bluebuff.in" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-[10px] text-zinc-500 hover:text-indigo-400 transition-colors inline-flex items-center gap-1 font-medium"
+          >
+            <span>A bluebuff.in Product</span>
+            <ExternalLink className="w-2.5 h-2.5 text-zinc-600" />
+          </a>
         </div>
       </div>
       

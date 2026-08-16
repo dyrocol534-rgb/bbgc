@@ -112,7 +112,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
             </h2>
           </div>
 
-          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 auto-rows-[minmax(80px,auto)] md:auto-rows-[minmax(100px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
+          <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 auto-rows-[minmax(80px,auto)] md:auto-rows-[minmax(100px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
             {initialAllGames.map((game: any, index: number) => {
               const spanClass = getBentoSpanClass(index);
               const imageContainerClass = getImageContainerClass(spanClass);
