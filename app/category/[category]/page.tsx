@@ -26,12 +26,12 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
       `${catTitle.toLowerCase()} browser games unblocked`,
     ],
     alternates: {
-      canonical: `/category/${category}`,
+      canonical: `${siteUrl}/category/${category}`,
     },
     openGraph: {
       title,
       description,
-      url: `/category/${category}`,
+      url: `${siteUrl}/category/${category}`,
       siteName,
       type: "website",
     },

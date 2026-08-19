@@ -18,12 +18,15 @@ export async function GET(request: Request) {
     if (category) {
       dbQuery.category = { $regex: new RegExp(`^${category}$`, 'i') };
     }
-    if (query) {
-      dbQuery.$or = [
-        { title: { $regex: new RegExp(query, 'i') } },
-        { slug: { $regex: new RegExp(query, 'i') } },
-        { category: { $regex: new RegExp(query, 'i') } }
-      ];
+    let isTextSearch = false;
+    if (query && query.trim()) {
+      const trimmed = query.trim();
+      if (trimmed.length === 1) {
+        dbQuery.title = { $regex: `^${trimmed}`, $options: "i" };
+      } else {
+        dbQuery.$text = { $search: trimmed };
+        isTextSearch = true;
+      }
     }
     if (featured) {
       dbQuery.featured = true;
@@ -44,6 +47,13 @@ export async function GET(request: Request) {
       games = await Game.find(dbQuery)
         .select('_id slug title thumbnailUrl category playCount')
         .skip(randomSkip)
+        .limit(limit)
+        .lean();
+    } else if (isTextSearch) {
+      games = await Game.find(dbQuery, { score: { $meta: "textScore" } })
+        .select('_id slug title thumbnailUrl category playCount')
+        .sort({ score: { $meta: "textScore" }, playCount: -1 })
+        .skip(skip)
         .limit(limit)
         .lean();
     } else {

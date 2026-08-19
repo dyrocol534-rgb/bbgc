@@ -57,6 +57,10 @@ const GameSchema: Schema<IGame> = new Schema({
 GameSchema.index({ status: 1, playCount: -1, createdAt: -1 });
 GameSchema.index({ status: 1, category: 1 });
 GameSchema.index({ status: 1, featured: 1 });
+GameSchema.index(
+  { title: "text", category: "text", tags: "text" },
+  { weights: { title: 10, category: 5, tags: 2 }, name: "GameTextIndex" }
+);
 
 const Game: Model<IGame> = mongoose.models.Game || mongoose.model<IGame>('Game', GameSchema);
 export default Game;

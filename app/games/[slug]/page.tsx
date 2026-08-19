@@ -38,12 +38,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description,
     keywords,
     alternates: {
-      canonical: `/games/${slug}`,
+      canonical: `${siteUrl}/games/${slug}`,
     },
     openGraph: {
       title,
       description,
-      url: `/games/${slug}`,
+      url: `${siteUrl}/games/${slug}`,
       siteName,
       type: "website",
       images: game.thumbnailUrl ? [{ url: game.thumbnailUrl, alt: game.title }] : [],
@@ -59,6 +59,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function GamePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in").replace(/\/+$/, "");
+
   const [game, randomGames] = await Promise.all([
     getPublishedGameBySlug(slug),
     getRandomSuggestedGames(slug),
@@ -67,6 +69,45 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
   if (!game) {
     notFound();
   }
+
+  const primaryCategory = Array.isArray(game.category) && game.category.length > 0 ? game.category[0] : null;
+  const breadcrumbElements: Array<{ "@type": string; position: number; name: string; item: string }> = [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: siteUrl,
+    },
+  ];
+
+  if (primaryCategory) {
+    const catTitle = primaryCategory.charAt(0).toUpperCase() + primaryCategory.slice(1);
+    breadcrumbElements.push({
+      "@type": "ListItem",
+      position: 2,
+      name: `${catTitle} Games`,
+      item: `${siteUrl}/category/${primaryCategory.toLowerCase()}`,
+    });
+    breadcrumbElements.push({
+      "@type": "ListItem",
+      position: 3,
+      name: game.title,
+      item: `${siteUrl}/games/${game.slug}`,
+    });
+  } else {
+    breadcrumbElements.push({
+      "@type": "ListItem",
+      position: 2,
+      name: game.title,
+      item: `${siteUrl}/games/${game.slug}`,
+    });
+  }
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbElements,
+  };
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -101,6 +142,10 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
