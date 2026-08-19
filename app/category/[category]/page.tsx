@@ -1,54 +1,11 @@
 import { Metadata } from 'next';
-import dbConnect from '@/lib/mongodb';
-import Game from '@/models/Game';
 import GameCard from '@/components/game/GameCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Gamepad2 } from 'lucide-react';
 import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
+import { getPublishedGamesByCategory } from '@/lib/services/gameService';
 
 export const revalidate = 3600;
-
-async function getCategoryGames(category: string) {
-  try {
-    await dbConnect();
-    let query: any = { status: "published" };
-    let sort: any = { playCount: -1 };
-    let limitAmount = 0; // 0 means no limit
-
-    const cat = category.toLowerCase();
-    
-    if (cat === 'new') {
-      sort = { createdAt: -1 };
-      limitAmount = 18;
-    } else if (cat === 'popular') {
-      sort = { playCount: -1 };
-      limitAmount = 18;
-    } else if (cat === 'updated') {
-      sort = { updatedAt: -1 };
-      limitAmount = 18;
-    } else if (cat === 'featured') {
-      sort = { playCount: -1 };
-      query.featured = true;
-      limitAmount = 18;
-    } else {
-      query.category = { $regex: new RegExp(`^${category}$`, 'i') };
-    }
-
-    const queryBuilder = Game.find(query)
-      .sort(sort)
-      .select('_id slug title thumbnailUrl category playCount');
-      
-    if (limitAmount > 0) {
-      queryBuilder.limit(limitAmount);
-    }
-
-    const games = await queryBuilder.lean();
-    return JSON.parse(JSON.stringify(games));
-  } catch (error) {
-    console.error(`Error fetching ${category} games:`, error);
-    return [];
-  }
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
   const { category } = await params;
@@ -88,7 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
-  const games = await getCategoryGames(category);
+  const games = await getPublishedGamesByCategory(category);
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
   const catTitle = category.charAt(0).toUpperCase() + category.slice(1);

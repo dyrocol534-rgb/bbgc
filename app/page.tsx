@@ -1,47 +1,16 @@
+import dynamic from "next/dynamic";
+import { Gamepad2 } from "lucide-react";
+import { getServerSession } from "next-auth";
+import { cookies } from "next/headers";
+import { authOptions } from "@/lib/auth";
+import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
+import { getInitialHomeGames, getRecentGamesForUserOrGuest } from "@/lib/services/gameService";
 import GameCard from "@/components/game/GameCard";
 import ContinuePlayingRow from "@/components/game/ContinuePlayingRow";
-import dynamic from "next/dynamic";
-const InfiniteGameGrid = dynamic(() => import("@/components/game/InfiniteGameGrid"));
-import dbConnect from "@/lib/mongodb";
-import Game from "@/models/Game";
-import { Gamepad2 } from "lucide-react";
-import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 
-import { cookies } from "next/headers";
-import GuestSession from "@/models/GuestSession";
+const InfiniteGameGrid = dynamic(() => import("@/components/game/InfiniteGameGrid"));
 
 export const revalidate = 60; // Revalidate page every 60 seconds
-
-
-async function getInitialAllGames(page: number = 1) {
-  try {
-    await dbConnect();
-    const limit = 24;
-    const skip = (page - 1) * limit;
-
-    if (page === 1) {
-      const games = await Game.aggregate([
-        { $match: { status: "published" } },
-        { $sample: { size: limit } },
-        { $project: { _id: 1, slug: 1, title: 1, thumbnailUrl: 1, category: 1, playCount: 1 } }
-      ]);
-      return JSON.parse(JSON.stringify(games));
-    } else {
-      const games = await Game.find({ status: "published" })
-        .select('_id slug title thumbnailUrl category playCount')
-        .sort({ playCount: -1, createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean();
-      return JSON.parse(JSON.stringify(games));
-    }
-  } catch (error) {
-    console.error(`Error fetching initial games:`, error);
-    return [];
-  }
-}
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const session = await getServerSession(authOptions);
@@ -50,38 +19,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
   const pageParam = typeof resolvedParams.page === 'string' ? parseInt(resolvedParams.page, 10) : 1;
   const page = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
 
-  const initialAllGames = await getInitialAllGames(page);
+  const cookieStore = await cookies();
+  const guestId = cookieStore.get('guestId')?.value;
 
-  // Fetch user's or guest's recently played games
-  let userRecentGames = [];
-  try {
-    await dbConnect();
-    let recentSlugs = [];
-    
-    if (session?.user && (session.user as any).recentlyPlayed?.length > 0) {
-      recentSlugs = (session.user as any).recentlyPlayed.slice(0, 3);
-    } else {
-      // If not logged in, check for guest session
-      const cookieStore = await cookies();
-      const guestIdCookie = cookieStore.get('guestId');
-      if (guestIdCookie?.value) {
-        const guest = await GuestSession.findOne({ guestId: guestIdCookie.value }).lean();
-        if (guest && guest.recentlyPlayed?.length > 0) {
-          recentSlugs = guest.recentlyPlayed.slice(0, 3);
-        }
-      }
-    }
-
-    if (recentSlugs.length > 0) {
-      const games = await Game.find({ slug: { $in: recentSlugs } })
-        .select('_id slug title thumbnailUrl category playCount')
-        .lean();
-      const gameMap = new Map(games.map(g => [(g as any).slug, g]));
-      userRecentGames = recentSlugs.map((slug: string) => gameMap.get(slug)).filter(Boolean);
-    }
-  } catch (error) {
-    console.error("Error fetching recent games:", error);
-  }
+  const [initialAllGames, userRecentGames] = await Promise.all([
+    getInitialHomeGames(page),
+    getRecentGamesForUserOrGuest(session, guestId),
+  ]);
 
   const hasGames = initialAllGames.length > 0;
 

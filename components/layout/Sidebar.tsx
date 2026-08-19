@@ -41,37 +41,46 @@ const getCategoryIcon = (category: string) => {
   }
 };
 
-export default function Sidebar() {
+function formatCategoryLinks(categoryList: string[]) {
+  return categoryList.map((c: string) => {
+    const displayName = c === "io" ? ".io" : c.charAt(0).toUpperCase() + c.slice(1);
+    return {
+      name: displayName,
+      href: `/category/${c}`,
+      icon: getCategoryIcon(c),
+    };
+  });
+}
+
+interface SidebarProps {
+  initialCategories?: string[];
+}
+
+export default function Sidebar({ initialCategories = [] }: SidebarProps) {
   const { data: session } = useSession();
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const [isRolling, setIsRolling] = useState(false);
-  const [categories, setCategories] = useState<{name: string, href: string, icon: React.ElementType}[]>([]);
+  const [categories, setCategories] = useState<{name: string, href: string, icon: React.ElementType}[]>(() =>
+    initialCategories.length > 0 ? formatCategoryLinks(initialCategories) : []
+  );
 
   useEffect(() => {
+    if (initialCategories.length > 0) return;
     async function fetchCategories() {
       try {
         const res = await fetch("/api/categories");
         const data = await res.json();
         if (data.categories) {
-          const formattedLinks = data.categories.map((c: string) => {
-            // Special case for io
-            const displayName = c === "io" ? ".io" : c.charAt(0).toUpperCase() + c.slice(1);
-            return {
-              name: displayName,
-              href: `/category/${c}`,
-              icon: getCategoryIcon(c)
-            };
-          });
-          setCategories(formattedLinks);
+          setCategories(formatCategoryLinks(data.categories));
         }
       } catch (error) {
         console.error("Failed to fetch dynamic categories", error);
       }
     }
     fetchCategories();
-  }, []);
+  }, [initialCategories]);
 
   const handleSurpriseMe = async () => {
     if (isRolling) return;

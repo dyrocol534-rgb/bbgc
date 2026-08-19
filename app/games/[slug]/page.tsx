@@ -1,42 +1,16 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import dbConnect from '@/lib/mongodb';
-import Game from '@/models/Game';
-import GamePlayer from '@/components/game/GamePlayer';
 import Link from 'next/link';
 import Image from 'next/image';
+import GamePlayer from '@/components/game/GamePlayer';
+import { getPublishedGameBySlug, getRandomSuggestedGames } from '@/lib/services/gameService';
 
 // Revalidate every hour since game pages don't change often
 export const revalidate = 3600;
 
-async function getGame(slug: string) {
-  try {
-    await dbConnect();
-    const game = await Game.findOne({ slug, status: "published" }).lean();
-    return game ? JSON.parse(JSON.stringify(game)) : null;
-  } catch (error) {
-    console.error("Error fetching game:", error);
-    return null;
-  }
-}
-
-async function getRandomGames(currentSlug: string) {
-  try {
-    await dbConnect();
-    const games = await Game.aggregate([
-      { $match: { status: "published", slug: { $ne: currentSlug } } },
-      { $sample: { size: 12 } }
-    ]);
-    return JSON.parse(JSON.stringify(games));
-  } catch (error) {
-    console.error("Error fetching random games:", error);
-    return [];
-  }
-}
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const game = await getGame(slug);
+  const game = await getPublishedGameBySlug(slug);
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
 
@@ -85,13 +59,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function GamePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const game = await getGame(slug);
+  const [game, randomGames] = await Promise.all([
+    getPublishedGameBySlug(slug),
+    getRandomSuggestedGames(slug),
+  ]);
 
   if (!game) {
     notFound();
   }
-
-  const randomGames = await getRandomGames(game.slug);
 
   const jsonLd = {
     '@context': 'https://schema.org',

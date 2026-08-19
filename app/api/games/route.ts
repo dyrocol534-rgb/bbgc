@@ -35,16 +35,17 @@ export async function GET(request: Request) {
     
     const skip = (page - 1) * limit;
     
+    const total = await Game.countDocuments(dbQuery);
     let games;
-    let total;
     
     if (sort === 'random') {
-      games = await Game.aggregate([
-        { $match: dbQuery },
-        { $sample: { size: limit } },
-        { $project: { _id: 1, slug: 1, title: 1, thumbnailUrl: 1, category: 1, playCount: 1 } }
-      ]);
-      total = await Game.countDocuments(dbQuery); // total remaining
+      const maxSkip = Math.max(0, total - limit);
+      const randomSkip = maxSkip > 0 ? Math.floor(Math.random() * (maxSkip + 1)) : 0;
+      games = await Game.find(dbQuery)
+        .select('_id slug title thumbnailUrl category playCount')
+        .skip(randomSkip)
+        .limit(limit)
+        .lean();
     } else {
       games = await Game.find(dbQuery)
         .select('_id slug title thumbnailUrl category playCount')
@@ -52,7 +53,6 @@ export async function GET(request: Request) {
         .skip(skip)
         .limit(limit)
         .lean();
-      total = await Game.countDocuments(dbQuery);
     }
       
     return NextResponse.json({ games, total, page, limit, hasMore: sort === 'random' ? games.length === limit : skip + games.length < total });
