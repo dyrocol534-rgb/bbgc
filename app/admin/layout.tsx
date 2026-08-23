@@ -1,12 +1,9 @@
 import { ReactNode } from "react";
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
-import Link from "next/link";
-import { UploadCloud, BarChart3, Users } from "lucide-react";
 import { cookies } from "next/headers";
-import AdminNav from "@/components/layout/AdminNav";
 import AdminUnlockForm from "@/components/admin/AdminUnlockForm";
+import AdminLayoutShell from "@/components/layout/AdminLayoutShell";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -31,22 +28,5 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     );
   }
 
-  return (
-    <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
-        <aside className="w-full lg:w-60 shrink-0 lg:sticky lg:top-24">
-          <div className="flex flex-col gap-4 lg:gap-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-main px-2">Admin Dashboard</h1>
-            <AdminNav />
-          </div>
-        </aside>
-        
-        <main className="flex-1 min-w-0 w-full">
-          <div className="bg-[#0c0c0e] border border-[#1f1f22] rounded-2xl p-4 sm:p-6 lg:p-8 shadow-2xl shadow-black/50">
-            {children}
-          </div>
-        </main>
-      </div>
-    </div>
-  );
+  return <AdminLayoutShell>{children}</AdminLayoutShell>;
 }

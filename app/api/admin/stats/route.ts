@@ -15,7 +15,17 @@ export const dynamic = "force-dynamic";
 
 let cachedStats: any = null;
 let lastCacheTime = 0;
-const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+const CACHE_TTL = 5 * 1000; // 5 seconds fresh cache
+
+function formatPlaytime(seconds: number): string {
+  if (!seconds || seconds <= 0) return "0m";
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  if (hours > 0) {
+    return `${hours.toLocaleString()}h ${minutes}m`;
+  }
+  return `${minutes}m`;
+}
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -128,10 +138,56 @@ export async function GET(req: NextRequest) {
       PushSubscription.countDocuments({ createdAt: { $gte: ago30d } })
     ]);
 
-    // Engagement & Retention (7d based)
-    const oldUsersCount = await User.countDocuments({ createdAt: { $lt: ago7d } });
-    const oldUsersActive7d = await User.countDocuments({ createdAt: { $lt: ago7d }, lastActiveAt: { $gte: ago7d } });
-    const retentionRate = oldUsersCount > 0 ? Math.round((oldUsersActive7d / oldUsersCount) * 100) : 0;
+    // Playtime aggregation per timeframe
+    const getPlaytimeForTimeframe = async (since: Date | null) => {
+      const matchFilter = since ? { lastActiveAt: { $gte: since } } : {};
+      const [userAgg, guestAgg] = await Promise.all([
+        User.aggregate([
+          { $match: matchFilter },
+          { $group: { _id: null, total: { $sum: "$playtimeSeconds" } } }
+        ]),
+        GuestSession.aggregate([
+          { $match: matchFilter },
+          { $group: { _id: null, total: { $sum: "$playtimeSeconds" } } }
+        ]),
+      ]);
+      const userTotal = userAgg[0]?.total || 0;
+      const guestTotal = guestAgg[0]?.total || 0;
+      const total = userTotal + guestTotal;
+      return {
+        totalSeconds: total,
+        formatted: formatPlaytime(total),
+        memberFormatted: formatPlaytime(userTotal),
+        guestFormatted: formatPlaytime(guestTotal)
+      };
+    };
+
+    // Calculate Retention per timeframe
+    const calcRetention = async (cutoffDate: Date, activeSince: Date) => {
+      const [oldUsers, activeOldUsers, oldGuests, activeOldGuests] = await Promise.all([
+        User.countDocuments({ createdAt: { $lt: cutoffDate } }),
+        User.countDocuments({ createdAt: { $lt: cutoffDate }, lastActiveAt: { $gte: activeSince } }),
+        GuestSession.countDocuments({ createdAt: { $lt: cutoffDate } }),
+        GuestSession.countDocuments({ createdAt: { $lt: cutoffDate }, lastActiveAt: { $gte: activeSince } })
+      ]);
+      const totalEligible = oldUsers + oldGuests;
+      const totalReturning = activeOldUsers + activeOldGuests;
+      return totalEligible > 0 ? Math.round((totalReturning / totalEligible) * 100) : 0;
+    };
+
+    // Parallel calculations for timeframe playtime and retention
+    const [
+      playtime24h, playtime7d, playtime30d, playtimeLifetime,
+      retention24h, retention7d, retention30d
+    ] = await Promise.all([
+      getPlaytimeForTimeframe(ago24h),
+      getPlaytimeForTimeframe(ago7d),
+      getPlaytimeForTimeframe(ago30d),
+      getPlaytimeForTimeframe(null),
+      calcRetention(ago24h, ago24h),
+      calcRetention(ago7d, ago7d),
+      calcRetention(ago30d, ago30d)
+    ]);
 
     // Helper functions for timeframe top games and device split
     const getTopGames = async (since: Date) => {
@@ -238,6 +294,10 @@ export async function GET(req: NextRequest) {
         totalPlays: newPlays24h,
         pwaInstalls: pwaInstalls24h,
         pushSubscribers: pushSubs24h,
+        playtime: playtime24h.formatted,
+        memberPlaytime: playtime24h.memberFormatted,
+        guestPlaytime: playtime24h.guestFormatted,
+        retentionRate: retention24h,
         topGames: topGames24h,
         topGuestGames: topGuestGames24h,
         deviceSplit: devices24h,
@@ -253,6 +313,10 @@ export async function GET(req: NextRequest) {
         totalPlays: newPlays7d,
         pwaInstalls: pwaInstalls7d,
         pushSubscribers: pushSubs7d,
+        playtime: playtime7d.formatted,
+        memberPlaytime: playtime7d.memberFormatted,
+        guestPlaytime: playtime7d.guestFormatted,
+        retentionRate: retention7d,
         topGames: topGames7d,
         topGuestGames: topGuestGames7d,
         deviceSplit: devices7d,
@@ -268,6 +332,10 @@ export async function GET(req: NextRequest) {
         totalPlays: newPlays30d,
         pwaInstalls: pwaInstalls30d,
         pushSubscribers: pushSubs30d,
+        playtime: playtime30d.formatted,
+        memberPlaytime: playtime30d.memberFormatted,
+        guestPlaytime: playtime30d.guestFormatted,
+        retentionRate: retention30d,
         topGames: topGames30d,
         topGuestGames: topGuestGames30d,
         deviceSplit: devices30d,
@@ -283,6 +351,12 @@ export async function GET(req: NextRequest) {
         totalPlays,
         pwaInstalls: totalPwaInstalls,
         pushSubscribers: totalPushSubscribers,
+        playtime: playtimeLifetime.formatted,
+        memberPlaytime: playtimeLifetime.memberFormatted,
+        guestPlaytime: playtimeLifetime.guestFormatted,
+        totalPlaytimeSeconds: playtimeLifetime.totalSeconds,
+        totalPlaytimeFormatted: playtimeLifetime.formatted,
+        retentionRate: retention7d,
         pwaDevices,
         recentPwaInstalls: recentPwaInstalls.map((inst: any) => ({
           deviceType: inst.deviceType,
@@ -297,7 +371,6 @@ export async function GET(req: NextRequest) {
         topGuestGames: topGuestGamesLifetime,
         deviceSplit: devicesLifetime,
         avgPlaysPerActive: (totalUsers + totalGuests) > 0 ? (totalPlays / (totalUsers + totalGuests)).toFixed(1) : 0,
-        retentionRate,
         topRatedGames,
         recentFeedback: recentFeedback.map((f: any) => ({
           gameSlug: f.gameSlug,

@@ -16,7 +16,8 @@ import {
   Gamepad2, 
   Trophy,
   ExternalLink,
-  ShieldCheck
+  ShieldCheck,
+  RefreshCw
 } from "lucide-react";
 import { getExistingSubscription, subscribeUserToPush } from "@/lib/push-client";
 
@@ -101,23 +102,28 @@ export default function AdminPushNotificationsPage() {
     }
   }
 
-  const applyTemplate = (template: typeof TEMPLATES[0]) => {
-    setTitle(template.title);
-    setBody(template.body);
-    setUrl(template.url);
+  const applyTemplate = (tmpl: typeof TEMPLATES[0]) => {
+    setTitle(tmpl.title);
+    setBody(tmpl.body);
+    setUrl(tmpl.url);
   };
 
   const handleSendTest = async () => {
+    if (!title.trim() || !body.trim()) {
+      alert("Please fill in both Title and Body.");
+      return;
+    }
+
     try {
       setIsSendingTest(true);
       setResultMessage(null);
 
-      // Make sure admin's browser is subscribed
+      // Ensure local user is subscribed
       let sub = await getExistingSubscription();
       if (!sub) {
         const subRes = await subscribeUserToPush();
         if (!subRes.success || !subRes.subscription) {
-          throw new Error(subRes.error || "Please allow notifications in this browser to receive the test push.");
+          throw new Error(subRes.error || "Please allow notifications in your browser first.");
         }
         sub = subRes.subscription;
       }
@@ -131,18 +137,21 @@ export default function AdminPushNotificationsPage() {
           url,
           image: imageUrl || undefined,
           target: "test",
-          testSubscription: sub.toJSON(),
+          subscription: sub,
         }),
       });
 
       const data = await res.json();
       if (res.ok && data.success) {
-        setResultMessage({ type: "success", text: "✅ Test notification sent directly to your device!" });
+        setResultMessage({
+          type: "success",
+          text: "✅ Test push notification delivered to your browser!",
+        });
       } else {
-        throw new Error(data.error || "Failed to send test push");
+        throw new Error(data.error || "Failed to deliver test notification");
       }
     } catch (err: any) {
-      setResultMessage({ type: "error", text: err.message || "Failed to send test notification" });
+      setResultMessage({ type: "error", text: err.message || "Failed to send test" });
     } finally {
       setIsSendingTest(false);
     }
@@ -179,9 +188,9 @@ export default function AdminPushNotificationsPage() {
       if (res.ok && data.success) {
         setResultMessage({
           type: "success",
-          text: `🎉 ${data.message} (${data.successCount} delivered, ${data.failureCount} failed, ${data.removedDead} expired removed).`,
+          text: `🎉 ${data.message} (${data.successCount} delivered, ${data.failureCount} failed).`,
         });
-        fetchStats(); // Refresh count
+        fetchStats();
       } else {
         throw new Error(data.error || "Failed to broadcast notification");
       }
@@ -193,99 +202,98 @@ export default function AdminPushNotificationsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-6">
-        <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2.5">
-            <BellRing className="w-7 h-7 text-indigo-400" />
-            Push Notifications Manager
-          </h2>
-          <p className="text-sm text-zinc-400 mt-1">
-            Send instant web and PWA push notifications to all subscribed desktop and mobile players.
-          </p>
+    <div className="space-y-4 max-w-[1400px] mx-auto animate-in fade-in duration-200">
+      {/* Compact Header */}
+      <div className="flex items-center justify-between gap-3 bg-[#0c0c0e] p-2.5 sm:p-3 rounded-xl border border-[#1f1f22] shadow-lg shadow-black/40">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="p-2 bg-indigo-500/10 border border-indigo-500/20 rounded-lg shrink-0 text-indigo-400">
+            <BellRing className="w-4 h-4" />
+          </div>
+          <h1 className="text-sm sm:text-base font-bold text-white leading-tight">Push Notifications</h1>
         </div>
 
         <button
           onClick={fetchStats}
           disabled={loadingStats}
-          className="self-start sm:self-auto px-3.5 py-1.5 bg-zinc-800/80 hover:bg-zinc-700 text-xs font-semibold text-zinc-300 rounded-lg border border-zinc-700/60 transition-colors"
+          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-zinc-300 bg-[#121214] hover:bg-[#1a1a1f] rounded-lg transition-colors border border-[#1f1f22] disabled:opacity-50 shrink-0"
         >
-          {loadingStats ? "Refreshing..." : "Refresh Stats"}
+          <RefreshCw className={`w-3 h-3 text-zinc-400 ${loadingStats ? "animate-spin" : ""}`} />
+          <span>Refresh</span>
         </button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#12111a] border border-[#282142] p-5 rounded-2xl relative overflow-hidden shadow-lg">
-          <div className="flex items-center justify-between text-indigo-400 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Total Subscribers</span>
-            <Users className="w-5 h-5" />
+      {/* Stats Cards Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
+        <div className="bg-[#0c0c0e] border border-[#1f1f22] p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 shadow-sm">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center shrink-0">
+            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-white">
-            {loadingStats ? "..." : stats?.total.toLocaleString() || 0}
+          <div className="min-w-0 flex-1">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500 block truncate">Total Subs</span>
+            <div className="text-sm sm:text-base font-bold text-white font-mono leading-tight">
+              {loadingStats ? "..." : stats?.total.toLocaleString() || 0}
+            </div>
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1">Active browser & PWA endpoints</p>
         </div>
 
-        <div className="bg-[#12111a] border border-[#282142] p-5 rounded-2xl relative overflow-hidden shadow-lg">
-          <div className="flex items-center justify-between text-indigo-400 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Mobile Devices</span>
-            <Smartphone className="w-5 h-5" />
+        <div className="bg-[#0c0c0e] border border-[#1f1f22] p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 shadow-sm">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-400 flex items-center justify-center shrink-0">
+            <Smartphone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-white">
-            {loadingStats ? "..." : stats?.devices.mobile.toLocaleString() || 0}
+          <div className="min-w-0 flex-1">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500 block truncate">Mobile</span>
+            <div className="text-sm sm:text-base font-bold text-white font-mono leading-tight">
+              {loadingStats ? "..." : stats?.devices.mobile.toLocaleString() || 0}
+            </div>
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1">Android & PWA installations</p>
         </div>
 
-        <div className="bg-[#12111a] border border-[#282142] p-5 rounded-2xl relative overflow-hidden shadow-lg">
-          <div className="flex items-center justify-between text-purple-400 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Desktop</span>
-            <Monitor className="w-5 h-5" />
+        <div className="bg-[#0c0c0e] border border-[#1f1f22] p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 shadow-sm">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center shrink-0">
+            <Monitor className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-white">
-            {loadingStats ? "..." : stats?.devices.desktop.toLocaleString() || 0}
+          <div className="min-w-0 flex-1">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500 block truncate">Desktop</span>
+            <div className="text-sm sm:text-base font-bold text-white font-mono leading-tight">
+              {loadingStats ? "..." : stats?.devices.desktop.toLocaleString() || 0}
+            </div>
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1">Chrome, Edge, Firefox, Mac</p>
         </div>
 
-        <div className="bg-[#12111a] border border-[#282142] p-5 rounded-2xl relative overflow-hidden shadow-lg">
-          <div className="flex items-center justify-between text-emerald-400 mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-400">Tablets</span>
-            <Tablet className="w-5 h-5" />
+        <div className="bg-[#0c0c0e] border border-[#1f1f22] p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 shadow-sm">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
+            <Tablet className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-white">
-            {loadingStats ? "..." : stats?.devices.tablet.toLocaleString() || 0}
+          <div className="min-w-0 flex-1">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500 block truncate">Tablet</span>
+            <div className="text-sm sm:text-base font-bold text-white font-mono leading-tight">
+              {loadingStats ? "..." : stats?.devices.tablet.toLocaleString() || 0}
+            </div>
           </div>
-          <p className="text-[11px] text-zinc-500 mt-1">iPads & Android tablets</p>
         </div>
       </div>
 
-      {/* Templates Row */}
-      <div className="space-y-3">
-        <label className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-          Quick Notification Presets
+      {/* Quick Notification Presets */}
+      <div className="space-y-2">
+        <label className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 flex items-center gap-1">
+          <Sparkles className="w-3 h-3 text-indigo-400" />
+          Quick Presets
         </label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {TEMPLATES.map((tmpl) => {
             const Icon = tmpl.icon;
             return (
               <button
                 key={tmpl.name}
                 onClick={() => applyTemplate(tmpl)}
-                className="flex items-start gap-3 p-3.5 bg-zinc-900/60 hover:bg-zinc-800/80 border border-zinc-800 hover:border-indigo-500/50 rounded-xl text-left transition-all group"
+                className="flex items-center gap-2 p-2 sm:p-2.5 bg-[#0c0c0e] hover:bg-[#16161a] border border-[#1f1f22] hover:border-indigo-500/40 rounded-xl text-left transition-all group"
               >
-                <div className="p-2 rounded-lg bg-indigo-600/10 text-indigo-400 group-hover:bg-indigo-600/20 transition-colors shrink-0">
-                  <Icon className="w-4 h-4" />
+                <div className="p-1.5 rounded-lg bg-indigo-600/10 text-indigo-400 group-hover:bg-indigo-600/20 shrink-0">
+                  <Icon className="w-3.5 h-3.5" />
                 </div>
-                <div>
-                  <span className="text-xs font-bold text-zinc-200 group-hover:text-white block">
+                <div className="min-w-0 flex-1">
+                  <span className="text-xs font-semibold text-zinc-200 group-hover:text-white block truncate">
                     {tmpl.name}
-                  </span>
-                  <span className="text-[11px] text-zinc-500 line-clamp-1 mt-0.5">
-                    {tmpl.title}
                   </span>
                 </div>
               </button>
@@ -295,103 +303,100 @@ export default function AdminPushNotificationsPage() {
       </div>
 
       {/* Composer & Preview Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
         {/* Form Column */}
-        <div className="lg:col-span-7 space-y-5 bg-zinc-900/50 border border-zinc-800/80 p-6 rounded-2xl">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Send className="w-5 h-5 text-indigo-400" />
-            Compose Notification
+        <div className="lg:col-span-7 space-y-3 bg-[#0c0c0e] border border-[#1f1f22] p-3.5 sm:p-4 rounded-xl shadow-md">
+          <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+            <Send className="w-3.5 h-3.5 text-indigo-400" />
+            Compose Message
           </h3>
 
-          <div className="space-y-4">
+          <div className="space-y-3 text-xs">
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+              <label className="block font-medium text-zinc-400 mb-1">
                 Notification Title <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. 🔥 Don't lose your streak!"
-                className="w-full bg-black/40 border border-zinc-700/70 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 transition-colors"
+                placeholder="🔥 Don't lose your streak!"
+                className="w-full bg-[#121214] border border-[#1f1f22] focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 transition-colors outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+              <label className="block font-medium text-zinc-400 mb-1">
                 Message Body <span className="text-red-400">*</span>
               </label>
               <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
-                rows={3}
-                placeholder="e.g. Your daily rewards and bonuses are ready to claim..."
-                className="w-full bg-black/40 border border-zinc-700/70 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 transition-colors resize-none"
+                rows={2}
+                placeholder="Your notification message..."
+                className="w-full bg-[#121214] border border-[#1f1f22] focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 transition-colors resize-none outline-none"
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                Click Target URL / Route
-              </label>
-              <input
-                type="text"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="e.g. /rewards or /games/subway-surfers"
-                className="w-full bg-black/40 border border-zinc-700/70 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 transition-colors"
-              />
-              <p className="text-[11px] text-zinc-500 mt-1">Users will be navigated here when they click the notification.</p>
-            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label className="block font-medium text-zinc-400 mb-1">Target Route</label>
+                <input
+                  type="text"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="/ or /games/slug"
+                  className="w-full bg-[#121214] border border-[#1f1f22] focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 transition-colors outline-none"
+                />
+              </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                Optional Banner Image URL
-              </label>
-              <input
-                type="text"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://... (image thumbnail banner)"
-                className="w-full bg-black/40 border border-zinc-700/70 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-500 transition-colors"
-              />
+              <div>
+                <label className="block font-medium text-zinc-400 mb-1">Banner Image URL (Optional)</label>
+                <input
+                  type="text"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://..."
+                  className="w-full bg-[#121214] border border-[#1f1f22] focus:border-indigo-500 rounded-lg px-3 py-2 text-xs text-white placeholder-zinc-500 transition-colors outline-none"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Feedback message banner */}
+          {/* Feedback banner */}
           {resultMessage && (
             <div
-              className={`p-4 rounded-xl flex items-start gap-3 text-sm border ${
+              className={`p-2.5 rounded-lg flex items-start gap-2 text-xs border ${
                 resultMessage.type === "success"
                   ? "bg-emerald-950/40 border-emerald-500/40 text-emerald-300"
                   : "bg-red-950/40 border-red-500/40 text-red-300"
               }`}
             >
               {resultMessage.type === "success" ? (
-                <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400 mt-0.5" />
               ) : (
-                <AlertCircle className="w-5 h-5 shrink-0 text-red-400 mt-0.5" />
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
               )}
               <div className="flex-1">{resultMessage.text}</div>
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 pt-3 border-t border-zinc-800">
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-zinc-800/80">
             <button
               onClick={handleSendTest}
               disabled={isSendingTest || isSending}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-semibold rounded-xl border border-zinc-700 transition-colors disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[#121214] hover:bg-[#1a1a1f] text-zinc-200 text-xs font-semibold rounded-lg border border-[#1f1f22] transition-colors disabled:opacity-50"
             >
               {isSendingTest ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
-                  Sending Test...
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+                  <span>Sending Test...</span>
                 </>
               ) : (
                 <>
-                  <ShieldCheck className="w-4 h-4 text-indigo-400" />
-                  Send Test to My Device
+                  <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Test on My Device</span>
                 </>
               )}
             </button>
@@ -399,17 +404,17 @@ export default function AdminPushNotificationsPage() {
             <button
               onClick={handleBroadcast}
               disabled={isSending || isSendingTest || stats?.total === 0}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg shadow-md shadow-indigo-600/30 transition-all disabled:opacity-50"
             >
               {isSending ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Broadcasting...
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Broadcasting...</span>
                 </>
               ) : (
                 <>
-                  <Send className="w-4 h-4" />
-                  Broadcast to All ({stats?.total || 0})
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Broadcast to All ({stats?.total || 0})</span>
                 </>
               )}
             </button>
@@ -417,54 +422,48 @@ export default function AdminPushNotificationsPage() {
         </div>
 
         {/* Live Preview Column */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="bg-zinc-900/50 border border-zinc-800/80 p-6 rounded-2xl">
-            <h4 className="text-sm font-bold text-zinc-300 uppercase tracking-wider mb-4 flex items-center gap-2">
-              <Monitor className="w-4 h-4 text-indigo-400" />
-              Live Push Preview
-            </h4>
+        <div className="lg:col-span-5 bg-[#0c0c0e] border border-[#1f1f22] p-3.5 sm:p-4 rounded-xl shadow-md space-y-3">
+          <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+            <Monitor className="w-3.5 h-3.5 text-indigo-400" />
+            Live Preview
+          </h4>
 
-            {/* Simulated Native OS Notification */}
-            <div className="bg-[#18181b] border border-zinc-700/80 rounded-2xl p-4 shadow-2xl space-y-3">
-              <div className="flex items-center justify-between text-[11px] text-zinc-400 border-b border-zinc-800 pb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded bg-indigo-600 flex items-center justify-center text-[10px] text-white font-bold">
-                    B
-                  </div>
-                  <span className="font-semibold text-zinc-300">Bluebuff Games</span>
-                  <span>• now</span>
+          {/* Simulated OS Notification */}
+          <div className="bg-[#121215] border border-zinc-800 rounded-xl p-3 shadow-lg space-y-2">
+            <div className="flex items-center justify-between text-[10px] text-zinc-400 border-b border-zinc-800/80 pb-1.5">
+              <div className="flex items-center gap-1.5">
+                <div className="w-3.5 h-3.5 rounded bg-indigo-600 flex items-center justify-center text-[9px] text-white font-bold">
+                  B
                 </div>
-                <span className="text-[10px] text-zinc-500">Google Chrome / PWA</span>
+                <span className="font-semibold text-zinc-300">Bluebuff Games</span>
+                <span>• now</span>
               </div>
+              <span className="text-[9px] text-zinc-500">Chrome / PWA</span>
+            </div>
 
-              <div className="flex gap-3 items-start">
-                <div className="flex-1 min-w-0">
-                  <h5 className="text-sm font-bold text-white leading-tight">
-                    {title || "Notification Title"}
-                  </h5>
-                  <p className="text-xs text-zinc-300 mt-1 leading-relaxed line-clamp-3">
-                    {body || "Your notification body message goes here..."}
-                  </p>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0 p-1.5">
-                  <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
-                </div>
+            <div className="flex gap-2.5 items-start">
+              <div className="flex-1 min-w-0">
+                <h5 className="text-xs font-bold text-white leading-tight truncate">
+                  {title || "Notification Title"}
+                </h5>
+                <p className="text-[11px] text-zinc-300 mt-0.5 leading-relaxed line-clamp-2">
+                  {body || "Message body goes here..."}
+                </p>
               </div>
-
-              {imageUrl && (
-                <div className="w-full h-32 rounded-lg overflow-hidden bg-black/40 border border-zinc-800">
-                  <img src={imageUrl} alt="Banner" className="w-full h-full object-cover" />
-                </div>
-              )}
-
-              <div className="pt-2 flex items-center justify-between text-[11px] text-indigo-400 font-medium">
-                <span>Opens: {url || "/"}</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+              <div className="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center shrink-0 p-1">
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
             </div>
 
-            <div className="mt-4 p-3.5 bg-indigo-950/20 border border-indigo-500/20 rounded-xl text-xs text-indigo-300 leading-relaxed">
-              💡 <strong>Tip:</strong> Click <em>"Send Test to My Device"</em> to see how the native notification looks and sounds directly on your operating system.
+            {imageUrl && (
+              <div className="w-full h-24 rounded-lg overflow-hidden bg-black/40 border border-zinc-800">
+                <img src={imageUrl} alt="Banner" className="w-full h-full object-cover" />
+              </div>
+            )}
+
+            <div className="pt-1 flex items-center justify-between text-[10px] text-indigo-400 font-medium">
+              <span>Opens: {url || "/"}</span>
+              <ExternalLink className="w-3 h-3" />
             </div>
           </div>
         </div>
