@@ -35,67 +35,53 @@ Tags/Keywords: ${Array.isArray(tags) ? tags.join(", ") : tags || "free online ga
 ${currentDescription ? `Existing Rough Details: ${currentDescription}` : ""}
 
 Requirements:
-1. Length: 120-220 words (2-3 concise paragraphs).
+1. Length: 120-200 words (2 concise paragraphs).
 2. Structure:
-   - Paragraph 1: High-energy opening hook explaining what the game is about and the main objective.
-   - Paragraph 2: Core gameplay features, power-ups, levels, or challenges that make it exciting.
-   - Paragraph 3: Mention that players can enjoy it instantly for free in their web browser with no download, install, or registration on PC, Chromebook, or mobile.
+   - Paragraph 1: High-energy opening hook explaining what the game is about and core objective.
+   - Paragraph 2: Exciting features, controls, and highlighting that it is 100% free with no download or install needed on PC, Chromebook, and mobile.
 3. Tone: Fun, engaging, clear, and natural.
-4. DO NOT use markdown headers (no ## or ###). Write clean, readable paragraphs with natural spacing.
-5. Return ONLY the description text without any conversational preamble or quotes.`;
+4. DO NOT use markdown headers (no ## or ###).
+5. Return ONLY the description text.`;
 
-    // Attempt Gemini 2.5 Flash first, then fallback to Gemini 1.5 Flash if needed
-    const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"];
-    let generatedText = "";
-    let lastError = "";
-
-    for (const model of modelsToTry) {
-      try {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        const response = await fetch(geminiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [{ text: prompt }]
-              }
-            ],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 600,
-            }
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const candidateText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (candidateText && candidateText.trim()) {
-            generatedText = candidateText.trim();
-            break;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${apiKey}`;
+    
+    const response = await fetch(geminiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [{ text: prompt }]
           }
-        } else {
-          const errData = await response.text();
-          lastError = `Model ${model} error (${response.status}): ${errData}`;
-          console.warn(`[Gemini API] ${lastError}`);
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 500,
         }
-      } catch (err: any) {
-        lastError = err.message || "Network error querying Gemini API";
-        console.warn(`[Gemini API] Model ${model} failed:`, err);
-      }
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      return NextResponse.json(
+        { error: `Gemini API error (${response.status}): ${errText}` },
+        { status: response.status }
+      );
     }
 
-    if (!generatedText) {
+    const data = await response.json();
+    const description = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+    if (!description) {
       return NextResponse.json(
-        { error: `Gemini AI failed to generate content: ${lastError || "No response generated"}` },
+        { error: "Gemini AI returned an empty response" },
         { status: 502 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      description: generatedText
+      description
     });
 
   } catch (error: any) {

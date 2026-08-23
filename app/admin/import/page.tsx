@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { DownloadCloud, CheckCircle, Loader2, ExternalLink } from "lucide-react";
+import { DownloadCloud, CheckCircle, Loader2, ExternalLink, Sparkles } from "lucide-react";
 import Image from "next/image";
 
 interface GMGame {
@@ -19,6 +19,7 @@ export default function ImportGamesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [category, setCategory] = useState("All");
+  const [autoGenerateAI, setAutoGenerateAI] = useState(true);
   const [importingUrls, setImportingUrls] = useState<Set<string>>(new Set());
   const [importedUrls, setImportedUrls] = useState<Set<string>>(new Set());
   const [error, setError] = useState("");
@@ -55,10 +56,27 @@ export default function ImportGamesPage() {
       const randomSuffix = Math.random().toString(36).substring(2, 7);
       const slug = game.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + randomSuffix;
       
+      let finalDescription = game.description || "A great free online browser game on Bluebuff Games.";
+      
+      if (autoGenerateAI) {
+        try {
+          const aiRes = await axios.post("/api/admin/ai/description", {
+            title: game.title,
+            category: [game.category?.toLowerCase() || "arcade"],
+            currentDescription: game.description,
+          });
+          if (aiRes.data?.success && aiRes.data?.description) {
+            finalDescription = aiRes.data.description;
+          }
+        } catch (aiErr) {
+          console.warn("AI generation fallback to feed description:", aiErr);
+        }
+      }
+
       await axios.post('/api/games', {
         title: game.title,
         slug: slug,
-        description: game.description || "A great HTML5 game.",
+        description: finalDescription,
         category: [game.category?.toLowerCase() || "arcade"],
         buildType: "iframe-external",
         source: "aggregated",
@@ -95,14 +113,26 @@ export default function ImportGamesPage() {
           </p>
         </div>
         
-        <select 
-          value={category}
-          onChange={(e) => {
-            setCategory(e.target.value);
-            setPage(1);
-          }}
-          className="px-3 py-2 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs font-medium text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors outline-none cursor-pointer shadow-inner min-w-[160px] w-full sm:w-auto"
-        >
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <label className="flex items-center gap-2 cursor-pointer bg-[#121214] px-3 py-2 rounded-lg border border-[#1f1f22] text-xs font-semibold text-zinc-300 hover:border-indigo-500/40 transition-colors select-none">
+            <input 
+              type="checkbox" 
+              checked={autoGenerateAI} 
+              onChange={e => setAutoGenerateAI(e.target.checked)} 
+              className="rounded bg-zinc-900 border-zinc-700 text-indigo-600 focus:ring-0 w-3.5 h-3.5"
+            />
+            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="text-[11px]">Auto AI SEO</span>
+          </label>
+
+          <select 
+            value={category}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              setPage(1);
+            }}
+            className="px-3 py-2 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs font-medium text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors outline-none cursor-pointer shadow-inner min-w-[150px] flex-1 sm:flex-initial"
+          >
           <option value="All">All Categories</option>
           <option value="1">Action</option>
           <option value="2">Arcade</option>
@@ -114,9 +144,10 @@ export default function ImportGamesPage() {
           <option value="10">Adventure</option>
           <option value="9">Girls</option>
           <option value="11">3D</option>
-          <option value="15">Clicker</option>
-          <option value="14">Casual</option>
-        </select>
+            <option value="15">Clicker</option>
+            <option value="14">Casual</option>
+          </select>
+        </div>
       </div>
 
       {error && (

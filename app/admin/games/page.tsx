@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ShieldCheck, ShieldAlert, Play, ExternalLink } from "lucide-react";
+import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ShieldCheck, ShieldAlert, Play, ExternalLink, Sparkles } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -27,6 +27,8 @@ export default function AdminGamesPage() {
   const [games, setGames] = useState<GameData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
+  const [enhancingIds, setEnhancingIds] = useState<Set<string>>(new Set());
+  const [isBatchEnhancing, setIsBatchEnhancing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -123,6 +125,43 @@ export default function AdminGamesPage() {
     }
   }
 
+  async function enhanceGameWithAI(gameId: string) {
+    setEnhancingIds(prev => new Set(prev).add(gameId));
+    try {
+      const { data } = await axios.post('/api/admin/ai/batch-enhance', { gameId });
+      if (data.success) {
+        alert("✨ AI SEO description generated and updated successfully!");
+      }
+    } catch (error: any) {
+      console.error("AI enhance error:", error);
+      alert(`AI Enhance Error: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setEnhancingIds(prev => {
+        const next = new Set(prev);
+        next.delete(gameId);
+        return next;
+      });
+    }
+  }
+
+  async function batchEnhancePageGames() {
+    if (games.length === 0) return;
+    if (!window.confirm(`Generate AI SEO descriptions for all ${games.length} games on this page?`)) return;
+    setIsBatchEnhancing(true);
+    try {
+      const ids = games.map(g => g._id);
+      const { data } = await axios.post('/api/admin/ai/batch-enhance', { gameIds: ids });
+      if (data.success) {
+        alert(`✨ Successfully generated AI SEO descriptions for ${data.updatedCount || 0} games!`);
+      }
+    } catch (error: any) {
+      console.error("Batch AI error:", error);
+      alert(`Batch AI Error: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setIsBatchEnhancing(false);
+    }
+  }
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-20">
@@ -201,6 +240,17 @@ export default function AdminGamesPage() {
               <option value="draft">Drafts Only</option>
             </select>
           </div>
+
+          {/* AI SEO Page Action */}
+          <button
+            onClick={batchEnhancePageGames}
+            disabled={isBatchEnhancing || games.length === 0}
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0"
+            title="Generate AI SEO descriptions for all games on this page"
+          >
+            {isBatchEnhancing ? <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" /> : <Sparkles className="w-3.5 h-3.5 text-indigo-400" />}
+            <span>{isBatchEnhancing ? "Optimizing..." : "AI SEO Page"}</span>
+          </button>
         </div>
       </div>
       
@@ -324,6 +374,18 @@ export default function AdminGamesPage() {
                 {/* Actions */}
                 <td className="py-2 px-3 text-right">
                   <div className="flex justify-end items-center gap-1">
+                    <button
+                      onClick={() => enhanceGameWithAI(game._id)}
+                      disabled={enhancingIds.has(game._id)}
+                      className="p-1.5 text-zinc-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-md transition-colors disabled:opacity-50"
+                      title="✨ Generate AI SEO description with Gemini"
+                    >
+                      {enhancingIds.has(game._id) ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+                      ) : (
+                        <Sparkles className="w-3.5 h-3.5" />
+                      )}
+                    </button>
                     <Link
                       href={`/games/${game.slug}`}
                       target="_blank"
