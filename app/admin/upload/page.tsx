@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import JSZip from "jszip";
 import axios from "axios";
-import { UploadCloud, Loader2, CheckCircle } from "lucide-react";
+import { UploadCloud, Loader2, CheckCircle, Sparkles } from "lucide-react";
 
 const CATEGORIES = [
   "action", "adventure", "arcade", "board", "card", "clicker", 
@@ -12,6 +12,7 @@ const CATEGORIES = [
 export default function UploadGamePage() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -32,6 +33,31 @@ export default function UploadGamePage() {
     thumbnailUrl: "",
     gameUrl: ""
   });
+
+  const handleGenerateAIDescription = async () => {
+    if (!formData.title.trim()) {
+      setMessage("Please enter a Game Title first to generate an SEO description.");
+      return;
+    }
+    setIsGeneratingAI(true);
+    try {
+      const res = await axios.post("/api/admin/ai/description", {
+        title: formData.title,
+        category: formData.categories,
+        currentDescription: formData.description,
+      });
+      if (res.data?.success && res.data?.description) {
+        setFormData(prev => ({ ...prev, description: res.data.description }));
+        setMessage("✨ AI SEO description generated successfully!");
+        setTimeout(() => setMessage(""), 3500);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setMessage(`AI Error: ${err.response?.data?.error || err.message}`);
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -236,12 +262,34 @@ export default function UploadGamePage() {
         </div>
         
         <div>
-          <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">Description</label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider">Description</label>
+            <button
+              type="button"
+              onClick={handleGenerateAIDescription}
+              disabled={isGeneratingAI || !formData.title.trim()}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 rounded-md transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
+              title="Generate high-converting SEO description using Gemini AI"
+            >
+              {isGeneratingAI ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin text-indigo-400" />
+                  Generating with AI...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-3 h-3 text-indigo-400" />
+                  Generate with Gemini AI
+                </>
+              )}
+            </button>
+          </div>
           <textarea 
             required
             value={formData.description}
             onChange={e => setFormData({...formData, description: e.target.value})}
-            className="w-full bg-[#121214] border border-[#1f1f22] rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-200 focus:border-[#333339] focus:outline-none h-20 transition-colors resize-y shadow-inner"
+            placeholder="Write or generate an SEO-optimized game description..."
+            className="w-full bg-[#121214] border border-[#1f1f22] rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-200 focus:border-[#333339] focus:outline-none h-24 transition-colors resize-y shadow-inner"
           />
         </div>
 
