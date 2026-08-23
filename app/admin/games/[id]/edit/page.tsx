@@ -31,7 +31,9 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
     playUrl: "",
     developer: "Bluebuff Games",
     platforms: "Browser (desktop, mobile, tablet)",
-    orientation: "any"
+    orientation: "any",
+    status: "published",
+    verified: false,
   });
 
   useEffect(() => {
@@ -51,7 +53,9 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
         playUrl: data.playUrl || "",
         developer: data.developer || "Bluebuff Games",
         platforms: data.platforms || "Browser (desktop, mobile, tablet)",
-        orientation: data.orientation || "any"
+        orientation: data.orientation || "any",
+        status: data.status || "draft",
+        verified: Boolean(data.verified),
       });
     } catch (error) {
       console.error("Failed to fetch game", error);
@@ -140,6 +144,8 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
         developer: formData.developer,
         platforms: formData.platforms,
         orientation: formData.orientation,
+        status: formData.status,
+        verified: formData.verified,
         ...(file ? { playUrl: finalPlayUrl } : {})
       });
 
@@ -241,6 +247,36 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
               onChange={e => setFormData({...formData, platforms: e.target.value})}
               className="w-full bg-surface-hover border border-border-main rounded-lg p-3 text-text-main focus:ring-2 focus:ring-primary-hover outline-none transition-all"
             />
+          </div>
+        </div>
+
+        {/* Status & Admin Verification Controls */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[#121214] border border-[#1f1f22]">
+          <div>
+            <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Visibility Status</label>
+            <select
+              value={formData.status}
+              onChange={e => setFormData({...formData, status: e.target.value as "draft" | "published"})}
+              className="w-full bg-surface-hover border border-border-main rounded-lg p-2.5 text-xs text-text-main focus:ring-2 focus:ring-indigo-500 outline-none"
+            >
+              <option value="published">Live (Published on website)</option>
+              <option value="draft">Draft (Hidden from players)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Admin Quality Verification</label>
+            <label className="flex items-center gap-3 p-2 rounded-lg bg-surface-hover border border-border-main cursor-pointer hover:border-zinc-600 transition-colors">
+              <input
+                type="checkbox"
+                checked={formData.verified}
+                onChange={e => setFormData({...formData, verified: e.target.checked})}
+                className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 bg-zinc-900 border-zinc-700"
+              />
+              <span className="text-xs font-semibold text-zinc-200">
+                {formData.verified ? "✅ Admin Verified (Tested & Working)" : "⚠️ Unverified (Needs Check)"}
+              </span>
+            </label>
           </div>
         </div>
 

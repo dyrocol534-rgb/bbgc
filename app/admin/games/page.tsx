@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, Filter, ChevronLeft, ChevronRight, ArrowUp, ArrowDown } from "lucide-react";
+import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ShieldCheck, ShieldAlert, Play, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -12,6 +12,7 @@ interface GameData {
   slug: string;
   status: "draft" | "published";
   featured: boolean;
+  verified?: boolean;
   playCount: number;
   thumbnailUrl: string;
   likes?: string[];
@@ -30,6 +31,7 @@ export default function AdminGamesPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
+  const [verifiedFilter, setVerifiedFilter] = useState("all");
   const [sortField, setSortField] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("desc");
   
@@ -38,17 +40,17 @@ export default function AdminGamesPage() {
   const [totalGames, setTotalGames] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 500);
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 400);
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, statusFilter, sourceFilter, sortField, sortOrder]);
+  }, [debouncedSearch, statusFilter, sourceFilter, verifiedFilter, sortField, sortOrder]);
 
   useEffect(() => {
     fetchGames();
-  }, [page, debouncedSearch, statusFilter, sourceFilter, sortField, sortOrder]);
+  }, [page, debouncedSearch, statusFilter, sourceFilter, verifiedFilter, sortField, sortOrder]);
 
   async function fetchGames() {
     setIsFetching(true);
@@ -60,6 +62,7 @@ export default function AdminGamesPage() {
           search: debouncedSearch,
           status: statusFilter,
           source: sourceFilter,
+          verified: verifiedFilter,
           sortField,
           sortOrder
         }
@@ -86,6 +89,17 @@ export default function AdminGamesPage() {
     }
   }
 
+  async function toggleVerified(id: string, currentVerified?: boolean) {
+    const newVerified = !currentVerified;
+    try {
+      await axios.patch(`/api/admin/games/${id}`, { verified: newVerified });
+      setGames(games.map(g => g._id === id ? { ...g, verified: newVerified } : g));
+    } catch (error) {
+      console.error("Failed to update verification", error);
+      alert("Error updating verification");
+    }
+  }
+
   async function toggleFeatured(id: string, currentFeatured: boolean) {
     try {
       await axios.patch(`/api/admin/games/${id}`, { featured: !currentFeatured });
@@ -102,6 +116,7 @@ export default function AdminGamesPage() {
     try {
       await axios.delete(`/api/admin/games/${id}`);
       setGames(games.filter(g => g._id !== id));
+      setTotalGames(prev => Math.max(0, prev - 1));
     } catch (error) {
       console.error("Failed to delete game", error);
       alert("Error deleting game");
@@ -131,48 +146,67 @@ export default function AdminGamesPage() {
   };
 
   return (
-    <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 bg-[#0c0c0e] p-3 rounded-xl border border-[#1f1f22] shadow-lg shadow-black/40">
-        <h2 className="text-lg font-bold text-white flex items-center gap-2">
+    <div className="space-y-4">
+      {/* Search & Filters */}
+      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-3 bg-[#0c0c0e] p-3 rounded-xl border border-[#1f1f22] shadow-lg shadow-black/40">
+        <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
           Manage Games ({totalGames}) 
           {isFetching && !isLoading && <Loader2 className="w-4 h-4 text-zinc-500 animate-spin" />}
         </h2>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-          <div className="relative w-full sm:w-56">
+        
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 w-full xl:w-auto">
+          {/* Search */}
+          <div className="relative w-full sm:w-52">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
             <input 
               type="text" 
               placeholder="Search games..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-[#333339] focus:bg-[#1a1a1f] focus:outline-none transition-all shadow-inner"
+              className="w-full pl-8 pr-3 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:bg-[#1a1a1f] focus:outline-none transition-all shadow-inner"
             />
           </div>
-          <div className="flex gap-2 w-full sm:w-auto">
+
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            {/* Source Filter */}
             <select 
               value={sourceFilter}
               onChange={(e) => setSourceFilter(e.target.value)}
-              className="flex-1 sm:flex-none px-2 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors outline-none cursor-pointer shadow-inner"
+              className="flex-1 sm:flex-none px-2 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors outline-none cursor-pointer shadow-inner"
             >
               <option value="all">All Sources</option>
               <option value="aggregated">Imported</option>
               <option value="own">Uploaded</option>
             </select>
+
+            {/* Verification Filter */}
+            <select 
+              value={verifiedFilter}
+              onChange={(e) => setVerifiedFilter(e.target.value)}
+              className="flex-1 sm:flex-none px-2 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors outline-none cursor-pointer shadow-inner"
+            >
+              <option value="all">All Verification</option>
+              <option value="true">Verified Only</option>
+              <option value="false">Unverified Only</option>
+            </select>
+
+            {/* Status Filter */}
             <select 
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="flex-1 sm:flex-none px-2 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-[#333339] focus:outline-none transition-colors outline-none cursor-pointer shadow-inner"
+              className="flex-1 sm:flex-none px-2 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors outline-none cursor-pointer shadow-inner"
             >
               <option value="all">All Status</option>
-              <option value="published">Published</option>
-              <option value="draft">Drafts</option>
+              <option value="published">Live Only</option>
+              <option value="draft">Drafts Only</option>
             </select>
           </div>
         </div>
       </div>
       
+      {/* Table */}
       <div className="overflow-x-auto bg-[#0c0c0e] border border-[#1f1f22] rounded-xl shadow-lg shadow-black/40 custom-scrollbar">
-        <table className="w-full text-left border-collapse min-w-[900px]">
+        <table className="w-full text-left border-collapse min-w-[960px]">
           <thead>
             <tr className="border-b border-[#1f1f22] bg-[#121214] text-zinc-500 text-[10px] uppercase tracking-widest">
               <th className="py-2.5 px-3 font-bold w-12">Icon</th>
@@ -195,26 +229,27 @@ export default function AdminGamesPage() {
                 <div className="flex items-center justify-center gap-1">Rating {renderSortIcon('rating')}</div>
               </th>
               <th 
-                className="py-2.5 px-3 font-bold text-center cursor-pointer group hover:text-zinc-300 transition-colors w-16"
+                className="py-2.5 px-3 font-bold text-center cursor-pointer group hover:text-zinc-300 transition-colors w-14"
                 onClick={() => handleSort('featured')}
               >
                 <div className="flex items-center justify-center gap-1">Feat {renderSortIcon('featured')}</div>
               </th>
-              <th className="py-2.5 px-3 font-bold text-center">Visibility</th>
-              <th className="py-2.5 px-3 font-bold text-right w-20">Actions</th>
+              <th className="py-2.5 px-3 font-bold text-center w-28">Admin Check</th>
+              <th className="py-2.5 px-3 font-bold text-center w-24">Visibility</th>
+              <th className="py-2.5 px-3 font-bold text-right w-24">Actions</th>
             </tr>
           </thead>
           <tbody>
             {games.map((game) => (
-              <tr key={game._id} className={`border-b border-[#1f1f22] transition-colors ${game.status === 'draft' ? 'bg-[#08080a] opacity-60' : 'hover:bg-[#121214]'}`}>
-                <td className="py-1.5 px-3">
-                  <Image src={game.thumbnailUrl} alt={game.title} width={32} height={32} className="w-8 h-8 rounded-md object-cover bg-zinc-900 border border-[#1f1f22] shadow-sm" />
+              <tr key={game._id} className={`border-b border-[#1f1f22] transition-colors ${game.status === 'draft' ? 'bg-[#08080a] opacity-70' : 'hover:bg-[#121214]'}`}>
+                <td className="py-2 px-3">
+                  <Image src={game.thumbnailUrl} alt={game.title} width={36} height={36} className="w-9 h-9 rounded-lg object-cover bg-zinc-900 border border-[#1f1f22] shadow-sm" />
                 </td>
-                <td className="py-1.5 px-3">
+                <td className="py-2 px-3">
                   <div className="font-semibold text-zinc-200 flex items-center gap-2 text-sm leading-tight">
-                    {game.title}
+                    <span>{game.title}</span>
                     {game.source === "aggregated" && (
-                      <span className="bg-indigo-500/10 text-indigo-400 text-[9px] uppercase font-bold px-1 py-0.5 rounded shrink-0 border border-indigo-500/20">
+                      <span className="bg-indigo-500/10 text-indigo-400 text-[9px] uppercase font-bold px-1.5 py-0.5 rounded shrink-0 border border-indigo-500/20">
                         Import
                       </span>
                     )}
@@ -230,17 +265,17 @@ export default function AdminGamesPage() {
                     )}
                   </div>
                 </td>
-                <td className="py-1.5 px-3 text-center text-zinc-300 text-xs font-medium">
+                <td className="py-2 px-3 text-center text-zinc-300 text-xs font-medium">
                   {game.playCount.toLocaleString()}
                 </td>
-                <td className="py-1.5 px-3 text-center text-xs">
+                <td className="py-2 px-3 text-center text-xs">
                   <div className="flex items-center justify-center gap-1.5">
                     <span className="text-emerald-400 font-medium">+{game.likes?.length || 0}</span>
                     <span className="text-zinc-700">/</span>
                     <span className="text-red-400 font-medium">-{game.dislikes?.length || 0}</span>
                   </div>
                 </td>
-                <td className="py-1.5 px-3 text-center">
+                <td className="py-2 px-3 text-center">
                   <button 
                     onClick={() => toggleFeatured(game._id, game.featured)}
                     className={`p-1.5 rounded-md transition-colors ${game.featured ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20' : 'text-zinc-600 hover:bg-zinc-800 hover:text-zinc-300'}`}
@@ -249,20 +284,55 @@ export default function AdminGamesPage() {
                     <Star className={`w-3.5 h-3.5 ${game.featured ? 'fill-current' : ''}`} />
                   </button>
                 </td>
-                <td className="py-1.5 px-3 text-center">
+                {/* Admin Verification Column */}
+                <td className="py-2 px-3 text-center">
+                  <button
+                    onClick={() => toggleVerified(game._id, game.verified)}
+                    title={game.verified ? "Verified by Admin (Click to unverify)" : "Click to mark as Admin Verified"}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wide transition-all border ${
+                      game.verified
+                        ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25 shadow-[0_0_8px_rgba(16,185,129,0.15)]"
+                        : "bg-amber-500/10 text-amber-300 border-amber-500/20 hover:bg-amber-500/20"
+                    }`}
+                  >
+                    {game.verified ? (
+                      <>
+                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Verified</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Needs Check</span>
+                      </>
+                    )}
+                  </button>
+                </td>
+                {/* Visibility Column */}
+                <td className="py-2 px-3 text-center">
                   <button 
                     onClick={() => toggleStatus(game._id, game.status)}
-                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide transition-colors ${
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide transition-colors border ${
                       game.status === 'published' 
-                        ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20' 
-                        : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 border border-zinc-700'
+                        ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20' 
+                        : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 border-zinc-700'
                     }`}
                   >
                     {game.status === 'published' ? <><Eye className="w-3 h-3" /> Live</> : <><EyeOff className="w-3 h-3" /> Draft</>}
                   </button>
                 </td>
-                <td className="py-1.5 px-3 text-right">
-                  <div className="flex justify-end gap-1">
+                {/* Actions */}
+                <td className="py-2 px-3 text-right">
+                  <div className="flex justify-end items-center gap-1">
+                    <Link
+                      href={`/games/${game.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 text-zinc-500 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-md transition-colors"
+                      title="Test / Play Game in new tab"
+                    >
+                      <Play className="w-3.5 h-3.5" />
+                    </Link>
                     <Link 
                       href={`/admin/games/${game._id}/edit`}
                       className="p-1.5 text-zinc-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-md transition-colors"
@@ -283,8 +353,8 @@ export default function AdminGamesPage() {
             ))}
             {games.length === 0 && (
               <tr>
-                <td colSpan={7} className="py-12 text-center text-text-muted">
-                  No games found. Time to upload some!
+                <td colSpan={8} className="py-12 text-center text-zinc-500 text-xs">
+                  No games found matching your filters.
                 </td>
               </tr>
             )}
@@ -292,10 +362,11 @@ export default function AdminGamesPage() {
         </table>
       </div>
 
+      {/* Pagination Controls */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4 px-2">
-          <p className="text-[11px] text-zinc-500 font-medium">
-            Showing {(page - 1) * 50 + 1} to {Math.min(page * 50, totalGames)} of {totalGames} results
+          <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wider">
+            Showing <span className="text-zinc-300">{(page - 1) * 50 + 1}</span> to <span className="text-zinc-300">{Math.min(page * 50, totalGames)}</span> of <span className="text-zinc-300">{totalGames}</span> results
           </p>
           <div className="flex gap-1.5">
             <button

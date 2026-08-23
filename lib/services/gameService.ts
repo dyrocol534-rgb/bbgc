@@ -24,6 +24,7 @@ export interface GameDetailData extends GameCardData {
   rating: { avg: number; count: number };
   status: "draft" | "published";
   featured: boolean;
+  verified?: boolean;
   likes: string[];
   dislikes: string[];
   developer: string;
@@ -65,6 +66,7 @@ export function serializeGameDetail(doc: any): GameDetailData {
     },
     status: doc.status || "draft",
     featured: Boolean(doc.featured),
+    verified: Boolean(doc.verified),
     likes: Array.isArray(doc.likes) ? doc.likes.map((id: any) => id.toString()) : [],
     dislikes: Array.isArray(doc.dislikes) ? doc.dislikes.map((id: any) => id.toString()) : [],
     developer: doc.developer || "Bluebuff Games",

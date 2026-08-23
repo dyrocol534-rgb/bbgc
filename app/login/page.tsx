@@ -3,11 +3,12 @@
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { Gamepad2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -28,44 +29,79 @@ export default function LoginPage() {
   if (status === "loading") {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
+        <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
       </div>
     );
   }
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-gradient-to-br from-indigo-900/40 to-purple-900/40 border border-indigo-500/30 rounded-3xl p-8 text-center relative overflow-hidden shadow-[0_0_40px_rgba(99,102,241,0.15)]">
-        {/* Background glow */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      {/* Ambient background glow */}
+      <div className="relative w-full max-w-sm">
+        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-blue-500/20 rounded-3xl blur-2xl opacity-50 pointer-events-none" />
 
-        <div className="relative flex flex-col items-center text-center z-10">
-          <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20">
-            <Gamepad2 className="w-8 h-8 text-white" />
-          </div>
+        {/* Premium Obsidian Card */}
+        <div className="relative bg-[#0d0d11]/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 sm:p-8 text-center shadow-2xl">
           
-          <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-8 tracking-tight">
-            Login
-          </h1>
-
-          <button
-            onClick={() => signIn("google", { callbackUrl })}
-            className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 px-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-indigo-500/25"
-          >
-            <div className="bg-white p-1 rounded-full flex items-center justify-center">
-              <Image
-                src="https://www.google.com/favicon.ico"
-                alt="Google"
-                width={16}
-                height={16}
-                className="w-4 h-4"
+          {/* Logo / Brand Icon */}
+          <div className="flex justify-center mb-5">
+            <div className="relative w-14 h-14 rounded-2xl bg-zinc-900/90 border border-white/10 flex items-center justify-center shadow-inner p-2.5 group">
+              <Image 
+                src="/logo.png" 
+                alt="Bluebuff Games" 
+                width={40} 
+                height={40} 
+                className="object-contain drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] group-hover:scale-105 transition-transform" 
               />
             </div>
-            Continue with Google
+          </div>
+          
+          {/* Title & Subtitle */}
+          <h1 className="text-xl font-bold tracking-tight text-white mb-1.5">
+            Welcome to Bluebuff Games
+          </h1>
+          <p className="text-xs text-zinc-400 mb-6 leading-relaxed">
+            Sign in to track highscores, earn XP & claim daily rewards.
+          </p>
+
+          {/* Premium Google Button */}
+          <button
+            onClick={() => signIn("google", { callbackUrl })}
+            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-zinc-100 text-zinc-900 font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-sm hover:shadow active:scale-[0.99] text-sm group"
+          >
+            {/* Crisp Official Google Multicolor SVG */}
+            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+              <path
+                fill="#4285F4"
+                d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+              />
+              <path
+                fill="#34A853"
+                d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
+              />
+              <path
+                fill="#EA4335"
+                d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+              />
+            </svg>
+            <span className="font-medium tracking-tight">Continue with Google</span>
           </button>
           
-          <p className="text-indigo-200/60 text-xs mt-6 max-w-[250px] mx-auto">
-            By logging in you are agreeing to our terms and conditions.
+          {/* Terms microcopy */}
+          <p className="text-[11px] text-zinc-500 mt-6 leading-relaxed">
+            By continuing, you agree to our{" "}
+            <Link href="/terms" className="text-zinc-400 hover:text-white underline underline-offset-2 transition-colors">
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="text-zinc-400 hover:text-white underline underline-offset-2 transition-colors">
+              Privacy Policy
+            </Link>
+            .
           </p>
         </div>
       </div>

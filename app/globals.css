@@ -127,3 +127,13 @@ body.hide-ui footer,
 body.hide-ui button.md\:hidden.fixed.top-1\/2 {
   display: none !important;
 }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}

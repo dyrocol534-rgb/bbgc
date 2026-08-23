@@ -9,6 +9,7 @@ import GuestSession from "@/models/GuestSession";
 import PlayEvent from "@/models/PlayEvent";
 import Feedback from "@/models/Feedback";
 import AppInstall from "@/models/AppInstall";
+import PushSubscription from "@/models/PushSubscription";
 
 export const dynamic = "force-dynamic";
 
@@ -44,19 +45,34 @@ export async function GET(req: NextRequest) {
       totalGames,
       totalSubscribers,
       totalPwaInstalls,
+      totalPushSubscribers,
       games,
       guestSessionsWithPlays,
-      recentFeedback
+      recentFeedback,
+      recentPwaInstalls,
+      pwaDeviceStats
     ] = await Promise.all([
       User.countDocuments(),
       GuestSession.countDocuments(),
       Game.countDocuments({ status: "published" }),
       Subscriber.countDocuments(),
       AppInstall.countDocuments(),
+      PushSubscription.countDocuments(),
       Game.find({}, "playCount title slug likes dislikes").lean(),
       GuestSession.find({ recentlyPlayed: { $exists: true, $not: { $size: 0 } } }, "recentlyPlayed").lean(),
-      Feedback.find().sort({ createdAt: -1 }).limit(10).lean() // Last 10 feedbacks
+      Feedback.find().sort({ createdAt: -1 }).limit(10).lean(),
+      AppInstall.find().sort({ installedAt: -1 }).limit(8).lean(),
+      AppInstall.aggregate([
+        { $group: { _id: "$deviceType", count: { $sum: 1 } } }
+      ])
     ]);
+
+    const pwaDevices = { Mobile: 0, Desktop: 0, Tablet: 0 };
+    pwaDeviceStats.forEach((d: any) => {
+      if (d._id === "Mobile" || d._id === "mobile") pwaDevices.Mobile += d.count;
+      else if (d._id === "Tablet" || d._id === "tablet") pwaDevices.Tablet += d.count;
+      else pwaDevices.Desktop += d.count;
+    });
 
     const gameMap = new Map(games.map((g: any) => [g.slug, g.title]));
     const totalPlays = games.reduce((sum: number, game: any) => sum + (game.playCount || 0), 0);
@@ -74,7 +90,7 @@ export async function GET(req: NextRequest) {
       .slice(0, 5);
 
     // 24h Stats
-    const [newUsers24h, newGuests24h, activeUsers24h, activeGuests24h, newSubs24h, newGames24h, newPlays24h, pwaInstalls24h] = await Promise.all([
+    const [newUsers24h, newGuests24h, activeUsers24h, activeGuests24h, newSubs24h, newGames24h, newPlays24h, pwaInstalls24h, pushSubs24h] = await Promise.all([
       User.countDocuments({ createdAt: { $gte: ago24h } }),
       GuestSession.countDocuments({ createdAt: { $gte: ago24h } }),
       User.countDocuments({ lastActiveAt: { $gte: ago24h } }),
@@ -82,11 +98,12 @@ export async function GET(req: NextRequest) {
       Subscriber.countDocuments({ createdAt: { $gte: ago24h } }),
       Game.countDocuments({ status: "published", createdAt: { $gte: ago24h } }),
       PlayEvent.countDocuments({ createdAt: { $gte: ago24h } }),
-      AppInstall.countDocuments({ installedAt: { $gte: ago24h } })
+      AppInstall.countDocuments({ installedAt: { $gte: ago24h } }),
+      PushSubscription.countDocuments({ createdAt: { $gte: ago24h } })
     ]);
 
     // 7d Stats
-    const [newUsers7d, newGuests7d, activeUsers7d, activeGuests7d, newSubs7d, newGames7d, newPlays7d, pwaInstalls7d] = await Promise.all([
+    const [newUsers7d, newGuests7d, activeUsers7d, activeGuests7d, newSubs7d, newGames7d, newPlays7d, pwaInstalls7d, pushSubs7d] = await Promise.all([
       User.countDocuments({ createdAt: { $gte: ago7d } }),
       GuestSession.countDocuments({ createdAt: { $gte: ago7d } }),
       User.countDocuments({ lastActiveAt: { $gte: ago7d } }),
@@ -94,11 +111,12 @@ export async function GET(req: NextRequest) {
       Subscriber.countDocuments({ createdAt: { $gte: ago7d } }),
       Game.countDocuments({ status: "published", createdAt: { $gte: ago7d } }),
       PlayEvent.countDocuments({ createdAt: { $gte: ago7d } }),
-      AppInstall.countDocuments({ installedAt: { $gte: ago7d } })
+      AppInstall.countDocuments({ installedAt: { $gte: ago7d } }),
+      PushSubscription.countDocuments({ createdAt: { $gte: ago7d } })
     ]);
 
     // 30d Stats
-    const [newUsers30d, newGuests30d, activeUsers30d, activeGuests30d, newSubs30d, newGames30d, newPlays30d, pwaInstalls30d] = await Promise.all([
+    const [newUsers30d, newGuests30d, activeUsers30d, activeGuests30d, newSubs30d, newGames30d, newPlays30d, pwaInstalls30d, pushSubs30d] = await Promise.all([
       User.countDocuments({ createdAt: { $gte: ago30d } }),
       GuestSession.countDocuments({ createdAt: { $gte: ago30d } }),
       User.countDocuments({ lastActiveAt: { $gte: ago30d } }),
@@ -106,7 +124,8 @@ export async function GET(req: NextRequest) {
       Subscriber.countDocuments({ createdAt: { $gte: ago30d } }),
       Game.countDocuments({ status: "published", createdAt: { $gte: ago30d } }),
       PlayEvent.countDocuments({ createdAt: { $gte: ago30d } }),
-      AppInstall.countDocuments({ installedAt: { $gte: ago30d } })
+      AppInstall.countDocuments({ installedAt: { $gte: ago30d } }),
+      PushSubscription.countDocuments({ createdAt: { $gte: ago30d } })
     ]);
 
     // Engagement & Retention (7d based)
@@ -218,6 +237,7 @@ export async function GET(req: NextRequest) {
         totalGames: newGames24h,
         totalPlays: newPlays24h,
         pwaInstalls: pwaInstalls24h,
+        pushSubscribers: pushSubs24h,
         topGames: topGames24h,
         topGuestGames: topGuestGames24h,
         deviceSplit: devices24h,
@@ -232,6 +252,7 @@ export async function GET(req: NextRequest) {
         totalGames: newGames7d,
         totalPlays: newPlays7d,
         pwaInstalls: pwaInstalls7d,
+        pushSubscribers: pushSubs7d,
         topGames: topGames7d,
         topGuestGames: topGuestGames7d,
         deviceSplit: devices7d,
@@ -246,6 +267,7 @@ export async function GET(req: NextRequest) {
         totalGames: newGames30d,
         totalPlays: newPlays30d,
         pwaInstalls: pwaInstalls30d,
+        pushSubscribers: pushSubs30d,
         topGames: topGames30d,
         topGuestGames: topGuestGames30d,
         deviceSplit: devices30d,
@@ -260,6 +282,17 @@ export async function GET(req: NextRequest) {
         totalGames,
         totalPlays,
         pwaInstalls: totalPwaInstalls,
+        pushSubscribers: totalPushSubscribers,
+        pwaDevices,
+        recentPwaInstalls: recentPwaInstalls.map((inst: any) => ({
+          deviceType: inst.deviceType,
+          installedAt: new Date(inst.installedAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+        })),
         topGames: topGamesLifetime,
         topGuestGames: topGuestGamesLifetime,
         deviceSplit: devicesLifetime,

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Gamepad2, PlaySquare, Loader2, Activity, UserPlus, Mail, Ghost, TrendingUp, Zap, Rocket, RefreshCw, Smartphone, Star, MessageSquare, Users, MousePointerClick, Heart, PlayCircle } from "lucide-react";
+import { Gamepad2, Loader2, Activity, UserPlus, Mail, Ghost, TrendingUp, RefreshCw, Smartphone, Star, MessageSquare, Users, MousePointerClick, Heart, PlayCircle, BellRing, Bell, ArrowRight, Laptop, Tablet } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import clsx from 'clsx';
@@ -24,6 +24,7 @@ interface TimeframeStats {
   activeGuests: number;
   newSubscribers: number;
   pwaInstalls: number;
+  pushSubscribers?: number;
   totalGames: number;
   totalPlays: number;
   topGames: { slug: string; title: string; playCount: number }[];
@@ -38,6 +39,8 @@ interface Stats {
   "30d": TimeframeStats;
   lifetime: TimeframeStats & {
     retentionRate: number;
+    pwaDevices?: { Mobile: number; Desktop: number; Tablet: number };
+    recentPwaInstalls?: { deviceType: string; installedAt: string }[];
     topRatedGames: { slug: string; title: string; ratio: number; totalVotes: number }[];
     recentFeedback: { gameSlug: string; userEmail: string; message: string; status: string; date: string }[];
   };
@@ -46,7 +49,7 @@ interface Stats {
 
 function StatCard({ icon: Icon, label, value, color, sub }: { icon: React.ElementType; label: string; value: string | number; color: string; sub?: string }) {
   return (
-    <div className="bg-[#0c0c0e] border border-[#1f1f22] p-3 rounded-xl flex items-center gap-3 hover:border-[#333339] transition-all shadow-lg shadow-black/40 relative overflow-hidden group">
+    <div className="bg-[#0c0c0e] border border-[#1f1f22] p-3.5 rounded-xl flex items-center gap-3 hover:border-[#333339] transition-all shadow-lg shadow-black/40 relative overflow-hidden group">
       <div className={`p-2.5 rounded-lg ${color} shadow-inner z-10 transition-transform group-hover:scale-110 border border-white/5`}>
         <Icon className="w-4 h-4 drop-shadow-md" />
       </div>
@@ -120,6 +123,9 @@ export default function AdminAnalytics() {
     { id: "lifetime", label: "All Time" },
   ];
 
+  const pwaDevices = stats.lifetime.pwaDevices || { Mobile: 0, Desktop: 0, Tablet: 0 };
+  const totalPwaAll = (pwaDevices.Mobile + pwaDevices.Desktop + pwaDevices.Tablet) || 1;
+
   return (
     <div className="space-y-6 pb-10 max-w-[1400px] mx-auto animate-in fade-in duration-300">
       
@@ -131,7 +137,7 @@ export default function AdminAnalytics() {
           </div>
           <div className="min-w-0 flex-1">
             <h1 className="text-lg font-bold text-white leading-tight truncate">Analytics Dashboard</h1>
-            <p className="text-[10px] text-zinc-400 truncate mt-0.5 font-medium">Time-series tracking & cache-enabled</p>
+            <p className="text-[10px] text-zinc-400 truncate mt-0.5 font-medium">Real-time games, user & PWA metrics</p>
           </div>
         </div>
 
@@ -140,7 +146,7 @@ export default function AdminAnalytics() {
             onClick={() => fetchStats(true)}
             disabled={isRefreshing}
             className="flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-zinc-300 bg-[#121214] hover:bg-[#1a1a1f] rounded-xl transition-colors border border-[#1f1f22] hover:border-[#333339] disabled:opacity-50 shrink-0 w-full sm:w-auto shadow-md"
-            title="Force refresh data from database (bypasses 10m cache)"
+            title="Force refresh data from database"
           >
             <RefreshCw className={clsx("w-4 h-4 text-zinc-400", isRefreshing && "animate-spin")} />
             <span>Refresh Data</span>
@@ -165,7 +171,7 @@ export default function AdminAnalytics() {
         </div>
       </div>
 
-      {/* Engagement KPIs */}
+      {/* Primary KPI Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard
           icon={Users}
@@ -175,31 +181,39 @@ export default function AdminAnalytics() {
           color="bg-indigo-500/20 text-indigo-400"
         />
         <StatCard
-          icon={MousePointerClick}
-          label={`Avg Plays Per User (${timeframe})`}
-          value={currentStats.avgPlaysPerActive}
-          sub="Game clicks per active user"
+          icon={PlayCircle}
+          label={`Total Plays (${timeframe})`}
+          value={currentStats.totalPlays.toLocaleString()}
+          sub="Game clicks"
+          color="bg-blue-500/20 text-blue-400"
+        />
+        <StatCard
+          icon={Smartphone}
+          label={isLifetime ? "Total PWA Installs" : `PWA Installs (${timeframe})`}
+          value={currentStats.pwaInstalls?.toLocaleString() || "0"}
+          sub="Saved to homescreen"
+          color="bg-sky-500/20 text-sky-400"
+        />
+        <StatCard
+          icon={BellRing}
+          label={isLifetime ? "Push Subscribers" : `New Push Subs (${timeframe})`}
+          value={currentStats.pushSubscribers?.toLocaleString() || stats.lifetime.pushSubscribers?.toLocaleString() || "0"}
+          sub="Web Push notifications"
           color="bg-emerald-500/20 text-emerald-400"
         />
         <StatCard
+          icon={MousePointerClick}
+          label={`Avg Plays/User (${timeframe})`}
+          value={currentStats.avgPlaysPerActive}
+          sub="Per active visitor"
+          color="bg-teal-500/20 text-teal-400"
+        />
+        <StatCard
           icon={Heart}
-          label="Weekly Retention Rate"
+          label="Weekly Retention"
           value={`${stats.lifetime.retentionRate}%`}
-          sub="% of old users active this week"
+          sub="Returning players"
           color="bg-amber-500/20 text-amber-400"
-        />
-        <StatCard
-          icon={Ghost}
-          label={isLifetime ? "Total Guests" : `New Guests (${timeframe})`}
-          value={currentStats.newGuests.toLocaleString()}
-          color="bg-zinc-500/20 text-zinc-400"
-        />
-        <StatCard
-          icon={PlayCircle}
-          label={`Total Game Plays (${timeframe})`}
-          value={currentStats.totalPlays.toLocaleString()}
-          sub="Total clicks across all games"
-          color="bg-blue-500/20 text-blue-400"
         />
         <StatCard
           icon={UserPlus}
@@ -210,25 +224,107 @@ export default function AdminAnalytics() {
         />
         <StatCard
           icon={Mail}
-          label={isLifetime ? "Total Subscribers" : `New Subscribers (${timeframe})`}
+          label={isLifetime ? "Total Newsletters" : `New Subs (${timeframe})`}
           value={currentStats.newSubscribers.toLocaleString()}
-          sub="Newsletter signups"
+          sub="Email list"
           color="bg-purple-500/20 text-purple-400"
         />
-        <StatCard
-          icon={Smartphone}
-          label={isLifetime ? "Total PWA Installs" : `New Installs (${timeframe})`}
-          value={currentStats.pwaInstalls?.toLocaleString() || "0"}
-          sub="Added to homescreen"
-          color="bg-indigo-500/20 text-indigo-400"
-        />
-        <StatCard
-          icon={Gamepad2}
-          label={isLifetime ? "Total Games" : `New Games (${timeframe})`}
-          value={currentStats.totalGames.toLocaleString()}
-          sub="Published games"
-          color="bg-cyan-500/20 text-cyan-400"
-        />
+      </div>
+
+      {/* PWA & Notification Ecosystem Breakdown */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        {/* PWA Device Breakdown */}
+        <div className="bg-[#0c0c0e] border border-[#1f1f22] rounded-xl p-4 shadow-lg shadow-black/40 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xs font-bold text-white flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-sky-400" />
+                PWA Installs by Device
+              </h2>
+              <span className="text-[10px] text-sky-400 font-bold bg-sky-500/10 px-2 py-0.5 rounded">
+                {stats.lifetime.pwaInstalls} Total
+              </span>
+            </div>
+
+            <div className="space-y-2.5 mt-2">
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-zinc-300 font-medium flex items-center gap-1.5">
+                    <Smartphone className="w-3.5 h-3.5 text-blue-400" /> Mobile
+                  </span>
+                  <span className="text-zinc-400 font-bold">{pwaDevices.Mobile} ({Math.round((pwaDevices.Mobile / totalPwaAll) * 100)}%)</span>
+                </div>
+                <div className="w-full h-2 bg-zinc-900 rounded-full overflow-hidden">
+                  <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(pwaDevices.Mobile / totalPwaAll) * 100}%` }} />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-zinc-300 font-medium flex items-center gap-1.5">
+                    <Laptop className="w-3.5 h-3.5 text-purple-400" /> Desktop
+                  </span>
+                  <span className="text-zinc-400 font-bold">{pwaDevices.Desktop} ({Math.round((pwaDevices.Desktop / totalPwaAll) * 100)}%)</span>
+                </div>
+                <div className="w-full h-2 bg-zinc-900 rounded-full overflow-hidden">
+                  <div className="h-full bg-purple-500 rounded-full" style={{ width: `${(pwaDevices.Desktop / totalPwaAll) * 100}%` }} />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-xs mb-1">
+                  <span className="text-zinc-300 font-medium flex items-center gap-1.5">
+                    <Tablet className="w-3.5 h-3.5 text-emerald-400" /> Tablet
+                  </span>
+                  <span className="text-zinc-400 font-bold">{pwaDevices.Tablet} ({Math.round((pwaDevices.Tablet / totalPwaAll) * 100)}%)</span>
+                </div>
+                <div className="w-full h-2 bg-zinc-900 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(pwaDevices.Tablet / totalPwaAll) * 100}%` }} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-[11px]">
+            <span className="text-zinc-400">Web Push Subscribers</span>
+            <Link href="/admin/notifications" className="text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1">
+              Send Broadcast <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Recent PWA Install Activity */}
+        <div className="lg:col-span-2 bg-[#0c0c0e] border border-[#1f1f22] rounded-xl p-4 shadow-lg shadow-black/40 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xs font-bold text-white flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-indigo-400" />
+                Recent PWA Installations
+              </h2>
+              <span className="text-[10px] text-zinc-500">Live Device Logs</span>
+            </div>
+
+            {(!stats.lifetime.recentPwaInstalls || stats.lifetime.recentPwaInstalls.length === 0) ? (
+              <div className="p-6 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed text-center">
+                <p className="text-xs text-zinc-500">No install logs yet. Installs will appear here as users add the PWA.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {stats.lifetime.recentPwaInstalls.map((inst, i) => (
+                  <div key={i} className="flex items-center justify-between p-2.5 bg-zinc-900/40 border border-zinc-800/80 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 bg-sky-500/10 border border-sky-500/20 text-sky-400 rounded-md">
+                        {inst.deviceType === 'Mobile' ? <Smartphone className="w-3.5 h-3.5" /> : inst.deviceType === 'Tablet' ? <Tablet className="w-3.5 h-3.5" /> : <Laptop className="w-3.5 h-3.5" />}
+                      </div>
+                      <span className="text-xs font-semibold text-zinc-200">{inst.deviceType} App</span>
+                    </div>
+                    <span className="text-[10px] text-zinc-400 font-mono">{inst.installedAt}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Charts Row */}
@@ -251,7 +347,7 @@ export default function AdminAnalytics() {
           <div>
             <h2 className="text-xs font-bold text-white flex items-center gap-2 mb-3">
               <Smartphone className="w-4 h-4 text-indigo-400 drop-shadow-[0_0_6px_rgba(99,102,241,0.5)]" />
-              Device Platform ({timeframes.find(t => t.id === timeframe)?.label})
+              Game Players by Platform
             </h2>
             {deviceData.length === 0 ? (
               <div className="h-[180px] flex items-center justify-center text-xs text-zinc-500">
@@ -301,13 +397,10 @@ export default function AdminAnalytics() {
             </div>
           )}
         </div>
-
-
       </div>
 
       {/* Community Pulse */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        
         {/* Top Rated Games (Lifetime) */}
         <div className="bg-[#0c0c0e] border border-[#1f1f22] rounded-xl p-4 shadow-lg shadow-black/40">
           <h2 className="text-xs font-bold text-white flex items-center gap-2 mb-3">
@@ -373,7 +466,6 @@ export default function AdminAnalytics() {
             )}
           </div>
         </div>
-
       </div>
     </div>
   );

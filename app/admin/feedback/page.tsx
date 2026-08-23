@@ -14,7 +14,7 @@ interface FeedbackData {
   createdAt: string;
 }
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 25;
 
 export default function AdminFeedbackPage() {
   const [feedbacks, setFeedbacks] = useState<FeedbackData[]>([]);

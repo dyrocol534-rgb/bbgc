@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "all";
     const source = searchParams.get("source") || "all";
+    const verified = searchParams.get("verified") || "all";
     const sortField = searchParams.get("sortField") || "createdAt";
     const sortOrder = searchParams.get("sortOrder") === "asc" ? 1 : -1;
 
@@ -37,6 +38,11 @@ export async function GET(req: NextRequest) {
     }
     if (source !== "all") {
       query.source = source;
+    }
+    if (verified === "true") {
+      query.verified = true;
+    } else if (verified === "false") {
+      query.$or = [{ verified: false }, { verified: { $exists: false } }];
     }
 
     const skip = (page - 1) * limit;

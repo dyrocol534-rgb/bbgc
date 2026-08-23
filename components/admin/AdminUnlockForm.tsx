@@ -1,80 +1,205 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { unlockAdmin } from "@/app/admin/actions";
-import { Lock, Loader2, KeyRound } from "lucide-react";
+import { ShieldCheck, Loader2, Eye, EyeOff, ArrowRight } from "lucide-react";
 
 export default function AdminUnlockForm() {
-  const [password, setPassword] = useState("");
+  const PIN_LENGTH = 6;
+  const [pin, setPin] = useState<string[]>(Array(PIN_LENGTH).fill(""));
+  const [showCharacters, setShowCharacters] = useState(true);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+  
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!password) return;
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
+
+  const handleUnlock = async (submittedPin: string) => {
+    if (!submittedPin) return;
 
     setIsLoading(true);
     setError("");
 
     try {
-      const res = await unlockAdmin(password);
+      const res = await unlockAdmin(submittedPin);
       if (res.success) {
-        router.refresh(); // This will trigger layout.tsx to re-read the cookie and render children
+        router.refresh();
       } else {
-        setError(res.error || "Failed to unlock");
-        setPassword("");
+        setError(res.error || "Incorrect PIN");
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+        setPin(Array(PIN_LENGTH).fill(""));
+        inputRefs.current[0]?.focus();
       }
     } catch (err) {
-      setError("An unexpected error occurred");
+      setError("Authentication error");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleBoxChange = (index: number, value: string) => {
+    // Handle paste of whole PIN
+    if (value.length > 1) {
+      const pastedChars = value.slice(0, PIN_LENGTH).split("");
+      const newPin = [...pin];
+      pastedChars.forEach((char, i) => {
+        newPin[i] = char;
+      });
+      setPin(newPin);
+
+      const nextFocus = Math.min(pastedChars.length, PIN_LENGTH - 1);
+      inputRefs.current[nextFocus]?.focus();
+
+      if (pastedChars.length >= PIN_LENGTH) {
+        handleUnlock(newPin.join(""));
+      }
+      return;
+    }
+
+    const char = value.slice(-1);
+    const newPin = [...pin];
+    newPin[index] = char;
+    setPin(newPin);
+
+    // Auto-advance
+    if (char && index < PIN_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+
+    // Auto-submit on 6th digit
+    if (char && index === PIN_LENGTH - 1) {
+      const fullCode = newPin.join("");
+      if (fullCode.length === PIN_LENGTH) {
+        handleUnlock(fullCode);
+      }
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace") {
+      if (!pin[index] && index > 0) {
+        const newPin = [...pin];
+        newPin[index - 1] = "";
+        setPin(newPin);
+        inputRefs.current[index - 1]?.focus();
+      } else {
+        const newPin = [...pin];
+        newPin[index] = "";
+        setPin(newPin);
+      }
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    } else if (e.key === "ArrowRight" && index < PIN_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      handleUnlock(pin.join(""));
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center py-20 px-4">
-      <div className="bg-surface border border-border-main rounded-2xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center">
-        <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
-          <Lock className="w-8 h-8 text-red-400" />
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+      {/* Compact Obsidian Modal */}
+      <div
+        className={`w-full max-w-xs sm:max-w-sm bg-[#0e0e12] border border-zinc-800/90 rounded-2xl p-5 sm:p-6 text-center shadow-2xl shadow-black transition-transform duration-200 ${
+          isShaking ? "animate-shake" : ""
+        }`}
+      >
+        {/* Compact Icon */}
+        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-3 text-indigo-400">
+          <ShieldCheck className="w-5 h-5" />
         </div>
-        
-        <h2 className="text-2xl font-bold text-text-main mb-2">Admin Locked</h2>
-        <p className="text-text-secondary text-sm mb-8">
-          Please enter your secondary admin PIN to access the dashboard.
-        </p>
 
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <KeyRound className="h-5 w-5 text-zinc-500" />
-            </div>
+        {/* Title & Subtitle */}
+        <h2 className="text-base sm:text-lg font-bold text-white mb-0.5">Admin Security</h2>
+        <p className="text-[11px] text-zinc-400 mb-4">Enter 6-digit PIN to access</p>
+
+        {/* 6-PIN Compact Box Row */}
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-3">
+          {pin.map((char, index) => (
             <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              key={index}
+              ref={(el) => {
+                inputRefs.current[index] = el;
+              }}
+              type={showCharacters ? "text" : "password"}
+              inputMode="text"
+              maxLength={1}
+              value={char}
               disabled={isLoading}
-              className="w-full bg-background border border-border-strong rounded-xl pl-10 pr-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-              placeholder="Enter admin password..."
-              autoFocus
+              onChange={(e) => handleBoxChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              onFocus={(e) => e.target.select()}
+              className={`w-9 h-11 sm:w-10 sm:h-12 text-center text-lg sm:text-xl font-mono font-bold rounded-xl bg-zinc-900 border transition-all outline-none ${
+                char
+                  ? "border-indigo-500 text-white bg-indigo-500/10"
+                  : "border-zinc-700/80 text-zinc-200 focus:border-indigo-400 focus:bg-zinc-800"
+              }`}
             />
-          </div>
+          ))}
+        </div>
 
-          {error && (
-            <div className="text-red-400 text-sm font-medium bg-red-500/10 py-2 rounded-lg border border-red-500/20">
-              {error}
-            </div>
-          )}
+        {/* Subtle Toggle */}
+        <div className="flex items-center justify-between px-1 mb-4 text-[11px] text-zinc-400">
+          <button
+            type="button"
+            onClick={() => setShowCharacters(!showCharacters)}
+            className="flex items-center gap-1 hover:text-white transition-colors"
+          >
+            {showCharacters ? (
+              <>
+                <EyeOff className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Hide</span>
+              </>
+            ) : (
+              <>
+                <Eye className="w-3.5 h-3.5" />
+                <span>Show</span>
+              </>
+            )}
+          </button>
 
           <button
-            type="submit"
-            disabled={isLoading || !password}
-            className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+            type="button"
+            onClick={() => {
+              setPin(Array(PIN_LENGTH).fill(""));
+              inputRefs.current[0]?.focus();
+            }}
+            className="hover:text-white text-zinc-500 transition-colors"
           >
-            {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Unlock Dashboard"}
+            Clear
           </button>
-        </form>
+        </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="text-red-400 text-[11px] font-medium bg-red-500/10 py-1.5 px-3 rounded-lg border border-red-500/20 mb-3">
+            {error}
+          </div>
+        )}
+
+        {/* Compact Action Button */}
+        <button
+          onClick={() => handleUnlock(pin.join(""))}
+          disabled={isLoading || pin.join("").length === 0}
+          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 text-xs shadow-md shadow-indigo-600/25 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
+        >
+          {isLoading ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <>
+              <span>Unlock</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

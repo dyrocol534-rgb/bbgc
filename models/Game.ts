@@ -17,6 +17,7 @@ export interface IGame extends Document {
   rating: { avg: number; count: number };
   status: "draft" | "published";
   featured: boolean;
+  verified: boolean;
   likes: string[];
   dislikes: string[];
   developer: string;
@@ -45,6 +46,7 @@ const GameSchema: Schema<IGame> = new Schema({
   },
   status: { type: String, enum: ["draft", "published"], default: "draft" },
   featured: { type: Boolean, default: false },
+  verified: { type: Boolean, default: false },
   likes: { type: [String], default: [] },
   dislikes: { type: [String], default: [] },
   developer: { type: String, default: "Bluebuff Games" },

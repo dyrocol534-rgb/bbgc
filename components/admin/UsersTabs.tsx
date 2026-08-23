@@ -11,7 +11,7 @@ interface UsersTabsProps {
   guests: any[];
 }
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 25;
 
 export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps) {
   const [activeTab, setActiveTab] = useState<"subscribers" | "users" | "guests">("users");
