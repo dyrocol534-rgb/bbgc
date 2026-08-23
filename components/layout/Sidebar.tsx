@@ -365,7 +365,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             rel="noopener noreferrer" 
             className="text-[10px] text-zinc-500 hover:text-indigo-400 transition-colors inline-flex items-center gap-1 font-medium"
           >
-            <span>A bluebuff.in Product</span>
+            <span>A product from bluebuff.in</span>
             <ExternalLink className="w-2.5 h-2.5 text-zinc-600" />
           </a>
         </div>

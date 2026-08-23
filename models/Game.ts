@@ -53,10 +53,14 @@ const GameSchema: Schema<IGame> = new Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-// Apply indexes to optimize database queries
+// High-performance compound indexes
 GameSchema.index({ status: 1, playCount: -1, createdAt: -1 });
-GameSchema.index({ status: 1, category: 1 });
-GameSchema.index({ status: 1, featured: 1 });
+GameSchema.index({ status: 1, category: 1, playCount: -1 });
+GameSchema.index({ status: 1, category: 1, createdAt: -1 });
+GameSchema.index({ status: 1, featured: 1, playCount: -1 });
+GameSchema.index({ status: 1, createdAt: -1 });
+GameSchema.index({ status: 1, updatedAt: -1 });
+GameSchema.index({ slug: 1, status: 1 });
 GameSchema.index(
   { title: "text", category: "text", tags: "text" },
   { weights: { title: 10, category: 5, tags: 2 }, name: "GameTextIndex" }

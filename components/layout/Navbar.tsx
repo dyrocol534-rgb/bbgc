@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronDown, ChevronRight, Coins, Flame, HeartHandshake, ExternalLink, ShoppingBag, Trophy, Globe } from "lucide-react";
+import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronRight, Coins, Flame, HeartHandshake, ExternalLink, ShoppingBag, Trophy } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import clsx from "clsx";
 import PWAInstallButton from "./PWAInstallButton";
-import GoogleTranslate from "./GoogleTranslate";
 import SearchBar from "./SearchBar";
+import NotificationBell from "../notifications/NotificationBell";
 
 
 export default function Navbar() {
@@ -60,62 +60,66 @@ export default function Navbar() {
           <SearchBar />
         </div>
         
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Mobile Search Button */}
           <button 
-            className="sm:hidden text-zinc-200 hover:text-white p-2 rounded-lg bg-zinc-800/60 hover:bg-zinc-700/70 border border-zinc-700/50 hover:border-zinc-500/70 transition-all shadow-sm"
+            className="sm:hidden w-9 h-9 flex items-center justify-center text-zinc-300 hover:text-white rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-zinc-500 transition-all shadow-sm shrink-0"
             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
             title="Search"
           >
-            <Search className="w-5 h-5" />
+            <Search className="w-3.5 h-3.5" />
           </button>
           
+          {/* Surprise Me / Dice Button */}
           <button
             onClick={handleSurpriseMe}
             disabled={isRolling}
-            className="group relative flex items-center justify-center p-2 rounded-full bg-gradient-to-tr from-indigo-600/30 to-purple-500/30 hover:from-indigo-600/50 hover:to-purple-500/50 border border-indigo-400/50 hover:border-indigo-300/70 transition-all shadow-[0_0_18px_rgba(99,102,241,0.25)] hover:shadow-[0_0_26px_rgba(99,102,241,0.45)] disabled:opacity-50"
+            className="group relative flex items-center justify-center w-9 h-9 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-purple-500/60 transition-all shadow-sm disabled:opacity-50 shrink-0"
             title="Surprise Me!"
           >
             {isRolling ? (
-              <Loader2 className="w-5 h-5 text-indigo-200 animate-spin" />
+              <Loader2 className="w-3.5 h-3.5 text-purple-400 animate-spin" />
             ) : (
-              <Dices className="w-5 h-5 text-indigo-200 group-hover:text-white transition-colors transform group-hover:rotate-12" />
+              <Dices className="w-3.5 h-3.5 text-zinc-300 group-hover:text-white transition-colors transform group-hover:rotate-12" />
             )}
+
+            {/* Purple status badge dot */}
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-[#0a0a0c] bg-[#a855f7]/80 shadow-[0_0_5px_rgba(168,85,247,0.6)]" />
             
-            {/* Tooltip for desktop */}
-            <span className="absolute -bottom-10 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-zinc-800 text-xs text-white px-2 py-1 rounded shadow-lg hidden sm:block">
-              Random Game
+            {/* Tooltip */}
+            <span className="absolute -bottom-9 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-zinc-900 border border-zinc-700 text-xs text-white px-2 py-1 rounded shadow-lg hidden sm:block z-50">
+              Random Game 🎲
             </span>
           </button>
 
-          <GoogleTranslate />
+          {/* PWA Install Button */}
+          <PWAInstallButton />
 
+          {/* Notification Bell Button */}
+          <NotificationBell />
+
+          {/* Profile / Menu Button */}
           {session ? (
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => setIsSidebarOpen(true)} 
-                className="flex items-center gap-1.5 bg-zinc-800/60 hover:bg-zinc-700/80 border border-zinc-600/70 hover:border-zinc-400/80 pl-2.5 pr-1 py-1 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-[0_0_10px_rgba(0,0,0,0.4)]"
-                aria-label="User Profile"
-              >
-                <ChevronDown className="w-4 h-4 text-zinc-200" />
-                {session.user?.image ? (
-                  <div className="relative w-8 h-8 rounded-full border-2 border-indigo-500/60 overflow-hidden shrink-0 shadow-[0_0_8px_rgba(99,102,241,0.35)]">
-                    <Image src={session.user.image} alt="User" fill sizes="32px" className="object-cover" />
-                  </div>
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center border-2 border-zinc-500 shrink-0">
-                    <UserIcon className="w-4 h-4 text-zinc-200" />
-                  </div>
-                )}
-              </button>
-            </div>
+            <button 
+              onClick={() => setIsSidebarOpen(true)} 
+              className="relative w-9 h-9 rounded-full overflow-hidden border border-zinc-700/80 hover:border-indigo-400/80 bg-zinc-900/80 hover:scale-105 transition-all flex items-center justify-center shadow-sm shrink-0"
+              aria-label="User Profile"
+              title={session.user?.name || "Account"}
+            >
+              {session.user?.image ? (
+                <Image src={session.user.image} alt="User" fill sizes="36px" className="object-cover" />
+              ) : (
+                <UserIcon className="w-3.5 h-3.5 text-zinc-300" />
+              )}
+            </button>
           ) : (
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white w-10 h-10 sm:w-auto sm:h-auto sm:px-4 sm:py-2 rounded-full transition-colors flex items-center justify-center gap-2"
-              aria-label="Sign In"
+              className="w-9 h-9 rounded-full border border-dashed border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 transition-all flex items-center justify-center text-zinc-300 hover:text-white shadow-sm shrink-0"
+              aria-label="Sign In / Menu"
+              title="Sign In / Menu"
             >
-              <UserIcon className="w-5 h-5 sm:w-4 sm:h-4" />
-              <span className="hidden sm:inline">Sign In</span>
+              <UserIcon className="w-3.5 h-3.5" />
             </button>
           )}
         </div>

@@ -139,19 +139,24 @@ export async function getInitialHomeGames(page: number = 1, limit: number = 24):
 }
 
 /**
- * Fetch a single published game by its slug
+ * Fetch a single published game by its slug with 24-hour ISR cache and tag invalidation
  */
-export async function getPublishedGameBySlug(slug: string): Promise<GameDetailData | null> {
-  try {
-    await dbConnect();
-    const game = await Game.findOne({ slug, status: "published" }).lean();
-    if (!game) return null;
-    return serializeGameDetail(game);
-  } catch (error) {
-    console.error(`Error fetching game by slug (${slug}):`, error);
-    return null;
-  }
-}
+export const getPublishedGameBySlug = (slug: string) =>
+  unstable_cache(
+    async (): Promise<GameDetailData | null> => {
+      try {
+        await dbConnect();
+        const game = await Game.findOne({ slug, status: "published" }).lean();
+        if (!game) return null;
+        return serializeGameDetail(game);
+      } catch (error) {
+        console.error(`Error fetching game by slug (${slug}):`, error);
+        return null;
+      }
+    },
+    [`game-detail-${slug}`],
+    { revalidate: 86400, tags: ["games", `game-${slug}`] }
+  )();
 
 /**
  * Fetch random suggested games instantly from cached game pool without $sample aggregation overhead
@@ -207,49 +212,54 @@ export async function getRandomSingleGameSlug(): Promise<string | null> {
 }
 
 /**
- * Fetch published games filtered by category or dynamic tab (new, popular, updated, featured)
+ * Fetch published games filtered by category with 24-hour ISR cache and tag invalidation
  */
-export async function getPublishedGamesByCategory(category: string): Promise<GameCardData[]> {
-  try {
-    await dbConnect();
-    let query: any = { status: "published" };
-    let sort: any = { playCount: -1 };
-    let limitAmount = 0;
+export const getPublishedGamesByCategory = (category: string) =>
+  unstable_cache(
+    async (): Promise<GameCardData[]> => {
+      try {
+        await dbConnect();
+        let query: any = { status: "published" };
+        let sort: any = { playCount: -1 };
+        let limitAmount = 0;
 
-    const cat = category.toLowerCase();
+        const cat = category.toLowerCase();
 
-    if (cat === "new") {
-      sort = { createdAt: -1 };
-      limitAmount = 18;
-    } else if (cat === "popular") {
-      sort = { playCount: -1 };
-      limitAmount = 18;
-    } else if (cat === "updated") {
-      sort = { updatedAt: -1 };
-      limitAmount = 18;
-    } else if (cat === "featured") {
-      sort = { playCount: -1 };
-      query.featured = true;
-      limitAmount = 18;
-    } else {
-      query.category = { $regex: new RegExp(`^${category}$`, "i") };
-    }
+        if (cat === "new") {
+          sort = { createdAt: -1 };
+          limitAmount = 18;
+        } else if (cat === "popular") {
+          sort = { playCount: -1 };
+          limitAmount = 18;
+        } else if (cat === "updated") {
+          sort = { updatedAt: -1 };
+          limitAmount = 18;
+        } else if (cat === "featured") {
+          sort = { playCount: -1 };
+          query.featured = true;
+          limitAmount = 18;
+        } else {
+          query.category = { $regex: new RegExp(`^${category}$`, "i") };
+        }
 
-    const queryBuilder = Game.find(query)
-      .sort(sort)
-      .select("_id slug title thumbnailUrl category playCount");
+        const queryBuilder = Game.find(query)
+          .sort(sort)
+          .select("_id slug title thumbnailUrl category playCount");
 
-    if (limitAmount > 0) {
-      queryBuilder.limit(limitAmount);
-    }
+        if (limitAmount > 0) {
+          queryBuilder.limit(limitAmount);
+        }
 
-    const games = await queryBuilder.lean();
-    return games.map(serializeGameCard);
-  } catch (error) {
-    console.error(`Error fetching category games (${category}):`, error);
-    return [];
-  }
-}
+        const games = await queryBuilder.lean();
+        return games.map(serializeGameCard);
+      } catch (error) {
+        console.error(`Error fetching category games (${category}):`, error);
+        return [];
+      }
+    },
+    [`category-games-${category.toLowerCase()}`],
+    { revalidate: 86400, tags: ["games", `category-${category.toLowerCase()}`] }
+  )();
 
 /**
  * Fetch games matching a specific list of slugs while preserving the order of slugs

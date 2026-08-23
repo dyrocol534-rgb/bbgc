@@ -284,7 +284,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             <div className="absolute inset-0 z-0 opacity-60 blur-3xl scale-125" style={{ backgroundImage: `url(${game.thumbnailUrl})`, backgroundSize: 'cover', backgroundPosition: 'top' }} />
             <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-black/70 to-black" />
             <div className="relative z-10 flex flex-col items-center w-full">
-              <Image src={game.thumbnailUrl} alt={game.title} width={128} height={128} className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
+              <Image src={game.thumbnailUrl} alt={game.title} width={128} height={128} priority className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
               <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 text-center drop-shadow-md">{game.title}</h1>
               <div className="flex items-center gap-1 text-xs sm:text-sm text-zinc-200 mb-4">
                 <span className="text-base">🕹️</span>

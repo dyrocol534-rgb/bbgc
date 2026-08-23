@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
@@ -55,6 +56,16 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: "Game not found" }, { status: 404 });
     }
 
+    // Invalidate ISR caches
+    try {
+      revalidateTag("games", "max");
+      revalidateTag("published-games", "max");
+      revalidateTag("published-categories", "max");
+      if (game.slug) revalidateTag(`game-${game.slug}`, "max");
+    } catch (e) {
+      console.error("Cache revalidation error:", e);
+    }
+
     return NextResponse.json(game);
   } catch (error) {
     return NextResponse.json({ error: "Failed to update game" }, { status: 500 });
@@ -75,6 +86,16 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     
     if (!game) {
       return NextResponse.json({ error: "Game not found" }, { status: 404 });
+    }
+
+    // Invalidate ISR caches
+    try {
+      revalidateTag("games", "max");
+      revalidateTag("published-games", "max");
+      revalidateTag("published-categories", "max");
+      if (game.slug) revalidateTag(`game-${game.slug}`, "max");
+    } catch (e) {
+      console.error("Cache revalidation error:", e);
     }
 
     return NextResponse.json({ success: true });

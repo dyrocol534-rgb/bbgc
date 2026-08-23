@@ -46,5 +46,10 @@ const UserSchema: Schema<IUser> = new Schema({
   lastIp: { type: String },
 });
 
+// Indexes for Leaderboard and Activity lookups
+UserSchema.index({ lifetimeXp: -1 });
+UserSchema.index({ xp: -1 });
+UserSchema.index({ lastActiveAt: -1 });
+
 const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
 export default User;
