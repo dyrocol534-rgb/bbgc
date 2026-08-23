@@ -1,8 +1,28 @@
+import { Metadata } from "next";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import Image from "next/image";
 import { Trophy, Flame, Medal, Search } from "lucide-react";
 import Link from "next/link";
+
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
+const siteUrl = rawSiteUrl.replace(/\/+$/, "");
+
+export const metadata: Metadata = {
+  title: `Global Player Leaderboard | ${siteName}`,
+  description: `Check the top players on ${siteName}. Level up, earn game XP, keep daily login streaks alive, and climb to the #1 spot on the global gaming leaderboard!`,
+  alternates: {
+    canonical: `${siteUrl}/leaderboard`,
+  },
+  openGraph: {
+    title: `Global Player Leaderboard | ${siteName}`,
+    description: `Check the top players on ${siteName}. Level up, earn XP, and climb the leaderboard!`,
+    url: `${siteUrl}/leaderboard`,
+    siteName,
+    type: "website",
+  },
+};
 
 export const revalidate = 60; // Revalidate every 60 seconds
 

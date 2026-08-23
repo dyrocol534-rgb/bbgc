@@ -1,3 +1,24 @@
+import { Metadata } from "next";
+
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
+const siteUrl = rawSiteUrl.replace(/\/+$/, "");
+
+export const metadata: Metadata = {
+  title: `Terms of Service | ${siteName}`,
+  description: `Review the terms of service and usage guidelines for playing free online browser games on ${siteName}.`,
+  alternates: {
+    canonical: `${siteUrl}/terms`,
+  },
+  openGraph: {
+    title: `Terms of Service | ${siteName}`,
+    description: `Terms of service and usage guidelines for ${siteName}.`,
+    url: `${siteUrl}/terms`,
+    siteName,
+    type: "website",
+  },
+};
+
 export default function TermsOfServicePage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">

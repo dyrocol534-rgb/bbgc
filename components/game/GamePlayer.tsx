@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal, preconnect, prefetchDNS } from 'react-dom';
-import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play, RotateCcw } from 'lucide-react';
+import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play, RotateCcw, Gamepad2 } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
 import { ConsoleLoader } from '@/components/ui/ConsoleLoader';
@@ -207,6 +207,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   };
 
   const aspectRatio = game.width && game.height ? `${game.width}/${game.height}` : '16/9';
+  const cleanThumb = (game.thumbnailUrl || '').trim().replace(/^http:\/\//, 'https://').replace(/^\/\//, 'https://');
 
   return (
     <>
@@ -224,7 +225,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             paddingTop: 'max(4px, env(safe-area-inset-top))',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Image src={game.thumbnailUrl} alt="" width={20} height={20} style={{ width: 20, height: 20, borderRadius: 4, objectFit: 'cover' }} />
+              {cleanThumb && <Image src={cleanThumb} alt="" width={20} height={20} unoptimized style={{ width: 20, height: 20, borderRadius: 4, objectFit: 'cover' }} />}
               <span style={{ color: '#fff', fontSize: 12, fontWeight: 700, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.title}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -281,10 +282,16 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         {!isPlaying ? (
           /* Splash Screen */
           <div className="relative flex flex-col items-center justify-center bg-zinc-950 rounded-xl overflow-hidden shadow-2xl py-6 px-4 w-full min-h-[250px] sm:min-h-[300px]">
-            <div className="absolute inset-0 z-0 opacity-60 blur-3xl scale-125" style={{ backgroundImage: `url(${game.thumbnailUrl})`, backgroundSize: 'cover', backgroundPosition: 'top' }} />
+            {cleanThumb && <div className="absolute inset-0 z-0 opacity-60 blur-3xl scale-125" style={{ backgroundImage: `url(${cleanThumb})`, backgroundSize: 'cover', backgroundPosition: 'top' }} />}
             <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-black/70 to-black" />
             <div className="relative z-10 flex flex-col items-center w-full">
-              <Image src={game.thumbnailUrl} alt={game.title} width={128} height={128} priority className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
+              {cleanThumb ? (
+                <Image src={cleanThumb} alt={game.title} width={128} height={128} unoptimized priority className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
+              ) : (
+                <div className="w-24 sm:w-32 aspect-square rounded-2xl bg-zinc-900 flex items-center justify-center mb-2 border border-white/10">
+                  <Gamepad2 className="w-10 h-10 text-indigo-400 opacity-50" />
+                </div>
+              )}
               <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 text-center drop-shadow-md">{game.title}</h1>
               <div className="flex items-center gap-1 text-xs sm:text-sm text-zinc-200 mb-4">
                 <span className="text-base">🕹️</span>

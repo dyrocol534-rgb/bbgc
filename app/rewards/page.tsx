@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -6,6 +7,25 @@ import User from "@/models/User";
 import { XP_CONFIG } from "@/lib/xp";
 import { Coins, Flame, Clock, Gamepad2, Users, ShoppingBag, Gift, ArrowRight } from "lucide-react";
 import Link from "next/link";
+
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
+const siteUrl = rawSiteUrl.replace(/\/+$/, "");
+
+export const metadata: Metadata = {
+  title: `Player Rewards & Daily Bonuses | ${siteName}`,
+  description: `Claim your daily gaming streak bonuses, convert playtime into XP, level up your profile, and unlock rewards on ${siteName}!`,
+  alternates: {
+    canonical: `${siteUrl}/rewards`,
+  },
+  openGraph: {
+    title: `Player Rewards & Daily Bonuses | ${siteName}`,
+    description: `Claim daily streak coins and bonuses on ${siteName}.`,
+    url: `${siteUrl}/rewards`,
+    siteName,
+    type: "website",
+  },
+};
 
 export default async function RewardsPage() {
   const session = await getServerSession(authOptions);

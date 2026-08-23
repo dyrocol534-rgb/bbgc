@@ -1,4 +1,24 @@
+import { Metadata } from "next";
 import { Mail, MessageSquare, MapPin } from "lucide-react";
+
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
+const siteUrl = rawSiteUrl.replace(/\/+$/, "");
+
+export const metadata: Metadata = {
+  title: `Contact Us | ${siteName}`,
+  description: `Get in touch with the ${siteName} team. Reach out for game developer submissions, feedback, bug reports, and support.`,
+  alternates: {
+    canonical: `${siteUrl}/contact`,
+  },
+  openGraph: {
+    title: `Contact Us | ${siteName}`,
+    description: `Get in touch with the ${siteName} team.`,
+    url: `${siteUrl}/contact`,
+    siteName,
+    type: "website",
+  },
+};
 
 export default function ContactPage() {
   return (

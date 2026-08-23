@@ -1,3 +1,24 @@
+import { Metadata } from "next";
+
+const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
+const siteUrl = rawSiteUrl.replace(/\/+$/, "");
+
+export const metadata: Metadata = {
+  title: `Privacy Policy | ${siteName}`,
+  description: `Learn how ${siteName} protects and respects your privacy when playing free browser games on our platform.`,
+  alternates: {
+    canonical: `${siteUrl}/privacy`,
+  },
+  openGraph: {
+    title: `Privacy Policy | ${siteName}`,
+    description: `Learn how ${siteName} protects your privacy.`,
+    url: `${siteUrl}/privacy`,
+    siteName,
+    type: "website",
+  },
+};
+
 export default function PrivacyPolicyPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">

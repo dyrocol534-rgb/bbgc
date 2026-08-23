@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import dbConnect from '@/lib/mongodb';
 import Game from '@/models/Game';
 
-export const revalidate = 86400; // Revalidate every 24 hours
+export const revalidate = 43200; // Revalidate every 12 hours
 
 const GAMES_PER_SITEMAP = 1000;
 
@@ -23,7 +23,8 @@ export async function generateSitemaps(): Promise<{ id: number }[]> {
 }
 
 export default async function sitemap(props?: { id: Promise<number> | number }): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://games.bluebuff.in';
+  const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://games.bluebuff.in';
+  const baseUrl = rawBaseUrl.replace(/\/+$/, '');
 
   let sitemapId = 0;
   if (props && 'id' in props) {
@@ -48,7 +49,7 @@ export default async function sitemap(props?: { id: Promise<number> | number }):
       url: `${baseUrl}/games/${game.slug}`,
       lastModified: new Date(game.updatedAt || game.createdAt || new Date()),
       changeFrequency: 'weekly' as const,
-      priority: 0.7,
+      priority: 0.8,
     }));
 
     // Only include static & category routes on the first sitemap chunk (id === 0)
@@ -73,22 +74,26 @@ export default async function sitemap(props?: { id: Promise<number> | number }):
         '/category/adventure',
         '/category/shooting',
         '/category/io',
+        '/category/arcade',
+        '/leaderboard',
+        '/rewards',
+        '/faq',
+        '/contact',
         '/privacy',
         '/terms',
-        '/contact',
-        '/faq',
+        '/dmca',
       ].map((route) => ({
         url: `${baseUrl}${route}`,
         lastModified: new Date(),
-        changeFrequency: 'daily' as const,
-        priority: route === '' ? 1 : route.startsWith('/category') ? 0.8 : 0.5,
+        changeFrequency: (route === '' || route.startsWith('/category') || route === '/leaderboard') ? 'daily' as const : 'monthly' as const,
+        priority: route === '' ? 1.0 : route.startsWith('/category') ? 0.85 : route === '/leaderboard' || route === '/rewards' ? 0.7 : 0.4,
       }));
 
       const categoryRoutes: MetadataRoute.Sitemap = validCategories.map((category: string) => ({
         url: `${baseUrl}/category/${category}`,
         lastModified: new Date(),
-        changeFrequency: 'weekly' as const,
-        priority: 0.6,
+        changeFrequency: 'daily' as const,
+        priority: 0.8,
       }));
 
       return [...staticRoutes, ...categoryRoutes, ...gameRoutes];
