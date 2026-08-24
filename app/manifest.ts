@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-export default function manifest(): MetadataRoute.Manifest {
+export default function manifest(): MetadataRoute.Manifest & { widgets?: any[] } {
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Bluebuff Games';
   return {
     id: '/?source=pwa',
@@ -50,25 +50,36 @@ export default function manifest(): MetadataRoute.Manifest {
         icons: [{ src: '/icons/icon-192x192.png', sizes: '192x192' }],
       },
       {
-        name: 'Leaderboard',
-        short_name: 'Leaderboard',
-        description: 'Check top players and rankings',
-        url: '/leaderboard',
-        icons: [{ src: '/icons/icon-192x192.png', sizes: '192x192' }],
-      },
-      {
-        name: 'Daily Rewards',
-        short_name: 'Rewards',
-        description: 'Claim daily XP and check streaks',
-        url: '/rewards',
-        icons: [{ src: '/icons/icon-192x192.png', sizes: '192x192' }],
-      },
-      {
         name: 'My Profile',
         short_name: 'Profile',
         description: 'View favorites and recently played games',
         url: '/profile',
         icons: [{ src: '/icons/icon-192x192.png', sizes: '192x192' }],
+      },
+    ],
+    widgets: [
+      {
+        name: 'Quick Play',
+        short_name: 'QuickPlay',
+        description: 'Play the featured game of the day instantly',
+        tag: 'quick-play',
+        template: 'quick-play-template',
+        ms_ac_template: '/widgets/quick-play.json',
+        data: '/api/widgets/quick-play',
+        type: 'application/json',
+        screenshots: [
+          {
+            src: '/screenshots/mobile.png',
+            sizes: '750x1334',
+            label: 'Quick Play Widget',
+          },
+        ],
+        icons: [
+          {
+            src: '/icons/icon-192x192.png',
+            sizes: '192x192',
+          },
+        ],
       },
     ],
     screenshots: [
