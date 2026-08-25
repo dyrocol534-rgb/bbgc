@@ -16,6 +16,7 @@ interface GamePlayerProps {
     height: number;
     orientation: string;
     thumbnailUrl: string;
+    category?: string[];
     likes?: string[];
     dislikes?: string[];
   };
