@@ -3,9 +3,19 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
+      "package_name": "in.bluebuff.games.twa",
+      "sha256_cert_fingerprints": [
+        "25:C8:60:00:AA:16:CB:8F:A5:AF:78:C5:27:2A:E1:57:C7:DD:91:7B:CE:7F:A2:E3:1C:05:1B:8F:47:AD:BC:67"
+      ]
+    }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
       "package_name": "in.bluebuff.games",
       "sha256_cert_fingerprints": [
-        "REPLACE_WITH_YOUR_SHA256_FINGERPRINT"
+        "25:C8:60:00:AA:16:CB:8F:A5:AF:78:C5:27:2A:E1:57:C7:DD:91:7B:CE:7F:A2:E3:1C:05:1B:8F:47:AD:BC:67"
       ]
     }
   }
