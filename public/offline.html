@@ -3,136 +3,362 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>You're Offline - Bluebuff Games</title>
+  <title>Game Paused - Bluebuff Games</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: #09090b;
+      background-color: #000000;
       color: #f4f4f5;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       padding: 16px;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
     }
+    
+    /* Ambient backdrop glow */
+    .glow-orange {
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(255, 107, 0, 0.15) 0%, rgba(255, 107, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-purple {
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translate(-50%, 0);
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
     .card {
-      background: rgba(24, 24, 27, 0.8);
-      border: 1px solid rgba(63, 63, 70, 0.5);
-      border-radius: 24px;
+      position: relative;
+      z-index: 1;
+      background: rgba(14, 14, 18, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
       padding: 36px 28px;
-      max-width: 420px;
+      max-width: 380px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
-    .icon-box {
-      width: 72px;
-      height: 72px;
-      border-radius: 20px;
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.2);
+
+    .icon-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .icon-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #1c1c22 0%, #121216 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 20px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
     }
-    .icon-box svg {
+
+    .icon-btn:hover {
+      transform: scale(1.05);
+      border-color: rgba(255, 107, 0, 0.4);
+    }
+
+    .icon-btn:active {
+      transform: scale(0.92);
+    }
+
+    .ping-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 28px;
+      border: 2px solid rgba(255, 107, 0, 0.3);
+      animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+      pointer-events: none;
+    }
+
+    @keyframes ping {
+      75%, 100% {
+        transform: scale(1.25);
+        opacity: 0;
+      }
+    }
+
+    .icon-btn svg.main-icon {
       width: 36px;
       height: 36px;
-      stroke: #818cf8;
+      stroke: #ff6b00;
       stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      fill: none;
+      filter: drop-shadow(0 0 10px rgba(255, 107, 0, 0.5));
     }
+
+    .badge-xp {
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background: linear-gradient(135deg, #ff6b00 0%, #f59e0b 100%);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+    }
+
+    .badge-xp.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
     h1 {
       font-size: 24px;
       font-weight: 800;
       color: #ffffff;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
     }
-    p {
-      font-size: 14px;
+
+    p.desc {
+      font-size: 13px;
       color: #a1a1aa;
-      line-height: 1.6;
-      margin-bottom: 24px;
+      line-height: 1.5;
+      margin-bottom: 22px;
+      max-width: 290px;
+      margin-left: auto;
+      margin-right: auto;
     }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #71717a;
+      background: rgba(24, 24, 27, 0.8);
+      border: 1px solid rgba(39, 39, 42, 0.8);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ff6b00;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .status-badge.connected {
+      color: #34d399;
+      background: rgba(6, 78, 59, 0.2);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .status-badge.connected .status-dot {
+      background: #10b981;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
     .btn {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       width: 100%;
-      padding: 14px;
+      padding: 12px 18px;
       border-radius: 14px;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 13.5px;
+      font-weight: 700;
       cursor: pointer;
       text-decoration: none;
-      transition: all 0.2s;
+      transition: all 0.15s ease;
       border: none;
     }
+
     .btn-primary {
-      background: #4f46e5;
+      background: linear-gradient(135deg, #ff6b00 0%, #ea580c 100%);
       color: #ffffff;
-      box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
-      margin-bottom: 12px;
+      box-shadow: 0 8px 20px -4px rgba(255, 107, 0, 0.4);
     }
+
     .btn-primary:hover {
-      background: #4338ca;
+      background: linear-gradient(135deg, #ff7c1a 0%, #f97316 100%);
+      box-shadow: 0 10px 24px -4px rgba(255, 107, 0, 0.5);
+      transform: translateY(-1px);
     }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
     .btn-secondary {
-      background: #27272a;
+      background: #18181b;
       color: #d4d4d8;
-      border: 1px solid #3f3f46;
+      border: 1px solid #27272a;
     }
+
     .btn-secondary:hover {
-      background: #3f3f46;
+      background: #27272a;
       color: #ffffff;
+      border-color: #3f3f46;
     }
+
+    .btn-secondary:active {
+      transform: scale(0.98);
+    }
+
     .footer-tip {
-      margin-top: 24px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(63, 63, 70, 0.4);
-      font-size: 12px;
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 11px;
       color: #71717a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .footer-tip span.fire {
+      color: #ff6b00;
+    }
+
+    .spin {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
+  <div class="glow-orange"></div>
+  <div class="glow-purple"></div>
+
   <div class="card">
-    <div class="icon-box">
-      <svg viewBox="0 0 24 24">
-        <line x1="1" y1="1" x2="23" y2="23"></line>
-        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
-        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
-        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
-        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
-        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-        <line x1="12" y1="20" x2="12.01" y2="20"></line>
-      </svg>
+    <div class="icon-wrapper">
+      <button class="icon-btn" id="tapBtn" onclick="handleTap()" title="Tap to charge luck!">
+        <div class="ping-ring"></div>
+        <svg class="main-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+          <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+          <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </svg>
+        <span class="badge-xp" id="badgeXp">+1 XP</span>
+      </button>
     </div>
-    <h1>You're Offline</h1>
-    <p>It looks like your device lost internet connectivity. Please check your Wi-Fi or mobile data.</p>
-    <button class="btn btn-primary" onclick="window.location.reload()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-      </svg>
-      Retry Connection
-    </button>
-    <a href="/" class="btn btn-secondary">
-      Return to Home
-    </a>
+
+    <h1>Game Paused ⏸️</h1>
+    <p class="desc">You're currently offline. Check your Wi-Fi or mobile connection to jump back in.</p>
+
+    <div class="status-badge" id="statusBadge">
+      <span class="status-dot"></span>
+      <span id="statusText">Waiting for connection...</span>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="retryBtn" onclick="handleRetry()">
+        <svg id="retryIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+        <span id="retryText">Retry Connection</span>
+      </button>
+      <a href="/" class="btn btn-secondary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Return to Home
+      </a>
+    </div>
+
     <div class="footer-tip">
-      ⚡ Your XP and streak will sync as soon as you reconnect
+      <span class="fire">🔥</span>
+      <span>Streak & XP progress are safely preserved</span>
     </div>
   </div>
 
   <script>
+    let tapCount = 0;
+    function handleTap() {
+      tapCount++;
+      const badge = document.getElementById('badgeXp');
+      badge.textContent = '+' + tapCount + ' XP';
+      badge.classList.remove('show');
+      void badge.offsetWidth;
+      badge.classList.add('show');
+    }
+
+    function handleRetry() {
+      const retryIcon = document.getElementById('retryIcon');
+      const retryText = document.getElementById('retryText');
+      retryIcon.classList.add('spin');
+      retryText.textContent = 'Checking Signal...';
+
+      if (navigator.onLine) {
+        window.location.reload();
+      } else {
+        setTimeout(function() {
+          retryIcon.classList.remove('spin');
+          retryText.textContent = 'Retry Connection';
+        }, 900);
+      }
+    }
+
     window.addEventListener('online', function() {
-      window.location.href = '/';
+      const statusBadge = document.getElementById('statusBadge');
+      const statusText = document.getElementById('statusText');
+      statusBadge.classList.add('connected');
+      statusText.textContent = 'Signal Restored! Loading...';
+      setTimeout(function() {
+        window.location.href = '/';
+      }, 600);
     });
   </script>
 </body>
 </html>
+

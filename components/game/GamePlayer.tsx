@@ -31,6 +31,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMobileFS, setIsMobileFS] = useState(false);
+  const [isForceLandscape, setIsForceLandscape] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showQrModal, setShowQrModal] = useState(false);
@@ -138,24 +139,32 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   const exitMobileFS = () => {
     setIsMobileFS(false);
     setIsPlaying(false);
+    setIsForceLandscape(false);
+    try {
+      const orient = (screen.orientation || (screen as any).mozOrientation || (screen as any).msOrientation) as any;
+      if (orient && orient.unlock) orient.unlock();
+    } catch (e) {}
   };
 
   const rotateScreen = async () => {
     try {
-      // Must be in native fullscreen for orientation.lock() to work
+      // 1. Try native orientation lock if available
       const docEl = document.documentElement as any;
       if (!document.fullscreenElement) {
         const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen;
         if (requestFS) await requestFS.call(docEl).catch(() => {});
       }
-      const orient = screen.orientation as any;
-      if (orient && orient.lock && orient.type) {
-        const newOrientation = orient.type.startsWith('portrait') ? 'landscape' : 'portrait';
-        await orient.lock(newOrientation);
+      const orient = (screen.orientation || (screen as any).mozOrientation || (screen as any).msOrientation) as any;
+      if (orient && orient.lock) {
+        const isCurrentlyPortrait = (orient.type || '').startsWith('portrait') || window.innerHeight > window.innerWidth;
+        const target = isCurrentlyPortrait ? 'landscape' : 'portrait';
+        await orient.lock(target).catch(() => {});
       }
     } catch (e) {
-      console.log('Orientation lock failed:', e);
+      console.log('Orientation lock attempt:', e);
     }
+    // 2. Toggle CSS virtual orientation transform so it ALWAYS physically rotates on any device/iOS/browser
+    setIsForceLandscape(prev => !prev);
   };
 
   // Desktop fullscreen
@@ -217,62 +226,90 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         <div style={{
           position: 'fixed', inset: 0, zIndex: 2147483647,
           background: '#000', display: 'flex', flexDirection: 'column',
+          overflow: 'hidden',
         }}>
-          {/* Mini top bar — Exit + Rotate only */}
+          {/* Mini top bar — Icon-only Exit + Rotate */}
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '4px 10px', background: '#0a0a0f',
-            borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
-            paddingTop: 'max(4px, env(safe-area-inset-top))',
+            padding: '5px 12px', background: '#0a0a0f',
+            borderBottom: '1px solid rgba(255,255,255,0.08)', flexShrink: 0,
+            paddingTop: 'max(6px, env(safe-area-inset-top))',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              {cleanThumb && <Image src={cleanThumb} alt="" width={20} height={20} unoptimized style={{ width: 20, height: 20, borderRadius: 4, objectFit: 'cover' }} />}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }}>
+              {cleanThumb && <Image src={cleanThumb} alt="" width={22} height={22} unoptimized style={{ width: 22, height: 22, borderRadius: 5, objectFit: 'cover' }} />}
               <span style={{ color: '#fff', fontSize: 12, fontWeight: 700, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.title}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              {/* Rotate */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {/* Rotate (Icon Only) */}
               <button
                 onClick={rotateScreen}
+                aria-label="Rotate Screen"
+                title="Rotate Screen"
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  padding: '5px 10px', background: '#27272a',
-                  border: 'none', borderRadius: 8,
-                  color: '#a1a1aa', fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: 32, height: 32,
+                  background: isForceLandscape ? 'rgba(255, 107, 0, 0.2)' : '#27272a',
+                  border: isForceLandscape ? '1px solid rgba(255, 107, 0, 0.5)' : '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 9,
+                  color: isForceLandscape ? '#ff6b00' : '#d4d4d8',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
                 }}
               >
-                <RotateCcw size={12} />
-                Rotate
+                <RotateCcw size={15} />
               </button>
-              {/* Exit */}
+              {/* Exit (Icon Only) */}
               <button
                 onClick={exitMobileFS}
+                aria-label="Exit Game"
+                title="Exit Game"
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  padding: '5px 12px', background: '#6c40ff',
-                  border: 'none', borderRadius: 8,
-                  color: '#fff', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: 32, height: 32,
+                  background: '#27272a',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 9,
+                  color: '#f4f4f5',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
                 }}
               >
-                <X size={12} />
-                Exit
+                <X size={15} />
               </button>
             </div>
           </div>
 
           {/* Game iframe */}
-          <div style={{ flex: 1, position: 'relative', background: '#000' }}>
+          <div style={{
+            flex: 1,
+            position: 'relative',
+            background: '#000',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
             {isLoading && (
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#18181b', zIndex: 10 }}>
-                <ConsoleLoader className="w-12 h-12 text-[#8b68ff]" label="Loading Game..." />
+                <ConsoleLoader className="w-12 h-12 text-[#ff6b00]" label="Loading Game..." />
               </div>
             )}
-            <iframe
-              ref={iframeRef}
-              src={game.playUrl}
-              style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-              allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
-              onLoad={() => setIsLoading(false)}
-            />
+            <div style={{
+              width: isForceLandscape ? 'calc(100vh - 44px)' : '100%',
+              height: isForceLandscape ? '100vw' : '100%',
+              position: isForceLandscape ? 'absolute' : 'relative',
+              transform: isForceLandscape ? 'rotate(90deg)' : 'none',
+              transformOrigin: 'center center',
+              transition: 'transform 0.2s ease, width 0.2s ease, height 0.2s ease',
+            }}>
+              <iframe
+                ref={iframeRef}
+                src={game.playUrl}
+                style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+                allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+                onLoad={() => setIsLoading(false)}
+              />
+            </div>
           </div>
         </div>,
         document.body

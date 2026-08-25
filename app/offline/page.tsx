@@ -1,18 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { WifiOff, RefreshCw, Gamepad2, ArrowLeft } from "lucide-react";
+import { WifiOff, RotateCcw, Gamepad2, Home, Flame, Sparkles, Zap } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function OfflinePage() {
   const [isChecking, setIsChecking] = useState(false);
   const [isOnline, setIsOnline] = useState(false);
+  const [tapCount, setTapCount] = useState(0);
+  const [isBouncing, setIsBouncing] = useState(false);
 
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
-      window.location.href = "/";
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 800);
     };
 
     const handleOffline = () => {
@@ -35,63 +38,100 @@ export default function OfflinePage() {
     } else {
       setTimeout(() => {
         setIsChecking(false);
-      }, 1000);
+      }, 900);
     }
   };
 
+  const handleFunTap = () => {
+    setTapCount((prev) => prev + 1);
+    setIsBouncing(true);
+    setTimeout(() => setIsBouncing(false), 250);
+  };
+
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full text-center space-y-6 bg-zinc-900/60 border border-zinc-800/80 rounded-3xl p-8 backdrop-blur-xl shadow-2xl">
+    <div className="min-h-[85vh] flex items-center justify-center px-4 py-8 relative overflow-hidden">
+      {/* Ambient background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-orange-500/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/10 rounded-full blur-[90px] pointer-events-none" />
+
+      <div className="relative max-w-sm w-full text-center bg-[#0e0e12]/90 border border-zinc-800/80 rounded-3xl p-7 sm:p-8 backdrop-blur-2xl shadow-2xl space-y-6">
         
-        {/* Glowing Wifi Off Icon */}
-        <div className="relative mx-auto w-20 h-20 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-          <div className="absolute inset-0 bg-indigo-500/20 rounded-2xl blur-xl animate-pulse" />
-          <WifiOff className="w-10 h-10 relative z-10 text-indigo-400" />
+        {/* Interactive Fun Gamepad / Radar Icon */}
+        <div className="relative mx-auto flex justify-center">
+          <button
+            onClick={handleFunTap}
+            title="Tap for good luck!"
+            className={`group relative w-20 h-20 rounded-2xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-zinc-700/80 flex items-center justify-center transition-transform active:scale-90 shadow-xl cursor-pointer select-none ${
+              isBouncing ? "scale-110" : "hover:scale-105"
+            }`}
+          >
+            {/* Subtle radar ping ring */}
+            <span className="absolute inset-0 rounded-2xl border border-orange-500/30 animate-ping pointer-events-none opacity-40" />
+            
+            <div className="relative flex items-center justify-center">
+              <WifiOff className="w-8 h-8 text-orange-400 drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]" />
+              <Gamepad2 className="w-4 h-4 text-zinc-400 absolute -bottom-1 -right-2 opacity-80" />
+            </div>
+
+            {/* Tap counter bubble */}
+            {tapCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[10px] px-2 py-0.5 rounded-full shadow-lg border border-orange-400/40 animate-in zoom-in-50">
+                +{tapCount} XP
+              </span>
+            )}
+          </button>
         </div>
 
         {/* Text Content */}
         <div className="space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            You&apos;re Offline
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center justify-center gap-2">
+            Game Paused ⏸️
           </h1>
-          <p className="text-sm text-zinc-400 leading-relaxed">
-            It looks like you lost your internet connection. Please check your Wi-Fi or mobile data to continue playing.
+          <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-xs mx-auto">
+            You’ve wandered into the offline realm. Check your Wi-Fi or mobile data to hop back in.
           </p>
         </div>
 
-        {/* Auto-reconnect banner if restored */}
+        {/* Status banner */}
         {isOnline ? (
-          <div className="bg-emerald-950/40 border border-emerald-500/30 rounded-xl p-3 text-xs text-emerald-300 font-medium animate-pulse">
-            Connection restored! Reconnecting now...
+          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl py-2.5 px-3.5 text-xs text-emerald-300 font-semibold flex items-center justify-center gap-2 animate-bounce">
+            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <span>Signal restored! Jumping back in...</span>
           </div>
-        ) : null}
+        ) : (
+          <div className="flex items-center justify-center gap-1.5 text-[11px] text-zinc-500 font-medium bg-zinc-900/80 border border-zinc-800 py-1.5 px-3 rounded-full w-fit mx-auto">
+            <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+            <span>Waiting for connection...</span>
+          </div>
+        )}
 
         {/* Action Buttons */}
-        <div className="space-y-3 pt-2">
+        <div className="space-y-2.5 pt-1">
           <button
             onClick={handleRetry}
             disabled={isChecking}
-            className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/25 disabled:opacity-60"
+            className="w-full py-3 px-5 rounded-xl bg-gradient-to-r from-primary to-[#ff8c38] hover:from-[#ea580c] hover:to-primary active:scale-[0.98] text-white font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 disabled:opacity-60 cursor-pointer"
           >
-            <RefreshCw className={`w-4 h-4 ${isChecking ? "animate-spin" : ""}`} />
-            {isChecking ? "Checking Connection..." : "Retry Connection"}
+            <RotateCcw className={`w-4 h-4 ${isChecking ? "animate-spin" : ""}`} />
+            {isChecking ? "Checking Signal..." : "Retry Connection"}
           </button>
 
           <Link
             href="/"
-            className="w-full py-3 px-4 rounded-xl bg-zinc-800/80 hover:bg-zinc-700/80 text-zinc-300 hover:text-white font-medium text-sm transition-all flex items-center justify-center gap-2 border border-zinc-700/50"
+            className="w-full py-2.5 px-5 rounded-xl bg-zinc-900 hover:bg-zinc-800/80 active:scale-[0.98] text-zinc-300 hover:text-white font-medium text-xs sm:text-sm transition-all flex items-center justify-center gap-2 border border-zinc-800 hover:border-zinc-700"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
+            <Home className="w-4 h-4 text-zinc-400" />
+            Return to Home
           </Link>
         </div>
 
-        {/* Footer tip */}
-        <div className="pt-4 border-t border-zinc-800/60 flex items-center justify-center gap-2 text-xs text-zinc-500">
-          <Gamepad2 className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Your streaks and saved XP will sync when reconnected</span>
+        {/* Gamified Footer Tip */}
+        <div className="pt-3 border-t border-zinc-800/60 flex items-center justify-center gap-2 text-[11px] text-zinc-400">
+          <Flame className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+          <span>Your streak progress are safely preserved!</span>
         </div>
       </div>
     </div>
   );
 }
+
