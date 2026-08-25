@@ -99,12 +99,101 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     };
   }, [isPlaying]);
 
+  const handlePlayNow = () => {
+    setIsPlaying(true);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsMobileFS(true);
+      const docEl = document.documentElement as any;
+      const requestFS =
+        docEl.requestFullscreen ||
+        docEl.webkitRequestFullscreen ||
+        docEl.mozRequestFullScreen ||
+        docEl.msRequestFullscreen;
+      if (requestFS && !document.fullscreenElement) {
+        requestFS.call(docEl).catch(() => {});
+      }
+    }
+  };
+
   // Auto-enter mobile fullscreen on play
   useEffect(() => {
     if (isPlaying && typeof window !== 'undefined' && window.innerWidth < 1024) {
       setIsMobileFS(true);
     }
   }, [isPlaying]);
+
+  // Handle Mobile Fullscreen: Status Bar, Native Fullscreen & Back Button interception
+  useEffect(() => {
+    if (!isMobileFS) return;
+
+    // 1. Hide Capacitor system status bar on Android/iOS app
+    import('@capacitor/status-bar')
+      .then(({ StatusBar }) => {
+        StatusBar.hide().catch(() => {});
+      })
+      .catch(() => {});
+
+    // 2. Request native HTML5 fullscreen to hide browser address/status bars
+    const docEl = document.documentElement as any;
+    if (!document.fullscreenElement) {
+      const requestFS =
+        docEl.requestFullscreen ||
+        docEl.webkitRequestFullscreen ||
+        docEl.mozRequestFullScreen ||
+        docEl.msRequestFullscreen;
+      if (requestFS) {
+        requestFS.call(docEl).catch(() => {});
+      }
+    }
+
+    // 3. Push a history state so phone Back button / swipe gesture exits game fullscreen first
+    window.history.pushState({ isGameFullscreen: true }, '', window.location.href);
+
+    const handlePopState = () => {
+      // Back button was pressed: close mobile fullscreen game instead of navigating away
+      setIsMobileFS(false);
+      setIsPlaying(false);
+      setIsForceLandscape(false);
+      try {
+        if (document.fullscreenElement) {
+          const exitFS =
+            document.exitFullscreen ||
+            (document as any).webkitExitFullscreen ||
+            (document as any).mozCancelFullScreen ||
+            (document as any).msExitFullscreen;
+          if (exitFS) exitFS.call(document).catch(() => {});
+        }
+        const orient = (screen.orientation || (screen as any).mozOrientation || (screen as any).msOrientation) as any;
+        if (orient && orient.unlock) orient.unlock();
+      } catch (e) {}
+      import('@capacitor/status-bar')
+        .then(({ StatusBar }) => {
+          StatusBar.show().catch(() => {});
+        })
+        .catch(() => {});
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    // 4. Register Capacitor hardware back button handler
+    let capacitorBackListener: any = null;
+    import('@capacitor/app')
+      .then(({ App }) => {
+        App.addListener('backButton', () => {
+          exitMobileFS();
+        }).then(listener => {
+          capacitorBackListener = listener;
+        }).catch(() => {});
+      })
+      .catch(() => {});
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      if (capacitorBackListener && capacitorBackListener.remove) {
+        capacitorBackListener.remove();
+      }
+    };
+  }, [isMobileFS]);
 
   // Hide/show page elements during mobile FS by direct DOM manipulation
   useEffect(() => {
@@ -137,13 +226,30 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   }, [isMobileFS]);
 
   const exitMobileFS = () => {
+    // If top history entry is our game fullscreen state, unwind it
+    if (window.history.state?.isGameFullscreen) {
+      window.history.back();
+    }
     setIsMobileFS(false);
     setIsPlaying(false);
     setIsForceLandscape(false);
     try {
+      if (document.fullscreenElement) {
+        const exitFS =
+          document.exitFullscreen ||
+          (document as any).webkitExitFullscreen ||
+          (document as any).mozCancelFullScreen ||
+          (document as any).msExitFullscreen;
+        if (exitFS) exitFS.call(document).catch(() => {});
+      }
       const orient = (screen.orientation || (screen as any).mozOrientation || (screen as any).msOrientation) as any;
       if (orient && orient.unlock) orient.unlock();
     } catch (e) {}
+    import('@capacitor/status-bar')
+      .then(({ StatusBar }) => {
+        StatusBar.show().catch(() => {});
+      })
+      .catch(() => {});
   };
 
   const rotateScreen = async () => {
@@ -377,7 +483,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
               <button
                 ref={playButtonRef}
-                onClick={() => setIsPlaying(true)}
+                onClick={handlePlayNow}
                 className="px-6 py-2 bg-[#ff6b00] hover:bg-[#ea580c] text-white text-sm sm:text-base font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-md flex items-center gap-2 group cursor-pointer"
               >
                 <Play className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
