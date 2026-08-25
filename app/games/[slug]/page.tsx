@@ -5,6 +5,7 @@ import Image from 'next/image';
 import GamePlayer from '@/components/game/GamePlayer';
 import GameImage from '@/components/game/GameImage';
 import { getPublishedGameBySlug, getRandomSuggestedGames } from '@/lib/services/gameService';
+import { getSidebarBentoSpanClass } from '@/lib/bento';
 import { Gamepad2, Sparkles, Smartphone, Monitor, HelpCircle, ShieldCheck } from 'lucide-react';
 
 export const revalidate = 3600; // Revalidate every hour
@@ -78,7 +79,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
 
   const [game, randomGames] = await Promise.all([
     getPublishedGameBySlug(slug),
-    getRandomSuggestedGames(slug),
+    getRandomSuggestedGames(slug, 16),
   ]);
 
   if (!game) {
@@ -346,29 +347,37 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
             </div>
           </div>
 
-          {/* Suggested Games Sidebar */}
+          {/* Suggested Games Bento Sidebar */}
           {randomGames.length > 0 && (
             <aside className="w-full lg:w-[360px] xl:w-[420px] shrink-0">
               <div className="bg-[#0c0c0e] rounded-2xl p-4 sm:p-5 shadow-lg border border-[#1f1f22]">
-                <h3 className="font-bold text-base text-white mb-3 flex items-center gap-2">
+                <h3 className="font-bold text-base text-white mb-3.5 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-amber-400" />
                   You May Also Like
                 </h3>
-                <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
-                  {randomGames.map((g: any) => (
-                    <Link key={g.slug} href={`/games/${g.slug}`} className="group block">
-                      <div className="relative aspect-square rounded-xl overflow-hidden bg-zinc-800 shadow-md border border-[#1f1f22] group-hover:border-indigo-500/50 transition-colors">
+                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-3 xl:grid-cols-4 auto-rows-[minmax(80px,auto)] sm:auto-rows-[minmax(95px,auto)] gap-2 sm:gap-2.5 grid-flow-dense">
+                  {randomGames.map((g: any, index: number) => {
+                    const spanClass = getSidebarBentoSpanClass(index);
+                    return (
+                      <Link 
+                        key={`${g.slug}-${index}`} 
+                        href={`/games/${g.slug}`} 
+                        className={`group block relative rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800/80 hover:border-orange-500/50 transition-all duration-300 shadow-md hover:shadow-orange-500/15 ${spanClass} min-h-[80px]`}
+                      >
                         <GameImage 
                           src={g.thumbnailUrl} 
                           alt={g.title} 
-                          sizes="(max-width: 640px) 33vw, 150px"
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 220px"
+                          className="transition-transform duration-300 group-hover:scale-105"
                         />
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-1.5 pt-4 z-10">
-                          <p className="text-white text-[10px] sm:text-xs font-bold truncate group-hover:text-indigo-300 transition-colors">{g.title}</p>
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2 pt-5 z-10">
+                          <p className="text-white text-[11px] sm:text-xs font-bold truncate group-hover:text-orange-300 transition-colors leading-tight">
+                            {g.title}
+                          </p>
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </aside>
@@ -378,3 +387,4 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
     </>
   );
 }
+

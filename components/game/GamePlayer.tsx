@@ -228,53 +228,61 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           background: '#000', display: 'flex', flexDirection: 'column',
           overflow: 'hidden',
         }}>
-          {/* Mini top bar — Icon-only Exit + Rotate */}
+          {/* Mini top bar — Ultra-slim Icon-only Exit + Phone Rotate */}
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '5px 12px', background: '#0a0a0f',
-            borderBottom: '1px solid rgba(255,255,255,0.08)', flexShrink: 0,
-            paddingTop: 'max(6px, env(safe-area-inset-top))',
+            padding: '2px 8px', background: '#0a0a0f',
+            borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0,
+            height: '28px',
+            boxSizing: 'border-box',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }}>
-              {cleanThumb && <Image src={cleanThumb} alt="" width={22} height={22} unoptimized style={{ width: 22, height: 22, borderRadius: 5, objectFit: 'cover' }} />}
-              <span style={{ color: '#fff', fontSize: 12, fontWeight: 700, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.title}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+              {cleanThumb && <Image src={cleanThumb} alt="" width={18} height={18} unoptimized style={{ width: 18, height: 18, borderRadius: 4, objectFit: 'cover' }} />}
+              <span style={{ color: '#fff', fontSize: 11, fontWeight: 700, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.title}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              {/* Rotate (Icon Only) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              {/* Rotate Phone Screen Icon */}
               <button
                 onClick={rotateScreen}
                 aria-label="Rotate Screen"
                 title="Rotate Screen"
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  width: 32, height: 32,
-                  background: isForceLandscape ? 'rgba(255, 107, 0, 0.2)' : '#27272a',
-                  border: isForceLandscape ? '1px solid rgba(255, 107, 0, 0.5)' : '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 9,
+                  width: 24, height: 24,
+                  background: isForceLandscape ? 'rgba(255, 107, 0, 0.25)' : '#222226',
+                  border: isForceLandscape ? '1px solid rgba(255, 107, 0, 0.6)' : '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 6,
                   color: isForceLandscape ? '#ff6b00' : '#d4d4d8',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
+                  padding: 0,
                 }}
               >
-                <RotateCcw size={15} />
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="6" y="2" width="12" height="20" rx="3" transform={isForceLandscape ? "rotate(90 12 12)" : undefined} style={{ transition: 'transform 0.25s ease', transformOrigin: 'center' }} />
+                  <path d="M12 18h.01" />
+                  <path d="M21 8.5A9 9 0 0 0 5.5 4.5L3 7" />
+                  <polyline points="3 3 3 7 7 7" />
+                </svg>
               </button>
-              {/* Exit (Icon Only) */}
+              {/* Exit Icon */}
               <button
                 onClick={exitMobileFS}
                 aria-label="Exit Game"
                 title="Exit Game"
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  width: 32, height: 32,
-                  background: '#27272a',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 9,
+                  width: 24, height: 24,
+                  background: '#222226',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 6,
                   color: '#f4f4f5',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
+                  padding: 0,
                 }}
               >
-                <X size={15} />
+                <X size={13} strokeWidth={2.4} />
               </button>
             </div>
           </div>
@@ -295,7 +303,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
               </div>
             )}
             <div style={{
-              width: isForceLandscape ? 'calc(100vh - 44px)' : '100%',
+              width: isForceLandscape ? 'calc(100vh - 28px)' : '100%',
               height: isForceLandscape ? '100vw' : '100%',
               position: isForceLandscape ? 'absolute' : 'relative',
               transform: isForceLandscape ? 'rotate(90deg)' : 'none',

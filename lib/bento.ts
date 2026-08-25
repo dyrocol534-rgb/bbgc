@@ -25,3 +25,18 @@ export function getImageContainerClass(spanClass: string) {
   }
   return "aspect-square";
 }
+
+export function getSidebarBentoSpanClass(index: number) {
+  const pattern = index % 8;
+  if (pattern === 0 || pattern === 6) {
+    return "col-span-2 row-span-2"; // 2x2 Big Featured
+  }
+  if (pattern === 3) {
+    return "col-span-2 row-span-1"; // 2x1 Wide
+  }
+  if (pattern === 4) {
+    return "col-span-1 row-span-2"; // 1x2 Tall
+  }
+  return "col-span-1 row-span-1"; // 1x1 Standard
+}
+
