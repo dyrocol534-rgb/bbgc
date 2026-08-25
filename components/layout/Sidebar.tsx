@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -99,6 +99,73 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
     }
   };
 
+  // Floating Mobile Pill Position State
+  const [pillTop, setPillTop] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartYRef = useRef(0);
+  const initialPillTopRef = useRef(0);
+  const hasMovedRef = useRef(false);
+
+  useEffect(() => {
+    // Load saved position or default to 50%
+    const saved = localStorage.getItem('sidebar_pill_top');
+    if (saved) {
+      const parsed = parseFloat(saved);
+      if (!isNaN(parsed)) setPillTop(parsed);
+    } else {
+      if (typeof window !== 'undefined') {
+        setPillTop(window.innerHeight / 2);
+      }
+    }
+  }, []);
+
+  const handleDragStart = (e: React.TouchEvent | React.MouseEvent) => {
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    dragStartYRef.current = clientY;
+    initialPillTopRef.current = pillTop ?? (typeof window !== 'undefined' ? window.innerHeight / 2 : 300);
+    hasMovedRef.current = false;
+    setIsDragging(true);
+  };
+
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMove = (e: TouchEvent | MouseEvent) => {
+      const clientY = 'touches' in e ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY;
+      const deltaY = clientY - dragStartYRef.current;
+      if (Math.abs(deltaY) > 5) {
+        hasMovedRef.current = true;
+      }
+      const minTop = 80;
+      const maxTop = window.innerHeight - 80;
+      const newTop = Math.min(Math.max(initialPillTopRef.current + deltaY, minTop), maxTop);
+      setPillTop(newTop);
+    };
+
+    const handleEnd = () => {
+      setIsDragging(false);
+      if (!hasMovedRef.current) {
+        // Simple tap / click -> toggle sidebar
+        setIsExpanded(prev => !prev);
+      } else if (pillTop !== null) {
+        // Save dragged position
+        localStorage.setItem('sidebar_pill_top', pillTop.toString());
+      }
+    };
+
+    window.addEventListener('touchmove', handleMove, { passive: false });
+    window.addEventListener('touchend', handleEnd);
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleEnd);
+
+    return () => {
+      window.removeEventListener('touchmove', handleMove);
+      window.removeEventListener('touchend', handleEnd);
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleEnd);
+    };
+  }, [isDragging, pillTop]);
+
   return (
     <>
       {/* Full-screen Loader Overlay for "Surprise Me" */}
@@ -129,17 +196,40 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
         />
       )}
 
-      {/* Mobile Toggle Handle */}
-      <button 
-        onClick={() => setIsExpanded(!isExpanded)}
+      {/* Mobile Draggable Ergonomic Pill Handle */}
+      <div 
+        onMouseDown={handleDragStart}
+        onTouchStart={handleDragStart}
+        style={{
+          top: pillTop !== null ? `${pillTop}px` : '50%',
+          transform: 'translateY(-50%)',
+        }}
         className={clsx(
-          "md:hidden fixed top-1/2 -translate-y-1/2 z-50 bg-[#ff6b00] hover:bg-[#ea580c] border-y border-r border-orange-400/40 rounded-r-lg py-2.5 px-1 text-white transition-all duration-300 transform-gpu active:scale-95",
-          isExpanded ? "left-60" : "left-0"
+          "md:hidden fixed z-50 select-none touch-none",
+          "flex items-center justify-center cursor-grab active:cursor-grabbing",
+          "w-6 h-12 rounded-r-2xl",
+          "bg-gradient-to-br from-[#ff7a1a] via-[#ff6b00] to-[#ea580c]",
+          "border-y border-r border-orange-300/40 shadow-[2px_0_15px_rgba(255,107,0,0.4)]",
+          "text-white transition-[left] duration-300 transform-gpu",
+          isExpanded ? "left-60" : "left-0",
+          isDragging ? "scale-105 opacity-90 shadow-[4px_0_20px_rgba(255,107,0,0.6)]" : "active:scale-95"
         )}
         aria-label={isExpanded ? "Close sidebar" : "Open sidebar"}
+        role="button"
+        tabIndex={0}
       >
-        {isExpanded ? <X className="w-3.5 h-3.5" /> : <Menu className="w-3.5 h-3.5" />}
-      </button>
+        <div className="flex flex-col items-center justify-center gap-0.5">
+          {isExpanded ? (
+            <X className="w-4 h-4 text-white drop-shadow-sm" />
+          ) : (
+            <>
+              <div className="w-3 h-0.5 bg-white rounded-full shadow-sm" />
+              <div className="w-3 h-0.5 bg-white rounded-full shadow-sm" />
+              <div className="w-3 h-0.5 bg-white rounded-full shadow-sm" />
+            </>
+          )}
+        </div>
+      </div>
 
       <aside 
         className={clsx(

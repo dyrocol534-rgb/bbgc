@@ -48,30 +48,35 @@ export default function Footer() {
           
           {/* Brand & Subtitle */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-3">
-            <Link 
-              href="/" 
-              className="inline-flex items-center gap-2.5 text-indigo-400 hover:text-indigo-300 transition-colors group" 
-              title={`${siteName} Home`}
-            >
-              <div className="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 group-hover:border-indigo-500/40 transition-colors shadow-sm">
-                <Gamepad2 className="w-5 h-5 text-indigo-400" />
-              </div>
+            <div className="inline-flex items-center gap-2.5">
+              <Link 
+                href="/" 
+                className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20 hover:border-orange-500/40 transition-colors shadow-sm text-orange-400 group" 
+                title={`${siteName} Home`}
+              >
+                <Gamepad2 className="w-5 h-5 text-orange-400 group-hover:scale-105 transition-transform" />
+              </Link>
               <div className="flex flex-col text-left">
-                <span className="text-base font-bold tracking-tight text-white">{siteName}</span>
+                <Link 
+                  href="/" 
+                  className="text-base font-bold tracking-tight text-white hover:text-orange-400 transition-colors"
+                >
+                  {siteName}
+                </Link>
                 <span className="text-[11px] text-zinc-400">
                   A product from{" "}
                   <a 
                     href="https://bluebuff.in" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="text-indigo-400 hover:underline font-medium inline-flex items-center gap-0.5"
+                    className="text-orange-400 hover:underline font-medium inline-flex items-center gap-0.5"
                   >
                     bluebuff.in
                     <ExternalLink className="w-2.5 h-2.5" />
                   </a>
                 </span>
               </div>
-            </Link>
+            </div>
           </div>
 
           {/* Compact Newsletter Bar */}

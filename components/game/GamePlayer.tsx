@@ -45,6 +45,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [thumbError, setThumbError] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const playButtonRef = useRef<HTMLButtonElement>(null);
@@ -324,6 +325,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
   const aspectRatio = game.width && game.height ? `${game.width}/${game.height}` : '16/9';
   const cleanThumb = (game.thumbnailUrl || '').trim().replace(/^http:\/\//, 'https://').replace(/^\/\//, 'https://');
+  const initialLetter = (game.title || 'G').charAt(0).toUpperCase();
 
   return (
     <>
@@ -343,7 +345,21 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             boxSizing: 'border-box',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
-              {cleanThumb && <Image src={cleanThumb} alt="" width={18} height={18} unoptimized style={{ width: 18, height: 18, borderRadius: 4, objectFit: 'cover' }} />}
+              {cleanThumb && !thumbError ? (
+                <Image 
+                  src={cleanThumb} 
+                  alt="" 
+                  width={18} 
+                  height={18} 
+                  unoptimized 
+                  style={{ width: 18, height: 18, borderRadius: 4, objectFit: 'cover' }} 
+                  onError={() => setThumbError(true)}
+                />
+              ) : (
+                <div style={{ width: 18, height: 18, borderRadius: 4, background: 'linear-gradient(135deg, #ff6b00, #ea580c)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 10, fontWeight: 900, flexShrink: 0, userSelect: 'none' }}>
+                  {initialLetter}
+                </div>
+              )}
               <span style={{ color: '#fff', fontSize: 11, fontWeight: 700, maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.title}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -456,7 +472,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center w-full">
-              {cleanThumb ? (
+              {cleanThumb && !thumbError ? (
                 <div className="relative mb-2.5 group">
                   <Image 
                     src={cleanThumb} 
@@ -466,11 +482,12 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                     unoptimized 
                     priority 
                     className="w-20 h-20 sm:w-24 sm:h-24 aspect-square object-cover rounded-2xl border border-white/15 shadow-xl group-hover:scale-105 transition-transform duration-300" 
+                    onError={() => setThumbError(true)}
                   />
                 </div>
               ) : (
-                <div className="w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-2xl bg-zinc-900/90 flex items-center justify-center mb-2.5 border border-white/10 shadow-xl">
-                  <Gamepad2 className="w-10 h-10 text-orange-400 opacity-60" />
+                <div className="w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-2xl bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center mb-2.5 border border-white/20 shadow-xl text-white font-black text-3xl sm:text-4xl select-none">
+                  {initialLetter}
                 </div>
               )}
 
@@ -549,9 +566,22 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         {/* ── ACTION BAR (always visible below the player) ─── */}
         <div className="flex flex-row items-center justify-between bg-zinc-900/90 backdrop-blur-md rounded-xl p-1 sm:p-1.5 border border-white/5 gap-1.5 mt-1 overflow-x-auto scrollbar-none">
           <div className="flex items-center gap-1.5 min-w-0 shrink">
-            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md overflow-hidden flex-shrink-0 bg-zinc-800 ml-0.5">
-              <Image src={game.thumbnailUrl} alt={game.title} width={28} height={28} className="w-full h-full object-cover" />
-            </div>
+            {cleanThumb && !thumbError ? (
+              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md overflow-hidden flex-shrink-0 bg-zinc-800 ml-0.5">
+                <Image 
+                  src={cleanThumb} 
+                  alt={game.title} 
+                  width={28} 
+                  height={28} 
+                  className="w-full h-full object-cover" 
+                  onError={() => setThumbError(true)}
+                />
+              </div>
+            ) : (
+              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white text-[11px] sm:text-xs font-black shadow-sm shrink-0 select-none ml-0.5">
+                {initialLetter}
+              </div>
+            )}
             <h2 className="text-zinc-100 font-semibold truncate text-xs sm:text-sm">{game.title}</h2>
           </div>
           <div className="flex items-center gap-1 shrink-0 pr-0.5">
