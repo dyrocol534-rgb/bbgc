@@ -18,6 +18,7 @@ export default function Navbar() {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
+  const [logoError, setLogoError] = useState(false);
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -51,9 +52,23 @@ export default function Navbar() {
     <>
       <nav className="fixed top-0 left-0 right-0 z-40 h-13 sm:h-16 bg-surface/80 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between px-3 sm:px-4 lg:px-8">
         <Link href="/" className="flex items-center text-primary hover:text-primary-light transition-transform hover:scale-105" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
-          <div className="relative w-8 h-8 sm:w-9 sm:h-9">
-            <Image src="/logo.png" alt="Logo" fill sizes="36px" priority className="object-contain" />
-          </div>
+          {logoError ? (
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-orange-500 via-primary to-amber-500 flex items-center justify-center font-black text-white text-lg sm:text-xl shadow-[0_0_15px_rgba(255,107,0,0.35)] border border-white/20 select-none tracking-tight">
+              B
+            </div>
+          ) : (
+            <div className="relative w-8 h-8 sm:w-9 sm:h-9">
+              <Image 
+                src="/logo.png" 
+                alt="Logo" 
+                fill 
+                sizes="36px" 
+                priority 
+                className="object-contain" 
+                onError={() => setLogoError(true)}
+              />
+            </div>
+          )}
         </Link>
         
         <div className="flex-1 max-w-xl mx-4 hidden sm:block">

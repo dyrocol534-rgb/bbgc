@@ -2,7 +2,7 @@
 
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +12,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
+  const [logoError, setLogoError] = useState(false);
   let callbackUrl = searchParams.get("callbackUrl") || "/";
   const ref = searchParams.get("ref");
   
@@ -46,13 +47,20 @@ export default function LoginPage() {
           {/* Logo / Brand Icon */}
           <div className="flex justify-center mb-5">
             <div className="relative w-14 h-14 rounded-2xl bg-zinc-900/90 border border-white/10 flex items-center justify-center shadow-inner p-2.5 group">
-              <Image 
-                src="/logo.png" 
-                alt="Bluebuff Games" 
-                width={40} 
-                height={40} 
-                className="object-contain drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] group-hover:scale-105 transition-transform" 
-              />
+              {logoError ? (
+                <div className="w-full h-full rounded-xl bg-gradient-to-br from-orange-500 via-primary to-amber-500 flex items-center justify-center font-black text-white text-2xl shadow-[0_0_15px_rgba(255,107,0,0.4)] select-none">
+                  B
+                </div>
+              ) : (
+                <Image 
+                  src="/logo.png" 
+                  alt="Bluebuff Games" 
+                  width={40} 
+                  height={40} 
+                  className="object-contain drop-shadow-[0_0_8px_rgba(255,107,0,0.5)] group-hover:scale-105 transition-transform" 
+                  onError={() => setLogoError(true)}
+                />
+              )}
             </div>
           </div>
           

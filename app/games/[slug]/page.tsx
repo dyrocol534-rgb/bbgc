@@ -6,7 +6,7 @@ import GamePlayer from '@/components/game/GamePlayer';
 import GameImage from '@/components/game/GameImage';
 import { getPublishedGameBySlug, getRandomSuggestedGames } from '@/lib/services/gameService';
 import { getSidebarBentoSpanClass } from '@/lib/bento';
-import { Gamepad2, Sparkles, Smartphone, Monitor, HelpCircle, ShieldCheck } from 'lucide-react';
+import { Gamepad2, Sparkles, Smartphone, Monitor, HelpCircle, ShieldCheck, Calendar, Code2, Layers, Globe, ChevronDown, Flame } from 'lucide-react';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -247,101 +247,118 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
               <GamePlayer game={game} />
             </div>
 
-            {/* Game Meta & Information Card */}
-            <div className="bg-[#0c0c0e] rounded-2xl p-4 sm:p-6 shadow-lg border border-[#1f1f22]">
-              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">{game.title}</h1>
-                  </div>
+            {/* Game Meta & Information */}
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <div className="flex flex-col gap-2.5">
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{game.title}</h1>
                   
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="flex flex-wrap items-center gap-2">
                     {game.category?.map((cat: string) => (
                       <Link 
                         key={cat} 
                         href={`/category/${cat.toLowerCase()}`}
-                        className="px-3 py-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold rounded-lg border border-zinc-800 transition-colors capitalize"
+                        className="px-3 py-1 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/25 rounded-lg text-xs font-bold transition-all capitalize"
                       >
                         {cat}
                       </Link>
                     ))}
                     {game.tags?.map((tag: string) => (
-                      <span key={tag} className="px-2.5 py-1 bg-zinc-900/60 text-zinc-400 text-xs rounded-lg border border-zinc-800/80">
+                      <span key={tag} className="px-2.5 py-1 bg-zinc-900 text-zinc-400 text-xs rounded-lg border border-zinc-800">
                         #{tag}
                       </span>
                     ))}
                   </div>
+                </div>
 
-                  <p className="text-zinc-300 leading-relaxed text-sm sm:text-base max-w-3xl whitespace-pre-line mb-5">
-                    {game.description}
-                  </p>
+                <div className="text-zinc-300 text-sm sm:text-base leading-relaxed space-y-3 whitespace-pre-line">
+                  {game.description}
+                </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2.5 gap-x-8 max-w-3xl text-sm border-t border-zinc-800/80 pt-4">
-                    <div className="flex justify-between sm:justify-start gap-4">
-                      <span className="text-zinc-500 font-medium sm:w-28 shrink-0">Developer:</span>
-                      <span className="text-indigo-400 font-semibold">{game.developer === "GameMonetize" ? siteName : (game.developer || siteName)}</span>
-                    </div>
-                    <div className="flex justify-between sm:justify-start gap-4">
-                      <span className="text-zinc-500 font-medium sm:w-28 shrink-0">Released:</span>
-                      <span className="text-zinc-200 font-semibold">
-                        {new Date(game.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                      </span>
-                    </div>
-                    <div className="flex justify-between sm:justify-start gap-4">
-                      <span className="text-zinc-500 font-medium sm:w-28 shrink-0">Game Engine:</span>
-                      <span className="text-zinc-200 font-semibold">
-                        {game.buildType === 'html5' ? 'HTML5' : game.buildType === 'unity-webgl' ? 'Unity WebGL' : 'HTML5 / WebGL'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between sm:justify-start gap-4">
-                      <span className="text-zinc-500 font-medium sm:w-28 shrink-0">Platforms:</span>
-                      <span className="text-zinc-200 font-semibold">{game.platforms || "Web Browser, Mobile, PC"}</span>
-                    </div>
+                {/* Inline Specs Row */}
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-zinc-400 pt-3 border-t border-zinc-800/80">
+                  <div className="flex items-center gap-1.5">
+                    <Code2 className="w-3.5 h-3.5 text-orange-400" />
+                    <span className="text-zinc-500 font-medium">Developer:</span>
+                    <span className="text-zinc-200 font-semibold">{game.developer === "GameMonetize" ? siteName : (game.developer || siteName)}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="text-zinc-500 font-medium">Released:</span>
+                    <span className="text-zinc-200 font-semibold">{new Date(game.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-cyan-400" />
+                    <span className="text-zinc-500 font-medium">Engine:</span>
+                    <span className="text-zinc-200 font-semibold">{game.buildType === 'html5' ? 'HTML5' : game.buildType === 'unity-webgl' ? 'Unity WebGL' : 'HTML5 / WebGL'}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="text-zinc-500 font-medium">Platform:</span>
+                    <span className="text-zinc-200 font-semibold">Browser, Mobile, PC</span>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* SEO Content: How to Play & Controls */}
-            <div className="bg-[#0c0c0e] rounded-2xl p-4 sm:p-6 shadow-lg border border-[#1f1f22] space-y-4">
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                <Gamepad2 className="w-4 h-4 text-indigo-400" />
-                How to Play {game.title}
-              </h2>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-zinc-300">
-                <div className="p-3 bg-[#121214] border border-zinc-800/80 rounded-xl space-y-1.5">
-                  <div className="font-semibold text-white flex items-center gap-1.5">
-                    <Monitor className="w-3.5 h-3.5 text-indigo-400" /> Desktop Controls
+              {/* Controls & Gameplay Guide */}
+              <div className="space-y-4 pt-4 border-t border-zinc-800/80">
+                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <Gamepad2 className="w-4 h-4 text-orange-400" />
+                  How to Play {game.title}
+                </h2>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  {/* Desktop Controls */}
+                  <div className="space-y-2">
+                    <div className="font-bold text-zinc-200 flex items-center gap-2">
+                      <Monitor className="w-4 h-4 text-orange-400" />
+                      <span>Desktop Controls</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[11px] font-bold rounded">WASD / Arrows</span>
+                      <span className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[11px] font-bold rounded">Space</span>
+                      <span className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[11px] font-bold rounded">Mouse</span>
+                    </div>
+                    <p className="text-zinc-400 leading-relaxed">
+                      Use keyboard controls to steer and accelerate. Use mouse to interact with in-game menus.
+                    </p>
                   </div>
-                  <p className="text-zinc-400">Use your Mouse or Keyboard (Arrow keys / WASD / Spacebar) depending on in-game instructions.</p>
-                </div>
-                <div className="p-3 bg-[#121214] border border-zinc-800/80 rounded-xl space-y-1.5">
-                  <div className="font-semibold text-white flex items-center gap-1.5">
-                    <Smartphone className="w-3.5 h-3.5 text-sky-400" /> Mobile & Tablet Controls
-                  </div>
-                  <p className="text-zinc-400">Tap, swipe, and use on-screen touch buttons for full mobile responsiveness.</p>
-                </div>
-              </div>
 
-              {/* Game FAQ */}
-              <div className="pt-3 border-t border-zinc-800/80 space-y-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                  <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
-                  Frequently Asked Questions
-                </h3>
-                <div className="space-y-1.5">
-                  {gameFaqs.map((faq, i) => (
-                    <details key={i} className="group p-2.5 bg-[#121214] border border-zinc-800/60 rounded-xl cursor-pointer">
-                      <summary className="text-xs font-semibold text-zinc-200 group-hover:text-indigo-300 list-none flex justify-between items-center select-none">
-                        <span>{faq.q}</span>
-                        <span className="text-zinc-500 group-open:rotate-180 transition-transform text-sm">+</span>
-                      </summary>
-                      <p className="text-[11px] text-zinc-400 mt-2 leading-relaxed">
-                        {faq.a}
-                      </p>
-                    </details>
-                  ))}
+                  {/* Mobile Controls */}
+                  <div className="space-y-2">
+                    <div className="font-bold text-zinc-200 flex items-center gap-2">
+                      <Smartphone className="w-4 h-4 text-sky-400" />
+                      <span>Mobile & Tablet Controls</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[11px] font-bold rounded">Touch Screen</span>
+                      <span className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[11px] font-bold rounded">Virtual Controls</span>
+                    </div>
+                    <p className="text-zinc-400 leading-relaxed">
+                      Tap and swipe using on-screen virtual buttons designed for mobile screens.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Game FAQ */}
+                <div className="pt-4 border-t border-zinc-800/80 space-y-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+                    <HelpCircle className="w-4 h-4 text-orange-400" />
+                    Frequently Asked Questions
+                  </h3>
+                  <div className="divide-y divide-zinc-800/60">
+                    {gameFaqs.map((faq, i) => (
+                      <details key={i} className="group py-3 cursor-pointer">
+                        <summary className="text-xs sm:text-sm font-semibold text-zinc-200 group-hover:text-orange-300 list-none flex justify-between items-center select-none">
+                          <span>{faq.q}</span>
+                          <ChevronDown className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 group-open:rotate-180 transition-transform" />
+                        </summary>
+                        <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
+                          {faq.a}
+                        </p>
+                      </details>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -350,9 +367,9 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
           {/* Suggested Games Bento Sidebar */}
           {randomGames.length > 0 && (
             <aside className="w-full lg:w-[360px] xl:w-[420px] shrink-0">
-              <div className="bg-[#0c0c0e] rounded-2xl p-4 sm:p-5 shadow-lg border border-[#1f1f22]">
-                <h3 className="font-bold text-base text-white mb-3.5 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
+              <div className="space-y-3 sm:space-y-3.5">
+                <h3 className="font-bold text-base sm:text-lg text-white flex items-center gap-2">
+                  <Gamepad2 className="w-5 h-5 text-primary" />
                   You May Also Like
                 </h3>
                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-3 xl:grid-cols-4 auto-rows-[minmax(80px,auto)] sm:auto-rows-[minmax(95px,auto)] gap-2 sm:gap-2.5 grid-flow-dense">
