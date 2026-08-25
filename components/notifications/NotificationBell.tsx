@@ -56,20 +56,20 @@ export default function NotificationBell() {
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         disabled={loading}
-        className={`group relative flex items-center justify-center w-9 h-9 rounded-full transition-all shadow-sm shrink-0 ${
+        className={`group relative flex items-center justify-center w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full transition-all shadow-sm shrink-0 ${
           isSubscribed
             ? "border border-emerald-500/50 bg-emerald-500/15 text-emerald-300 hover:border-emerald-400 hover:bg-emerald-500/25 shadow-[0_0_10px_rgba(0,230,118,0.2)]"
             : "border border-dashed border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white"
         }`}
-        title={isSubscribed ? "Notifications Subscribed (Click to Mute)" : "Enable Notifications"}
-        aria-label="Toggle Push Notifications"
+        title={isSubscribed ? "Notifications Enabled" : "Enable Notifications"}
+        aria-label={isSubscribed ? "Mute Notifications" : "Allow Notifications"}
       >
         {loading ? (
-          <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-400" />
+          <Loader2 className="w-4 h-4 text-zinc-400 animate-spin" />
         ) : isSubscribed ? (
-          <BellRing className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform" />
+          <BellRing className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
         ) : (
-          <Bell className="w-3.5 h-3.5 text-zinc-300 group-hover:text-white group-hover:rotate-12 transition-transform" />
+          <Bell className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
         )}
 
         {/* Green status badge dot in top-right */}

@@ -280,29 +280,61 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       {/* ── MAIN PAGE CONTENT ─────────────────────────────────────── */}
       <div className="flex flex-col gap-2 relative w-full max-w-[800px] mx-auto">
         {!isPlaying ? (
-          /* Splash Screen */
-          <div className="relative flex flex-col items-center justify-center bg-zinc-950 rounded-xl overflow-hidden shadow-2xl py-6 px-4 w-full min-h-[250px] sm:min-h-[300px]">
-            {cleanThumb && <div className="absolute inset-0 z-0 opacity-60 blur-3xl scale-125" style={{ backgroundImage: `url(${cleanThumb})`, backgroundSize: 'cover', backgroundPosition: 'top' }} />}
-            <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-black/70 to-black" />
+          /* Seamless Hero Section with Top-to-Middle Ambient Color Fade */
+          <div className="relative flex flex-col items-center justify-center py-3 sm:py-5 px-3 w-full overflow-hidden">
+            {/* Top-to-Middle Faded Ambient Glow */}
+            <div 
+              className="absolute -top-12 inset-x-0 h-[200px] pointer-events-none z-0 opacity-35 blur-2xl"
+              style={{
+                background: `radial-gradient(ellipse 90% 70% at 50% 15%, rgba(255, 107, 0, 0.4), rgba(234, 88, 12, 0.1) 50%, transparent 80%)`,
+              }}
+            />
+            {cleanThumb && (
+              <div 
+                className="absolute -top-8 inset-x-0 h-[180px] pointer-events-none z-0 opacity-20 blur-xl scale-105"
+                style={{
+                  backgroundImage: `url(${cleanThumb})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 80%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 80%)'
+                }}
+              />
+            )}
+
+            {/* Content */}
             <div className="relative z-10 flex flex-col items-center w-full">
               {cleanThumb ? (
-                <Image src={cleanThumb} alt={game.title} width={128} height={128} unoptimized priority className="w-24 sm:w-32 aspect-square object-cover rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.5)] mb-2 border border-white/10" />
+                <div className="relative mb-2.5 group">
+                  <Image 
+                    src={cleanThumb} 
+                    alt={game.title} 
+                    width={112} 
+                    height={112} 
+                    unoptimized 
+                    priority 
+                    className="w-20 h-20 sm:w-24 sm:h-24 aspect-square object-cover rounded-2xl border border-white/15 shadow-xl group-hover:scale-105 transition-transform duration-300" 
+                  />
+                </div>
               ) : (
-                <div className="w-24 sm:w-32 aspect-square rounded-2xl bg-zinc-900 flex items-center justify-center mb-2 border border-white/10">
-                  <Gamepad2 className="w-10 h-10 text-indigo-400 opacity-50" />
+                <div className="w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-2xl bg-zinc-900/90 flex items-center justify-center mb-2.5 border border-white/10 shadow-xl">
+                  <Gamepad2 className="w-10 h-10 text-orange-400 opacity-60" />
                 </div>
               )}
-              <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 text-center drop-shadow-md">{game.title}</h1>
-              <div className="flex items-center gap-1 text-xs sm:text-sm text-zinc-200 mb-4">
-                <span className="text-base">🕹️</span>
-                <span className="capitalize">Arcade</span>
+
+              <h1 className="text-lg sm:text-xl font-bold text-white mb-1 text-center tracking-tight">{game.title}</h1>
+              
+              <div className="flex items-center gap-1 text-[11px] sm:text-xs text-zinc-400 mb-3.5 font-medium">
+                <span>🕹️</span>
+                <span className="capitalize">{game.category?.[0] || "Arcade"}</span>
               </div>
+
               <button
                 ref={playButtonRef}
                 onClick={() => setIsPlaying(true)}
-                className="px-6 py-2 bg-primary hover:bg-primary-hover text-white text-base sm:text-lg font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(108,64,255,0.4)] flex items-center gap-2 group"
+                className="px-6 py-2 bg-[#ff6b00] hover:bg-[#ea580c] text-white text-sm sm:text-base font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-md flex items-center gap-2 group cursor-pointer"
               >
-                <Play className="w-5 h-5 fill-current group-hover:scale-110 transition-transform" />
+                <Play className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
                 Play now
               </button>
             </div>
@@ -363,70 +395,72 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         )}
 
         {/* ── ACTION BAR (always visible below the player) ─── */}
-        <div className="flex flex-row items-center justify-between bg-zinc-900/80 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 shadow-xl border border-white/5 gap-2 mt-2 overflow-x-auto scrollbar-none">
-          <div className="flex items-center gap-2 min-w-0 shrink">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg overflow-hidden flex-shrink-0 shadow-md bg-zinc-800 ml-1">
-              <Image src={game.thumbnailUrl} alt={game.title} width={32} height={32} className="w-full h-full object-cover" />
+        <div className="flex flex-row items-center justify-between bg-zinc-900/90 backdrop-blur-md rounded-xl p-1 sm:p-1.5 border border-white/5 gap-1.5 mt-1 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-1.5 min-w-0 shrink">
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md overflow-hidden flex-shrink-0 bg-zinc-800 ml-0.5">
+              <Image src={game.thumbnailUrl} alt={game.title} width={28} height={28} className="w-full h-full object-cover" />
             </div>
-            <h2 className="text-zinc-100 font-bold truncate text-sm sm:text-base">{game.title}</h2>
+            <h2 className="text-zinc-100 font-semibold truncate text-xs sm:text-sm">{game.title}</h2>
           </div>
-          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0 pr-1">
+          <div className="flex items-center gap-1 shrink-0 pr-0.5">
             {/* Like/Dislike */}
             <div className="flex items-center bg-zinc-800/80 rounded-full border border-white/5 overflow-hidden shrink-0">
-              <button onClick={() => handleInteract('like')} className={clsx("flex items-center gap-1.5 px-3 py-1.5 sm:py-2 hover:bg-zinc-700 transition-colors group", isLiked ? "text-indigo-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}>
-                <ThumbsUp className={clsx("w-4 h-4", isLiked ? "fill-current" : "group-hover:scale-110")} />
-                {likeCount > 0 && <span className="text-sm font-bold">{likeCount > 999 ? (likeCount/1000).toFixed(1)+'k' : likeCount}</span>}
+              <button onClick={() => handleInteract('like')} className={clsx("flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 hover:bg-zinc-700 transition-colors group", isLiked ? "text-orange-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}>
+                <ThumbsUp className={clsx("w-3.5 h-3.5", isLiked ? "fill-current" : "group-hover:scale-110")} />
+                {likeCount > 0 && <span className="text-xs font-bold">{likeCount > 999 ? (likeCount/1000).toFixed(1)+'k' : likeCount}</span>}
               </button>
-              <div className="w-px h-4 bg-white/10" />
-              <button onClick={() => handleInteract('dislike')} className={clsx("flex items-center gap-1.5 px-3 py-1.5 sm:py-2 hover:bg-zinc-700 transition-colors group", isDisliked ? "text-red-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}>
-                <ThumbsDown className={clsx("w-4 h-4", isDisliked ? "fill-current" : "group-hover:scale-110")} />
+              <div className="w-px h-3 bg-white/10" />
+              <button onClick={() => handleInteract('dislike')} className={clsx("flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 hover:bg-zinc-700 transition-colors group", isDisliked ? "text-red-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}>
+                <ThumbsDown className={clsx("w-3.5 h-3.5", isDisliked ? "fill-current" : "group-hover:scale-110")} />
               </button>
             </div>
-            <button onClick={() => handleInteract('favorite')} className={clsx("p-1.5 sm:p-2 rounded-full border border-white/5 transition-colors shrink-0 group", isFavorited ? "bg-zinc-700 text-pink-500 border-pink-500/30" : "bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-white")}>
-              <Heart className={clsx("w-4 h-4", isFavorited ? "fill-current" : "group-hover:text-pink-500")} />
+            <button onClick={() => handleInteract('favorite')} className={clsx("w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-white/5 transition-colors shrink-0 group", isFavorited ? "bg-zinc-700 text-pink-500 border-pink-500/30" : "bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-white")} title="Favorite">
+              <Heart className={clsx("w-3.5 h-3.5", isFavorited ? "fill-current" : "group-hover:text-pink-500")} />
             </button>
-            <button onClick={() => setShowFeedbackModal(true)} className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0">
-              <MessageSquareWarning className="w-4 h-4" />
+            <button onClick={() => setShowFeedbackModal(true)} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0" title="Feedback">
+              <MessageSquareWarning className="w-3.5 h-3.5" />
             </button>
-            <button onClick={() => setShowQrModal(true)} className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 group">
-              <Smartphone className="w-4 h-4 group-hover:text-indigo-400" />
+            <button onClick={() => setShowQrModal(true)} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 group" title="Play on Mobile">
+              <Smartphone className="w-3.5 h-3.5 group-hover:text-orange-400" />
             </button>
-            <button onClick={toggleFullscreen} className="p-1.5 sm:p-2 bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 hidden md:flex">
-              {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+            <button onClick={toggleFullscreen} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 hidden md:flex" title="Fullscreen">
+              {isFullscreen ? <Minimize className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
             </button>
           </div>
         </div>
 
         {/* QR Modal */}
-        {showQrModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeQrModal}>
-            <div className="relative bg-[#1f1f2e] border border-border-main rounded-3xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-              <button onClick={closeQrModal} className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"><X className="w-6 h-6" /></button>
-              <div className="bg-white p-4 rounded-3xl mb-8 shadow-xl">
-                <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}&margin=0`} alt="QR" width={192} height={192} className="w-48 h-48 rounded-xl" unoptimized />
+        {showQrModal && typeof document !== 'undefined' && createPortal(
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200" onClick={closeQrModal}>
+            <div className="relative bg-[#0e0e12] border border-[#27272a] rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+              <button onClick={closeQrModal} className="absolute top-3.5 right-3.5 p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
+              <div className="bg-white p-3 rounded-2xl mb-5 shadow-xl">
+                <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}&margin=0`} alt="QR" width={160} height={160} className="w-40 h-40 rounded-lg" unoptimized />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-4">Take the fun with you!</h3>
-              <p className="text-zinc-300 text-sm">Scan to play <strong>{game.title}</strong> on your phone or tablet.</p>
+              <h3 className="text-xl font-bold text-white mb-2">Take the fun with you!</h3>
+              <p className="text-zinc-400 text-xs sm:text-sm">Scan to play <strong>{game.title}</strong> on your phone or tablet.</p>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
 
         {/* Feedback Modal */}
-        {showFeedbackModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={closeFeedbackModal}>
-            <div className="relative bg-zinc-900 border border-border-main rounded-3xl p-6 max-w-lg w-full shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-              <button onClick={closeFeedbackModal} className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
-              <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2"><MessageSquareWarning className="w-5 h-5 text-indigo-400" />Provide Feedback</h3>
-              <p className="text-zinc-400 text-sm mb-6">Let us know what you think about <strong>{game.title}</strong>, or report any issues.</p>
-              <textarea value={feedbackText} onChange={e => setFeedbackText(e.target.value)} placeholder="Your message here..." className="w-full bg-surface-hover border border-border-main rounded-xl p-4 text-zinc-100 min-h-[120px] focus:outline-none focus:border-indigo-500 transition-colors mb-4" />
-              <div className="flex justify-end gap-3">
-                <button onClick={closeFeedbackModal} className="px-5 py-2.5 text-zinc-300 hover:text-white font-medium rounded-xl hover:bg-white/5 transition-colors">Cancel</button>
-                <button onClick={submitFeedback} disabled={isSubmittingFeedback || !feedbackText.trim()} className="px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2">
-                  {isSubmittingFeedback ? <Loader2 className="w-4 h-4 animate-spin" /> : null}Submit
+        {showFeedbackModal && typeof document !== 'undefined' && createPortal(
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200" onClick={closeFeedbackModal}>
+            <div className="relative bg-[#0e0e12] border border-[#27272a] rounded-2xl p-5 sm:p-6 max-w-md w-full shadow-2xl flex flex-col animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+              <button onClick={closeFeedbackModal} className="absolute top-3.5 right-3.5 p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
+              <h3 className="text-lg font-bold text-white mb-1.5 flex items-center gap-2"><MessageSquareWarning className="w-4.5 h-4.5 text-orange-400" />Provide Feedback</h3>
+              <p className="text-zinc-400 text-xs sm:text-sm mb-4">Let us know what you think about <strong>{game.title}</strong>, or report any issues.</p>
+              <textarea value={feedbackText} onChange={e => setFeedbackText(e.target.value)} placeholder="Your message here..." className="w-full bg-[#16161c] border border-zinc-700/80 rounded-xl p-3 text-zinc-100 text-sm min-h-[100px] focus:outline-none focus:border-orange-500 transition-colors mb-4" />
+              <div className="flex justify-end gap-2.5">
+                <button onClick={closeFeedbackModal} className="px-4 py-2 text-zinc-400 hover:text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-white/5 transition-colors">Cancel</button>
+                <button onClick={submitFeedback} disabled={isSubmittingFeedback || !feedbackText.trim()} className="px-5 py-2 bg-[#ff6b00] hover:bg-[#ea580c] text-white text-xs sm:text-sm font-bold rounded-lg transition-all shadow-md disabled:opacity-50 flex items-center gap-2">
+                  {isSubmittingFeedback ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}Submit
                 </button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
     </>

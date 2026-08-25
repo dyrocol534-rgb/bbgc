@@ -74,7 +74,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeCollectionSchema) }}
       />
 
-      <div className="container mx-auto px-4 py-6 space-y-10">
+      <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 space-y-6 sm:space-y-10">
         {!hasGames && (
           <div className="text-center py-32 flex flex-col items-center justify-center">
             <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(var(--primary-rgb),0.15)] border border-primary/20">
@@ -95,12 +95,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-                <Gamepad2 className="w-5 h-5 text-indigo-400" />
+                <Gamepad2 className="w-5 h-5 text-orange-400" />
                 Featured Free Games
               </h1>
             </div>
 
-            <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 auto-rows-[minmax(80px,auto)] md:auto-rows-[minmax(100px,auto)] gap-2 sm:gap-3 grid-flow-dense pb-6">
+            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-10 xl:grid-cols-12 auto-rows-[minmax(85px,auto)] md:auto-rows-[minmax(110px,auto)] gap-2 sm:gap-2.5 grid-flow-dense pb-6">
               {initialAllGames.map((game: any, index: number) => {
                 const spanClass = getBentoSpanClass(index);
                 const imageContainerClass = getImageContainerClass(spanClass);
@@ -145,7 +145,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
           <footer className="bg-[#0c0c0e] rounded-2xl p-6 sm:p-8 border border-[#1f1f22] space-y-6 text-xs text-zinc-400">
             <div className="space-y-2">
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-indigo-400" />
+                <Sparkles className="w-4 h-4 text-orange-400" />
                 Play Free Online Games on {siteName}
               </h2>
               <p className="leading-relaxed text-zinc-300">

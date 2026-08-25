@@ -48,9 +48,9 @@ export default function NotificationPrompt() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-sm w-[calc(100vw-2rem)] sm:w-96 bg-zinc-900/95 backdrop-blur-md border border-indigo-500/30 rounded-2xl p-4 shadow-2xl shadow-black/80 animate-in fade-in slide-in-from-bottom-5 duration-300">
+    <div className="fixed bottom-4 right-4 z-50 max-w-sm w-[calc(100vw-2rem)] sm:w-96 bg-zinc-900/95 backdrop-blur-md border border-orange-500/30 rounded-2xl p-4 shadow-2xl shadow-black/80 animate-in fade-in slide-in-from-bottom-5 duration-300">
       <div className="flex items-start gap-3">
-        <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white shrink-0 shadow-lg shadow-indigo-500/30">
+        <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 text-white shrink-0 shadow-lg shadow-orange-500/30">
           <Bell className="w-5 h-5 animate-pulse" />
           <Sparkles className="w-3.5 h-3.5 text-amber-300 absolute -top-1 -right-1" />
         </div>
@@ -67,7 +67,7 @@ export default function NotificationPrompt() {
             <button
               onClick={handleSubscribe}
               disabled={loading}
-              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all shadow-md shadow-indigo-600/30 disabled:opacity-50"
+              className="flex-1 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-500 hover:to-amber-400 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all shadow-md shadow-orange-600/30 disabled:opacity-50"
             >
               {loading ? "Enabling..." : "Enable Notifications"}
             </button>

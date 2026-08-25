@@ -49,10 +49,10 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-40 h-16 bg-surface/80 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between px-4 lg:px-8">
+      <nav className="fixed top-0 left-0 right-0 z-40 h-13 sm:h-16 bg-surface/80 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between px-3 sm:px-4 lg:px-8">
         <Link href="/" className="flex items-center text-primary hover:text-primary-light transition-transform hover:scale-105" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
-          <div className="relative w-10 h-10 drop-shadow-[0_0_8px_rgba(108,64,255,0.6)]">
-            <Image src="/logo.png" alt="Logo" fill sizes="40px" priority className="object-contain" />
+          <div className="relative w-8 h-8 sm:w-9 sm:h-9">
+            <Image src="/logo.png" alt="Logo" fill sizes="36px" priority className="object-contain" />
           </div>
         </Link>
         
@@ -60,31 +60,31 @@ export default function Navbar() {
           <SearchBar />
         </div>
         
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           {/* Mobile Search Button */}
           <button 
-            className="sm:hidden w-9 h-9 flex items-center justify-center text-zinc-300 hover:text-white rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-zinc-500 transition-all shadow-sm shrink-0"
+            className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-zinc-300 hover:text-white rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-zinc-500 transition-all shadow-sm shrink-0"
             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
             title="Search"
           >
-            <Search className="w-3.5 h-3.5" />
+            <Search className="w-4 h-4" />
           </button>
           
           {/* Surprise Me / Dice Button */}
           <button
             onClick={handleSurpriseMe}
             disabled={isRolling}
-            className="group relative flex items-center justify-center w-9 h-9 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-purple-500/60 transition-all shadow-sm disabled:opacity-50 shrink-0"
+            className="group relative flex items-center justify-center w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-orange-500/60 transition-all shadow-sm disabled:opacity-50 shrink-0"
             title="Surprise Me!"
           >
             {isRolling ? (
-              <Loader2 className="w-3.5 h-3.5 text-purple-400 animate-spin" />
+              <Loader2 className="w-4 h-4 text-orange-400 animate-spin" />
             ) : (
-              <Dices className="w-3.5 h-3.5 text-zinc-300 group-hover:text-white transition-colors transform group-hover:rotate-12" />
+              <Dices className="w-4 h-4 text-zinc-300 group-hover:text-white transition-colors transform group-hover:rotate-12" />
             )}
 
-            {/* Purple status badge dot */}
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-[#0a0a0c] bg-[#a855f7]/80 shadow-[0_0_5px_rgba(168,85,247,0.6)]" />
+            {/* Orange status badge dot */}
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-[#0a0a0c] bg-orange-500 shadow-[0_0_5px_rgba(249,115,22,0.6)]" />
             
             {/* Tooltip */}
             <span className="absolute -bottom-9 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-zinc-900 border border-zinc-700 text-xs text-white px-2 py-1 rounded shadow-lg hidden sm:block z-50">
@@ -102,24 +102,24 @@ export default function Navbar() {
           {session ? (
             <button 
               onClick={() => setIsSidebarOpen(true)} 
-              className="relative w-9 h-9 rounded-full overflow-hidden border border-zinc-700/80 hover:border-indigo-400/80 bg-zinc-900/80 hover:scale-105 transition-all flex items-center justify-center shadow-sm shrink-0"
+              className="relative w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full overflow-hidden border border-zinc-700/80 hover:border-orange-400/80 bg-zinc-900/80 hover:scale-105 transition-all flex items-center justify-center shadow-sm shrink-0"
               aria-label="User Profile"
               title={session.user?.name || "Account"}
             >
               {session.user?.image ? (
                 <Image src={session.user.image} alt="User" fill sizes="36px" className="object-cover" />
               ) : (
-                <UserIcon className="w-3.5 h-3.5 text-zinc-300" />
+                <UserIcon className="w-4 h-4 text-zinc-300" />
               )}
             </button>
           ) : (
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="w-9 h-9 rounded-full border border-dashed border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 transition-all flex items-center justify-center text-zinc-300 hover:text-white shadow-sm shrink-0"
+              className="w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full border border-dashed border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 transition-all flex items-center justify-center text-zinc-300 hover:text-white shadow-sm shrink-0"
               aria-label="Sign In / Menu"
               title="Sign In / Menu"
             >
-              <UserIcon className="w-3.5 h-3.5" />
+              <UserIcon className="w-4 h-4" />
             </button>
           )}
         </div>

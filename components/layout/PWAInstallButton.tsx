@@ -111,7 +111,7 @@ export default function PWAInstallButton({ variant = "icon", onInstall }: { vari
         onClick={handleInstall}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
-        className={`group relative flex items-center justify-center w-9 h-9 rounded-full transition-all shadow-sm shrink-0 ${
+        className={`group relative flex items-center justify-center w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full transition-all shadow-sm shrink-0 ${
           isInstalled
             ? "border border-blue-500/50 bg-blue-500/15 text-blue-300 hover:border-blue-400 hover:bg-blue-500/25 shadow-[0_0_10px_rgba(0,168,255,0.2)]"
             : "border border-dashed border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white"
@@ -120,9 +120,9 @@ export default function PWAInstallButton({ variant = "icon", onInstall }: { vari
         aria-label={isInstalled ? "App Installed" : "Install Bluebuff Games app"}
       >
         {isInstalled ? (
-          <Check className="w-3.5 h-3.5 text-blue-400 group-hover:scale-110 transition-transform" />
+          <Check className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
         ) : (
-          <Download className="w-3.5 h-3.5 text-zinc-300 group-hover:text-white transition-colors" />
+          <Download className="w-4 h-4 text-zinc-300 group-hover:text-white transition-colors" />
         )}
 
         {/* Blue status badge dot in top-right */}

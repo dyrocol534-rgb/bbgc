@@ -218,7 +218,7 @@ export default async function RootLayout({
           <Navbar />
           <LazyWelcomeModal />
           <NotificationPrompt />
-          <div className="flex flex-1 pt-16 w-full">
+          <div className="flex flex-1 pt-13 sm:pt-16 w-full">
             <Sidebar initialCategories={categories} />
             <main className="flex-1 min-w-0 flex flex-col">
               {children}

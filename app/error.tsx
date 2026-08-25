@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { AlertTriangle } from "lucide-react";
+import Link from "next/link";
+import { AlertCircle, RotateCcw, Home } from "lucide-react";
 
 export default function GlobalError({
   error,
@@ -16,20 +17,39 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center text-center p-4">
-      <div className="w-24 h-24 bg-red-500/10 rounded-3xl flex items-center justify-center mb-8 shadow-[0_0_40px_rgba(239,68,68,0.15)] border border-red-500/20">
-        <AlertTriangle className="w-12 h-12 text-red-500" />
+    <div className="min-h-[80vh] flex items-center justify-center p-4">
+      <div className="w-full max-w-md flex flex-col items-center text-center p-6 sm:p-8 rounded-3xl bg-zinc-900/40 border border-zinc-800/60 backdrop-blur-sm">
+        <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-5 text-red-400 shadow-lg shadow-red-500/5">
+          <AlertCircle className="w-8 h-8" />
+        </div>
+
+        <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-2">
+          Something went wrong
+        </h1>
+        
+        <p className="text-zinc-400 text-sm sm:text-base max-w-xs mb-7 leading-relaxed">
+          An unexpected error occurred. Please try again or return home.
+        </p>
+
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+          <button
+            onClick={() => reset()}
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover active:scale-95 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Try again
+          </button>
+          
+          <Link
+            href="/"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-zinc-800/80 hover:bg-zinc-700/80 active:scale-95 text-zinc-300 hover:text-white font-medium text-sm transition-all flex items-center justify-center gap-2 border border-zinc-700/50"
+          >
+            <Home className="w-4 h-4" />
+            Go Home
+          </Link>
+        </div>
       </div>
-      <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">Something went wrong!</h1>
-      <p className="text-zinc-400 max-w-md mx-auto text-lg mb-8 leading-relaxed">
-        An unexpected error occurred. Don't worry, our team has been notified. Let's try that again.
-      </p>
-      <button
-        onClick={() => reset()}
-        className="px-8 py-4 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-all shadow-lg hover:shadow-indigo-500/25 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-background"
-      >
-        Try again
-      </button>
     </div>
   );
 }
+
