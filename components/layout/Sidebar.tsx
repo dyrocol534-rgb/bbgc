@@ -102,6 +102,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
   // Floating Mobile Pill Position State
   const [pillTop, setPillTop] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const isPointerDownRef = useRef(false);
   const dragStartYRef = useRef(0);
   const initialPillTopRef = useRef(0);
   const hasMovedRef = useRef(false);
@@ -119,52 +120,48 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
     }
   }, []);
 
-  const handleDragStart = (e: React.TouchEvent | React.MouseEvent) => {
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-    dragStartYRef.current = clientY;
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch (err) {}
+    isPointerDownRef.current = true;
+    dragStartYRef.current = e.clientY;
     initialPillTopRef.current = pillTop ?? (typeof window !== 'undefined' ? window.innerHeight / 2 : 300);
     hasMovedRef.current = false;
-    setIsDragging(true);
   };
 
-  useEffect(() => {
-    if (!isDragging) return;
-
-    const handleMove = (e: TouchEvent | MouseEvent) => {
-      const clientY = 'touches' in e ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY;
-      const deltaY = clientY - dragStartYRef.current;
-      if (Math.abs(deltaY) > 5) {
-        hasMovedRef.current = true;
-      }
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!isPointerDownRef.current) return;
+    const deltaY = e.clientY - dragStartYRef.current;
+    if (Math.abs(deltaY) > 5) {
+      hasMovedRef.current = true;
+      setIsDragging(true);
       const minTop = 80;
-      const maxTop = window.innerHeight - 80;
+      const maxTop = (typeof window !== 'undefined' ? window.innerHeight : 600) - 80;
       const newTop = Math.min(Math.max(initialPillTopRef.current + deltaY, minTop), maxTop);
       setPillTop(newTop);
-    };
+    }
+  };
 
-    const handleEnd = () => {
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!isPointerDownRef.current) return;
+    isPointerDownRef.current = false;
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch (err) {}
+
+    if (hasMovedRef.current) {
+      // Finished dragging: save position
       setIsDragging(false);
-      if (!hasMovedRef.current) {
-        // Simple tap / click -> toggle sidebar
-        setIsExpanded(prev => !prev);
-      } else if (pillTop !== null) {
-        // Save dragged position
+      if (pillTop !== null) {
         localStorage.setItem('sidebar_pill_top', pillTop.toString());
       }
-    };
-
-    window.addEventListener('touchmove', handleMove, { passive: false });
-    window.addEventListener('touchend', handleEnd);
-    window.addEventListener('mousemove', handleMove);
-    window.addEventListener('mouseup', handleEnd);
-
-    return () => {
-      window.removeEventListener('touchmove', handleMove);
-      window.removeEventListener('touchend', handleEnd);
-      window.removeEventListener('mousemove', handleMove);
-      window.removeEventListener('mouseup', handleEnd);
-    };
-  }, [isDragging, pillTop]);
+    } else {
+      // Simple tap / click -> toggle sidebar
+      setIsDragging(false);
+      setIsExpanded(prev => !prev);
+    }
+  };
 
   return (
     <>
@@ -197,9 +194,18 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
       )}
 
       {/* Mobile Draggable Ergonomic Pill Handle */}
-      <div 
-        onMouseDown={handleDragStart}
-        onTouchStart={handleDragStart}
+      <button 
+        type="button"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={() => {
+          isPointerDownRef.current = false;
+          setIsDragging(false);
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
         style={{
           top: pillTop !== null ? `${pillTop}px` : '50%',
           transform: 'translateY(-50%)',
@@ -215,10 +221,8 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
           isDragging ? "scale-105 opacity-90 shadow-[4px_0_20px_rgba(255,107,0,0.6)]" : "active:scale-95"
         )}
         aria-label={isExpanded ? "Close sidebar" : "Open sidebar"}
-        role="button"
-        tabIndex={0}
       >
-        <div className="flex flex-col items-center justify-center gap-0.5">
+        <div className="flex flex-col items-center justify-center gap-0.5 pointer-events-none">
           {isExpanded ? (
             <X className="w-4 h-4 text-white drop-shadow-sm" />
           ) : (
@@ -229,7 +233,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             </>
           )}
         </div>
-      </div>
+      </button>
 
       <aside 
         className={clsx(

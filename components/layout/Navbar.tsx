@@ -154,52 +154,65 @@ export default function Navbar() {
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
-      
-      <div className={clsx(
-        "fixed top-0 right-0 h-full w-72 bg-[#0c0c0e] border-l border-[#1f1f22] z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl",
+           <div className={clsx(
+        "fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-[#0c0c0e] border-l border-[#1f1f22] z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl backdrop-blur-xl",
         isSidebarOpen ? "translate-x-0" : "translate-x-full"
       )}>
-        <div className="p-4 bg-gradient-to-r from-indigo-950/40 via-[#121217] to-[#0c0c0e] border-b border-zinc-800/80 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        {/* Drawer Header */}
+        <div className="p-4 bg-[#111115] border-b border-zinc-800/80 flex items-center justify-between">
+          <div className="flex items-center gap-3 min-w-0">
             {session?.user?.image ? (
-              <div className="relative w-10 h-10 rounded-full border border-indigo-500/40 shadow-md shadow-indigo-500/20 overflow-hidden shrink-0">
+              <div className="relative w-10 h-10 rounded-xl border border-orange-500/30 shadow-md shadow-orange-500/10 overflow-hidden shrink-0">
                 <Image src={session.user.image} alt="User" fill sizes="40px" className="object-cover" />
               </div>
             ) : (
-              <div className="w-10 h-10 rounded-full bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center shrink-0 text-indigo-400 shadow-[0_0_12px_rgba(99,102,241,0.25)]">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center shrink-0 text-orange-400 shadow-[0_0_12px_rgba(255,107,0,0.2)]">
                 <UserIcon className="w-5 h-5" />
               </div>
             )}
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-white tracking-wide truncate max-w-[140px]">{session?.user?.name || "Guest Player"}</span>
-              <span className="text-[10px] text-zinc-400 font-medium">
-                {session ? (session.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") ? "Administrator" : "Member") : "Play & Earn Rewards"}
-              </span>
+            <div className="flex flex-col min-w-0">
+              <span className="text-sm font-bold text-white tracking-tight truncate">{session?.user?.name || "Guest Player"}</span>
+              <div className="mt-0.5">
+                {session ? (
+                  session.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") ? (
+                    <span className="inline-block px-2 py-0.5 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-400 text-[10px] font-bold">
+                      Administrator
+                    </span>
+                  ) : (
+                    <span className="inline-block px-2 py-0.5 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 text-[10px] font-medium">
+                      Member
+                    </span>
+                  )
+                ) : (
+                  <span className="text-[10px] text-zinc-400 font-medium">Play & Earn XP</span>
+                )}
+              </div>
             </div>
           </div>
           <button 
             onClick={() => setIsSidebarOpen(false)} 
-            className="text-zinc-400 hover:text-white p-1.5 hover:bg-zinc-800/60 rounded-lg transition-colors"
+            className="text-zinc-400 hover:text-white p-2 hover:bg-zinc-800 rounded-xl border border-transparent hover:border-zinc-700 transition-all shrink-0 ml-2"
             aria-label="Close sidebar"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+        {/* Drawer Body */}
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
           {session && (
             <Link 
               href="/profile" 
               onClick={() => setIsSidebarOpen(false)} 
-              className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/60 border border-zinc-800/80 hover:border-zinc-700 text-zinc-200 hover:text-white transition-all group"
+              className="flex items-center justify-between p-3 rounded-2xl bg-[#121216] border border-zinc-800 hover:border-orange-500/40 text-zinc-200 hover:text-white transition-all group shadow-sm"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-300 group-hover:text-indigo-400 transition-colors">
+                <div className="w-8 h-8 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 group-hover:scale-105 transition-transform">
                   <UserIcon className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-semibold">My Profile</span>
+                <span className="text-xs font-bold text-zinc-200 group-hover:text-white">My Profile</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+              <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-orange-400 transition-colors" />
             </Link>
           )}
 
@@ -214,14 +227,14 @@ export default function Navbar() {
                 }
                 setIsSidebarOpen(false);
               }}
-              className="bg-gradient-to-b from-[#141418] to-[#0f0f12] border border-zinc-800/80 hover:border-amber-500/40 rounded-xl p-3 transition-all group relative overflow-hidden"
+              className="bg-[#121216] border border-zinc-800 hover:border-amber-500/40 rounded-2xl p-3.5 transition-all group relative overflow-hidden shadow-sm"
             >
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">XP Balance</span>
                 <Coins className="w-4 h-4 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-amber-300">0 XP</span>
+                <span className="text-sm font-extrabold text-amber-300">0 XP</span>
                 <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-amber-400 transition-colors" />
               </div>
             </Link>
@@ -235,21 +248,21 @@ export default function Navbar() {
                 }
                 setIsSidebarOpen(false);
               }}
-              className="bg-gradient-to-b from-[#141418] to-[#0f0f12] border border-zinc-800/80 hover:border-orange-500/40 rounded-xl p-3 transition-all group relative overflow-hidden"
+              className="bg-[#121216] border border-zinc-800 hover:border-orange-500/40 rounded-2xl p-3.5 transition-all group relative overflow-hidden shadow-sm"
             >
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Streak</span>
                 <Flame className="w-4 h-4 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-orange-400">0 Days</span>
+                <span className="text-sm font-extrabold text-orange-400">0 Days</span>
                 <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-orange-400 transition-colors" />
               </div>
             </Link>
           </div>
 
           {/* Menu Actions Group */}
-          <div className="flex flex-col gap-2 bg-[#0e0e11] border border-zinc-800/70 rounded-xl p-1.5">
+          <div className="flex flex-col gap-2 bg-[#121216] border border-zinc-800 rounded-2xl p-2 shadow-sm">
             <Link
               href="/referral"
               onClick={(e) => {
@@ -259,18 +272,18 @@ export default function Navbar() {
                 }
                 setIsSidebarOpen(false);
               }}
-              className="flex items-center justify-between p-2.5 hover:bg-zinc-800/50 rounded-lg transition-all group"
+              className="flex items-center justify-between p-2.5 hover:bg-zinc-800/60 rounded-xl transition-all group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-7 h-7 rounded-md bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                <div className="w-8 h-8 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
                   <HeartHandshake className="w-4 h-4" />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-xs font-semibold text-zinc-200 group-hover:text-white transition-colors">Refer & Earn</span>
-                  <span className="text-[10px] text-zinc-500">Get +50 XP per invite</span>
+                  <span className="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">Refer & Earn</span>
+                  <span className="text-[10px] text-zinc-400">Get +50 XP per invite</span>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/30">
                 +50 XP
               </span>
             </Link>
@@ -282,27 +295,27 @@ export default function Navbar() {
         </div>
 
         {/* Drawer Footer - Minimalist Brand Mention & Sign-In CTA */}
-        <div className="p-4 border-t border-zinc-800/80 bg-[#0b0b0d] flex flex-col gap-3">
+        <div className="p-4 border-t border-zinc-800/80 bg-[#111115] flex flex-col gap-3">
           {/* Unique Pill Badge for bluebuff.in Product */}
           <a 
             href="https://bluebuff.in" 
             target="_blank" 
-            rel="noopener noreferrer"
+            rel="noopener noreferrer" 
             onClick={() => setIsSidebarOpen(false)}
-            className="flex items-center justify-between px-3 py-2 rounded-lg bg-zinc-900/80 border border-zinc-800 hover:border-indigo-500/40 text-zinc-400 hover:text-indigo-300 transition-all group"
+            className="flex items-center justify-between px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-orange-500/40 text-zinc-400 hover:text-orange-300 transition-all group"
           >
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
               <span className="text-xs font-bold text-zinc-200 group-hover:text-white">bluebuff.in</span>
               <span className="text-zinc-600 text-[10px]">&bull;</span>
               <span className="text-[10px] text-zinc-400 font-medium">Official Product</span>
             </div>
-            <ExternalLink className="w-3.5 h-3.5 text-zinc-600 group-hover:text-indigo-400 transition-colors" />
+            <ExternalLink className="w-3.5 h-3.5 text-zinc-600 group-hover:text-orange-400 transition-colors" />
           </a>
 
           {!session ? (
             <div className="flex flex-col gap-2 pt-1">
-              <p className="text-zinc-500 text-[11px] text-center leading-tight">
+              <p className="text-zinc-400 text-[11px] text-center leading-tight">
                 Sign in to sync XP, unlock rewards & save favorites!
               </p>
               <button
@@ -310,7 +323,7 @@ export default function Navbar() {
                   setIsSidebarOpen(false);
                   router.push("/login");
                 }}
-                className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold text-xs transition-all rounded-xl shadow-lg shadow-indigo-600/25 active:scale-[0.98]"
+                className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-[#ff6b00] to-[#ea580c] hover:brightness-110 text-white font-bold text-xs transition-all rounded-xl shadow-lg shadow-orange-600/25 active:scale-[0.98]"
               >
                 <UserIcon className="w-4 h-4" />
                 <span>Sign In with Google</span>
@@ -322,7 +335,7 @@ export default function Navbar() {
                 <Link 
                   href="/admin" 
                   onClick={() => setIsSidebarOpen(false)} 
-                  className="flex items-center justify-center gap-2 w-full py-2 bg-indigo-950/40 text-indigo-300 hover:bg-indigo-900/50 transition-colors rounded-lg text-xs font-bold border border-indigo-800/40"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 hover:text-orange-300 transition-colors rounded-xl text-xs font-bold border border-orange-500/25"
                 >
                   <UploadCloud className="w-3.5 h-3.5" />
                   <span>Admin Dashboard</span>
@@ -330,7 +343,7 @@ export default function Navbar() {
               )}
               <button
                 onClick={() => signOut()}
-                className="flex items-center justify-center gap-2 w-full py-2 bg-red-950/30 text-red-400 hover:bg-red-900/40 transition-colors rounded-lg text-xs font-bold border border-red-900/30"
+                className="flex items-center justify-center gap-2 w-full py-2.5 bg-red-950/30 hover:bg-red-950/50 text-red-400 hover:text-red-300 transition-colors rounded-xl text-xs font-bold border border-red-900/30"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Sign Out</span>
@@ -342,3 +355,4 @@ export default function Navbar() {
     </>
   );
 }
+
