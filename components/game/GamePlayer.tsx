@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import axios from 'axios';
 import { ConsoleLoader } from '@/components/ui/ConsoleLoader';
 import Image from 'next/image';
+import GameImage from '@/components/game/GameImage';
 
 interface GamePlayerProps {
   game: {
@@ -45,7 +46,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
-  const [thumbError, setThumbError] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const playButtonRef = useRef<HTMLButtonElement>(null);
@@ -345,15 +345,16 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             boxSizing: 'border-box',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
-              {cleanThumb && !thumbError ? (
-                <Image 
+              {cleanThumb ? (
+                <img 
                   src={cleanThumb} 
                   alt="" 
                   width={18} 
                   height={18} 
-                  unoptimized 
                   style={{ width: 18, height: 18, borderRadius: 4, objectFit: 'cover' }} 
-                  onError={() => setThumbError(true)}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLElement).style.display = 'none';
+                  }}
                 />
               ) : (
                 <div style={{ width: 18, height: 18, borderRadius: 4, background: 'linear-gradient(135deg, #ff6b00, #ea580c)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 10, fontWeight: 900, flexShrink: 0, userSelect: 'none' }}>
@@ -472,17 +473,13 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center w-full">
-              {cleanThumb && !thumbError ? (
-                <div className="relative mb-2.5 group">
-                  <Image 
+              {cleanThumb ? (
+                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden mb-2.5 border border-white/15 shadow-xl group">
+                  <GameImage 
                     src={cleanThumb} 
                     alt={game.title} 
-                    width={112} 
-                    height={112} 
-                    unoptimized 
-                    priority 
-                    className="w-20 h-20 sm:w-24 sm:h-24 aspect-square object-cover rounded-2xl border border-white/15 shadow-xl group-hover:scale-105 transition-transform duration-300" 
-                    onError={() => setThumbError(true)}
+                    priority={true} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
                   />
                 </div>
               ) : (
@@ -566,15 +563,13 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         {/* ── ACTION BAR (always visible below the player) ─── */}
         <div className="flex flex-row items-center justify-between bg-zinc-900/90 backdrop-blur-md rounded-xl p-1 sm:p-1.5 border border-white/5 gap-1.5 mt-1 overflow-x-auto scrollbar-none">
           <div className="flex items-center gap-1.5 min-w-0 shrink">
-            {cleanThumb && !thumbError ? (
-              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md overflow-hidden flex-shrink-0 bg-zinc-800 ml-0.5">
-                <Image 
+            {cleanThumb ? (
+              <div className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-md overflow-hidden flex-shrink-0 bg-zinc-800 ml-0.5">
+                <GameImage 
                   src={cleanThumb} 
                   alt={game.title} 
-                  width={28} 
-                  height={28} 
+                  sizes="32px" 
                   className="w-full h-full object-cover" 
-                  onError={() => setThumbError(true)}
                 />
               </div>
             ) : (

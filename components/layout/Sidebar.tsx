@@ -99,70 +99,6 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
     }
   };
 
-  // Floating Mobile Pill Position State
-  const [pillTop, setPillTop] = useState<number | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const isPointerDownRef = useRef(false);
-  const dragStartYRef = useRef(0);
-  const initialPillTopRef = useRef(0);
-  const hasMovedRef = useRef(false);
-
-  useEffect(() => {
-    // Load saved position or default to 50%
-    const saved = localStorage.getItem('sidebar_pill_top');
-    if (saved) {
-      const parsed = parseFloat(saved);
-      if (!isNaN(parsed)) setPillTop(parsed);
-    } else {
-      if (typeof window !== 'undefined') {
-        setPillTop(window.innerHeight / 2);
-      }
-    }
-  }, []);
-
-  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId);
-    } catch (err) {}
-    isPointerDownRef.current = true;
-    dragStartYRef.current = e.clientY;
-    initialPillTopRef.current = pillTop ?? (typeof window !== 'undefined' ? window.innerHeight / 2 : 300);
-    hasMovedRef.current = false;
-  };
-
-  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
-    if (!isPointerDownRef.current) return;
-    const deltaY = e.clientY - dragStartYRef.current;
-    if (Math.abs(deltaY) > 5) {
-      hasMovedRef.current = true;
-      setIsDragging(true);
-      const minTop = 80;
-      const maxTop = (typeof window !== 'undefined' ? window.innerHeight : 600) - 80;
-      const newTop = Math.min(Math.max(initialPillTopRef.current + deltaY, minTop), maxTop);
-      setPillTop(newTop);
-    }
-  };
-
-  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
-    if (!isPointerDownRef.current) return;
-    isPointerDownRef.current = false;
-    try {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    } catch (err) {}
-
-    if (hasMovedRef.current) {
-      // Finished dragging: save position
-      setIsDragging(false);
-      if (pillTop !== null) {
-        localStorage.setItem('sidebar_pill_top', pillTop.toString());
-      }
-    } else {
-      // Simple tap / click -> toggle sidebar
-      setIsDragging(false);
-      setIsExpanded(prev => !prev);
-    }
-  };
-
   return (
     <>
       {/* Full-screen Loader Overlay for "Surprise Me" */}
@@ -188,51 +124,32 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
       {/* Mobile Backdrop */}
       {isExpanded && (
         <div 
-          className="fixed inset-0 top-13 sm:top-16 bg-black/60 z-30 md:hidden"
+          className="fixed inset-0 top-13 sm:top-16 bg-black/60 z-30 md:hidden backdrop-blur-xs transition-opacity duration-300"
           onClick={() => setIsExpanded(false)}
         />
       )}
 
-      {/* Mobile Draggable Ergonomic Pill Handle */}
+      {/* Mobile Floating Circular Action Button (FAB) */}
       <button 
         type="button"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={() => {
-          isPointerDownRef.current = false;
-          setIsDragging(false);
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-        style={{
-          top: pillTop !== null ? `${pillTop}px` : '50%',
-          transform: 'translateY(-50%)',
-        }}
+        onClick={() => setIsExpanded(prev => !prev)}
         className={clsx(
-          "md:hidden fixed z-50 select-none touch-none",
-          "flex items-center justify-center cursor-grab active:cursor-grabbing",
-          "w-6 h-12 rounded-r-2xl",
+          "md:hidden fixed z-50 select-none",
+          "flex items-center justify-center",
+          "w-12 h-12 rounded-full",
           "bg-gradient-to-br from-[#ff7a1a] via-[#ff6b00] to-[#ea580c]",
-          "border-y border-r border-orange-300/40 shadow-[2px_0_15px_rgba(255,107,0,0.4)]",
-          "text-white transition-[left] duration-300 transform-gpu",
-          isExpanded ? "left-60" : "left-0",
-          isDragging ? "scale-105 opacity-90 shadow-[4px_0_20px_rgba(255,107,0,0.6)]" : "active:scale-95"
+          "border border-orange-300/40 shadow-[0_4px_20px_rgba(255,107,0,0.5)]",
+          "text-white transition-all duration-300 transform-gpu",
+          "bottom-6 left-4 active:scale-90 hover:scale-105",
+          isExpanded && "left-[250px] shadow-[0_4px_25px_rgba(255,107,0,0.7)]"
         )}
-        aria-label={isExpanded ? "Close sidebar" : "Open sidebar"}
+        aria-label={isExpanded ? "Close navigation" : "Open navigation"}
       >
-        <div className="flex flex-col items-center justify-center gap-0.5 pointer-events-none">
-          {isExpanded ? (
-            <X className="w-4 h-4 text-white drop-shadow-sm" />
-          ) : (
-            <>
-              <div className="w-3 h-0.5 bg-white rounded-full shadow-sm" />
-              <div className="w-3 h-0.5 bg-white rounded-full shadow-sm" />
-              <div className="w-3 h-0.5 bg-white rounded-full shadow-sm" />
-            </>
-          )}
-        </div>
+        {isExpanded ? (
+          <X className="w-5 h-5 text-white drop-shadow-sm transition-transform duration-200" />
+        ) : (
+          <Gamepad2 className="w-5 h-5 text-white drop-shadow-sm transition-transform duration-200" />
+        )}
       </button>
 
       <aside 
