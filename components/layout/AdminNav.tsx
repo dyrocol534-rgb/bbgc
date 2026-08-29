@@ -32,7 +32,7 @@ export default function AdminNav() {
   ];
 
   return (
-    <nav className="w-full flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 custom-scrollbar hide-scrollbar-on-mobile">
+    <nav className="w-full flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0 custom-scrollbar hide-scrollbar-on-mobile">
       {links.map((link) => {
         const isActive = link.exact ? pathname === link.href : pathname.startsWith(link.href);
         const Icon = link.icon;
@@ -42,13 +42,13 @@ export default function AdminNav() {
             key={link.name}
             href={link.href}
             className={clsx(
-              "flex items-center gap-3 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap shrink-0",
+              "flex items-center gap-2.5 px-2.5 py-1.5 sm:py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0",
               isActive 
-                ? "bg-[#121214] text-white shadow-md shadow-black/40 border-b-2 lg:border-b-0 lg:border-l-2 border-indigo-500 lg:rounded-l-none" 
-                : "text-zinc-500 hover:bg-[#121214]/50 hover:text-zinc-300 border-b-2 lg:border-b-0 lg:border-l-2 border-transparent"
+                ? "bg-zinc-800/90 text-white font-semibold border border-zinc-700/60" 
+                : "text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200 border border-transparent"
             )}
           >
-            <Icon className={clsx("w-4 h-4", isActive ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]" : "text-zinc-500")} />
+            <Icon className={clsx("w-4 h-4 shrink-0", isActive ? "text-indigo-400" : "text-zinc-500")} />
             {link.name}
           </Link>
         );

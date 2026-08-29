@@ -45,36 +45,36 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
   };
 
   return (
-    <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-6 py-6">
-      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
+    <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6">
+      <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-5 items-start">
         
         {/* Admin Sidebar */}
         <aside
           className={clsx(
             "w-full shrink-0 transition-all duration-300 lg:sticky lg:top-20 z-20",
-            isCollapsed ? "lg:w-20" : "lg:w-60"
+            isCollapsed ? "lg:w-16" : "lg:w-56"
           )}
         >
-          <div className="relative bg-[#0c0c0e] border border-[#1f1f22] rounded-2xl p-3 sm:p-4 shadow-2xl shadow-black/60 flex flex-col gap-4">
+          <div className="relative bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-2 sm:p-2.5 flex flex-col gap-2">
             
             {/* Collapse Toggle Button (Desktop) */}
             <button
               type="button"
               onClick={toggleCollapse}
-              title={isCollapsed ? "Expand Admin Navigation" : "Collapse Admin Navigation"}
-              className="hidden lg:flex absolute -right-3.5 top-6 w-7 h-7 bg-[#121214] border border-[#1f1f22] hover:border-indigo-500/50 rounded-full items-center justify-center text-zinc-400 hover:text-white shadow-lg shadow-black/80 z-30 transition-all cursor-pointer"
+              title={isCollapsed ? "Expand Navigation" : "Collapse Navigation"}
+              className="hidden lg:flex absolute -right-3 top-4 w-6 h-6 bg-[#141418] border border-zinc-800 hover:border-zinc-700 rounded-full items-center justify-center text-zinc-400 hover:text-white z-30 transition-all cursor-pointer shadow-sm"
             >
               {isCollapsed ? (
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-3.5 h-3.5" />
               ) : (
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-3.5 h-3.5" />
               )}
             </button>
 
             {/* Header / Title */}
-            <div className="flex items-center gap-3 px-2 py-1 overflow-hidden min-h-[36px]">
-              <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 text-indigo-400">
-                <ShieldCheck className="w-4 h-4" />
+            <div className="flex items-center gap-2 px-1.5 py-1 overflow-hidden">
+              <div className="w-6 h-6 rounded-md bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 text-indigo-400">
+                <ShieldCheck className="w-3.5 h-3.5" />
               </div>
               <div
                 className={clsx(
@@ -82,7 +82,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
                   isCollapsed ? "lg:opacity-0 lg:w-0 lg:hidden" : "opacity-100"
                 )}
               >
-                <h2 className="text-sm font-bold text-white leading-tight truncate">Admin Panel</h2>
+                <h2 className="text-xs font-semibold text-white leading-tight truncate">Admin Panel</h2>
               </div>
             </div>
 
@@ -98,17 +98,17 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
                     href={link.href}
                     title={isCollapsed ? link.name : undefined}
                     className={clsx(
-                      "flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap shrink-0 group relative",
+                      "flex items-center gap-2.5 px-2.5 py-1.5 sm:py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 group relative",
                       isActive
-                        ? "bg-[#16161a] text-white shadow-md border-b-2 lg:border-b-0 lg:border-l-2 border-indigo-500"
-                        : "text-zinc-400 hover:bg-[#16161a]/60 hover:text-zinc-200 border-b-2 lg:border-b-0 lg:border-l-2 border-transparent"
+                        ? "bg-zinc-800/90 text-white font-semibold border border-zinc-700/60"
+                        : "text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200 border border-transparent"
                     )}
                   >
                     <Icon
                       className={clsx(
-                        "w-4 h-4 shrink-0 transition-transform group-hover:scale-110",
+                        "w-4 h-4 shrink-0 transition-transform group-hover:scale-105",
                         isActive
-                          ? "text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]"
+                          ? "text-indigo-400"
                           : "text-zinc-500 group-hover:text-zinc-300"
                       )}
                     />
@@ -124,7 +124,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
 
                     {/* Floating Tooltip when Collapsed */}
                     {isCollapsed && (
-                      <div className="hidden lg:group-hover:flex absolute left-full ml-3 px-2.5 py-1 bg-[#16161a] border border-[#27272e] rounded-lg text-white text-[11px] font-semibold tracking-normal shadow-xl whitespace-nowrap z-50 pointer-events-none items-center">
+                      <div className="hidden lg:group-hover:flex absolute left-full ml-2.5 px-2 py-0.5 bg-zinc-900 border border-zinc-800 rounded-md text-white text-[11px] font-medium shadow-md whitespace-nowrap z-50 pointer-events-none items-center">
                         {link.name}
                       </div>
                     )}
@@ -137,7 +137,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
 
         {/* Main Content Area */}
         <main className="flex-1 min-w-0 w-full transition-all duration-300">
-          <div className="bg-[#0c0c0e] border border-[#1f1f22] rounded-2xl p-4 sm:p-6 lg:p-7 shadow-2xl shadow-black/50">
+          <div className="bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-3 sm:p-5 lg:p-6">
             {children}
           </div>
         </main>
