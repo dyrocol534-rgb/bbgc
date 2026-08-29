@@ -113,7 +113,7 @@ export default function Navbar() {
           {/* Notification Bell Button */}
           <NotificationBell />
 
-          {/* Profile / Menu Button or Login Button */}
+          {/* Profile / Menu Button */}
           {session ? (
             <button 
               onClick={() => setIsSidebarOpen(true)} 
@@ -128,24 +128,15 @@ export default function Navbar() {
               )}
             </button>
           ) : (
-            <div className="flex items-center gap-1.5">
-              <Link
-                href="/login"
-                className="inline-flex items-center justify-center gap-1.5 h-[34px] sm:h-9 px-3 sm:px-3.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold text-xs shadow-md shadow-orange-500/25 active:scale-95 transition-all touch-manipulation shrink-0 cursor-pointer"
-                title="Sign In"
-              >
-                <UserIcon className="w-3.5 h-3.5" />
-                <span>Sign In</span>
-              </Link>
-              <button
-                onClick={() => setIsSidebarOpen(true)}
-                className="w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full border border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 transition-all flex items-center justify-center text-zinc-400 hover:text-white shadow-sm shrink-0 touch-manipulation cursor-pointer"
-                aria-label="Open Menu"
-                title="Menu"
-              >
-                <Gamepad2 className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="h-9 px-2.5 sm:px-3 rounded-full border border-dashed border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 transition-all flex items-center gap-1 text-zinc-300 hover:text-white shadow-sm shrink-0 touch-manipulation cursor-pointer active:scale-95"
+              aria-label="Account & Menu"
+              title="Account & Menu"
+            >
+              <UserIcon className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />
+            </button>
           )}
         </div>
       </nav>
@@ -164,37 +155,37 @@ export default function Navbar() {
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
-           <div className={clsx(
-        "fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-[#0c0c0e] border-l border-[#1f1f22] z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl backdrop-blur-xl",
+      <div className={clsx(
+        "fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-[#0d0d10] border-l border-zinc-800/60 z-50 transform transition-transform duration-300 ease-out flex flex-col",
         isSidebarOpen ? "translate-x-0" : "translate-x-full"
       )}>
         {/* Drawer Header */}
-        <div className="p-4 bg-[#111115] border-b border-zinc-800/80 flex items-center justify-between">
+        <div className="p-4 bg-[#111114] border-b border-zinc-800/60 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
             {session?.user?.image ? (
-              <div className="relative w-10 h-10 rounded-xl border border-orange-500/30 shadow-md shadow-orange-500/10 overflow-hidden shrink-0">
-                <Image src={session.user.image} alt="User" fill sizes="40px" className="object-cover" />
+              <div className="relative w-9 h-9 rounded-xl border border-zinc-700/60 overflow-hidden shrink-0">
+                <Image src={session.user.image} alt="User" fill sizes="36px" className="object-cover" />
               </div>
             ) : (
-              <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/30 flex items-center justify-center shrink-0 text-orange-400 shadow-[0_0_12px_rgba(255,107,0,0.2)]">
-                <UserIcon className="w-5 h-5" />
+              <div className="w-9 h-9 rounded-xl bg-zinc-800/80 border border-zinc-700/50 flex items-center justify-center shrink-0 text-zinc-300">
+                <UserIcon className="w-4 h-4" />
               </div>
             )}
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold text-white tracking-tight truncate">{session?.user?.name || "Guest Player"}</span>
+              <span className="text-sm font-semibold text-white tracking-tight truncate">{session?.user?.name || "Guest Player"}</span>
               <div className="mt-0.5">
                 {session ? (
                   session.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") ? (
-                    <span className="inline-block px-2 py-0.5 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-400 text-[10px] font-bold">
+                    <span className="inline-block px-2 py-0.5 rounded-md bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-semibold">
                       Administrator
                     </span>
                   ) : (
-                    <span className="inline-block px-2 py-0.5 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 text-[10px] font-medium">
+                    <span className="inline-block px-2 py-0.5 rounded-md bg-zinc-800 border border-zinc-700/60 text-zinc-300 text-[10px] font-medium">
                       Member
                     </span>
                   )
                 ) : (
-                  <span className="text-[10px] text-zinc-400 font-medium">Play & Earn XP</span>
+                  <span className="text-[11px] text-zinc-400 font-normal">Play & Earn XP</span>
                 )}
               </div>
             </div>
@@ -203,7 +194,7 @@ export default function Navbar() {
             {session && (
               <button
                 onClick={() => signOut()}
-                className="text-zinc-400 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-xl border border-transparent hover:border-red-500/20 transition-all touch-manipulation cursor-pointer"
+                className="text-zinc-400 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg border border-transparent hover:border-red-500/20 transition-all touch-manipulation cursor-pointer"
                 title="Sign Out"
                 aria-label="Sign Out"
               >
@@ -212,7 +203,7 @@ export default function Navbar() {
             )}
             <button 
               onClick={() => setIsSidebarOpen(false)} 
-              className="text-zinc-400 hover:text-white p-2 hover:bg-zinc-800 rounded-xl border border-transparent hover:border-zinc-700 transition-all touch-manipulation cursor-pointer"
+              className="text-zinc-400 hover:text-white p-2 hover:bg-zinc-800/60 rounded-lg border border-transparent hover:border-zinc-700 transition-all touch-manipulation cursor-pointer"
               aria-label="Close sidebar"
             >
               <X className="w-4 h-4" />
@@ -221,39 +212,20 @@ export default function Navbar() {
         </div>
 
         {/* Drawer Body */}
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
-          {!session && (
-            <div className="p-3 bg-gradient-to-br from-orange-500/15 via-zinc-900 to-zinc-900/90 border border-orange-500/30 rounded-2xl flex flex-col gap-2 shadow-md">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                <span className="text-xs font-bold text-white">Save Progress & Earn XP</span>
-              </div>
-              <button
-                onClick={() => {
-                  setIsSidebarOpen(false);
-                  router.push("/login");
-                }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 active:scale-[0.98] text-white font-bold text-xs rounded-xl shadow-md transition-all touch-manipulation cursor-pointer"
-              >
-                <UserIcon className="w-4 h-4" />
-                <span>Sign In with Google</span>
-              </button>
-            </div>
-          )}
-
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3.5 custom-scrollbar">
           {session && (
             <Link 
               href="/profile" 
               onClick={() => setIsSidebarOpen(false)} 
-              className="flex items-center justify-between p-3 rounded-2xl bg-[#121216] border border-zinc-800 hover:border-orange-500/40 text-zinc-200 hover:text-white transition-all group shadow-sm"
+              className="flex items-center justify-between p-3 rounded-xl bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 text-zinc-200 hover:text-white transition-all group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 group-hover:scale-105 transition-transform">
-                  <UserIcon className="w-4 h-4" />
+                <div className="w-7 h-7 rounded-lg bg-zinc-800 border border-zinc-700/60 flex items-center justify-center text-zinc-300">
+                  <UserIcon className="w-3.5 h-3.5" />
                 </div>
-                <span className="text-xs font-bold text-zinc-200 group-hover:text-white">My Profile</span>
+                <span className="text-xs font-semibold text-zinc-200 group-hover:text-white">My Profile</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-orange-400 transition-colors" />
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
             </Link>
           )}
 
@@ -268,15 +240,15 @@ export default function Navbar() {
                 }
                 setIsSidebarOpen(false);
               }}
-              className="bg-[#121216] border border-zinc-800 hover:border-amber-500/40 rounded-2xl p-3.5 transition-all group relative overflow-hidden shadow-sm"
+              className="bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-xl p-3 transition-all group flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">XP Balance</span>
-                <Coins className="w-4 h-4 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+                <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">XP Balance</span>
+                <Coins className="w-3.5 h-3.5 text-amber-400" />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-extrabold text-amber-300">0 XP</span>
-                <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-amber-400 transition-colors" />
+                <span className="text-sm font-bold text-amber-300">0 XP</span>
+                <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
               </div>
             </Link>
 
@@ -289,21 +261,21 @@ export default function Navbar() {
                 }
                 setIsSidebarOpen(false);
               }}
-              className="bg-[#121216] border border-zinc-800 hover:border-orange-500/40 rounded-2xl p-3.5 transition-all group relative overflow-hidden shadow-sm"
+              className="bg-zinc-900/60 border border-zinc-800/60 hover:border-zinc-700 rounded-xl p-3 transition-all group flex flex-col justify-between"
             >
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Streak</span>
-                <Flame className="w-4 h-4 text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
+                <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Streak</span>
+                <Flame className="w-3.5 h-3.5 text-orange-400" />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-extrabold text-orange-400">0 Days</span>
-                <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-orange-400 transition-colors" />
+                <span className="text-sm font-bold text-orange-400">0 Days</span>
+                <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
               </div>
             </Link>
           </div>
 
           {/* Menu Actions Group */}
-          <div className="flex flex-col gap-2 bg-[#121216] border border-zinc-800 rounded-2xl p-2 shadow-sm">
+          <div className="flex flex-col bg-zinc-900/60 border border-zinc-800/60 rounded-xl divide-y divide-zinc-800/40 overflow-hidden">
             <Link
               href="/referral"
               onClick={(e) => {
@@ -313,60 +285,58 @@ export default function Navbar() {
                 }
                 setIsSidebarOpen(false);
               }}
-              className="flex items-center justify-between p-2.5 hover:bg-zinc-800/60 rounded-xl transition-all group"
+              className="flex items-center justify-between p-3 hover:bg-zinc-800/40 transition-colors group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400">
-                  <HeartHandshake className="w-4 h-4" />
+                <div className="w-7 h-7 rounded-lg bg-zinc-800 border border-zinc-700/60 flex items-center justify-center text-zinc-300">
+                  <HeartHandshake className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-xs font-bold text-zinc-200 group-hover:text-white transition-colors">Refer & Earn</span>
+                  <span className="text-xs font-semibold text-zinc-200 group-hover:text-white transition-colors">Refer & Earn</span>
                   <span className="text-[10px] text-zinc-400">Get +50 XP per invite</span>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-400 border border-orange-500/30">
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">
                 +50 XP
               </span>
             </Link>
 
-            <div className="px-1">
+            <div className="p-1">
               <PWAInstallButton variant="menuItem" onInstall={() => setIsSidebarOpen(false)} />
             </div>
           </div>
         </div>
 
-        {/* Drawer Footer - Admin or Sign-In CTA */}
-        {(!session || session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com")) && (
-          <div className="p-4 border-t border-zinc-800/80 bg-[#111115] flex flex-col gap-3">
-            {!session ? (
-              <div className="flex flex-col gap-2">
-                <p className="text-zinc-400 text-[11px] text-center leading-tight">
-                  Sign in to sync XP, unlock rewards & save favorites!
-                </p>
-                <button
-                  onClick={() => {
-                    setIsSidebarOpen(false);
-                    router.push("/login");
-                  }}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-[#ff6b00] to-[#ea580c] hover:brightness-110 text-white font-bold text-xs transition-all rounded-xl shadow-lg shadow-orange-600/25 active:scale-[0.98] touch-manipulation cursor-pointer"
-                >
-                  <UserIcon className="w-4 h-4" />
-                  <span>Sign In with Google</span>
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-2">
-                <Link 
-                  href="/admin" 
-                  onClick={() => setIsSidebarOpen(false)} 
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 hover:text-orange-300 transition-colors rounded-xl text-xs font-bold border border-orange-500/25 touch-manipulation"
-                >
-                  <UploadCloud className="w-3.5 h-3.5" />
-                  <span>Admin Dashboard</span>
-                </Link>
-              </div>
-            )}
+        {/* Drawer Footer - Single Clean Action */}
+        {!session ? (
+          <div className="p-4 border-t border-zinc-800/60 bg-[#111114] flex flex-col gap-2">
+            <p className="text-zinc-400 text-[11px] text-center leading-tight">
+              Sign in to sync XP & save favorites
+            </p>
+            <button
+              onClick={() => {
+                setIsSidebarOpen(false);
+                router.push("/login");
+              }}
+              className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs transition-all rounded-xl active:scale-[0.98] touch-manipulation cursor-pointer"
+            >
+              <UserIcon className="w-4 h-4" />
+              <span>Sign In with Google</span>
+            </button>
           </div>
+        ) : (
+          session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") && (
+            <div className="p-4 border-t border-zinc-800/60 bg-[#111114]">
+              <Link 
+                href="/admin" 
+                onClick={() => setIsSidebarOpen(false)} 
+                className="flex items-center justify-center gap-2 w-full py-2.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 transition-colors rounded-xl text-xs font-semibold border border-zinc-800/80 touch-manipulation"
+              >
+                <UploadCloud className="w-3.5 h-3.5" />
+                <span>Admin Dashboard</span>
+              </Link>
+            </div>
+          )
         )}
       </div>
     </>

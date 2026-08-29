@@ -138,17 +138,17 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
           "flex items-center justify-center",
           "w-12 h-12 rounded-full",
           "bg-gradient-to-br from-[#ff7a1a] via-[#ff6b00] to-[#ea580c]",
-          "border border-orange-300/40 shadow-[0_4px_20px_rgba(255,107,0,0.5)]",
+          "border border-orange-400/30",
           "text-white transition-all duration-300 transform-gpu",
           "bottom-6 left-4 active:scale-90 hover:scale-105",
-          isExpanded && "left-[250px] shadow-[0_4px_25px_rgba(255,107,0,0.7)]"
+          isExpanded && "left-[250px]"
         )}
         aria-label={isExpanded ? "Close navigation" : "Open navigation"}
       >
         {isExpanded ? (
-          <X className="w-5 h-5 text-white drop-shadow-sm transition-transform duration-200" />
+          <X className="w-5 h-5 text-white transition-transform duration-200" />
         ) : (
-          <Gamepad2 className="w-5 h-5 text-white drop-shadow-sm transition-transform duration-200" />
+          <Gamepad2 className="w-5 h-5 text-white transition-transform duration-200" />
         )}
       </button>
 
@@ -189,7 +189,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             {isRolling ? (
               <Loader2 className="w-5 h-5 shrink-0 text-orange-400 animate-spin" />
             ) : (
-              <Dices className="w-5 h-5 shrink-0 text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]" />
+              <Dices className="w-5 h-5 shrink-0 text-orange-400" />
             )}
             <span className={clsx(
               "font-bold text-sm text-orange-100 transition-all duration-300", 
@@ -217,7 +217,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 )}
                 title={!isExpanded ? link.name : undefined}
               >
-                <Icon className={clsx("w-5 h-5 shrink-0", isActive ? "text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]" : "text-zinc-500")} />
+                <Icon className={clsx("w-5 h-5 shrink-0", isActive ? "text-orange-400" : "text-zinc-500")} />
                 <span className={clsx("transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
                   {link.name}
                 </span>
@@ -248,7 +248,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             title={!isExpanded ? "Refer & Earn +50 XP" : undefined}
           >
             <div className="flex items-center gap-3">
-              <Handshake className="w-5 h-5 text-orange-400 shrink-0 drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
+              <Handshake className="w-5 h-5 text-orange-400 shrink-0" />
               <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
                 <span className="text-white text-sm group-hover:text-orange-200 transition-colors">Refer & Earn</span>
                 <span className="text-orange-400/80 text-[10px] uppercase tracking-wider font-bold">+50 XP</span>
@@ -273,7 +273,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             title={!isExpanded ? "Daily Streak & XP" : undefined}
           >
             <div className="flex items-center gap-3">
-              <Flame className="w-5 h-5 text-orange-500 shrink-0 drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]" />
+              <Flame className="w-5 h-5 text-orange-500 shrink-0" />
               <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
                 <span className="text-white text-sm group-hover:text-orange-200 transition-colors">Daily Streak</span>
                 <span className="text-orange-500/80 text-[10px] uppercase tracking-wider font-bold">
@@ -317,7 +317,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 )}
                 title={!isExpanded ? link.name : undefined}
               >
-                <Icon className={clsx("w-5 h-5 shrink-0", isActive ? "text-orange-400 drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]" : "text-zinc-500")} />
+                <Icon className={clsx("w-5 h-5 shrink-0", isActive ? "text-orange-400" : "text-zinc-500")} />
                 <span className={clsx("transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
                   {link.name}
                 </span>
