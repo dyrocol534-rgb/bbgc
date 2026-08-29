@@ -8,7 +8,8 @@ import { useRouter } from "next/navigation";
 
 const CATEGORIES = [
   "action", "adventure", "arcade", "board", "card", "clicker", 
-  "driving", "io", "puzzle", "shooting", "sports", "multiplayer"
+  "driving", "racing", "puzzle", "shooting", "sports", "multiplayer",
+  "casual", "strategy", "3d", "io"
 ];
 
 export default function EditGamePage({ params }: { params: Promise<{ id: string }> }) {
@@ -18,6 +19,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [isCategorizingAI, setIsCategorizingAI] = useState(false);
   const [progress, setProgress] = useState(0);
   const [message, setMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -65,6 +67,35 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
       setIsLoading(false);
     }
   }
+
+  const handleAutoCategorizeAI = async () => {
+    if (!formData.title.trim()) {
+      setMessage("Please enter a Game Title first to analyze categories.");
+      return;
+    }
+    setIsCategorizingAI(true);
+    try {
+      const res = await axios.post("/api/admin/ai/categorize", {
+        title: formData.title,
+        description: formData.description,
+        category: formData.categories
+      });
+      if (res.data?.success && res.data?.categories?.length > 0) {
+        setFormData(prev => ({
+          ...prev,
+          categories: res.data.categories,
+          orientation: res.data.orientation || prev.orientation
+        }));
+        setMessage(`✨ Categorized with AI: [${res.data.categories.join(", ")}]`);
+        setTimeout(() => setMessage(""), 4000);
+      }
+    } catch (err: any) {
+      console.error(err);
+      setMessage(`AI Error: ${err.response?.data?.error || err.message}`);
+    } finally {
+      setIsCategorizingAI(false);
+    }
+  };
 
   const handleGenerateAIDescription = async () => {
     if (!formData.title.trim()) {
@@ -330,7 +361,28 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
 
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-3">Categories (Select Multiple)</label>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-medium text-text-secondary">Categories (Select Multiple)</label>
+              <button
+                type="button"
+                onClick={handleAutoCategorizeAI}
+                disabled={isCategorizingAI || !formData.title.trim()}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-orange-400 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/30 rounded-md transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98]"
+                title="Automatically analyze and classify game with Gemini AI"
+              >
+                {isCategorizingAI ? (
+                  <>
+                    <Loader2 className="w-3 h-3 animate-spin text-orange-400" />
+                    Analyzing with AI...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+                    AI Auto-Categorize
+                  </>
+                )}
+              </button>
+            </div>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map(cat => (
                 <button

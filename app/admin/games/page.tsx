@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ShieldCheck, ShieldAlert, Play, ExternalLink, Sparkles } from "lucide-react";
+import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ShieldCheck, ShieldAlert, Play, ExternalLink, Sparkles, Tag } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -28,6 +28,7 @@ export default function AdminGamesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
   const [enhancingIds, setEnhancingIds] = useState<Set<string>>(new Set());
+  const [categorizingIds, setCategorizingIds] = useState<Set<string>>(new Set());
   const [isBatchEnhancing, setIsBatchEnhancing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -137,6 +138,26 @@ export default function AdminGamesPage() {
       alert(`AI Enhance Error: ${error.response?.data?.error || error.message}`);
     } finally {
       setEnhancingIds(prev => {
+        const next = new Set(prev);
+        next.delete(gameId);
+        return next;
+      });
+    }
+  }
+
+  async function categorizeGameWithAI(gameId: string) {
+    setCategorizingIds(prev => new Set(prev).add(gameId));
+    try {
+      const { data } = await axios.post('/api/admin/ai/categorize', { gameId });
+      if (data.success && data.categories) {
+        setGames(games.map(g => g._id === gameId ? { ...g, category: data.categories } : g));
+        alert(`✨ AI Categorized: [${data.categories.join(", ")}]`);
+      }
+    } catch (error: any) {
+      console.error("AI categorize error:", error);
+      alert(`AI Categorize Error: ${error.response?.data?.error || error.message}`);
+    } finally {
+      setCategorizingIds(prev => {
         const next = new Set(prev);
         next.delete(gameId);
         return next;
@@ -374,6 +395,18 @@ export default function AdminGamesPage() {
                 {/* Actions */}
                 <td className="py-2 px-3 text-right">
                   <div className="flex justify-end items-center gap-1">
+                    <button
+                      onClick={() => categorizeGameWithAI(game._id)}
+                      disabled={categorizingIds.has(game._id)}
+                      className="p-1.5 text-zinc-500 hover:text-orange-400 hover:bg-orange-500/10 rounded-md transition-colors disabled:opacity-50"
+                      title="✨ AI Auto-Categorize with Gemini"
+                    >
+                      {categorizingIds.has(game._id) ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
+                      ) : (
+                        <Tag className="w-3.5 h-3.5 text-orange-400/80" />
+                      )}
+                    </button>
                     <button
                       onClick={() => enhanceGameWithAI(game._id)}
                       disabled={enhancingIds.has(game._id)}
