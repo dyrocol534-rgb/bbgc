@@ -4,6 +4,11 @@ import dbConnect from "./mongodb";
 import User from "@/models/User";
 
 export const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+    maxAge: 60 * 24 * 60 * 60, // 60 days persistent session for mobile/PWA
+    updateAge: 24 * 60 * 60, // Refresh every 24 hours
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -32,18 +37,20 @@ export const authOptions: NextAuthOptions = {
           };
 
           if (!existingUser) {
-            await User.create({
+            const created = await User.create({
               name: user.name || "User",
               email: user.email || "",
               image: user.image || "",
               referralCode: generateReferralCode(user.email || ""),
             });
+            user.id = created._id.toString();
           } else {
             existingUser.lastActiveAt = new Date();
             if (!existingUser.referralCode) {
               existingUser.referralCode = generateReferralCode(user.email || "");
             }
             await existingUser.save();
+            user.id = existingUser._id.toString();
           }
           return true;
         } catch (error) {
@@ -53,7 +60,28 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async session({ session }) {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.email = user.email;
+        token.name = user.name;
+        token.picture = user.image;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // Ensure session user exists even before DB call
+      if (token) {
+        if (!session.user) {
+          session.user = {
+            email: token.email as string,
+            name: token.name as string,
+            image: token.picture as string,
+          } as any;
+        }
+        (session.user as any).id = token.id || token.sub;
+      }
+
       if (session.user?.email) {
         try {
           await dbConnect();

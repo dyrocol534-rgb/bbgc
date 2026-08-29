@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronRight, Coins, Flame, HeartHandshake, ExternalLink, ShoppingBag, Trophy } from "lucide-react";
+import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronRight, Coins, Flame, HeartHandshake, ShoppingBag, Trophy } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -113,11 +113,11 @@ export default function Navbar() {
           {/* Notification Bell Button */}
           <NotificationBell />
 
-          {/* Profile / Menu Button */}
+          {/* Profile / Menu Button or Login Button */}
           {session ? (
             <button 
               onClick={() => setIsSidebarOpen(true)} 
-              className="relative w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full overflow-hidden border border-zinc-700/80 hover:border-orange-400/80 bg-zinc-900/80 hover:scale-105 transition-all flex items-center justify-center shadow-sm shrink-0"
+              className="relative w-9 h-9 sm:w-9 sm:h-9 min-w-[36px] min-h-[36px] rounded-full overflow-hidden border border-zinc-700/80 hover:border-orange-400/80 bg-zinc-900/80 active:scale-95 transition-all flex items-center justify-center shadow-sm shrink-0 touch-manipulation cursor-pointer"
               aria-label="User Profile"
               title={session.user?.name || "Account"}
             >
@@ -128,14 +128,24 @@ export default function Navbar() {
               )}
             </button>
           ) : (
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full border border-dashed border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 transition-all flex items-center justify-center text-zinc-300 hover:text-white shadow-sm shrink-0"
-              aria-label="Sign In / Menu"
-              title="Sign In / Menu"
-            >
-              <UserIcon className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-1.5">
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center gap-1.5 h-[34px] sm:h-9 px-3 sm:px-3.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold text-xs shadow-md shadow-orange-500/25 active:scale-95 transition-all touch-manipulation shrink-0 cursor-pointer"
+                title="Sign In"
+              >
+                <UserIcon className="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </Link>
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full border border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 transition-all flex items-center justify-center text-zinc-400 hover:text-white shadow-sm shrink-0 touch-manipulation cursor-pointer"
+                aria-label="Open Menu"
+                title="Menu"
+              >
+                <Gamepad2 className="w-4 h-4" />
+              </button>
+            </div>
           )}
         </div>
       </nav>
@@ -189,17 +199,48 @@ export default function Navbar() {
               </div>
             </div>
           </div>
-          <button 
-            onClick={() => setIsSidebarOpen(false)} 
-            className="text-zinc-400 hover:text-white p-2 hover:bg-zinc-800 rounded-xl border border-transparent hover:border-zinc-700 transition-all shrink-0 ml-2"
-            aria-label="Close sidebar"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1 shrink-0 ml-2">
+            {session && (
+              <button
+                onClick={() => signOut()}
+                className="text-zinc-400 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-xl border border-transparent hover:border-red-500/20 transition-all touch-manipulation cursor-pointer"
+                title="Sign Out"
+                aria-label="Sign Out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
+            <button 
+              onClick={() => setIsSidebarOpen(false)} 
+              className="text-zinc-400 hover:text-white p-2 hover:bg-zinc-800 rounded-xl border border-transparent hover:border-zinc-700 transition-all touch-manipulation cursor-pointer"
+              aria-label="Close sidebar"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Drawer Body */}
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 custom-scrollbar">
+          {!session && (
+            <div className="p-3 bg-gradient-to-br from-orange-500/15 via-zinc-900 to-zinc-900/90 border border-orange-500/30 rounded-2xl flex flex-col gap-2 shadow-md">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                <span className="text-xs font-bold text-white">Save Progress & Earn XP</span>
+              </div>
+              <button
+                onClick={() => {
+                  setIsSidebarOpen(false);
+                  router.push("/login");
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 active:scale-[0.98] text-white font-bold text-xs rounded-xl shadow-md transition-all touch-manipulation cursor-pointer"
+              >
+                <UserIcon className="w-4 h-4" />
+                <span>Sign In with Google</span>
+              </button>
+            </div>
+          )}
+
           {session && (
             <Link 
               href="/profile" 
@@ -294,63 +335,39 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Drawer Footer - Minimalist Brand Mention & Sign-In CTA */}
-        <div className="p-4 border-t border-zinc-800/80 bg-[#111115] flex flex-col gap-3">
-          {/* Unique Pill Badge for bluebuff.in Product */}
-          <a 
-            href="https://bluebuff.in" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            onClick={() => setIsSidebarOpen(false)}
-            className="flex items-center justify-between px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-orange-500/40 text-zinc-400 hover:text-orange-300 transition-all group"
-          >
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-              <span className="text-xs font-bold text-zinc-200 group-hover:text-white">bluebuff.in</span>
-              <span className="text-zinc-600 text-[10px]">&bull;</span>
-              <span className="text-[10px] text-zinc-400 font-medium">Official Product</span>
-            </div>
-            <ExternalLink className="w-3.5 h-3.5 text-zinc-600 group-hover:text-orange-400 transition-colors" />
-          </a>
-
-          {!session ? (
-            <div className="flex flex-col gap-2 pt-1">
-              <p className="text-zinc-400 text-[11px] text-center leading-tight">
-                Sign in to sync XP, unlock rewards & save favorites!
-              </p>
-              <button
-                onClick={() => {
-                  setIsSidebarOpen(false);
-                  router.push("/login");
-                }}
-                className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-[#ff6b00] to-[#ea580c] hover:brightness-110 text-white font-bold text-xs transition-all rounded-xl shadow-lg shadow-orange-600/25 active:scale-[0.98]"
-              >
-                <UserIcon className="w-4 h-4" />
-                <span>Sign In with Google</span>
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2 pt-1">
-              {session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") && (
+        {/* Drawer Footer - Admin or Sign-In CTA */}
+        {(!session || session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com")) && (
+          <div className="p-4 border-t border-zinc-800/80 bg-[#111115] flex flex-col gap-3">
+            {!session ? (
+              <div className="flex flex-col gap-2">
+                <p className="text-zinc-400 text-[11px] text-center leading-tight">
+                  Sign in to sync XP, unlock rewards & save favorites!
+                </p>
+                <button
+                  onClick={() => {
+                    setIsSidebarOpen(false);
+                    router.push("/login");
+                  }}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-gradient-to-r from-[#ff6b00] to-[#ea580c] hover:brightness-110 text-white font-bold text-xs transition-all rounded-xl shadow-lg shadow-orange-600/25 active:scale-[0.98] touch-manipulation cursor-pointer"
+                >
+                  <UserIcon className="w-4 h-4" />
+                  <span>Sign In with Google</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
                 <Link 
                   href="/admin" 
                   onClick={() => setIsSidebarOpen(false)} 
-                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 hover:text-orange-300 transition-colors rounded-xl text-xs font-bold border border-orange-500/25"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 hover:text-orange-300 transition-colors rounded-xl text-xs font-bold border border-orange-500/25 touch-manipulation"
                 >
                   <UploadCloud className="w-3.5 h-3.5" />
                   <span>Admin Dashboard</span>
                 </Link>
-              )}
-              <button
-                onClick={() => signOut()}
-                className="flex items-center justify-center gap-2 w-full py-2.5 bg-red-950/30 hover:bg-red-950/50 text-red-400 hover:text-red-300 transition-colors rounded-xl text-xs font-bold border border-red-900/30"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Sign Out</span>
-              </button>
-            </div>
-          )}
-        </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </>
   );
