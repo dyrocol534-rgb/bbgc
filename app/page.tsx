@@ -9,7 +9,7 @@ import GameCard from "@/components/game/GameCard";
 import ContinuePlayingRow from "@/components/game/ContinuePlayingRow";
 import Link from "next/link";
 
-const InfiniteGameGrid = dynamic(() => import("@/components/game/InfiniteGameGrid"));
+import InfiniteGameGrid from "@/components/game/InfiniteGameGrid";
 
 export const revalidate = 60; // Revalidate page every 60 seconds
 
@@ -115,15 +115,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
                       game={game} 
                       className="h-full w-full"
                       imageContainerClassName={imageContainerClass}
-                      priority={index < 8}
+                      priority={index < 12}
                     />
                   </div>
                 );
               })}
               
               <InfiniteGameGrid 
-                initialPage={page} 
-                sortType={page === 1 ? 'random' : 'popular'} 
+                initialPage={1} 
+                sortType="popular" 
                 startIndex={initialAllGames.length}
                 excludeIds={initialAllGames.map((g: any) => g._id).join(',')}
                 hasMoreInitial={initialAllGames.length >= 24}

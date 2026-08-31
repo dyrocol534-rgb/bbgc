@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import GameCard from "@/components/game/GameCard";
-import { Skeleton } from "@/components/ui/Skeleton";
+import GameCardSkeleton from "@/components/game/GameCardSkeleton";
 import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
+import { RefreshCw } from "lucide-react";
 
 interface GameData {
   _id: string;
@@ -25,57 +26,124 @@ interface InfiniteGameGridProps {
 
 export default function InfiniteGameGrid({ 
   initialPage = 1, 
-  sortType = 'random', 
+  sortType = 'popular', 
   startIndex = 0,
   excludeIds = "",
   hasMoreInitial = true
 }: InfiniteGameGridProps) {
   const [games, setGames] = useState<GameData[]>([]);
-  const [page, setPage] = useState(initialPage + 1);
   const [hasMore, setHasMore] = useState(hasMoreInitial);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const observerTarget = useRef<HTMLDivElement>(null);
+  const isIntersectingRef = useRef(false);
+  const isLoadingRef = useRef(false);
+  const hasMoreRef = useRef(hasMoreInitial);
+  const pageRef = useRef(initialPage + 1);
+
+  // Keep refs in sync with state
+  isLoadingRef.current = isLoading;
+  hasMoreRef.current = hasMore;
+
+  // Track all game IDs currently shown to prevent duplicates
+  const seenIdsRef = useRef<Set<string>>(
+    new Set(excludeIds.split(',').filter(Boolean))
+  );
 
   const loadMoreGames = useCallback(async () => {
+    if (isLoadingRef.current || !hasMoreRef.current) return;
+
+    isLoadingRef.current = true;
     setIsLoading(true);
+    setError(null);
+
     try {
-      const currentExcludeIds = [...excludeIds.split(',').filter(Boolean), ...games.map(g => g._id)].join(',');
-      const { data } = await axios.get(`/api/games?page=${page}&limit=24&sort=${sortType}&exclude=${currentExcludeIds}`);
+      const currentPage = pageRef.current;
+      const url = `/api/games?page=${currentPage}&limit=24&sort=${sortType}`;
+
+      const { data } = await axios.get(url);
       
-      if (data.games.length > 0) {
-        const newGames = data.games.filter(
-          (newGame: GameData) => !games.some((existingGame) => existingGame._id === newGame._id)
+      if (data.games && Array.isArray(data.games) && data.games.length > 0) {
+        const uniqueNewGames: GameData[] = [];
+        for (const game of data.games) {
+          if (!seenIdsRef.current.has(game._id)) {
+            seenIdsRef.current.add(game._id);
+            uniqueNewGames.push(game);
+          }
+        }
+
+        // Advance page counter
+        pageRef.current = currentPage + 1;
+
+        // Determine if more games exist
+        const moreAvailable = Boolean(
+          data.hasMore ?? (data.total ? (currentPage * 24) < data.total : data.games.length === 24)
         );
-        setGames((prev) => [...prev, ...newGames]);
-        setPage((prev) => prev + 1);
+        hasMoreRef.current = moreAvailable;
+        setHasMore(moreAvailable);
+
+        if (uniqueNewGames.length > 0) {
+          setGames((prev) => [...prev, ...uniqueNewGames]);
+        } else if (moreAvailable) {
+          // If all games in this page were duplicates of the initial random pool,
+          // immediately trigger the next page so the scroll doesn't stall!
+          isLoadingRef.current = false;
+          setIsLoading(false);
+          loadMoreGames();
+          return;
+        }
+      } else {
+        hasMoreRef.current = false;
+        setHasMore(false);
       }
-      setHasMore(data.hasMore);
-    } catch (error) {
-      console.error("Error fetching more games:", error);
+    } catch (err: any) {
+      console.error("Error fetching more games:", err);
+      setError("Failed to load more games. Tap to retry.");
     } finally {
+      isLoadingRef.current = false;
       setIsLoading(false);
     }
-  }, [games, page, sortType, excludeIds]);
+  }, [sortType]);
 
+  // Observer to detect when user reaches the bottom
   useEffect(() => {
     const target = observerTarget.current;
     if (!target) return;
 
     const observer = new IntersectionObserver(
       entries => {
-        if (entries[0].isIntersecting && hasMore && !isLoading) {
+        const isIntersecting = entries[0].isIntersecting;
+        isIntersectingRef.current = isIntersecting;
+        if (isIntersecting && hasMoreRef.current && !isLoadingRef.current) {
           loadMoreGames();
         }
       },
-      { threshold: 0.1 }
+      { 
+        root: null,
+        rootMargin: "600px 0px", 
+        threshold: 0.01 
+      }
     );
 
     observer.observe(target);
 
     return () => {
-      if (target) observer.unobserve(target);
+      observer.disconnect();
     };
-  }, [hasMore, isLoading, loadMoreGames]);
+  }, [loadMoreGames]);
+
+  // After games render, if the sentinel is still in viewport (e.g. on tall displays), load next page
+  useEffect(() => {
+    if (isIntersectingRef.current && hasMoreRef.current && !isLoadingRef.current) {
+      const timer = setTimeout(() => {
+        if (isIntersectingRef.current && hasMoreRef.current && !isLoadingRef.current) {
+          loadMoreGames();
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [games, loadMoreGames]);
 
   return (
     <>
@@ -88,7 +156,7 @@ export default function InfiniteGameGrid({
           <div
             key={`${game._id}-${index}`}
             className={`${spanClass} game-card-enter`}
-            style={{ animationDelay: `${Math.min(i % 24, 12) * 40}ms` }}
+            style={{ animationDelay: `${Math.min(i % 24, 12) * 35}ms` }}
           >
             <GameCard 
               game={game} 
@@ -100,27 +168,50 @@ export default function InfiniteGameGrid({
         );
       })}
 
-      {hasMore && Array.from({ length: 8 }).map((_, i) => {
+      {/* Skeletons while actively loading new batch */}
+      {isLoading && Array.from({ length: 8 }).map((_, i) => {
         const index = startIndex + games.length + i;
         const spanClass = getBentoSpanClass(index);
         const imageContainerClass = getImageContainerClass(spanClass);
         
         return (
-          <div 
-            key={`skeleton-${i}`} 
-            className={spanClass}
-            ref={i === 0 ? observerTarget : null}
-          >
-            <Skeleton className={`${imageContainerClass} w-full rounded-2xl`} />
-          </div>
+          <GameCardSkeleton
+            key={`skeleton-${index}`}
+            spanClass={spanClass}
+            imageContainerClass={imageContainerClass}
+          />
         );
       })}
 
-      {!hasMore && games.length > 0 && (
-        <div className="col-span-full text-center py-12 text-zinc-500">
+      {/* Persistent Invisible Sentinel for Intersection Observer */}
+      <div 
+        ref={observerTarget} 
+        className="col-span-full h-4 w-full pointer-events-none opacity-0"
+        aria-hidden="true"
+      />
+
+      {/* Error state with retry */}
+      {error && (
+        <div className="col-span-full text-center py-6 flex flex-col items-center justify-center gap-3">
+          <p className="text-sm text-zinc-400">{error}</p>
+          <button
+            onClick={() => loadMoreGames()}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold rounded-xl border border-zinc-700 transition-colors"
+          >
+            <RefreshCw className="w-3.5 h-3.5" />
+            Retry Loading
+          </button>
+        </div>
+      )}
+
+      {/* End of results message */}
+      {!hasMore && games.length > 0 && !isLoading && (
+        <div className="col-span-full text-center py-10 flex flex-col items-center justify-center text-zinc-500 text-xs">
+          <div className="w-8 h-1 bg-zinc-800 rounded-full mb-3" />
           You&apos;ve reached the end! 🎮
         </div>
       )}
     </>
   );
 }
+

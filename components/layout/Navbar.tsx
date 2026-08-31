@@ -50,8 +50,8 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-40 h-13 sm:h-16 bg-surface/80 backdrop-blur-md border-b border-zinc-800 flex items-center justify-between px-3 sm:px-4 lg:px-8">
-        <Link href="/" className="flex items-center text-primary hover:text-primary-light transition-transform hover:scale-105" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-[#0c0c0e] border-b border-[#1f1f22] flex items-center justify-between px-3 sm:px-4 lg:px-8 shadow-sm select-none">
+        <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
           {logoError ? (
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-orange-500 via-primary to-amber-500 flex items-center justify-center font-black text-white text-lg sm:text-xl shadow-[0_0_15px_rgba(255,107,0,0.35)] border border-white/20 select-none tracking-tight">
               B
@@ -75,7 +75,7 @@ export default function Navbar() {
           <SearchBar />
         </div>
         
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Mobile Search Button */}
           <button 
             className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-zinc-300 hover:text-white rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-zinc-500 transition-all shadow-sm shrink-0"
@@ -114,30 +114,18 @@ export default function Navbar() {
           <NotificationBell />
 
           {/* Profile / Menu Button */}
-          {session ? (
-            <button 
-              onClick={() => setIsSidebarOpen(true)} 
-              className="relative w-9 h-9 sm:w-9 sm:h-9 min-w-[36px] min-h-[36px] rounded-full overflow-hidden border border-zinc-700/80 hover:border-orange-400/80 bg-zinc-900/80 active:scale-95 transition-all flex items-center justify-center shadow-sm shrink-0 touch-manipulation cursor-pointer"
-              aria-label="User Profile"
-              title={session.user?.name || "Account"}
-            >
-              {session.user?.image ? (
-                <Image src={session.user.image} alt="User" fill sizes="36px" className="object-cover" />
-              ) : (
-                <UserIcon className="w-4 h-4 text-zinc-300" />
-              )}
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="h-9 px-2.5 sm:px-3 rounded-full border border-dashed border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 transition-all flex items-center gap-1 text-zinc-300 hover:text-white shadow-sm shrink-0 touch-manipulation cursor-pointer active:scale-95"
-              aria-label="Account & Menu"
-              title="Account & Menu"
-            >
-              <UserIcon className="w-4 h-4" />
-              <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />
-            </button>
-          )}
+          <button 
+            onClick={() => setIsSidebarOpen(true)} 
+            className="relative w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full overflow-hidden border border-zinc-700/80 hover:border-orange-400/80 bg-zinc-900/80 active:scale-95 transition-all flex items-center justify-center shadow-sm shrink-0 touch-manipulation cursor-pointer"
+            aria-label="User Profile & Menu"
+            title={session?.user?.name || "Account & Menu"}
+          >
+            {session?.user?.image ? (
+              <Image src={session.user.image} alt="User" fill sizes="36px" className="object-cover" />
+            ) : (
+              <UserIcon className="w-4 h-4 text-zinc-300" />
+            )}
+          </button>
         </div>
       </nav>
 

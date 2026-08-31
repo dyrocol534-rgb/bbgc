@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     if (featured) {
       dbQuery.featured = true;
     }
-    if (excludeIds.length > 0) {
+    if (excludeIds.length > 0 && sort === 'random') {
       const mongoose = (await import('mongoose')).default;
       dbQuery._id = { $nin: excludeIds.map(id => new mongoose.Types.ObjectId(id)) };
     }

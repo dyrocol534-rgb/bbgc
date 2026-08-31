@@ -127,11 +127,7 @@ export default function PWAInstallButton({ variant = "icon", onInstall }: { vari
 
         {/* Blue status badge dot in top-right */}
         <span
-          className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-[#0a0a0c] transition-all ${
-            isInstalled
-              ? "bg-[#00a8ff] shadow-[0_0_8px_#00a8ff] scale-110"
-              : "bg-[#00a8ff]/80 shadow-[0_0_5px_rgba(0,168,255,0.6)]"
-          }`}
+          className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-[#0a0a0c] bg-[#00a8ff] shadow-[0_0_5px_rgba(0,168,255,0.6)]"
         />
 
         {/* Tooltip */}

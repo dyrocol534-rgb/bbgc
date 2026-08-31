@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  devIndicators: false,
   experimental: {
     optimizeCss: true,
   },

@@ -12,15 +12,11 @@ export default function NotificationBell() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isPushSupported()) {
-      setIsSupported(true);
-      getExistingSubscription().then((sub) => {
-        setIsSubscribed(!!sub);
-      });
-    }
+    setIsSupported(isPushSupported());
+    getExistingSubscription().then((sub) => {
+      setIsSubscribed(!!sub);
+    });
   }, []);
-
-  if (!isSupported) return null;
 
   const handleToggle = async () => {
     if (loading) return;
@@ -74,11 +70,7 @@ export default function NotificationBell() {
 
         {/* Green status badge dot in top-right */}
         <span
-          className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-[#0a0a0c] transition-all ${
-            isSubscribed
-              ? "bg-[#00e676] shadow-[0_0_8px_#00e676] scale-110"
-              : "bg-[#00e676]/60 shadow-[0_0_4px_rgba(0,230,118,0.4)]"
-          }`}
+          className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-[#0a0a0c] bg-[#00e676] shadow-[0_0_4px_rgba(0,230,118,0.4)]"
         />
 
         {/* Tooltip */}

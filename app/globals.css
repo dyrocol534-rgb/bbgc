@@ -44,11 +44,13 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html,
 body {
   background: var(--background);
   color: var(--text-main);
   font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
   overscroll-behavior-y: none;
   user-select: none;
   -webkit-user-select: none;
@@ -83,28 +85,37 @@ input, textarea {
 
 /* ─── Shimmer Skeleton ─────────────────────────────────── */
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .skeleton-shimmer {
   background: linear-gradient(
-    110deg,
-    transparent 20%,
-    rgba(255, 255, 255, 0.06) 50%,
-    transparent 80%
+    90deg,
+    #18181b 0%,
+    #27272a 35%,
+    #3f3f46 50%,
+    #27272a 65%,
+    #18181b 100%
   );
-  background-color: var(--surface-hover);
   background-size: 200% 100%;
-  animation: shimmer 2s ease-in-out infinite;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  animation: shimmer 1.8s ease-in-out infinite;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.game-img-placeholder {
+  background: radial-gradient(circle at center, #27272a 0%, #18181b 70%, #09090b 100%);
 }
 
 /* ─── Game Card Staggered Fade-In ──────────────────────── */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -113,18 +124,12 @@ input, textarea {
 }
 
 .game-card-enter {
-  animation: fadeInUp 0.4s ease both;
+  animation: fadeInUp 0.25s ease-out both;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 130px;
 }
 
 /* ─── Page Transition ──────────────────────────────────── */
-@keyframes pageFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-main > * {
-  animation: pageFadeIn 0.35s ease both;
-}
 
 
 
@@ -145,4 +150,11 @@ body.hide-ui button.md\:hidden.fixed.top-1\/2 {
 
 .animate-shake {
   animation: shake 0.5s ease-in-out;
+}
+
+/* Hide Next.js dev compilation indicator overlay */
+nextjs-portal,
+[data-nextjs-toast],
+[data-nextjs-dev-indicator] {
+  display: none !important;
 }
