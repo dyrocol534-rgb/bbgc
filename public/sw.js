@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bluebuff-offline-v2';
+const CACHE_NAME = 'bluebuff-offline-v3';
 const OFFLINE_URL = '/offline.html';
 
 const PRECACHE_ASSETS = [
@@ -56,9 +56,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For static assets (images, icons), try cache if network fails
+  // For static assets (images, icons, thumbnails), serve from cache if available or cache on fetch
   if (
     event.request.destination === 'image' ||
+    event.request.url.includes('/_next/image') ||
     event.request.url.includes('/icons/') ||
     event.request.url.includes('/screenshots/')
   ) {
@@ -68,7 +69,7 @@ self.addEventListener('fetch', (event) => {
           return cachedResponse;
         }
         return fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
+          if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
             const responseClone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => {
               cache.put(event.request, responseClone);

@@ -384,7 +384,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                         <GameImage 
                           src={g.thumbnailUrl} 
                           alt={g.title} 
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 220px"
+                          sizes="(max-width: 640px) 25vw, (max-width: 1024px) 20vw, 120px"
                           className="transition-transform duration-300 group-hover:scale-105"
                         />
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2 pt-5 z-10">

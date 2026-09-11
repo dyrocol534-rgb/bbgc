@@ -16,7 +16,7 @@ export default function GameImage({
   src,
   alt,
   priority = false,
-  sizes = "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw",
+  sizes = "(max-width: 640px) 25vw, (max-width: 1024px) 20vw, 160px",
   className = "",
 }: GameImageProps) {
   const [useFallbackImg, setUseFallbackImg] = useState(false);
@@ -62,6 +62,7 @@ export default function GameImage({
           src={cleanSrc}
           alt={alt}
           loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
           decoding="async"
           className={`w-full h-full object-cover transform-gpu group-hover:scale-105 transition-opacity duration-300 ease-out ${
             isLoaded ? "opacity-100" : "opacity-0"
@@ -74,17 +75,16 @@ export default function GameImage({
           src={cleanSrc}
           alt={alt}
           fill
-          unoptimized
-          priority={priority}
-          loading={priority ? "eager" : "lazy"}
-          decoding="async"
+          quality={75}
+          preload={priority}
           sizes={sizes}
+          decoding="async"
           className={`object-cover transform-gpu group-hover:scale-105 transition-opacity duration-300 ease-out ${
             isLoaded ? "opacity-100" : "opacity-0"
           } ${className}`}
           onLoad={() => setIsLoaded(true)}
           onError={() => {
-            // If next/image fails, gracefully fall back to native <img> tag
+            // If next/image optimization fails, gracefully fall back to native <img> tag
             setUseFallbackImg(true);
           }}
         />

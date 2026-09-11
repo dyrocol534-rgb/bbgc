@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
-import { Gamepad2, Mail, CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
+import { Mail, CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -51,10 +52,16 @@ export default function Footer() {
             <div className="inline-flex items-center gap-2.5">
               <Link 
                 href="/" 
-                className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20 hover:border-orange-500/40 transition-colors shadow-sm text-orange-400 group" 
+                className="p-1.5 rounded-xl bg-orange-500/10 border border-orange-500/20 hover:border-orange-500/40 transition-colors shadow-sm flex items-center justify-center group" 
                 title={`${siteName} Home`}
               >
-                <Gamepad2 className="w-5 h-5 text-orange-400 group-hover:scale-105 transition-transform" />
+                <Image 
+                  src="/logo.png" 
+                  alt={siteName} 
+                  width={28} 
+                  height={28} 
+                  className="w-7 h-7 object-contain group-hover:scale-105 transition-transform" 
+                />
               </Link>
               <div className="flex flex-col text-left">
                 <Link 

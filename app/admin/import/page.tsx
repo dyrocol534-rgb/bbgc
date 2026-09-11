@@ -175,8 +175,8 @@ export default function ImportGamesPage() {
                       alt={game.title}
                       width={200}
                       height={200}
+                      sizes="200px"
                       className="w-full h-full object-cover"
-                      unoptimized
                     />
                     <div className="absolute top-2 right-2 bg-black/60 text-white text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded backdrop-blur-md uppercase">
                       {game.category || "Game"}

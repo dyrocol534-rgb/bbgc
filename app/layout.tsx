@@ -176,10 +176,14 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
         <link rel="preconnect" href="https://img.gamedistribution.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://img.gamemonetize.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://html5.gamedistribution.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://html5.gamemonetize.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://img.gamedistribution.com" />
+        <link rel="dns-prefetch" href="https://img.gamemonetize.com" />
         <link rel="dns-prefetch" href="https://html5.gamedistribution.com" />
+        <link rel="dns-prefetch" href="https://html5.gamemonetize.com" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col bg-background text-text-main`}>
         {/* Google Analytics */}
