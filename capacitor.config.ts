@@ -8,6 +8,14 @@ const config: CapacitorConfig = {
     url: 'https://games.bluebuff.in',
     cleartext: false,
     androidScheme: 'https',
+    allowNavigation: [
+      'games.bluebuff.in',
+      '*.bluebuff.in',
+      'accounts.google.com',
+      '*.google.com',
+      '*.google.co.in',
+      '*.gstatic.com'
+    ],
   },
   android: {
     allowMixedContent: true,
