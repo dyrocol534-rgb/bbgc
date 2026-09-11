@@ -72,119 +72,150 @@ export default function AdminFeedbackPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+      <div className="flex justify-center items-center py-16">
+        <Loader2 className="w-6 h-6 text-indigo-400 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 bg-[#0c0c0e] p-4 rounded-xl border border-[#1f1f22] shadow-lg shadow-black/40">
-        <div>
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <MessageSquareWarning className="w-5 h-5 text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
-            User Feedback ({feedbacks.length})
+    <div className="space-y-4">
+      {/* Compact Header & Search Bar */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div className="flex items-center gap-2">
+          <MessageSquareWarning className="w-4 h-4 text-indigo-400" />
+          <h2 className="text-sm sm:text-base font-bold text-white">
+            User Feedback
           </h2>
+          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 border border-zinc-700/60">
+            {feedbacks.length}
+          </span>
         </div>
-        
-        {/* Search Bar */}
-        <div className="relative w-full sm:w-auto sm:mb-0">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="w-4 h-4 text-zinc-500" />
-          </div>
+
+        {/* Compact Search Bar */}
+        <div className="relative w-full sm:w-60">
+          <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             placeholder="Search feedback..."
             value={searchTerm}
             onChange={handleSearch}
-            className="w-full sm:w-64 bg-[#121214] border border-[#1f1f22] rounded-lg pl-10 pr-4 py-2.5 text-sm font-medium text-white focus:outline-none focus:border-[#333339] focus:ring-1 focus:ring-[#333339] transition-colors shadow-inner"
+            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-700 transition-colors"
           />
         </div>
       </div>
-      
-      <div className="bg-[#0c0c0e] border border-[#1f1f22] rounded-xl overflow-hidden shadow-lg shadow-black/40 animate-in fade-in duration-300">
+
+      {/* Main Table / Cards Container */}
+      <div className="bg-[#0c0c0e] border border-zinc-800/80 rounded-xl overflow-hidden">
         
-        {/* Mobile View (Cards) */}
-        <div className="block sm:hidden divide-y divide-[#1f1f22]">
+        {/* Mobile View (Compact Cards) */}
+        <div className="block sm:hidden divide-y divide-zinc-800/60">
           {paginatedData.length === 0 ? (
-            <div className="p-8 text-center text-zinc-500 font-bold text-sm">
+            <div className="p-8 text-center text-zinc-500 text-xs font-medium">
               {searchTerm ? "No results found matching your search." : "No feedback received yet."}
             </div>
           ) : (
             paginatedData.map((item) => (
-              <div key={item._id} className={clsx("p-4 space-y-3 transition-colors", item.status === 'resolved' ? 'opacity-60 bg-[#121214]/50' : 'hover:bg-[#121214]')}>
-                <div className="flex justify-between items-start gap-2">
-                  <div className="font-bold text-white text-sm truncate max-w-[200px]">{item.userEmail}</div>
+              <div
+                key={item._id}
+                className={clsx(
+                  "p-3 space-y-2 transition-colors",
+                  item.status === 'resolved' ? 'opacity-60 bg-zinc-900/30' : 'hover:bg-zinc-900/40'
+                )}
+              >
+                <div className="flex justify-between items-center gap-2">
+                  <span className="font-semibold text-white text-xs truncate max-w-[180px]">
+                    {item.userEmail || "Anonymous"}
+                  </span>
                   <button 
                     onClick={() => toggleStatus(item._id, item.status)}
-                    className={`inline-flex shrink-0 items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors border ${
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold transition-colors border ${
                       item.status === 'resolved' 
                         ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
                         : 'bg-orange-500/10 text-orange-400 border-orange-500/20'
                     }`}
                   >
-                    {item.status === 'resolved' ? <><CheckCircle2 className="w-3.5 h-3.5" /> Resolved</> : <><Circle className="w-3.5 h-3.5" /> Pending</>}
+                    {item.status === 'resolved' ? (
+                      <><CheckCircle2 className="w-3 h-3" /> Resolved</>
+                    ) : (
+                      <><Circle className="w-3 h-3" /> Pending</>
+                    )}
                   </button>
                 </div>
-                <div className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-[#1f1f22] text-zinc-300">
-                  {item.gameSlug}
-                </div>
-                <p className="text-xs font-medium text-zinc-300 whitespace-pre-wrap">{item.message}</p>
-                <div className="text-[10px] font-bold text-zinc-500 pt-1 uppercase tracking-wider">
-                  {new Date(item.createdAt).toLocaleString()}
+                {item.gameSlug && (
+                  <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-zinc-800 text-zinc-300">
+                    {item.gameSlug}
+                  </span>
+                )}
+                <p className="text-xs text-zinc-300 leading-snug whitespace-pre-wrap">{item.message}</p>
+                <div className="text-[10px] text-zinc-500 font-medium">
+                  {new Date(item.createdAt).toLocaleDateString()} • {new Date(item.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
               </div>
             ))
           )}
         </div>
 
-        {/* Desktop View (Table) */}
+        {/* Desktop View (Compact Table) */}
         <div className="hidden sm:block overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse min-w-[600px]">
+          <table className="w-full text-left border-collapse min-w-[550px]">
             <thead>
-              <tr className="bg-[#121214] border-b border-[#1f1f22] text-zinc-500 text-[10px] font-bold uppercase tracking-widest">
-                <th className="py-4 px-6">User</th>
-                <th className="py-4 px-6">Game</th>
-                <th className="py-4 px-6 w-1/2">Message</th>
-                <th className="py-4 px-6 text-center">Date</th>
-                <th className="py-4 px-6 text-right">Status</th>
+              <tr className="bg-zinc-900/80 border-b border-zinc-800 text-zinc-400 text-[10px] font-semibold uppercase tracking-wider">
+                <th className="py-2.5 px-3.5">User</th>
+                <th className="py-2.5 px-3.5">Game</th>
+                <th className="py-2.5 px-3.5 w-1/2">Message</th>
+                <th className="py-2.5 px-3.5 text-center">Date</th>
+                <th className="py-2.5 px-3.5 text-right">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#1f1f22] text-sm">
+            <tbody className="divide-y divide-zinc-800/50 text-xs">
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-zinc-500 font-bold text-sm">
+                  <td colSpan={5} className="py-10 text-center text-zinc-500 font-medium text-xs">
                     {searchTerm ? "No results found matching your search." : "No feedback received yet."}
                   </td>
                 </tr>
               ) : (
                 paginatedData.map((item) => (
-                  <tr key={item._id} className={clsx("transition-colors hover:bg-[#121214]", item.status === 'resolved' ? 'opacity-60' : '')}>
-                    <td className="py-4 px-6 text-white font-bold text-xs">
-                      {item.userEmail}
+                  <tr
+                    key={item._id}
+                    className={clsx(
+                      "transition-colors hover:bg-zinc-900/50",
+                      item.status === 'resolved' ? 'opacity-60' : ''
+                    )}
+                  >
+                    <td className="py-2.5 px-3.5 text-white font-medium text-xs whitespace-nowrap">
+                      {item.userEmail || "Anonymous"}
                     </td>
-                    <td className="py-4 px-6">
-                      <div className="inline-flex items-center px-2.5 py-1 rounded text-[10px] font-bold bg-[#1f1f22] text-zinc-300">
-                        {item.gameSlug}
-                      </div>
+                    <td className="py-2.5 px-3.5 whitespace-nowrap">
+                      {item.gameSlug ? (
+                        <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-zinc-800 text-zinc-300">
+                          {item.gameSlug}
+                        </span>
+                      ) : (
+                        <span className="text-zinc-500 text-[10px]">—</span>
+                      )}
                     </td>
-                    <td className="py-4 px-6">
-                      <p className="text-zinc-300 font-medium text-xs whitespace-pre-wrap">{item.message}</p>
+                    <td className="py-2.5 px-3.5">
+                      <p className="text-zinc-300 font-normal text-xs whitespace-pre-wrap leading-snug">{item.message}</p>
                     </td>
-                    <td className="py-4 px-6 text-center text-zinc-400 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider">
+                    <td className="py-2.5 px-3.5 text-center text-zinc-400 whitespace-nowrap text-[10px] font-medium">
                       {new Date(item.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="py-4 px-6 text-right">
+                    <td className="py-2.5 px-3.5 text-right whitespace-nowrap">
                       <button 
                         onClick={() => toggleStatus(item._id, item.status)}
-                        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-colors border shadow-sm ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors border ${
                           item.status === 'resolved' 
                             ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' 
                             : 'bg-orange-500/10 text-orange-400 border-orange-500/20 hover:bg-orange-500/20'
                         }`}
                       >
-                        {item.status === 'resolved' ? <><CheckCircle2 className="w-3.5 h-3.5" /> Resolved</> : <><Circle className="w-3.5 h-3.5" /> Pending</>}
+                        {item.status === 'resolved' ? (
+                          <><CheckCircle2 className="w-3 h-3" /> Resolved</>
+                        ) : (
+                          <><Circle className="w-3 h-3" /> Pending</>
+                        )}
                       </button>
                     </td>
                   </tr>
@@ -196,30 +227,32 @@ export default function AdminFeedbackPage() {
         
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-[#1f1f22] px-4 py-3 bg-[#121214]">
-            <span className="text-xs font-bold text-zinc-500 hidden sm:inline uppercase tracking-wider">
-              Showing <span className="text-zinc-300">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-zinc-300">{Math.min(currentPage * ITEMS_PER_PAGE, filteredData.length)}</span> of <span className="text-zinc-300">{filteredData.length}</span> results
+          <div className="flex items-center justify-between border-t border-zinc-800/80 px-3.5 py-2.5 bg-zinc-900/60">
+            <span className="text-[11px] text-zinc-500 hidden sm:inline">
+              Showing <span className="text-zinc-300 font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-zinc-300 font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredData.length)}</span> of <span className="text-zinc-300 font-medium">{filteredData.length}</span>
             </span>
-            <span className="text-xs font-bold text-zinc-500 sm:hidden uppercase tracking-wider">
+            <span className="text-[11px] text-zinc-500 sm:hidden">
               Page {currentPage} of {totalPages}
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-1 rounded-lg text-zinc-500 hover:text-white hover:bg-[#1a1a1f] disabled:opacity-50 disabled:pointer-events-none transition-colors border border-transparent hover:border-[#333339] shadow-sm"
+                className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 disabled:opacity-40 disabled:pointer-events-none transition-colors"
+                aria-label="Previous page"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-xs text-zinc-400 font-bold px-2 hidden sm:inline">
+              <span className="text-xs text-zinc-400 px-1.5 hidden sm:inline">
                 {currentPage} / {totalPages}
               </span>
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="p-1 rounded-lg text-zinc-500 hover:text-white hover:bg-[#1a1a1f] disabled:opacity-50 disabled:pointer-events-none transition-colors border border-transparent hover:border-[#333339] shadow-sm"
+                className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 disabled:opacity-40 disabled:pointer-events-none transition-colors"
+                aria-label="Next page"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           </div>

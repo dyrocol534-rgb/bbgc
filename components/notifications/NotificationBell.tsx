@@ -5,14 +5,13 @@ import { Bell, BellRing, Loader2 } from "lucide-react";
 import { isPushSupported, getExistingSubscription, subscribeUserToPush, unsubscribeUserFromPush } from "@/lib/push-client";
 
 export default function NotificationBell() {
-  const [isSupported, setIsSupported] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsSupported(isPushSupported());
+    if (!isPushSupported()) return;
     getExistingSubscription().then((sub) => {
       setIsSubscribed(!!sub);
     });
@@ -52,9 +51,9 @@ export default function NotificationBell() {
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         disabled={loading}
-        className={`group relative flex items-center justify-center w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full transition-all shadow-sm shrink-0 ${
+        className={`group relative flex items-center justify-center w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full transition-all shrink-0 ${
           isSubscribed
-            ? "border border-emerald-500/50 bg-emerald-500/15 text-emerald-300 hover:border-emerald-400 hover:bg-emerald-500/25 shadow-[0_0_10px_rgba(0,230,118,0.2)]"
+            ? "border border-emerald-500/50 bg-emerald-500/15 text-emerald-300 hover:border-emerald-400 hover:bg-emerald-500/25"
             : "border border-dashed border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-400 hover:text-white"
         }`}
         title={isSubscribed ? "Notifications Enabled" : "Enable Notifications"}
@@ -68,14 +67,9 @@ export default function NotificationBell() {
           <Bell className="w-4 h-4 text-zinc-400 group-hover:text-white transition-colors" />
         )}
 
-        {/* Green status badge dot in top-right */}
-        <span
-          className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-[#0a0a0c] bg-[#00e676] shadow-[0_0_4px_rgba(0,230,118,0.4)]"
-        />
-
         {/* Tooltip */}
         {(showTooltip || statusMessage) && (
-          <div className="absolute -bottom-9 right-0 w-max z-50 pointer-events-none bg-zinc-900 border border-zinc-700 text-xs text-white px-2.5 py-1 rounded shadow-lg hidden sm:block whitespace-nowrap">
+          <div className="absolute -bottom-9 right-0 w-max z-50 pointer-events-none bg-zinc-900 border border-zinc-700 text-xs text-white px-2.5 py-1 rounded hidden sm:block whitespace-nowrap">
             {statusMessage || (isSubscribed ? "Notifications Subscribed ✅" : "Enable Notifications 🔔")}
           </div>
         )}

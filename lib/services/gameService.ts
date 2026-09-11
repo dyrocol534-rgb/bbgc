@@ -221,7 +221,7 @@ export const getPublishedGamesByCategory = (category: string) =>
     async (): Promise<GameCardData[]> => {
       try {
         await dbConnect();
-        let query: any = { status: "published" };
+        const query: any = { status: "published" };
         let sort: any = { playCount: -1 };
         let limitAmount = 0;
 
@@ -287,18 +287,19 @@ export async function getGamesBySlugs(slugs: string[]): Promise<GameCardData[]> 
  */
 export async function getRecentGamesForUserOrGuest(
   session: any,
-  guestId?: string
+  guestId?: string,
+  limit: number = 6
 ): Promise<GameCardData[]> {
   try {
     let recentSlugs: string[] = [];
 
     if (session?.user && (session.user as any).recentlyPlayed?.length > 0) {
-      recentSlugs = (session.user as any).recentlyPlayed.slice(0, 3);
+      recentSlugs = (session.user as any).recentlyPlayed.slice(0, limit);
     } else if (guestId) {
       await dbConnect();
       const guest = await GuestSession.findOne({ guestId }).lean();
       if (guest && guest.recentlyPlayed?.length > 0) {
-        recentSlugs = guest.recentlyPlayed.slice(0, 3);
+        recentSlugs = guest.recentlyPlayed.slice(0, limit);
       }
     }
 

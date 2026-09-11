@@ -43,7 +43,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#09090b] border-t border-zinc-800/80 mt-auto">
+    <footer className="bg-black border-t border-zinc-800/80 mt-auto">
       <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6 pb-6 border-b border-zinc-800/60">
           

@@ -50,7 +50,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-[#0c0c0e] border-b border-[#1f1f22] flex items-center justify-between px-3 sm:px-4 lg:px-8 shadow-sm select-none">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-black border-b border-zinc-800/80 flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
         <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
           {logoError ? (
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-orange-500 via-primary to-amber-500 flex items-center justify-center font-black text-white text-lg sm:text-xl shadow-[0_0_15px_rgba(255,107,0,0.35)] border border-white/20 select-none tracking-tight">
@@ -78,7 +78,7 @@ export default function Navbar() {
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Mobile Search Button */}
           <button 
-            className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-zinc-300 hover:text-white rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-zinc-500 transition-all shadow-sm shrink-0"
+            className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-zinc-300 hover:text-white rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-zinc-500 transition-all shrink-0"
             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
             title="Search"
           >
@@ -89,7 +89,7 @@ export default function Navbar() {
           <button
             onClick={handleSurpriseMe}
             disabled={isRolling}
-            className="group relative flex items-center justify-center w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-orange-500/60 transition-all shadow-sm disabled:opacity-50 shrink-0"
+            className="group relative flex items-center justify-center w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-orange-500/60 transition-all disabled:opacity-50 shrink-0"
             title="Surprise Me!"
           >
             {isRolling ? (
@@ -98,17 +98,11 @@ export default function Navbar() {
               <Dices className="w-4 h-4 text-zinc-300 group-hover:text-white transition-colors transform group-hover:rotate-12" />
             )}
 
-            {/* Orange status badge dot */}
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ring-2 ring-[#0a0a0c] bg-orange-500 shadow-[0_0_5px_rgba(249,115,22,0.6)]" />
-            
             {/* Tooltip */}
-            <span className="absolute -bottom-9 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-zinc-900 border border-zinc-700 text-xs text-white px-2 py-1 rounded shadow-lg hidden sm:block z-50">
+            <span className="absolute -bottom-9 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-zinc-900 border border-zinc-700 text-xs text-white px-2 py-1 rounded hidden sm:block z-50">
               Random Game 🎲
             </span>
           </button>
-
-          {/* PWA Install Button */}
-          <PWAInstallButton />
 
           {/* Notification Bell Button */}
           <NotificationBell />
@@ -116,7 +110,7 @@ export default function Navbar() {
           {/* Profile / Menu Button */}
           <button 
             onClick={() => setIsSidebarOpen(true)} 
-            className="relative w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full overflow-hidden border border-zinc-700/80 hover:border-orange-400/80 bg-zinc-900/80 active:scale-95 transition-all flex items-center justify-center shadow-sm shrink-0 touch-manipulation cursor-pointer"
+            className="relative w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full overflow-hidden border border-zinc-700/80 hover:border-orange-400/80 bg-zinc-900/80 active:scale-95 transition-all flex items-center justify-center shrink-0 touch-manipulation cursor-pointer"
             aria-label="User Profile & Menu"
             title={session?.user?.name || "Account & Menu"}
           >

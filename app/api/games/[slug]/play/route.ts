@@ -61,7 +61,7 @@ export async function POST(
             recentlyPlayed: { 
               $each: [slug], 
               $position: 0, 
-              $slice: 3 
+              $slice: 12 
             } 
           },
           $set: { lastActiveAt: new Date(), lastIp: ip },
@@ -121,7 +121,7 @@ export async function POST(
           await GuestSession.updateOne(
             { guestId },
             { 
-              $push: { recentlyPlayed: { $each: [slug], $position: 0, $slice: 3 } },
+              $push: { recentlyPlayed: { $each: [slug], $position: 0, $slice: 12 } },
               $set: { lastActiveAt: new Date(), updatedAt: new Date(), lastIp: ip },
               $inc: { gamesPlayedCount: 1 }
             }

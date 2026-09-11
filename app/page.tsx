@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { Gamepad2, Sparkles, ShieldCheck, Zap, Smartphone, Globe, HelpCircle } from "lucide-react";
+import { Gamepad2, Sparkles, ShieldCheck, Zap, Smartphone, Globe, HelpCircle, ChevronDown, Puzzle, Car, Trophy, Crosshair, Compass } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { authOptions } from "@/lib/auth";
@@ -142,7 +142,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
 
         {/* SEO Editorial Content & FAQ Section */}
         {hasGames && (
-          <footer className="bg-[#0c0c0e] rounded-2xl p-6 sm:p-8 border border-[#1f1f22] space-y-6 text-xs text-zinc-400">
+          <footer className="bg-black rounded-2xl p-6 sm:p-8 border border-zinc-800/80 space-y-6 text-xs text-zinc-400">
             <div className="space-y-2">
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-orange-400" />
@@ -154,72 +154,88 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
             </div>
 
             {/* Feature Highlights Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-              <div className="p-3.5 bg-[#121214] border border-zinc-800/80 rounded-xl space-y-1">
-                <div className="font-bold text-white flex items-center gap-1.5 text-xs">
-                  <Zap className="w-3.5 h-3.5 text-amber-400" /> Instant No-Download Play
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="flex items-start gap-3 p-3.5 bg-zinc-900 border border-zinc-800/80 rounded-xl">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-400">
+                  <Zap className="w-4 h-4" />
                 </div>
-                <p className="text-zinc-400 text-[11px]">Click and play in seconds with lightweight HTML5 / WebGL emulation.</p>
+                <div className="min-w-0">
+                  <div className="font-semibold text-white text-xs">Instant No-Download Play</div>
+                  <p className="text-zinc-400 text-[11px] mt-0.5 leading-relaxed">Click and play in seconds with lightweight HTML5 & WebGL emulation.</p>
+                </div>
               </div>
 
-              <div className="p-3.5 bg-[#121214] border border-zinc-800/80 rounded-xl space-y-1">
-                <div className="font-bold text-white flex items-center gap-1.5 text-xs">
-                  <Smartphone className="w-3.5 h-3.5 text-sky-400" /> Works on All Devices
+              <div className="flex items-start gap-3 p-3.5 bg-[#121214] border border-zinc-800/80 rounded-xl">
+                <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0 text-sky-400">
+                  <Smartphone className="w-4 h-4" />
                 </div>
-                <p className="text-zinc-400 text-[11px]">Fully responsive controls on PC, Mac, Chromebook, iPhone, and Android.</p>
+                <div className="min-w-0">
+                  <div className="font-semibold text-white text-xs">Works on All Devices</div>
+                  <p className="text-zinc-400 text-[11px] mt-0.5 leading-relaxed">Fully responsive controls on PC, Mac, Chromebook, iPhone, and Android.</p>
+                </div>
               </div>
 
-              <div className="p-3.5 bg-[#121214] border border-zinc-800/80 rounded-xl space-y-1">
-                <div className="font-bold text-white flex items-center gap-1.5 text-xs">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Safe & Family Friendly
+              <div className="flex items-start gap-3 p-3.5 bg-[#121214] border border-zinc-800/80 rounded-xl">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400">
+                  <ShieldCheck className="w-4 h-4" />
                 </div>
-                <p className="text-zinc-400 text-[11px]">Clean, curated browser gaming experience safe for players of all ages.</p>
+                <div className="min-w-0">
+                  <div className="font-semibold text-white text-xs">Safe & Family Friendly</div>
+                  <p className="text-zinc-400 text-[11px] mt-0.5 leading-relaxed">Clean, curated browser gaming experience safe for players of all ages.</p>
+                </div>
               </div>
             </div>
 
-            {/* Quick Categories Navigation */}
-            <div className="pt-2 border-t border-zinc-800/80 space-y-2">
-              <h3 className="font-bold text-xs text-zinc-300 uppercase tracking-wider">Popular Game Categories</h3>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { name: "Action Games", href: "/category/action" },
-                  { name: "Puzzle Games", href: "/category/puzzle" },
-                  { name: "Racing Games", href: "/category/racing" },
-                  { name: "Sports Games", href: "/category/sports" },
-                  { name: "Shooting Games", href: "/category/shooting" },
-                  { name: "IO Games", href: "/category/io" },
-                  { name: "Adventure Games", href: "/category/adventure" },
-                  { name: "Arcade Games", href: "/category/arcade" },
-                ].map((cat) => (
-                  <Link
-                    key={cat.name}
-                    href={cat.href}
-                    className="px-2.5 py-1 bg-[#121214] hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-lg border border-zinc-800 transition-colors text-[11px]"
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
+            {/* Split Grid: Categories & FAQ */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4 border-t border-zinc-800/80">
+              {/* Popular Categories */}
+              <div className="lg:col-span-5 space-y-3">
+                <h3 className="font-bold text-xs text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <Gamepad2 className="w-3.5 h-3.5 text-orange-400" />
+                  Popular Game Categories
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { name: "Action Games", href: "/category/action", icon: Zap, color: "text-amber-400" },
+                    { name: "Puzzle Games", href: "/category/puzzle", icon: Puzzle, color: "text-emerald-400" },
+                    { name: "Racing Games", href: "/category/racing", icon: Car, color: "text-rose-400" },
+                    { name: "Sports Games", href: "/category/sports", icon: Trophy, color: "text-orange-400" },
+                    { name: "Shooting Games", href: "/category/shooting", icon: Crosshair, color: "text-red-400" },
+                    { name: "IO Games", href: "/category/io", icon: Globe, color: "text-cyan-400" },
+                    { name: "Adventure Games", href: "/category/adventure", icon: Compass, color: "text-blue-400" },
+                    { name: "Arcade Games", href: "/category/arcade", icon: Gamepad2, color: "text-purple-400" },
+                  ].map((cat) => (
+                    <Link
+                      key={cat.name}
+                      href={cat.href}
+                      className="flex items-center gap-2 px-2.5 py-2 bg-[#121214] hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-xl border border-zinc-800/80 hover:border-zinc-700 transition-all text-[11px] font-medium group"
+                    >
+                      <cat.icon className={`w-3.5 h-3.5 ${cat.color} group-hover:scale-110 transition-transform shrink-0`} />
+                      <span className="truncate">{cat.name}</span>
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Homepage FAQ */}
-            <div className="pt-2 border-t border-zinc-800/80 space-y-2">
-              <h3 className="font-bold text-xs text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
-                Frequently Asked Questions
-              </h3>
-              <div className="space-y-1.5">
-                {homeFaqs.map((faq, i) => (
-                  <details key={i} className="group p-2.5 bg-[#121214] border border-zinc-800/60 rounded-xl cursor-pointer">
-                    <summary className="text-xs font-semibold text-zinc-200 group-hover:text-indigo-300 list-none flex justify-between items-center select-none">
-                      <span>{faq.q}</span>
-                      <span className="text-zinc-500 group-open:rotate-180 transition-transform text-sm">+</span>
-                    </summary>
-                    <p className="text-[11px] text-zinc-400 mt-2 leading-relaxed">
-                      {faq.a}
-                    </p>
-                  </details>
-                ))}
+              {/* Homepage FAQ */}
+              <div className="lg:col-span-7 space-y-3">
+                <h3 className="font-bold text-xs text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+                  Frequently Asked Questions
+                </h3>
+                <div className="space-y-2">
+                  {homeFaqs.map((faq, i) => (
+                    <details key={i} className="group p-3 bg-[#121214] border border-zinc-800/60 hover:border-zinc-700/80 rounded-xl cursor-pointer transition-colors">
+                      <summary className="text-xs font-semibold text-zinc-200 group-hover:text-white list-none flex justify-between items-center select-none gap-2">
+                        <span>{faq.q}</span>
+                        <ChevronDown className="w-4 h-4 text-zinc-500 group-open:rotate-180 group-hover:text-zinc-400 transition-transform duration-200 shrink-0" />
+                      </summary>
+                      <p className="text-[11px] text-zinc-400 mt-2 leading-relaxed">
+                        {faq.a}
+                      </p>
+                    </details>
+                  ))}
+                </div>
               </div>
             </div>
           </footer>

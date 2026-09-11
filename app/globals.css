@@ -2,10 +2,10 @@
 
 :root {
   --background: #000000; 
-  --surface: #080808; 
-  --surface-hover: #121212; 
-  --border-main: #1a1a1a; 
-  --border-strong: #262626; 
+  --surface: #050505; 
+  --surface-hover: #0a0a0a; 
+  --border-main: #141414; 
+  --border-strong: #1e1e1e; 
   
   --text-main: #f4f4f5; 
   --text-secondary: #d4d4d8; 
@@ -18,10 +18,10 @@
 }
 
 @theme inline {
-  /* Override default Tailwind zinc colors for matte black look everywhere */
-  --color-zinc-700: #1c1c1c;
-  --color-zinc-800: #121212;
-  --color-zinc-900: #080808;
+  /* Override default Tailwind zinc colors for matte black pure black look everywhere */
+  --color-zinc-700: #141414;
+  --color-zinc-800: #0d0d0d;
+  --color-zinc-900: #050505;
   --color-zinc-950: #000000;
 
   --color-background: var(--background);

@@ -120,110 +120,113 @@ export default function ScannerPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4 bg-[#0c0c0e] p-4 rounded-xl border border-[#1f1f22] shadow-lg shadow-black/40">
+    <div className="space-y-4">
+      {/* Compact Header & Controls */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
-          <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Activity className="w-5 h-5 text-indigo-400 drop-shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
+          <h2 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+            <Activity className="w-4 h-4 text-indigo-400" />
             Broken Game Scanner
           </h2>
-          <p className="text-[10px] text-zinc-400 truncate mt-0.5 font-medium">Automatically ping game URLs to find broken links (404s) so you can fix or unpublish them.</p>
+          <p className="text-xs text-zinc-400 mt-0.5">
+            Ping game URLs to detect broken links and 404s.
+          </p>
         </div>
         
-        <div className="flex gap-3 w-full sm:w-auto">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          {lastScanned && !isScanning && (
+            <span className="text-[11px] text-zinc-500 hidden md:inline">
+              Last: {new Date(lastScanned).toLocaleDateString()} {new Date(lastScanned).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>
+          )}
           {isScanning ? (
             <button 
               onClick={stopScan}
-              className="w-full sm:w-auto bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg font-bold text-xs transition-all shadow-lg shadow-red-600/20 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto bg-red-600 hover:bg-red-500 text-white px-3.5 py-1.5 rounded-lg font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
             >
-              <Square className="w-3.5 h-3.5 fill-current" /> Stop Scan
+              <Square className="w-3 h-3 fill-current" /> Stop Scan
             </button>
           ) : (
             <button 
               onClick={startScan}
               disabled={games.length === 0}
-              className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-bold text-xs transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-lg font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
             >
-              <Play className="w-3.5 h-3.5 fill-current" /> {scannedCount > 0 ? "Restart Scan" : "Start Scan"}
+              <Play className="w-3 h-3 fill-current" /> {scannedCount > 0 ? "Restart Scan" : "Start Scan"}
             </button>
           )}
         </div>
       </div>
 
-      {/* Progress Card */}
-      <div className="bg-[#0c0c0e] border border-[#1f1f22] rounded-xl p-6 shadow-lg shadow-black/40">
-        <div className="flex justify-between items-end mb-3">
-          <div>
-            <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">Scanning progress</div>
-            {lastScanned && !isScanning && (
-              <div className="text-[10px] text-zinc-500 font-medium">
-                Last scanned: {new Date(lastScanned).toLocaleString()}
-              </div>
-            )}
-          </div>
-          <span className="text-xs font-bold text-indigo-400">{scannedCount} / {games.length} Games</span>
+      {/* Progress & Stat Cards */}
+      <div className="bg-[#0c0c0e] border border-zinc-800/80 rounded-xl p-4">
+        {/* Progress Bar */}
+        <div className="flex justify-between items-center text-xs mb-2">
+          <span className="font-semibold text-zinc-400">Progress</span>
+          <span className="font-semibold text-indigo-400">{scannedCount} / {games.length} Games ({Math.round(progressPercentage)}%)</span>
         </div>
-        <div className="w-full bg-[#121214] border border-[#1f1f22] rounded-full h-3 mb-6 shadow-inner overflow-hidden">
+        <div className="w-full bg-zinc-900 rounded-full h-2 mb-4 overflow-hidden border border-zinc-800">
           <div 
-            className="bg-indigo-500 h-full transition-all duration-300 ease-out shadow-[0_0_10px_rgba(99,102,241,0.5)]"
+            className="bg-indigo-500 h-full transition-all duration-300 ease-out"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[#121214] border border-[#1f1f22] rounded-lg p-4 shadow-sm">
-            <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1">Games Found</div>
-            <div className="text-2xl font-bold text-white">{games.length}</div>
+        {/* 3 Metric Cards */}
+        <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-lg p-2.5 sm:p-3">
+            <div className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">Total Games</div>
+            <div className="text-lg sm:text-xl font-bold text-white mt-0.5">{games.length}</div>
           </div>
-          <div className="bg-[#121214] border border-emerald-900/30 rounded-lg p-4 shadow-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-emerald-500/5 pointer-events-none" />
-            <div className="text-[10px] font-bold text-emerald-500/70 uppercase tracking-wider mb-1 flex items-center gap-1 relative z-10">
+          <div className="bg-emerald-950/20 border border-emerald-800/30 rounded-lg p-2.5 sm:p-3">
+            <div className="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" /> Healthy
             </div>
-            <div className="text-2xl font-bold text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)] relative z-10">{games.filter(g => g.status === "ok").length}</div>
+            <div className="text-lg sm:text-xl font-bold text-emerald-400 mt-0.5">{games.filter(g => g.status === "ok").length}</div>
           </div>
-          <div className="bg-[#121214] border border-red-900/30 rounded-lg p-4 shadow-sm relative overflow-hidden">
-            <div className="absolute inset-0 bg-red-500/5 pointer-events-none" />
-            <div className="text-[10px] font-bold text-red-500/70 uppercase tracking-wider mb-1 flex items-center gap-1 relative z-10">
+          <div className="bg-red-950/20 border border-red-800/30 rounded-lg p-2.5 sm:p-3">
+            <div className="text-[10px] font-semibold text-red-400 uppercase tracking-wider flex items-center gap-1">
               <AlertTriangle className="w-3 h-3" /> Broken
             </div>
-            <div className="text-2xl font-bold text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.3)] relative z-10">{brokenGames.length}</div>
+            <div className="text-lg sm:text-xl font-bold text-red-400 mt-0.5">{brokenGames.length}</div>
           </div>
         </div>
       </div>
 
       {/* Broken Games List */}
       {brokenGames.length > 0 && (
-        <div className="bg-[#0c0c0e] border border-red-900/50 rounded-xl overflow-hidden shadow-lg shadow-red-900/20 animate-in fade-in duration-300 mt-6">
-          <div className="bg-red-500/10 border-b border-red-900/50 p-4 flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.5)]" />
-            <h3 className="font-bold text-red-100 text-sm">Action Required: Broken Games Found</h3>
+        <div className="bg-[#0c0c0e] border border-red-900/40 rounded-xl overflow-hidden">
+          <div className="bg-red-500/10 border-b border-red-900/40 px-3.5 py-2.5 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+              <h3 className="font-bold text-red-200 text-xs sm:text-sm">Broken Games Found ({brokenGames.length})</h3>
+            </div>
           </div>
           
           {/* Mobile View (Cards) */}
-          <div className="block sm:hidden divide-y divide-[#1f1f22]">
+          <div className="block sm:hidden divide-y divide-zinc-800/60">
             {brokenGames.map((game) => (
-              <div key={game._id} className="p-4 space-y-3 hover:bg-[#121214] transition-colors">
+              <div key={game._id} className="p-3 space-y-2 hover:bg-zinc-900/40 transition-colors">
                 <div className="flex justify-between items-start gap-2">
                   <div>
-                    <div className="font-bold text-zinc-200 text-xs">{game.title}</div>
+                    <div className="font-semibold text-zinc-100 text-xs">{game.title}</div>
                     <div className="text-zinc-500 text-[10px]">/{game.slug}</div>
                   </div>
-                  <span className="inline-flex shrink-0 items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 uppercase tracking-wider">
-                    {game.statusCode || 'Timeout/Failed'}
+                  <span className="inline-flex shrink-0 items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
+                    {game.statusCode || 'Failed'}
                   </span>
                 </div>
                 
-                <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 text-xs font-medium break-all">
-                  <ExternalLink className="w-3.5 h-3.5 shrink-0" /> {game.playUrl}
+                <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 text-xs break-all">
+                  <ExternalLink className="w-3 h-3 shrink-0" /> {game.playUrl}
                 </a>
                 
-                <div className="pt-2 flex justify-end">
+                <div className="pt-1 flex justify-end">
                   <Link 
                     href={`/admin/games/${game._id}/edit`}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold bg-[#121214] hover:bg-[#1a1a1f] text-zinc-300 hover:text-white rounded-lg transition-colors border border-[#1f1f22] shadow-sm"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white rounded-md transition-colors border border-zinc-700/60"
                   >
-                    Edit Game <ArrowRight className="w-3.5 h-3.5" />
+                    Edit Game <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
               </div>
@@ -234,37 +237,37 @@ export default function ScannerPage() {
           <div className="hidden sm:block overflow-x-auto custom-scrollbar">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[#1f1f22] text-[10px] font-bold text-zinc-500 bg-[#121214] uppercase tracking-widest">
-                  <th className="p-3">Game</th>
-                  <th className="p-3">Status Code</th>
-                  <th className="p-3">URL</th>
-                  <th className="p-3 text-right">Action</th>
+                <tr className="border-b border-zinc-800/80 text-[10px] font-semibold text-zinc-400 bg-zinc-900/80 uppercase tracking-wider">
+                  <th className="py-2.5 px-3.5">Game</th>
+                  <th className="py-2.5 px-3.5">Status</th>
+                  <th className="py-2.5 px-3.5">Play URL</th>
+                  <th className="py-2.5 px-3.5 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="text-sm divide-y divide-[#1f1f22]">
+              <tbody className="text-xs divide-y divide-zinc-800/50">
                 {brokenGames.map((game) => (
-                  <tr key={game._id} className="hover:bg-[#121214] transition-colors">
-                    <td className="p-3">
-                      <div className="font-bold text-zinc-200 text-xs">{game.title}</div>
-                      <div className="text-zinc-500 text-[10px] mt-0.5">/{game.slug}</div>
+                  <tr key={game._id} className="hover:bg-zinc-900/40 transition-colors">
+                    <td className="py-2.5 px-3.5 whitespace-nowrap">
+                      <div className="font-medium text-white text-xs">{game.title}</div>
+                      <div className="text-zinc-500 text-[10px]">/{game.slug}</div>
                     </td>
-                    <td className="p-3">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 uppercase tracking-wider">
-                        {game.statusCode || 'Timeout/Failed'}
+                    <td className="py-2.5 px-3.5 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
+                        {game.statusCode || 'Failed'}
                       </span>
                     </td>
-                    <td className="p-3">
-                      <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 truncate max-w-[300px] text-xs font-medium">
+                    <td className="py-2.5 px-3.5">
+                      <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 truncate max-w-[320px] text-xs">
                         <ExternalLink className="w-3.5 h-3.5 shrink-0" /> {game.playUrl}
                       </a>
                     </td>
-                    <td className="p-3 text-right">
+                    <td className="py-2.5 px-3.5 text-right whitespace-nowrap">
                       <Link 
                         href={`/admin/games/${game._id}/edit`}
-                        className="inline-flex items-center justify-center p-2 text-zinc-400 hover:text-white hover:bg-[#1a1a1f] rounded-lg transition-colors border border-transparent hover:border-[#333339] shadow-sm"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-zinc-300 hover:text-white bg-zinc-900 hover:bg-zinc-800 rounded-md transition-colors border border-zinc-700/60"
                         title="Edit Game"
                       >
-                        <ArrowRight className="w-3.5 h-3.5" />
+                        Edit <ArrowRight className="w-3 h-3" />
                       </Link>
                     </td>
                   </tr>

@@ -8,6 +8,8 @@ interface ContinuePlayingRowProps {
 export default function ContinuePlayingRow({ games }: ContinuePlayingRowProps) {
   if (!games || games.length === 0) return null;
 
+  const displayGames = games.slice(0, 6);
+
   return (
     <section className="mb-8">
       <div className="flex items-center justify-between mb-4">
@@ -17,10 +19,10 @@ export default function ContinuePlayingRow({ games }: ContinuePlayingRowProps) {
         </Link>
       </div>
       
-      <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none snap-x">
-        {games.map(game => (
+      <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+        {displayGames.map(game => (
           <Link href={`/games/${game.slug}`} key={game.slug} className="flex-shrink-0 group snap-start">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl overflow-hidden border border-border-main group-hover:border-primary-light transition-colors shadow-lg relative bg-surface-hover flex-shrink-0">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border border-border-main group-hover:border-primary-light transition-all shadow-lg relative bg-surface-hover flex-shrink-0">
               <GameImage 
                 src={game.thumbnailUrl} 
                 alt={game.title}
