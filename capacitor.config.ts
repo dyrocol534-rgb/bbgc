@@ -36,6 +36,10 @@ const config: CapacitorConfig = {
       backgroundColor: '#09090b',
       overlaysWebView: false,
     },
+    NavigationBar: {
+      color: '#09090b',
+      style: 'DARK',
+    },
   },
 };
 

@@ -17,6 +17,7 @@
     "@capacitor/core": "^8.5.0",
     "@capacitor/splash-screen": "^8.0.2",
     "@capacitor/status-bar": "^8.0.3",
+    "@capawesome/capacitor-navigation-bar": "^8.0.2",
     "axios": "^1.18.1",
     "clsx": "^2.1.1",
     "critters": "^0.0.23",

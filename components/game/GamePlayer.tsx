@@ -123,16 +123,40 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   }, [isPlaying]);
 
-  // Handle Mobile Fullscreen: Status Bar, Native Fullscreen & Back Button interception
-  useEffect(() => {
-    if (!isMobileFS) return;
-
-    // 1. Hide Capacitor system status bar on Android/iOS app
+  const enterImmersiveMode = () => {
     import('@capacitor/status-bar')
       .then(({ StatusBar }) => {
         StatusBar.hide().catch(() => {});
       })
       .catch(() => {});
+    import('@capawesome/capacitor-navigation-bar')
+      .then(({ NavigationBar }) => {
+        NavigationBar.hide().catch(() => {});
+      })
+      .catch(() => {});
+  };
+
+  const exitImmersiveMode = () => {
+    import('@capacitor/status-bar')
+      .then(({ StatusBar }) => {
+        StatusBar.show().catch(() => {});
+      })
+      .catch(() => {});
+    import('@capawesome/capacitor-navigation-bar')
+      .then(({ NavigationBar, Style }) => {
+        NavigationBar.show().catch(() => {});
+        NavigationBar.setColor({ color: '#09090b' }).catch(() => {});
+        NavigationBar.setStyle({ style: Style.Dark }).catch(() => {});
+      })
+      .catch(() => {});
+  };
+
+  // Handle Mobile Fullscreen: Status Bar, Navigation Bar & Back Button interception
+  useEffect(() => {
+    if (!isMobileFS) return;
+
+    // 1. Hide Capacitor system status bar and Android navigation bar for true edge-to-edge
+    enterImmersiveMode();
 
     // 2. Request native HTML5 fullscreen to hide browser address/status bars
     const docEl = document.documentElement as any;
@@ -167,11 +191,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         const orient = (screen.orientation || (screen as any).mozOrientation || (screen as any).msOrientation) as any;
         if (orient && orient.unlock) orient.unlock();
       } catch (e) {}
-      import('@capacitor/status-bar')
-        .then(({ StatusBar }) => {
-          StatusBar.show().catch(() => {});
-        })
-        .catch(() => {});
+      exitImmersiveMode();
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -193,6 +213,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       if (capacitorBackListener && capacitorBackListener.remove) {
         capacitorBackListener.remove();
       }
+      exitImmersiveMode();
     };
   }, [isMobileFS]);
 
@@ -246,11 +267,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       const orient = (screen.orientation || (screen as any).mozOrientation || (screen as any).msOrientation) as any;
       if (orient && orient.unlock) orient.unlock();
     } catch (e) {}
-    import('@capacitor/status-bar')
-      .then(({ StatusBar }) => {
-        StatusBar.show().catch(() => {});
-      })
-      .catch(() => {});
+    exitImmersiveMode();
   };
 
   const rotateScreen = async () => {
