@@ -1,7 +1,10 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal, preconnect, prefetchDNS } from 'react-dom';
-import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, X, Play, RotateCcw, Gamepad2 } from 'lucide-react';
+import { 
+  Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, 
+  MessageSquareWarning, X, Play, RotateCcw, Gamepad2, Share2, Star, Sparkles 
+} from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
 import { ConsoleLoader } from '@/components/ui/ConsoleLoader';
@@ -336,6 +339,27 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   };
 
+  const handleShare = async () => {
+    if (typeof window !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: game.title,
+          text: `Play ${game.title} free online on Bluebuff!`,
+          url: window.location.href,
+        });
+      } catch (e) {
+        // User cancelled or share dismissed
+      }
+    } else if (typeof window !== 'undefined') {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Game link copied to clipboard! 📋');
+      } catch (e) {
+        // fallback
+      }
+    }
+  };
+
   const aspectRatio = game.width && game.height ? `${game.width}/${game.height}` : '16/9';
   const cleanThumb = (game.thumbnailUrl || '').trim().replace(/^http:\/\//, 'https://').replace(/^\/\//, 'https://');
   const initialLetter = (game.title || 'G').charAt(0).toUpperCase();
@@ -460,34 +484,35 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       )}
 
       {/* ── MAIN PAGE CONTENT ─────────────────────────────────────── */}
-      <div className="flex flex-col gap-2 relative w-full max-w-[800px] mx-auto">
+      <div className="flex flex-col gap-3 relative w-full max-w-[840px] mx-auto">
         {!isPlaying ? (
-          /* Seamless Hero Section with Top-to-Middle Ambient Color Fade */
-          <div className="relative flex flex-col items-center justify-center py-3 sm:py-5 px-3 w-full overflow-hidden">
-            {/* Top-to-Middle Faded Ambient Glow */}
-            <div 
-              className="absolute -top-12 inset-x-0 h-[200px] pointer-events-none z-0 opacity-35 blur-2xl"
-              style={{
-                background: `radial-gradient(ellipse 90% 70% at 50% 15%, rgba(255, 107, 0, 0.4), rgba(234, 88, 12, 0.1) 50%, transparent 80%)`,
-              }}
-            />
-            {cleanThumb && (
-              <div 
-                className="absolute -top-8 inset-x-0 h-[180px] pointer-events-none z-0 opacity-20 blur-xl scale-105"
-                style={{
-                  backgroundImage: `url(${cleanThumb})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 80%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.4) 40%, rgba(0,0,0,0) 80%)'
-                }}
-              />
+          /* iOS Arcade Hero Section with Top-to-Bottom Game Icon Gradient */
+          <div className="relative flex flex-col items-center justify-center py-7 sm:py-9 px-4 w-full rounded-[28px] border border-white/[0.1] shadow-[0_20px_50px_rgba(0,0,0,0.7)] overflow-hidden bg-[#0c0c0f]">
+            {/* Top hairline highlight */}
+            <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/30 to-transparent z-10" />
+
+            {/* Dynamic Game-Themed Top-to-Bottom Gradient & Artwork Backdrop */}
+            {cleanThumb ? (
+              <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+                <div 
+                  className="absolute -top-14 inset-x-0 h-[90%] opacity-45 blur-3xl scale-125 transition-all"
+                  style={{
+                    backgroundImage: `url(${cleanThumb})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center top',
+                  }}
+                />
+                {/* Smooth top-to-bottom darkening fade */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-[#0e0e12]/80 to-[#0e0e12]" />
+              </div>
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-b from-orange-500/25 via-[#0e0e12]/80 to-[#0e0e12] pointer-events-none" />
             )}
 
             {/* Content */}
-            <div className="relative z-10 flex flex-col items-center w-full">
+            <div className="relative z-10 flex flex-col items-center w-full text-center">
               {cleanThumb ? (
-                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden mb-2.5 border border-white/15 shadow-xl group">
+                <div className="relative w-22 h-22 sm:w-26 sm:h-26 rounded-[22px] overflow-hidden mb-3.5 border border-white/20 shadow-[0_14px_32px_rgba(0,0,0,0.7)] group ring-1 ring-white/10">
                   <GameImage 
                     src={cleanThumb} 
                     alt={game.title} 
@@ -496,25 +521,31 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                   />
                 </div>
               ) : (
-                <div className="w-20 h-20 sm:w-24 sm:h-24 aspect-square rounded-2xl bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center mb-2.5 border border-white/20 shadow-xl text-white font-black text-3xl sm:text-4xl select-none">
+                <div className="w-22 h-22 sm:w-26 sm:h-26 aspect-square rounded-[22px] bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center mb-3.5 border border-white/20 shadow-2xl text-white font-black text-3xl sm:text-4xl select-none">
                   {initialLetter}
                 </div>
               )}
 
-              <h1 className="text-lg sm:text-xl font-bold text-white mb-1 text-center tracking-tight">{game.title}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-white mb-2 text-center tracking-tight">
+                {game.title}
+              </h1>
               
-              <div className="flex items-center gap-1 text-[11px] sm:text-xs text-zinc-400 mb-3.5 font-medium">
-                <span>🕹️</span>
-                <span className="capitalize">{game.category?.[0] || "Arcade"}</span>
+              {/* Category Pill */}
+              <div className="flex items-center justify-center mb-5">
+                <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/[0.08] border border-white/[0.12] text-xs font-semibold text-zinc-200 shadow-sm backdrop-blur-md">
+                  <span>🕹️</span>
+                  <span className="capitalize">{game.category?.[0] || "Arcade"}</span>
+                </span>
               </div>
 
+              {/* iOS Big Pill Play Button */}
               <button
                 ref={playButtonRef}
                 onClick={handlePlayNow}
-                className="px-6 py-2 bg-[#ff6b00] hover:bg-[#ea580c] text-white text-sm sm:text-base font-bold rounded-full transition-all hover:scale-105 active:scale-95 shadow-md flex items-center gap-2 group cursor-pointer"
+                className="px-9 py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.98] text-white text-sm sm:text-base font-semibold rounded-full shadow-[0_8px_25px_rgba(249,115,22,0.35)] transition-all flex items-center gap-2.5 cursor-pointer"
               >
-                <Play className="w-4 h-4 fill-current group-hover:scale-110 transition-transform" />
-                Play now
+                <Play className="w-4 h-4 fill-current transition-transform" />
+                <span>Play Now</span>
               </button>
             </div>
           </div>
@@ -523,8 +554,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           <div
             ref={containerRef}
             className={clsx(
-              "hidden lg:flex relative bg-black rounded-xl overflow-hidden shadow-2xl flex-col items-center justify-center group",
-              isFullscreen ? "w-screen h-screen rounded-none" : "w-full"
+              "hidden lg:flex relative bg-black rounded-2xl overflow-hidden shadow-2xl flex-col items-center justify-center group border border-white/[0.08]",
+              isFullscreen ? "w-screen h-screen rounded-none border-none" : "w-full"
             )}
             style={{ aspectRatio: !isFullscreen ? aspectRatio : 'auto' }}
           >
@@ -541,8 +572,11 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             />
             {isFullscreen && (
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                <button onClick={toggleFullscreen} className="flex items-center gap-2 px-4 py-2 bg-black/70 backdrop-blur-sm text-white rounded-lg border border-white/10 text-sm font-bold">
-                  <Minimize className="w-4 h-4" /> Exit Fullscreen
+                <button 
+                  onClick={toggleFullscreen} 
+                  className="flex items-center gap-2 px-4 py-2 bg-black/80 backdrop-blur-md text-white rounded-full border border-white/15 text-xs font-semibold active:scale-95 transition-all cursor-pointer"
+                >
+                  <Minimize className="w-3.5 h-3.5" /> Exit Fullscreen
                 </button>
               </div>
             )}
@@ -551,17 +585,17 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
         {/* Mobile placeholder while in FS (keeps layout from collapsing) */}
         {isPlaying && isMobileFS && (
-          <div className="lg:hidden w-full rounded-xl bg-zinc-950 flex items-center justify-center" style={{ aspectRatio }}>
-            <p className="text-zinc-600 text-sm">Playing in fullscreen…</p>
+          <div className="lg:hidden w-full rounded-2xl bg-zinc-950 flex items-center justify-center border border-white/[0.06]" style={{ aspectRatio }}>
+            <p className="text-zinc-500 text-xs font-medium">Playing in fullscreen…</p>
           </div>
         )}
 
         {/* Mobile inline player (when NOT in mobile FS) */}
         {isPlaying && !isMobileFS && (
-          <div className="lg:hidden relative bg-black rounded-xl overflow-hidden shadow-2xl w-full" style={{ aspectRatio }}>
+          <div className="lg:hidden relative bg-black rounded-2xl overflow-hidden shadow-2xl w-full border border-white/[0.08]" style={{ aspectRatio }}>
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10">
-                <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
               </div>
             )}
             <iframe
@@ -573,11 +607,11 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           </div>
         )}
 
-        {/* ── ACTION BAR (always visible below the player) ─── */}
-        <div className="flex flex-row items-center justify-between bg-zinc-900/90 backdrop-blur-md rounded-xl p-1 sm:p-1.5 border border-white/5 gap-1.5 mt-1 overflow-x-auto scrollbar-none">
-          <div className="flex items-center gap-1.5 min-w-0 shrink">
+        {/* ── iOS ACTION BAR (always visible below player) ─── */}
+        <div className="flex flex-row items-center justify-between bg-[#141416]/90 backdrop-blur-xl rounded-2xl p-2 px-3 border border-white/[0.08] gap-2 shadow-md">
+          <div className="flex items-center gap-2.5 min-w-0">
             {cleanThumb ? (
-              <div className="relative w-6 h-6 sm:w-7 sm:h-7 rounded-md overflow-hidden flex-shrink-0 bg-zinc-800 ml-0.5">
+              <div className="relative w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 bg-zinc-800 border border-white/10 shadow-sm">
                 <GameImage 
                   src={cleanThumb} 
                   alt={game.title} 
@@ -586,48 +620,138 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 />
               </div>
             ) : (
-              <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white text-[11px] sm:text-xs font-black shadow-sm shrink-0 select-none ml-0.5">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white text-xs font-black shadow-sm shrink-0 select-none">
                 {initialLetter}
               </div>
             )}
-            <h2 className="text-zinc-100 font-semibold truncate text-xs sm:text-sm">{game.title}</h2>
+            <div className="flex flex-col min-w-0">
+              <h2 className="text-white font-semibold truncate text-xs sm:text-sm tracking-tight">{game.title}</h2>
+              <span className="text-[10.5px] text-zinc-400 truncate capitalize">{game.category?.[0] || "Online Game"}</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1 shrink-0 pr-0.5">
-            {/* Like/Dislike */}
-            <div className="flex items-center bg-zinc-800/80 rounded-full border border-white/5 overflow-hidden shrink-0">
-              <button onClick={() => handleInteract('like')} className={clsx("flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 hover:bg-zinc-700 transition-colors group", isLiked ? "text-orange-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}>
-                <ThumbsUp className={clsx("w-3.5 h-3.5", isLiked ? "fill-current" : "group-hover:scale-110")} />
-                {likeCount > 0 && <span className="text-xs font-bold">{likeCount > 999 ? (likeCount/1000).toFixed(1)+'k' : likeCount}</span>}
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            {/* iOS Like/Dislike Segmented Pill */}
+            <div className="flex items-center bg-white/[0.05] rounded-full border border-white/[0.08] overflow-hidden shrink-0 p-0.5">
+              <button 
+                onClick={() => handleInteract('like')} 
+                className={clsx(
+                  "flex items-center gap-1 px-2.5 py-1 rounded-full transition-all text-xs font-medium cursor-pointer active:scale-95", 
+                  isLiked ? "text-orange-400 bg-orange-500/15" : "text-zinc-300 hover:text-white"
+                )}
+                title="Like"
+              >
+                <ThumbsUp className={clsx("w-3.5 h-3.5", isLiked ? "fill-current" : "")} />
+                {likeCount > 0 && <span className="text-[11px] font-semibold">{likeCount > 999 ? (likeCount/1000).toFixed(1)+'k' : likeCount}</span>}
               </button>
-              <div className="w-px h-3 bg-white/10" />
-              <button onClick={() => handleInteract('dislike')} className={clsx("flex items-center gap-1 px-2 py-1 sm:px-2.5 sm:py-1.5 hover:bg-zinc-700 transition-colors group", isDisliked ? "text-red-400 bg-zinc-700/50" : "text-zinc-300 hover:text-white")}>
-                <ThumbsDown className={clsx("w-3.5 h-3.5", isDisliked ? "fill-current" : "group-hover:scale-110")} />
+              <div className="w-px h-3 bg-white/10 my-auto" />
+              <button 
+                onClick={() => handleInteract('dislike')} 
+                className={clsx(
+                  "flex items-center gap-1 px-2 py-1 rounded-full transition-all text-xs cursor-pointer active:scale-95", 
+                  isDisliked ? "text-red-400 bg-red-500/15" : "text-zinc-300 hover:text-white"
+                )}
+                title="Dislike"
+              >
+                <ThumbsDown className={clsx("w-3.5 h-3.5", isDisliked ? "fill-current" : "")} />
               </button>
             </div>
-            <button onClick={() => handleInteract('favorite')} className={clsx("w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full border border-white/5 transition-colors shrink-0 group", isFavorited ? "bg-zinc-700 text-pink-500 border-pink-500/30" : "bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-white")} title="Favorite">
-              <Heart className={clsx("w-3.5 h-3.5", isFavorited ? "fill-current" : "group-hover:text-pink-500")} />
+
+            {/* Favorite Button */}
+            <button 
+              onClick={() => handleInteract('favorite')} 
+              className={clsx(
+                "w-8 h-8 flex items-center justify-center rounded-full border transition-all shrink-0 cursor-pointer active:scale-95 shadow-sm", 
+                isFavorited 
+                  ? "bg-pink-500/15 text-pink-400 border-pink-500/30" 
+                  : "bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border-white/[0.08]"
+              )} 
+              title="Add to Favorites"
+            >
+              <Heart className={clsx("w-3.5 h-3.5", isFavorited ? "fill-current text-pink-500" : "")} />
             </button>
-            <button onClick={() => setShowFeedbackModal(true)} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0" title="Feedback">
+
+            {/* Native Share Button */}
+            <button 
+              onClick={handleShare} 
+              className="w-8 h-8 flex items-center justify-center bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 rounded-full border border-white/[0.08] text-zinc-300 hover:text-white transition-all shrink-0 cursor-pointer shadow-sm" 
+              title="Share Game"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Feedback Button */}
+            <button 
+              onClick={() => setShowFeedbackModal(true)} 
+              className="w-8 h-8 flex items-center justify-center bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 rounded-full border border-white/[0.08] text-zinc-300 hover:text-white transition-all shrink-0 cursor-pointer shadow-sm" 
+              title="Report or Give Feedback"
+            >
               <MessageSquareWarning className="w-3.5 h-3.5" />
             </button>
-            <button onClick={toggleFullscreen} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 hidden md:flex" title="Fullscreen">
+
+            {/* Desktop Fullscreen Button */}
+            <button 
+              onClick={toggleFullscreen} 
+              className="w-8 h-8 items-center justify-center bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 rounded-full border border-white/[0.08] text-zinc-300 hover:text-white transition-all shrink-0 hidden md:flex cursor-pointer shadow-sm" 
+              title="Fullscreen"
+            >
               {isFullscreen ? <Minimize className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
             </button>
           </div>
         </div>
 
-        {/* Feedback Modal */}
+        {/* iOS Feedback Modal */}
         {showFeedbackModal && typeof document !== 'undefined' && createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200" onClick={closeFeedbackModal}>
-            <div className="relative bg-[#0e0e12] border border-[#27272a] rounded-2xl p-5 sm:p-6 max-w-md w-full shadow-2xl flex flex-col animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-              <button onClick={closeFeedbackModal} className="absolute top-3.5 right-3.5 p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
-              <h3 className="text-lg font-bold text-white mb-1.5 flex items-center gap-2"><MessageSquareWarning className="w-4.5 h-4.5 text-orange-400" />Provide Feedback</h3>
-              <p className="text-zinc-400 text-xs sm:text-sm mb-4">Let us know what you think about <strong>{game.title}</strong>, or report any issues.</p>
-              <textarea value={feedbackText} onChange={e => setFeedbackText(e.target.value)} placeholder="Your message here..." className="w-full bg-[#16161c] border border-zinc-700/80 rounded-xl p-3 text-zinc-100 text-sm min-h-[100px] focus:outline-none focus:border-orange-500 transition-colors mb-4" />
-              <div className="flex justify-end gap-2.5">
-                <button onClick={closeFeedbackModal} className="px-4 py-2 text-zinc-400 hover:text-white text-xs sm:text-sm font-medium rounded-lg hover:bg-white/5 transition-colors">Cancel</button>
-                <button onClick={submitFeedback} disabled={isSubmittingFeedback || !feedbackText.trim()} className="px-5 py-2 bg-[#ff6b00] hover:bg-[#ea580c] text-white text-xs sm:text-sm font-bold rounded-lg transition-all shadow-md disabled:opacity-50 flex items-center gap-2">
-                  {isSubmittingFeedback ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}Submit
+          <div 
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200" 
+            onClick={closeFeedbackModal}
+          >
+            <div 
+              className="relative bg-[#18181b] border border-white/[0.12] rounded-3xl p-5 sm:p-6 max-w-md w-full shadow-2xl flex flex-col animate-in zoom-in-95 duration-200" 
+              onClick={e => e.stopPropagation()}
+            >
+              <button 
+                onClick={closeFeedbackModal} 
+                className="absolute top-4 right-4 w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className="w-8 h-8 rounded-xl bg-orange-500/15 border border-orange-500/25 flex items-center justify-center text-orange-400 shrink-0">
+                  <MessageSquareWarning className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white tracking-tight">Game Feedback</h3>
+                  <p className="text-[11px] text-zinc-400">Help us improve Bluebuff Games</p>
+                </div>
+              </div>
+
+              <p className="text-zinc-400 text-xs mb-3.5 leading-relaxed">
+                Let us know what you think about <strong className="text-zinc-200">{game.title}</strong>, or report an issue.
+              </p>
+
+              <textarea 
+                value={feedbackText} 
+                onChange={e => setFeedbackText(e.target.value)} 
+                placeholder="Write your feedback or issue description here..." 
+                className="w-full bg-white/[0.04] border border-white/[0.1] focus:border-orange-500/80 rounded-2xl p-3.5 text-zinc-100 placeholder-zinc-500 text-xs sm:text-sm min-h-[110px] outline-none transition-all mb-4" 
+              />
+
+              <div className="flex items-center justify-end gap-2.5">
+                <button 
+                  onClick={closeFeedbackModal} 
+                  className="px-4 py-2 rounded-full text-zinc-400 hover:text-white text-xs font-medium hover:bg-white/[0.06] transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={submitFeedback} 
+                  disabled={isSubmittingFeedback || !feedbackText.trim()} 
+                  className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 text-white text-xs font-semibold rounded-full transition-all shadow-md shadow-orange-500/20 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                >
+                  {isSubmittingFeedback ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+                  <span>Submit Feedback</span>
                 </button>
               </div>
             </div>

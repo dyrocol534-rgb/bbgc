@@ -7,7 +7,7 @@ import GameImage from '@/components/game/GameImage';
 import GameDescription from '@/components/game/GameDescription';
 import { getPublishedGameBySlug, getRandomSuggestedGames } from '@/lib/services/gameService';
 import { getSidebarBentoSpanClass } from '@/lib/bento';
-import { Gamepad2, Smartphone, Monitor, Layers, Globe } from 'lucide-react';
+import { Gamepad2, Smartphone, Monitor, Layers, Globe, ChevronRight, Star, Info, Sparkles } from 'lucide-react';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -217,25 +217,25 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <div className="container mx-auto px-3 sm:px-4 pt-2 sm:pt-3 pb-6 max-w-[1400px]">
-        {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="mb-2 sm:mb-2.5 text-[11px] sm:text-xs text-zinc-500">
+      <div className="container mx-auto px-3 sm:px-4 pt-2 sm:pt-3 pb-8 max-w-[1400px]">
+        {/* iOS Breadcrumb Navigation */}
+        <nav aria-label="Breadcrumb" className="mb-3 text-[11px] sm:text-xs text-zinc-400">
           <ol className="flex items-center gap-1.5 flex-wrap">
             <li>
-              <Link href="/" className="hover:text-zinc-300 transition-colors">Home</Link>
+              <Link href="/" className="hover:text-white transition-colors">Home</Link>
             </li>
-            <li>/</li>
+            <li><ChevronRight className="w-3 h-3 text-zinc-600" /></li>
             {primaryCategory && (
               <>
                 <li>
-                  <Link href={`/category/${primaryCategory.toLowerCase()}`} className="hover:text-zinc-300 transition-colors capitalize">
+                  <Link href={`/category/${primaryCategory.toLowerCase()}`} className="hover:text-white transition-colors capitalize">
                     {primaryCategory}
                   </Link>
                 </li>
-                <li>/</li>
+                <li><ChevronRight className="w-3 h-3 text-zinc-600" /></li>
               </>
             )}
-            <li className="text-zinc-300 font-medium truncate max-w-[200px] sm:max-w-none">
+            <li className="text-zinc-200 font-medium truncate max-w-[200px] sm:max-w-none">
               {game.title}
             </li>
           </ol>
@@ -248,22 +248,23 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
               <GamePlayer game={game} />
             </div>
 
-            {/* Game Meta & Information */}
-            <div className="space-y-6">
-              <div className="space-y-4">
-                {/* Title */}
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
-                  {game.title}
-                </h1>
+            {/* iOS Inset Grouped Details Card */}
+            <div className="rounded-[24px] bg-[#141416] border border-white/[0.08] p-5 sm:p-6 shadow-sm space-y-5">
+              {/* Header Info */}
+              <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight leading-tight">
+                    {game.title}
+                  </h1>
+                </div>
 
-                {/* Category chips + tag pills */}
+                {/* Categories & Tags */}
                 <div className="flex flex-wrap items-center gap-2">
                   {game.category?.map((cat: string) => (
                     <Link
                       key={cat}
                       href={`/category/${cat.toLowerCase()}`}
-                      className="px-3 py-1 rounded-lg text-xs font-bold capitalize transition-all
-                        bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/30 hover:border-orange-500/50"
+                      className="px-3 py-1 rounded-full text-xs font-semibold capitalize transition-all bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/25 cursor-pointer"
                     >
                       {cat}
                     </Link>
@@ -271,48 +272,93 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                   {game.tags?.map((tag: string) => (
                     <span
                       key={tag}
-                      className="px-2.5 py-1 rounded-lg text-[11px] text-zinc-500 bg-zinc-900 border border-zinc-800/60"
+                      className="px-2.5 py-0.5 rounded-full text-[11px] text-zinc-400 bg-white/[0.04] border border-white/[0.07]"
                     >
                       #{tag}
                     </span>
                   ))}
                 </div>
+              </div>
 
-                {/* Description */}
-                <GameDescription description={game.description} />
-
-                {/* Spec pills */}
-                <div className="flex items-center gap-2 pt-1 border-t border-zinc-800/60">
-                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] shrink-0">
-                    <Layers className="w-3 h-3 text-cyan-400 shrink-0" />
-                    <span className="text-zinc-200 font-semibold">{game.buildType === 'html5' ? 'HTML5' : game.buildType === 'unity-webgl' ? 'Unity WebGL' : 'HTML5 / WebGL'}</span>
+              {/* iOS Quick Spec Row */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-white/[0.06]">
+                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0">
+                    <Star className="w-4 h-4 fill-amber-400" />
                   </div>
-                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-[11px] shrink-0">
-                    <Globe className="w-3 h-3 text-emerald-400 shrink-0" />
-                    <span className="text-zinc-200 font-semibold">Browser · Mobile · PC</span>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[10px] text-zinc-400 font-medium uppercase tracking-wider">Rating</span>
+                    <span className="text-xs font-semibold text-white truncate">4.8 / 5.0</span>
                   </div>
                 </div>
 
-                {/* Useful Game Controls */}
-                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="text-zinc-400 font-medium flex items-center gap-1.5">
-                      <Monitor className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                      Controls:
+                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <div className="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-500/25 flex items-center justify-center text-cyan-400 shrink-0">
+                    <Layers className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[10px] text-zinc-400 font-medium uppercase tracking-wider">Engine</span>
+                    <span className="text-xs font-semibold text-white truncate">
+                      {game.buildType === 'html5' ? 'HTML5' : game.buildType === 'unity-webgl' ? 'Unity WebGL' : 'HTML5 WebGL'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400 shrink-0">
+                    <Globe className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[10px] text-zinc-400 font-medium uppercase tracking-wider">Devices</span>
+                    <span className="text-xs font-semibold text-white truncate">Mobile, iOS &amp; PC</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-indigo-400 shrink-0">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[10px] text-zinc-400 font-medium uppercase tracking-wider">Access</span>
+                    <span className="text-xs font-semibold text-white truncate">Instant Play</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* About This Game Description */}
+              <div className="space-y-2 pt-2 border-t border-white/[0.06]">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                  <Info className="w-3.5 h-3.5 text-orange-400" />
+                  About This Game
+                </h3>
+                <GameDescription description={game.description} />
+              </div>
+
+              {/* iOS Controls Section */}
+              <div className="space-y-2.5 pt-2 border-t border-white/[0.06]">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                  <Gamepad2 className="w-3.5 h-3.5 text-orange-400" />
+                  Controls &amp; How to Play
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <span className="text-xs font-medium text-zinc-300 flex items-center gap-2">
+                      <Monitor className="w-4 h-4 text-orange-400 shrink-0" />
+                      Desktop Keyboard
                     </span>
                     <div className="flex items-center gap-1">
-                      <kbd className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[10px] font-semibold rounded">WASD / Arrows</kbd>
-                      <kbd className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[10px] font-semibold rounded">Space</kbd>
-                      <kbd className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[10px] font-semibold rounded">Mouse</kbd>
+                      <kbd className="px-2 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[10px] font-semibold rounded-md">WASD</kbd>
+                      <kbd className="px-2 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[10px] font-semibold rounded-md">Space</kbd>
+                      <kbd className="px-2 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[10px] font-semibold rounded-md">Mouse</kbd>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="text-zinc-400 font-medium flex items-center gap-1.5">
-                      <Smartphone className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                      Mobile:
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                    <span className="text-xs font-medium text-zinc-300 flex items-center gap-2">
+                      <Smartphone className="w-4 h-4 text-sky-400 shrink-0" />
+                      Mobile &amp; Tablet
                     </span>
-                    <kbd className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[10px] font-semibold rounded">Touch Screen</kbd>
+                    <kbd className="px-2.5 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[10px] font-semibold rounded-md">Touch Screen</kbd>
                   </div>
                 </div>
               </div>
@@ -322,11 +368,15 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
           {/* Suggested Games Bento Sidebar */}
           {randomGames.length > 0 && (
             <aside className="w-full lg:w-[360px] xl:w-[420px] shrink-0">
-              <div className="space-y-3 sm:space-y-3.5">
-                <h3 className="font-bold text-base sm:text-lg text-white flex items-center gap-2">
-                  <Gamepad2 className="w-5 h-5 text-primary" />
-                  You May Also Like
-                </h3>
+              <div className="space-y-3.5">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-[8px] bg-gradient-to-br from-[#ff7a1a] to-[#ea580c] flex items-center justify-center text-white shadow-sm shrink-0">
+                    <Gamepad2 className="w-4 h-4" />
+                  </div>
+                  <h3 className="font-bold text-base sm:text-lg text-white tracking-tight">
+                    You May Also Like
+                  </h3>
+                </div>
                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-3 xl:grid-cols-4 auto-rows-[minmax(80px,auto)] sm:auto-rows-[minmax(95px,auto)] gap-2 sm:gap-2.5 grid-flow-dense">
                   {randomGames.map((g: any, index: number) => {
                     const spanClass = getSidebarBentoSpanClass(index);
@@ -334,7 +384,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                       <Link 
                         key={`${g.slug}-${index}`} 
                         href={`/games/${g.slug}`} 
-                        className={`group block relative rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800/80 hover:border-orange-500/50 transition-all duration-300 shadow-md hover:shadow-orange-500/15 ${spanClass} min-h-[80px]`}
+                        className={`group block relative rounded-[18px] overflow-hidden bg-[#141416] border border-white/[0.08] hover:border-orange-500/50 transition-all duration-300 shadow-sm hover:shadow-orange-500/15 ${spanClass} min-h-[80px] active:scale-[0.98]`}
                       >
                         <GameImage 
                           src={g.thumbnailUrl} 
@@ -343,7 +393,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                           className="transition-transform duration-300 group-hover:scale-105"
                         />
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2 pt-5 z-10">
-                          <p className="text-white text-[11px] sm:text-xs font-bold truncate group-hover:text-orange-300 transition-colors leading-tight">
+                          <p className="text-white text-[11px] sm:text-xs font-semibold truncate group-hover:text-orange-300 transition-colors leading-tight">
                             {g.title}
                           </p>
                         </div>
@@ -356,6 +406,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
           )}
         </div>
       </div>
+
     </>
   );
 }
