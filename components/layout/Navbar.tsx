@@ -269,7 +269,7 @@ export default function Navbar() {
             {session && (
               <button
                 onClick={() => signOut()}
-                className="w-7 h-7 rounded-full bg-[#1c1c1e] hover:bg-red-500/20 text-[#8e8e93] hover:text-red-400 flex items-center justify-center transition-colors touch-manipulation cursor-pointer"
+                className="w-7 h-7 rounded-full bg-red-500/15 hover:bg-red-500/25 active:bg-red-500/35 border border-red-500/25 text-red-400 hover:text-red-300 flex items-center justify-center transition-all touch-manipulation cursor-pointer shadow-xs"
                 title="Sign Out"
                 aria-label="Sign Out"
               >
@@ -341,18 +341,18 @@ export default function Navbar() {
                 <Link 
                   href="/profile" 
                   onClick={() => setIsSidebarOpen(false)} 
-                  className="flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                  className="flex items-center justify-between px-3.5 py-3 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     <div className="w-7 h-7 rounded-[8px] bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-sm">
                       <UserIcon className="w-4 h-4 text-white" />
                     </div>
-                    <div className="flex flex-col text-left">
-                      <span className="text-[14px] font-medium text-white tracking-tight">My Profile</span>
-                      <span className="text-[11px] text-zinc-400">Account &amp; gameplay stats</span>
+                    <div className="flex flex-col text-left min-w-0">
+                      <span className="text-[13.5px] font-medium text-white tracking-tight truncate">My Profile</span>
+                      <span className="text-[10.5px] text-zinc-400 truncate">Account &amp; gameplay stats</span>
                     </div>
                   </div>
-                  <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                  <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
                 </Link>
               )}
 
@@ -365,22 +365,22 @@ export default function Navbar() {
                   }
                   setIsSidebarOpen(false);
                 }}
-                className="flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex items-center justify-between px-3.5 py-3 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <div className="w-7 h-7 rounded-[8px] bg-[#34C759] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <HeartHandshake className="w-4 h-4 text-white" />
                   </div>
-                  <div className="flex flex-col text-left">
-                    <span className="text-[14px] font-medium text-white tracking-tight">Refer &amp; Earn</span>
-                    <span className="text-[11px] text-zinc-400">Invite friends for bonus XP</span>
+                  <div className="flex flex-col text-left min-w-0">
+                    <span className="text-[13.5px] font-medium text-white tracking-tight truncate">Refer &amp; Earn</span>
+                    <span className="text-[10.5px] text-zinc-400 truncate">Invite friends for bonus XP</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] font-semibold text-[#34c759] bg-[#34c759]/15 px-2.5 py-0.5 rounded-full">
+                <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                  <span className="text-[10.5px] font-semibold text-[#34c759] bg-[#34c759]/15 px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
                     +50 XP
                   </span>
-                  <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                  <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0" />
                 </div>
               </Link>
 
@@ -388,18 +388,18 @@ export default function Navbar() {
               <Link
                 href="/profile/settings"
                 onClick={() => setIsSidebarOpen(false)}
-                className="flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex items-center justify-between px-3.5 py-3 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <div className="w-7 h-7 rounded-[8px] bg-[#8E8E93] text-white flex items-center justify-center shrink-0 shadow-sm">
                     <Settings className="w-4 h-4 text-white" />
                   </div>
-                  <div className="flex flex-col text-left">
-                    <span className="text-[14px] font-medium text-white tracking-tight">Settings</span>
-                    <span className="text-[11px] text-zinc-400">Notifications, audio &amp; app</span>
+                  <div className="flex flex-col text-left min-w-0">
+                    <span className="text-[13.5px] font-medium text-white tracking-tight truncate">Settings</span>
+                    <span className="text-[10.5px] text-zinc-400 truncate">Notifications, audio &amp; app</span>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
               </Link>
             </div>
           </div>

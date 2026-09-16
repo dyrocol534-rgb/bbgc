@@ -133,15 +133,15 @@ export default function SettingsClient({ user }: SettingsClientProps) {
   };
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-5">
       {/* ── 1. Top Profile / Apple ID Card ── */}
       {user ? (
         <Link
           href="/profile"
-          className="flex items-center justify-between p-4 rounded-[22px] bg-[#141416] hover:bg-[#18181c] border border-white/[0.07] transition-all group shadow-sm"
+          className="flex items-center justify-between p-3.5 rounded-[18px] bg-[#141416] hover:bg-[#18181c] border border-white/[0.07] transition-all group shadow-xs"
         >
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="relative w-12 h-12 rounded-full overflow-hidden border border-white/[0.12] bg-zinc-800 shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-white/[0.12] bg-zinc-800 shrink-0">
               {user.image ? (
                 <Image
                   src={user.image}
@@ -150,22 +150,22 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                   className="object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-white font-bold text-base bg-gradient-to-tr from-orange-500 to-amber-500">
+                <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-tr from-orange-500 to-amber-500">
                   {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U"}
                 </div>
               )}
             </div>
             <div className="flex flex-col min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-[15px] font-semibold text-white truncate group-hover:text-orange-400 transition-colors">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[14px] font-semibold text-white truncate group-hover:text-orange-400 transition-colors">
                   {user.name || "Gamer"}
                 </span>
-                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full shrink-0">
+                <span className="inline-flex items-center gap-1 text-[9.5px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-full shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   Synced
                 </span>
               </div>
-              <span className="text-xs text-zinc-400 truncate">
+              <span className="text-[11px] text-zinc-400 truncate">
                 {user.email}
               </span>
             </div>
@@ -173,14 +173,14 @@ export default function SettingsClient({ user }: SettingsClientProps) {
           <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
         </Link>
       ) : (
-        <div className="flex items-center justify-between p-4 rounded-[22px] bg-[#141416] border border-white/[0.07] shadow-sm">
-          <div className="flex flex-col pr-4">
-            <span className="text-[14px] font-semibold text-white">Guest Player</span>
-            <span className="text-xs text-zinc-400">Sign in to sync streaks, XP, and settings across devices</span>
+        <div className="flex items-center justify-between p-3.5 rounded-[18px] bg-[#141416] border border-white/[0.07] shadow-xs">
+          <div className="flex flex-col pr-3">
+            <span className="text-[13px] font-semibold text-white">Guest Player</span>
+            <span className="text-[11px] text-zinc-400">Sign in to sync streaks, XP, and settings across devices</span>
           </div>
           <Link
             href="/login"
-            className="px-4 py-2 rounded-full bg-white hover:bg-zinc-100 text-black text-xs font-semibold shrink-0 transition-all shadow-sm active:scale-[0.98]"
+            className="px-3.5 py-1.5 rounded-full bg-white hover:bg-zinc-100 text-black text-xs font-semibold shrink-0 transition-all shadow-xs active:scale-[0.98]"
           >
             Sign In
           </Link>
@@ -189,35 +189,35 @@ export default function SettingsClient({ user }: SettingsClientProps) {
 
       {/* ── 2. Notifications Section (iOS Inset Group) ── */}
       <div>
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-3.5 mb-2">
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-1.5">
           Notifications &amp; Alerts
         </div>
 
-        <div className="bg-[#141416] rounded-[22px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-sm">
+        <div className="bg-[#141416] rounded-[20px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-xs">
           {/* Push Notifications Row */}
           <div 
             onClick={isSupported ? handleToggleNotifications : undefined}
-            className={`flex items-center justify-between p-3.5 sm:p-4 transition-colors ${
+            className={`flex items-center justify-between p-3 sm:p-3.5 transition-colors ${
               isSupported ? "hover:bg-white/[0.03] cursor-pointer" : ""
             }`}
           >
-            <div className="flex items-center gap-3 min-w-0 pr-3">
-              <div className={`w-8 h-8 rounded-[9px] flex items-center justify-center shrink-0 shadow-sm transition-colors ${
+            <div className="flex items-center gap-2.5 min-w-0 pr-3">
+              <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 shadow-xs transition-colors ${
                 isSubscribed 
                   ? "bg-[#FF3B30] text-white" 
                   : "bg-zinc-800 text-zinc-400"
               }`}>
-                {isSubscribed ? <BellRing className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
+                {isSubscribed ? <BellRing className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
               </div>
               <div className="flex flex-col text-left min-w-0">
-                <span className="text-[14px] font-medium text-white tracking-tight flex items-center gap-2">
+                <span className="text-[13px] font-medium text-white tracking-tight flex items-center gap-1.5">
                   Push Notifications
                   {isSubscribed && (
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                   )}
                 </span>
-                <span className="text-[11px] text-zinc-400 leading-tight">
-                  {isSupported ? "Streak expiration reminders & new game drops" : "Not supported in this browser"}
+                <span className="text-[10.5px] text-zinc-400 leading-tight">
+                  {isSupported ? "Streak reminders & new game drops" : "Not supported in this browser"}
                 </span>
               </div>
             </div>
@@ -233,40 +233,40 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                   handleToggleNotifications();
                 }}
                 disabled={loadingNotif}
-                className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 touch-manipulation ${
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 touch-manipulation ${
                   isSubscribed ? "bg-[#34C759]" : "bg-[#39393D]"
                 }`}
                 title={isSubscribed ? "Disable notifications" : "Enable notifications"}
               >
                 {loadingNotif ? (
                   <span className="absolute inset-0 flex items-center justify-center">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+                    <Loader2 className="w-3 h-3 animate-spin text-white" />
                   </span>
                 ) : (
                   <span
-                    className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
                       isSubscribed ? "translate-x-5" : "translate-x-0"
                     }`}
                   />
                 )}
               </button>
             ) : (
-              <span className="text-[11px] text-zinc-500 font-medium">Unavailable</span>
+              <span className="text-[10.5px] text-zinc-500 font-medium">Unavailable</span>
             )}
           </div>
 
           {/* Delivery Status Row */}
-          <div className="flex items-center justify-between p-3.5 sm:p-4 hover:bg-white/[0.02] transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-[9px] bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-sm">
-                <ShieldCheck className="w-4 h-4" />
+          <div className="flex items-center justify-between p-3 sm:p-3.5 hover:bg-white/[0.02] transition-colors">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-[8px] bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <ShieldCheck className="w-3.5 h-3.5" />
               </div>
               <div className="flex flex-col text-left">
-                <span className="text-[14px] font-medium text-white tracking-tight">Delivery Protocol</span>
-                <span className="text-[11px] text-zinc-400">Web Push Standard (VAPID)</span>
+                <span className="text-[13px] font-medium text-white tracking-tight">Delivery Protocol</span>
+                <span className="text-[10.5px] text-zinc-400">Web Push Standard (VAPID)</span>
               </div>
             </div>
-            <span className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full ${
+            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
               isSubscribed 
                 ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
                 : "bg-zinc-800 text-zinc-400"
@@ -278,7 +278,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
 
         {/* Feedback Alert if present */}
         {notifFeedback && (
-          <div className={`mt-2.5 p-3 rounded-2xl border text-xs flex items-center gap-2 animate-in fade-in duration-200 ${
+          <div className={`mt-2 p-2.5 rounded-xl border text-xs flex items-center gap-2 animate-in fade-in duration-200 ${
             notifFeedback.type === "success" 
               ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-300"
               : notifFeedback.type === "error"
@@ -286,55 +286,55 @@ export default function SettingsClient({ user }: SettingsClientProps) {
               : "bg-white/[0.04] border-white/[0.08] text-zinc-300"
           }`}>
             {notifFeedback.type === "success" ? (
-              <Check className="w-4 h-4 shrink-0 text-emerald-400" />
+              <Check className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
             ) : notifFeedback.type === "error" ? (
-              <AlertTriangle className="w-4 h-4 shrink-0 text-red-400" />
+              <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-red-400" />
             ) : (
-              <AlertCircle className="w-4 h-4 shrink-0 text-zinc-400" />
+              <AlertCircle className="w-3.5 h-3.5 shrink-0 text-zinc-400" />
             )}
-            <span>{notifFeedback.message}</span>
+            <span className="text-[11px]">{notifFeedback.message}</span>
           </div>
         )}
 
         {/* Browser Permission Blocked Alert */}
         {permission === "denied" && (
-          <div className="mt-2.5 p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-xs text-amber-300 space-y-1">
-            <div className="font-semibold flex items-center gap-1.5">
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+          <div className="mt-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300 space-y-1">
+            <div className="font-semibold flex items-center gap-1.5 text-[11.5px]">
+              <AlertTriangle className="w-3 h-3 text-amber-400" />
               Notifications Blocked by Browser
             </div>
-            <p className="text-amber-200/80 text-[11px] leading-relaxed">
+            <p className="text-amber-200/80 text-[10.5px] leading-relaxed">
               Push permissions are currently blocked in your browser address bar. Tap the site settings or padlock icon next to the URL to allow notifications.
             </p>
           </div>
         )}
 
-        <div className="text-[11px] text-zinc-500 px-3.5 mt-2">
+        <div className="text-[10px] text-zinc-500 px-1 mt-1.5">
           We send smart reminders before your daily streak expires and when major new games are published.
         </div>
       </div>
 
       {/* ── 3. Gameplay Preferences (iOS Inset Group) ── */}
       <div>
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-3.5 mb-2">
+        <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-1.5">
           Audio &amp; Gameplay
         </div>
 
-        <div className="bg-[#141416] rounded-[22px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-sm">
+        <div className="bg-[#141416] rounded-[20px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-xs">
           {/* Sound FX Row */}
           <div 
             onClick={handleToggleSound}
-            className="flex items-center justify-between p-3.5 sm:p-4 hover:bg-white/[0.03] transition-colors cursor-pointer"
+            className="flex items-center justify-between p-3 sm:p-3.5 hover:bg-white/[0.03] transition-colors cursor-pointer"
           >
-            <div className="flex items-center gap-3 min-w-0 pr-3">
-              <div className={`w-8 h-8 rounded-[9px] flex items-center justify-center shrink-0 shadow-sm transition-colors ${
+            <div className="flex items-center gap-2.5 min-w-0 pr-3">
+              <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 shadow-xs transition-colors ${
                 soundEnabled ? "bg-[#FF9500] text-white" : "bg-zinc-800 text-zinc-400"
               }`}>
-                {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
               </div>
               <div className="flex flex-col text-left min-w-0">
-                <span className="text-[14px] font-medium text-white tracking-tight">Game Sound &amp; Effects</span>
-                <span className="text-[11px] text-zinc-400 leading-tight">In-game sound effects &amp; audio</span>
+                <span className="text-[13px] font-medium text-white tracking-tight">Game Sound &amp; Effects</span>
+                <span className="text-[10.5px] text-zinc-400 leading-tight">In-game sound effects &amp; audio</span>
               </div>
             </div>
 
@@ -347,13 +347,13 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                 e.stopPropagation();
                 handleToggleSound();
               }}
-              className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none touch-manipulation ${
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none touch-manipulation ${
                 soundEnabled ? "bg-[#34C759]" : "bg-[#39393D]"
               }`}
               title={soundEnabled ? "Mute audio" : "Enable audio"}
             >
               <span
-                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
                   soundEnabled ? "translate-x-5" : "translate-x-0"
                 }`}
               />
@@ -361,19 +361,19 @@ export default function SettingsClient({ user }: SettingsClientProps) {
           </div>
 
           {/* Cloud Sync Row */}
-          <div className="flex items-center justify-between p-3.5 sm:p-4 hover:bg-white/[0.02] transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-[9px] bg-[#34C759] text-white flex items-center justify-center shrink-0 shadow-sm">
-                <Sparkles className="w-4 h-4" />
+          <div className="flex items-center justify-between p-3 sm:p-3.5 hover:bg-white/[0.02] transition-colors">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-[8px] bg-[#34C759] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <Sparkles className="w-3.5 h-3.5" />
               </div>
               <div className="flex flex-col text-left">
-                <span className="text-[14px] font-medium text-white tracking-tight">Cloud Progress Sync</span>
-                <span className="text-[11px] text-zinc-400">
+                <span className="text-[13px] font-medium text-white tracking-tight">Cloud Progress Sync</span>
+                <span className="text-[10.5px] text-zinc-400">
                   {user ? "Scores, XP and streaks backed up automatically" : "Guest mode — sign in to sync progress"}
                 </span>
               </div>
             </div>
-            <span className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full ${
+            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
               user ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-zinc-800 text-zinc-400"
             }`}>
               {user ? "Active" : "Guest"}
@@ -381,7 +381,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
           </div>
         </div>
 
-        <div className="text-[11px] text-zinc-500 px-3.5 mt-2">
+        <div className="text-[10px] text-zinc-500 px-1 mt-1.5">
           Sound preferences are applied across all instant and arcade game sessions.
         </div>
       </div>
@@ -389,25 +389,25 @@ export default function SettingsClient({ user }: SettingsClientProps) {
       {/* ── 4. Account Actions (iOS Inset Group) ── */}
       {user && (
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-3.5 mb-2">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-1.5">
             Account
           </div>
 
-          <div className="bg-[#141416] rounded-[22px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-sm">
+          <div className="bg-[#141416] rounded-[20px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-xs">
             {/* Sign Out Row */}
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full flex items-center justify-between p-3.5 sm:p-4 hover:bg-white/[0.03] transition-colors text-left group cursor-pointer"
+              className="w-full flex items-center justify-between p-3 sm:p-3.5 hover:bg-white/[0.03] transition-colors text-left group cursor-pointer"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-[9px] bg-zinc-800 text-zinc-300 border border-white/[0.08] flex items-center justify-center shrink-0 shadow-sm group-hover:text-white transition-colors">
-                  <LogOut className="w-4 h-4" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-[8px] bg-zinc-800 text-zinc-300 border border-white/[0.08] flex items-center justify-center shrink-0 shadow-xs group-hover:text-white transition-colors">
+                  <LogOut className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-[14px] font-medium text-zinc-200 group-hover:text-white transition-colors">
+                  <span className="text-[13px] font-medium text-zinc-200 group-hover:text-white transition-colors">
                     Sign Out
                   </span>
-                  <span className="text-[11px] text-zinc-400">{user.email}</span>
+                  <span className="text-[10.5px] text-zinc-400">{user.email}</span>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
@@ -420,17 +420,17 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                 setDeleteConfirmationText("");
                 setDeleteError("");
               }}
-              className="w-full flex items-center justify-between p-3.5 sm:p-4 hover:bg-red-500/[0.05] transition-colors text-left group cursor-pointer"
+              className="w-full flex items-center justify-between p-3 sm:p-3.5 hover:bg-red-500/[0.05] transition-colors text-left group cursor-pointer"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-[9px] bg-[#FF453A]/15 text-[#FF453A] border border-[#FF453A]/30 flex items-center justify-center shrink-0 shadow-sm">
-                  <Trash2 className="w-4 h-4" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-7 h-7 rounded-[8px] bg-[#FF453A]/15 text-[#FF453A] border border-[#FF453A]/30 flex items-center justify-center shrink-0 shadow-xs">
+                  <Trash2 className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-[14px] font-medium text-[#FF453A]">
+                  <span className="text-[13px] font-medium text-[#FF453A]">
                     Delete Account &amp; Data
                   </span>
-                  <span className="text-[11px] text-zinc-500">
+                  <span className="text-[10.5px] text-zinc-500">
                     Permanently wipe XP balance, streak records, and profile
                   </span>
                 </div>
@@ -439,7 +439,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
             </button>
           </div>
 
-          <div className="text-[11px] text-zinc-500 px-3.5 mt-2">
+          <div className="text-[10px] text-zinc-500 px-1 mt-1.5">
             Deleting your account is permanent. All accumulated rewards, leaderboard scores, and streak data will be lost.
           </div>
         </div>

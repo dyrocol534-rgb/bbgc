@@ -104,78 +104,77 @@ export default function PWAInstallButton({
 
   const renderIOSModal = () => (
     <div
-      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200"
       onClick={() => setShowIOSModal(false)}
     >
       <div
-        className="w-full max-w-sm bg-[#18181b] border border-white/[0.12] rounded-3xl p-5 shadow-2xl text-white relative animate-in slide-in-from-bottom-4 duration-200"
+        className="w-full max-w-[340px] bg-[#161618] border border-white/[0.1] rounded-[22px] p-4 shadow-2xl text-white relative animate-in slide-in-from-bottom-4 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-orange-500/15 border border-orange-500/30 flex items-center justify-center p-1.5">
+        <div className="flex items-center justify-between pb-2.5 border-b border-white/[0.08]">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-[8px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center p-1">
               <Image
                 src="/logo.png"
                 alt="Bluebuff"
-                width={28}
-                height={28}
+                width={22}
+                height={22}
                 className="w-full h-full object-contain"
               />
             </div>
             <div className="text-left">
-              <h3 className="text-sm font-bold text-white">
+              <h3 className="text-[13px] font-bold text-white leading-tight">
                 {isIOS ? "Install on iOS" : "Install Web App"}
               </h3>
-              <p className="text-[11px] text-zinc-400">Add to Home Screen in 3 steps</p>
+              <p className="text-[10px] text-zinc-400">Add to Home Screen in 3 steps</p>
             </div>
           </div>
           <button
             onClick={() => setShowIOSModal(false)}
-            className="w-7 h-7 rounded-full bg-white/[0.08] hover:bg-white/[0.15] flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            className="w-6 h-6 rounded-full bg-white/[0.08] hover:bg-white/[0.15] flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Steps */}
-        <div className="flex flex-col gap-2.5 py-4">
-          <div className="flex items-start gap-3 p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06]">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center shrink-0 text-blue-400">
-              <Share className="w-4 h-4" />
+        <div className="flex flex-col gap-1.5 py-3">
+          <div className="flex items-center gap-2.5 p-2 rounded-[12px] bg-white/[0.04] border border-white/[0.06]">
+            <div className="w-7 h-7 rounded-[7px] bg-blue-500/20 border border-blue-500/30 flex items-center justify-center shrink-0 text-blue-400">
+              <Share className="w-3.5 h-3.5" />
             </div>
-            <div className="text-left">
-              <p className="text-xs font-semibold text-white">1. Tap the Share button</p>
-              <p className="text-[11px] text-zinc-400 leading-relaxed">
-                Tap the <span className="text-blue-400 font-medium">Share icon</span> in Safari’s
-                bottom toolbar (or top right on iPad).
+            <div className="text-left min-w-0 flex-1">
+              <p className="text-[11.5px] font-semibold text-white leading-snug">1. Tap the Share button</p>
+              <p className="text-[10px] text-zinc-400 leading-tight">
+                Tap <span className="text-blue-400 font-medium">Share icon</span> in Safari’s toolbar.
               </p>
             </div>
           </div>
 
-          <div className="flex items-start gap-3 p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06]">
-            <div className="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/30 flex items-center justify-center shrink-0 text-orange-400">
-              <PlusSquare className="w-4 h-4" />
+          <div className="flex items-center gap-2.5 p-2 rounded-[12px] bg-white/[0.04] border border-white/[0.06]">
+            <div className="w-7 h-7 rounded-[7px] bg-orange-500/20 border border-orange-500/30 flex items-center justify-center shrink-0 text-orange-400">
+              <PlusSquare className="w-3.5 h-3.5" />
             </div>
-            <div className="text-left">
-              <p className="text-xs font-semibold text-white">
+            <div className="text-left min-w-0 flex-1">
+              <p className="text-[11.5px] font-semibold text-white leading-snug">
                 2. Select &apos;Add to Home Screen&apos;
               </p>
-              <p className="text-[11px] text-zinc-400 leading-relaxed">
-                Scroll down the share sheet and tap{" "}
+              <p className="text-[10px] text-zinc-400 leading-tight">
+                Scroll down and tap{" "}
                 <span className="text-orange-400 font-medium">Add to Home Screen</span>.
               </p>
             </div>
           </div>
 
-          <div className="flex items-start gap-3 p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06]">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0 text-emerald-400">
-              <Check className="w-4 h-4" />
+          <div className="flex items-center gap-2.5 p-2 rounded-[12px] bg-white/[0.04] border border-white/[0.06]">
+            <div className="w-7 h-7 rounded-[7px] bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0 text-emerald-400">
+              <Check className="w-3.5 h-3.5" />
             </div>
-            <div className="text-left">
-              <p className="text-xs font-semibold text-white">3. Tap &apos;Add&apos; in the top right</p>
-              <p className="text-[11px] text-zinc-400 leading-relaxed">
-                Launch instantly from your home screen for a fullscreen app experience!
+            <div className="text-left min-w-0 flex-1">
+              <p className="text-[11.5px] font-semibold text-white leading-snug">3. Tap &apos;Add&apos; in top right</p>
+              <p className="text-[10px] text-zinc-400 leading-tight">
+                Launch instantly from home screen as full app!
               </p>
             </div>
           </div>
@@ -184,7 +183,7 @@ export default function PWAInstallButton({
         {/* Action button */}
         <button
           onClick={() => setShowIOSModal(false)}
-          className="w-full py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.98] text-white font-semibold text-xs sm:text-sm rounded-xl transition-all shadow-md shadow-orange-500/20 cursor-pointer"
+          className="w-full py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.98] text-white font-semibold text-xs rounded-xl transition-all shadow-sm shadow-orange-500/20 cursor-pointer"
         >
           Got it
         </button>
