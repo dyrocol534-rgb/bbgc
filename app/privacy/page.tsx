@@ -41,8 +41,8 @@ export default function PrivacyPolicyPage() {
         <ul className="list-disc pl-6 space-y-2">
           <li><strong>Account & Personal Information:</strong> When you sign in (e.g., via Google Authentication), we collect your name, email address, profile photo, and an optional phone number/bio if you choose to provide them.</li>
           <li><strong>Gameplay & Progress Data:</strong> We record your gameplay sessions, recently played games, favorited games, accumulated experience points (XP), streak records, and achievements to provide a personalized gaming experience.</li>
-          <li><strong>Device & Usage Data:</strong> We collect standard technical information including your IP address, browser type, operating system version, referrer URLs, and interaction timestamps to ensure security, prevent abuse, and optimize performance.</li>
-          <li><strong>Cookies & Local Storage:</strong> We use local storage and cookies to maintain your login session and store your preferences locally on your device.</li>
+          <li><strong>Device &amp; Usage Data:</strong> We collect standard technical information including your IP address, browser type, operating system version, referrer URLs, and interaction timestamps to ensure security, prevent abuse, and optimize performance. We use <strong>Google Analytics</strong> to collect anonymized usage data (such as page views and session duration) to help us improve our services. Google Analytics may set cookies or use device identifiers to track usage across sessions.</li>
+          <li><strong>Cookies &amp; Local Storage:</strong> We use local storage and cookies to maintain your login session and store your preferences locally on your device.</li>
         </ul>
 
         <h2 className="text-2xl font-semibold text-white mt-8 mb-4">2. How We Use Your Information</h2>
@@ -55,10 +55,15 @@ export default function PrivacyPolicyPage() {
           <li>Delivering optional push notifications and platform updates (only with your explicit consent).</li>
         </ul>
 
-        <h2 className="text-2xl font-semibold text-white mt-8 mb-4">3. Data Sharing & Third Parties</h2>
+        <h2 className="text-2xl font-semibold text-white mt-8 mb-4">3. Data Sharing &amp; Third Parties</h2>
         <p>
           We do not sell, rent, or trade your personal data to third parties. We may share information with trusted third-party providers solely to facilitate our services (such as cloud hosting providers and authentication services).
           External game developers whose games are embedded on our platform operate under their own terms and privacy policies.
+        </p>
+        <p className="mt-3">
+          <strong>Third-Party Advertising:</strong> Games embedded on our platform may display advertisements served by third-party ad networks operated by game providers such as <strong>GameDistribution</strong> and <strong>GameMonetize</strong>. These ads are served within the game iframe and are not controlled by us. Those third parties may collect data (such as device identifiers or IP addresses) to serve relevant ads under their own privacy policies. We recommend reviewing their policies at{" "}
+          <a href="https://gamedistribution.com/privacy" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">gamedistribution.com/privacy</a> and{" "}
+          <a href="https://gamemonetize.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline">gamemonetize.com/privacy-policy</a>.
         </p>
 
         <h2 className="text-2xl font-semibold text-white mt-8 mb-4">4. Account & Data Deletion (User Rights)</h2>

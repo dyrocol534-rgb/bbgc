@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronRight, Coins, Flame, HeartHandshake, ShoppingBag, Trophy } from "lucide-react";
+import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronRight, Coins, Flame, HeartHandshake, ShoppingBag, Trophy, ArrowLeft, Share2, Check } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import clsx from "clsx";
 import PWAInstallButton from "./PWAInstallButton";
@@ -15,10 +15,14 @@ import NotificationBell from "../notifications/NotificationBell";
 export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
   const [logoError, setLogoError] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const isGameSlugPage = Boolean(pathname?.startsWith("/games/") && pathname !== "/games");
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -47,6 +51,92 @@ export default function Navbar() {
       setIsRolling(false);
     }
   };
+
+  const handleShare = async () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    const title = typeof document !== "undefined" ? document.title : "Play free game on Bluebuff";
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, url });
+        return;
+      } catch (err) {
+        // Fallback to clipboard if user dismissed or unsupported
+      }
+    }
+
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  if (isGameSlugPage) {
+    return (
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-black border-b border-zinc-800/80 flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
+        {/* Left: Back Button (Icon only) */}
+        <button
+          onClick={() => {
+            if (window.history.length > 1) {
+              router.back();
+            } else {
+              router.push("/");
+            }
+          }}
+          className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700/80 hover:border-zinc-500 transition-colors shrink-0 active:scale-95 cursor-pointer"
+          aria-label="Go Back"
+          title="Back"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </button>
+
+        {/* Center: Website Logo / Home Link */}
+        <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
+          {logoError ? (
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-orange-500 via-primary to-amber-500 flex items-center justify-center font-black text-white text-base shadow-sm border border-white/20 select-none">
+              B
+            </div>
+          ) : (
+            <div className="relative w-7 h-7 sm:w-8 sm:h-8">
+              <Image 
+                src="/logo.png" 
+                alt="Logo" 
+                fill 
+                sizes="32px" 
+                priority 
+                className="object-contain" 
+                onError={() => setLogoError(true)}
+              />
+            </div>
+          )}
+        </Link>
+
+        {/* Right: Share Button (Icon only) */}
+        <div className="relative flex items-center">
+          <button
+            onClick={handleShare}
+            className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700/80 hover:border-orange-500/60 transition-colors shrink-0 active:scale-95 cursor-pointer"
+            aria-label="Share Game"
+            title="Share"
+          >
+            {copied ? (
+              <Check className="w-4 h-4 text-emerald-400" />
+            ) : (
+              <Share2 className="w-4 h-4 text-zinc-300 hover:text-white" />
+            )}
+          </button>
+
+          {/* Copied confirmation tooltip */}
+          {copied && (
+            <span className="absolute -bottom-8 right-0 text-[10px] font-semibold bg-zinc-900 border border-zinc-700 text-emerald-400 px-2 py-0.5 rounded shadow-lg whitespace-nowrap">
+              Link copied!
+            </span>
+          )}
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <>
