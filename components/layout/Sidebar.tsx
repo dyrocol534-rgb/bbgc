@@ -69,6 +69,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const isLoginPage = pathname === "/login" || pathname?.startsWith("/login");
   const [isRolling, setIsRolling] = useState(false);
   const [categories, setCategories] = useState<{name: string, href: string, icon: React.ElementType}[]>(() =>
     initialCategories.length > 0 ? formatCategoryLinks(initialCategories) : []
@@ -138,27 +139,29 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
       )}
 
       {/* Mobile Floating Circular Action Button (FAB) */}
-      <button 
-        type="button"
-        onClick={() => setIsExpanded(prev => !prev)}
-        className={clsx(
-          "md:hidden fixed z-50 select-none",
-          "flex items-center justify-center",
-          "w-12 h-12 rounded-full",
-          "bg-[#18181c]/90 backdrop-blur-xl",
-          "border border-white/[0.15] shadow-[0_8px_24px_rgba(0,0,0,0.6)]",
-          "text-white transition-all duration-300 transform-gpu",
-          "bottom-6 left-4 active:scale-95 hover:scale-105",
-          isExpanded && "left-[290px]"
-        )}
-        aria-label={isExpanded ? "Close navigation" : "Open navigation"}
-      >
-        {isExpanded ? (
-          <X className="w-5 h-5 text-white transition-transform duration-200" />
-        ) : (
-          <Gamepad2 className="w-5 h-5 text-orange-400 transition-transform duration-200" />
-        )}
-      </button>
+      {!isLoginPage && (
+        <button 
+          type="button"
+          onClick={() => setIsExpanded(prev => !prev)}
+          className={clsx(
+            "md:hidden fixed z-50 select-none",
+            "flex items-center justify-center",
+            "w-12 h-12 rounded-full",
+            "bg-[#18181c]/90 backdrop-blur-xl",
+            "border border-white/[0.15] shadow-[0_8px_24px_rgba(0,0,0,0.6)]",
+            "text-white transition-all duration-300 transform-gpu",
+            "bottom-6 left-4 active:scale-95 hover:scale-105",
+            isExpanded && "left-[290px]"
+          )}
+          aria-label={isExpanded ? "Close navigation" : "Open navigation"}
+        >
+          {isExpanded ? (
+            <X className="w-5 h-5 text-white transition-transform duration-200" />
+          ) : (
+            <Gamepad2 className="w-5 h-5 text-orange-400 transition-transform duration-200" />
+          )}
+        </button>
+      )}
 
       <aside 
         className={clsx(

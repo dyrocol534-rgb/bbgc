@@ -2,14 +2,21 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { X, Loader2 } from "lucide-react";
 import { isPushSupported, getExistingSubscription, subscribeUserToPush } from "@/lib/push-client";
 
 export default function NotificationPrompt() {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (pathname === "/login" || pathname?.startsWith("/login")) {
+      setIsVisible(false);
+      return;
+    }
+
     if (!isPushSupported()) return;
 
     // Check if user dismissed prompt recently
@@ -46,6 +53,7 @@ export default function NotificationPrompt() {
     localStorage.setItem("push_prompt_dismissed", Date.now().toString());
   };
 
+  if (pathname === "/login" || pathname?.startsWith("/login")) return null;
   if (!isVisible) return null;
 
   return (
