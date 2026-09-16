@@ -40,3 +40,12 @@ export function getSidebarBentoSpanClass(index: number) {
   return "col-span-1 row-span-1"; // 1x1 Standard
 }
 
+export function getHorizontalBentoSpanClass(index: number) {
+  const pattern = index % 8;
+  if (pattern === 0 || pattern === 5) {
+    return "col-span-2 row-span-2"; // 2x2 Bento Featured
+  }
+  return "col-span-1 row-span-1"; // 1x1 Bento Standard
+}
+
+

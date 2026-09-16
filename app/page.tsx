@@ -1,12 +1,13 @@
 import dynamic from "next/dynamic";
-import { Gamepad2, Sparkles, ShieldCheck, Zap, Smartphone, Globe, HelpCircle, ChevronDown, Puzzle, Car, Trophy, Crosshair, Compass } from "lucide-react";
+import { Gamepad2, Sparkles, ShieldCheck, Zap, Smartphone, Globe, HelpCircle, ChevronDown, Puzzle, Car, Trophy, Crosshair, Compass, Crown } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { authOptions } from "@/lib/auth";
 import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
-import { getInitialHomeGames, getRecentGamesForUserOrGuest } from "@/lib/services/gameService";
+import { getInitialHomeGames, getRecentGamesForUserOrGuest, getPublishedGamesByCategory } from "@/lib/services/gameService";
 import GameCard from "@/components/game/GameCard";
 import ContinuePlayingRow from "@/components/game/ContinuePlayingRow";
+import HorizontalGameSection from "@/components/game/HorizontalGameSection";
 import Link from "next/link";
 
 import InfiniteGameGrid from "@/components/game/InfiniteGameGrid";
@@ -26,9 +27,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
   const cookieStore = await cookies();
   const guestId = cookieStore.get('guestId')?.value;
 
-  const [initialAllGames, userRecentGames] = await Promise.all([
+  const [initialAllGames, userRecentGames, featuredGames] = await Promise.all([
     getInitialHomeGames(page),
     getRecentGamesForUserOrGuest(session, guestId),
+    getPublishedGamesByCategory("featured"),
   ]);
 
   const hasGames = initialAllGames.length > 0;
@@ -89,6 +91,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
 
         {userRecentGames.length > 0 && (
           <ContinuePlayingRow games={userRecentGames} />
+        )}
+
+        {/* Featured Games */}
+        {featuredGames.length > 0 && (
+          <HorizontalGameSection
+            title="Featured Games"
+            icon={Crown}
+            categorySlug="featured"
+            games={featuredGames}
+          />
         )}
 
         {initialAllGames.length > 0 && (

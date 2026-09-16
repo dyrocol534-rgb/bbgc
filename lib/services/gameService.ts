@@ -240,6 +240,8 @@ export const getPublishedGamesByCategory = (category: string) =>
           sort = { playCount: -1 };
           query.featured = true;
           limitAmount = 18;
+        } else if (cat === "io" || cat === ".io") {
+          query.category = { $regex: /^\.?io$/i };
         } else {
           query.category = { $regex: new RegExp(`^${category}$`, "i") };
         }
