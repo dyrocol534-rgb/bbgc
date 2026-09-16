@@ -64,7 +64,18 @@ export default function TermsOfServicePage() {
           We reserve the right to change, update, or discontinue features, games, or platform functionality at any time without prior notice.
         </p>
 
-        <h2 className="text-2xl font-semibold text-white mt-8 mb-4">6. Contact Us</h2>
+        <h2 className="text-2xl font-semibold text-white mt-8 mb-4">6. Referral Program</h2>
+        <p>
+          {siteName} may offer a referral program that rewards users for inviting others to the platform. By participating in the referral program, you agree to the following:
+        </p>
+        <ul className="list-disc pl-6 space-y-2">
+          <li>Referral rewards (such as XP or bonuses) are granted only for genuine new user sign-ups through your unique referral link.</li>
+          <li>You may not use bots, scripts, fake accounts, or any automated means to generate fraudulent referrals.</li>
+          <li>We reserve the right to review, withhold, or permanently revoke referral rewards if abuse, fraud, or manipulation is detected.</li>
+          <li>Accounts found to be exploiting the referral system may be suspended or permanently banned without prior notice.</li>
+        </ul>
+
+        <h2 className="text-2xl font-semibold text-white mt-8 mb-4">7. Contact Us</h2>
         <p>If you have any questions or inquiries regarding these Terms of Service, please reach out to us at:</p>
         <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-4 inline-block">
           <p className="text-sm text-zinc-400">Support Team:</p>
