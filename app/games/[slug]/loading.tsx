@@ -3,9 +3,9 @@ import { getSidebarBentoSpanClass } from "@/lib/bento";
 
 export default function GameLoading() {
   return (
-    <div className="container mx-auto px-4 py-6 max-w-[1400px]">
+    <div className="container mx-auto px-3 sm:px-4 pt-2 sm:pt-3 pb-6 max-w-[1400px]">
       {/* Breadcrumb Skeleton */}
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-2 sm:mb-2.5">
         <Skeleton className="h-3.5 w-12 rounded-md" />
         <span className="text-zinc-700 text-xs">/</span>
         <Skeleton className="h-3.5 w-16 rounded-md" />

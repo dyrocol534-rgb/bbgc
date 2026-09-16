@@ -8,12 +8,20 @@ import Link from 'next/link';
 
 export const revalidate = 3600;
 
+function formatCategoryTitle(category: string): string {
+  const lower = category.toLowerCase();
+  if (lower === "3d") return "3D";
+  if (lower === "2d") return "2D";
+  if (lower === "io" || lower === ".io") return ".io";
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
   const { category } = await params;
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
   const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
   const siteUrl = rawSiteUrl.replace(/\/+$/, "");
-  const catTitle = category.charAt(0).toUpperCase() + category.slice(1);
+  const catTitle = formatCategoryTitle(category);
   const title = `Free ${catTitle} Games Online – No Download Needed | ${siteName}`;
   const description = `Play the best free ${catTitle.toLowerCase()} games online with no download, no install, and no login required on ${siteName}. Browse top-rated ${catTitle.toLowerCase()} browser games for PC & mobile.`;
 
@@ -62,7 +70,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
   const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
   const siteUrl = rawSiteUrl.replace(/\/+$/, "");
-  const catTitle = category.charAt(0).toUpperCase() + category.slice(1);
+  const catTitle = formatCategoryTitle(category);
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -93,27 +101,27 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl space-y-8">
+    <div className="container mx-auto px-3 sm:px-4 pt-3 sm:pt-4 pb-8 max-w-7xl space-y-4 sm:space-y-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
 
       {/* Category Header */}
-      <div className="border-b border-[#1f1f22] pb-6">
+      <div className="border-b border-zinc-800/60 pb-3 sm:pb-4">
         {/* Breadcrumb links */}
-        <nav aria-label="Breadcrumb" className="mb-2 text-xs text-zinc-500">
+        <nav aria-label="Breadcrumb" className="mb-1 text-[11px] sm:text-xs text-zinc-500">
           <ol className="flex items-center gap-1.5">
             <li><Link href="/" className="hover:text-zinc-300 transition-colors">Home</Link></li>
             <li>/</li>
-            <li className="text-zinc-300 font-medium capitalize">{catTitle} Games</li>
+            <li className="text-zinc-300 font-medium">{catTitle} Games</li>
           </ol>
         </nav>
 
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white capitalize tracking-tight">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight">
           Free {catTitle} Games Online
         </h1>
-        <p className="text-zinc-400 text-sm sm:text-base mt-2 max-w-3xl">
+        <p className="text-zinc-400 text-xs sm:text-sm mt-1 max-w-2xl leading-relaxed">
           {games.length > 0
-            ? `Play ${games.length} free ${catTitle.toLowerCase()} games directly in your browser – no download, no install, and no registration required.`
+            ? `Play ${games.length} free ${catTitle.toLowerCase()} games directly in your browser – no download, no install required.`
             : `Explore top free online ${catTitle.toLowerCase()} games with instant no-download play.`}
         </p>
       </div>

@@ -217,9 +217,9 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      <div className="container mx-auto px-4 py-6 max-w-[1400px]">
+      <div className="container mx-auto px-3 sm:px-4 pt-2 sm:pt-3 pb-6 max-w-[1400px]">
         {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="mb-4 text-xs text-zinc-500">
+        <nav aria-label="Breadcrumb" className="mb-2 sm:mb-2.5 text-[11px] sm:text-xs text-zinc-500">
           <ol className="flex items-center gap-1.5 flex-wrap">
             <li>
               <Link href="/" className="hover:text-zinc-300 transition-colors">Home</Link>
