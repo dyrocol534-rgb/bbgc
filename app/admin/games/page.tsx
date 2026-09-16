@@ -1,10 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ShieldCheck, ShieldAlert, Play, ExternalLink, Sparkles, Tag } from "lucide-react";
+import { 
+  Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, 
+  ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ShieldCheck, 
+  ShieldAlert, Play, Sparkles, Tag, Gamepad2, SlidersHorizontal, 
+  X, Filter 
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import clsx from "clsx";
 
 interface GameData {
   _id: string;
@@ -41,6 +47,28 @@ export default function AdminGamesPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalGames, setTotalGames] = useState(0);
+
+  // Filter Popover State
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsFilterOpen(false);
+      }
+    }
+    if (isFilterOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isFilterOpen]);
+
+  const activeFilterCount = (sourceFilter !== "all" ? 1 : 0) + 
+                            (verifiedFilter !== "all" ? 1 : 0) + 
+                            (statusFilter !== "all" ? 1 : 0);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchQuery), 400);
@@ -185,8 +213,9 @@ export default function AdminGamesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <div className="flex flex-col justify-center items-center py-24">
+        <Loader2 className="w-6 h-6 text-orange-500 animate-spin mb-2" />
+        <p className="text-xs text-zinc-400 font-medium">Loading Games Catalog...</p>
       </div>
     );
   }
@@ -202,284 +231,432 @@ export default function AdminGamesPage() {
 
   const renderSortIcon = (field: string) => {
     if (sortField !== field) return <ArrowDown className="w-3 h-3 opacity-0 group-hover:opacity-30 transition-opacity" />;
-    return sortOrder === "asc" ? <ArrowUp className="w-3 h-3 text-indigo-400" /> : <ArrowDown className="w-3 h-3 text-indigo-400" />;
+    return sortOrder === "asc" ? <ArrowUp className="w-3 h-3 text-orange-400" /> : <ArrowDown className="w-3 h-3 text-orange-400" />;
   };
 
   return (
-    <div className="space-y-4">
-      {/* Search & Filters */}
-      <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-3 bg-[#0c0c0e] p-3 rounded-xl border border-[#1f1f22] shadow-lg shadow-black/40">
-        <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-          Manage Games ({totalGames}) 
-          {isFetching && !isLoading && <Loader2 className="w-4 h-4 text-zinc-500 animate-spin" />}
-        </h2>
-        
-        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 w-full xl:w-auto">
+    <div className="space-y-4 max-w-[1400px] mx-auto">
+      {/* Compact Frameless Header */}
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
+            <Gamepad2 className="w-3.5 h-3.5" />
+          </div>
+          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+            Manage Games
+          </h1>
+          <span className="text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-white/[0.06] text-zinc-300 border border-white/[0.08] font-mono">
+            {totalGames}
+          </span>
+          {isFetching && !isLoading && <Loader2 className="w-3.5 h-3.5 text-orange-400 animate-spin ml-1" />}
+
+          {/* AI SEO button right side of title */}
+          <button
+            onClick={batchEnhancePageGames}
+            disabled={isBatchEnhancing || games.length === 0}
+            className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1 bg-orange-500/10 hover:bg-orange-500/20 text-orange-300 border border-orange-500/25 rounded-full text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0 active:scale-95 ml-1"
+            title="Generate AI SEO descriptions for all games on this page"
+          >
+            {isBatchEnhancing ? <Loader2 className="w-3 h-3 animate-spin text-orange-400" /> : <Sparkles className="w-3 h-3 text-orange-400" />}
+            <span>{isBatchEnhancing ? "Optimizing..." : "AI SEO"}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Search & Filter Bar */}
+      <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2.5">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           {/* Search */}
-          <div className="relative w-full sm:w-52">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
+          <div className="relative flex-1 sm:w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500 pointer-events-none" />
             <input 
               type="text" 
               placeholder="Search games..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:bg-[#1a1a1f] focus:outline-none transition-all shadow-inner"
+              className="w-full pl-8 pr-7 py-1.5 bg-[#101012] border border-white/[0.08] rounded-full text-xs text-zinc-200 placeholder-zinc-500 focus:border-orange-500/50 focus:outline-none transition-colors"
             />
+            {searchQuery && (
+              <button 
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
           </div>
 
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-            {/* Source Filter */}
-            <select 
-              value={sourceFilter}
-              onChange={(e) => setSourceFilter(e.target.value)}
-              className="flex-1 sm:flex-none px-2 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors outline-none cursor-pointer shadow-inner"
+          {/* Unified Filter Button & Popover to Right of Search */}
+          <div className="relative" ref={filterRef}>
+            <button
+              type="button"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={clsx(
+                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all border cursor-pointer active:scale-95 shrink-0",
+                activeFilterCount > 0 || isFilterOpen
+                  ? "bg-orange-500/15 text-orange-300 border-orange-500/35 shadow-xs"
+                  : "bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border-white/[0.08]"
+              )}
             >
-              <option value="all">All Sources</option>
-              <option value="aggregated">Imported</option>
-              <option value="own">Uploaded</option>
-            </select>
+              <SlidersHorizontal className="w-3.5 h-3.5 text-orange-400" />
+              <span>Filter</span>
+              {activeFilterCount > 0 && (
+                <span className="w-4 h-4 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[9.5px] font-bold flex items-center justify-center font-mono">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
 
-            {/* Verification Filter */}
-            <select 
-              value={verifiedFilter}
-              onChange={(e) => setVerifiedFilter(e.target.value)}
-              className="flex-1 sm:flex-none px-2 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors outline-none cursor-pointer shadow-inner"
-            >
-              <option value="all">All Verification</option>
-              <option value="true">Verified Only</option>
-              <option value="false">Unverified Only</option>
-            </select>
+            {/* Filter Dropdown Popover */}
+            {isFilterOpen && (
+              <div className="absolute left-0 sm:left-0 mt-2 w-72 p-3.5 bg-[#141417] border border-white/[0.12] rounded-[18px] shadow-2xl z-50 space-y-3 animate-in fade-in zoom-in-95 duration-150">
+                <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <Filter className="w-3.5 h-3.5 text-orange-400" />
+                    Filters
+                  </span>
+                  {activeFilterCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSourceFilter("all");
+                        setVerifiedFilter("all");
+                        setStatusFilter("all");
+                      }}
+                      className="text-[10.5px] font-medium text-orange-400 hover:text-orange-300 transition-colors cursor-pointer"
+                    >
+                      Reset All
+                    </button>
+                  )}
+                </div>
 
-            {/* Status Filter */}
-            <select 
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="flex-1 sm:flex-none px-2 py-1.5 bg-[#121214] border border-[#1f1f22] rounded-lg text-xs text-zinc-200 focus:border-indigo-500 focus:outline-none transition-colors outline-none cursor-pointer shadow-inner"
-            >
-              <option value="all">All Status</option>
-              <option value="published">Live Only</option>
-              <option value="draft">Drafts Only</option>
-            </select>
+                {/* Source Filter */}
+                <div>
+                  <label className="text-[10px] uppercase font-semibold text-zinc-400 block mb-1.5">Source</label>
+                  <div className="grid grid-cols-3 gap-1 p-0.5 bg-black/40 border border-white/[0.06] rounded-[10px]">
+                    {[
+                      { id: "all", label: "All" },
+                      { id: "aggregated", label: "Imported" },
+                      { id: "own", label: "Uploaded" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setSourceFilter(opt.id)}
+                        className={clsx(
+                          "py-1 px-1.5 text-[11px] rounded-[8px] font-medium transition-all text-center cursor-pointer",
+                          sourceFilter === opt.id
+                            ? "bg-white/[0.12] text-white font-semibold shadow-xs"
+                            : "text-zinc-400 hover:text-zinc-200"
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Verification Filter */}
+                <div>
+                  <label className="text-[10px] uppercase font-semibold text-zinc-400 block mb-1.5">Admin Check</label>
+                  <div className="grid grid-cols-3 gap-1 p-0.5 bg-black/40 border border-white/[0.06] rounded-[10px]">
+                    {[
+                      { id: "all", label: "All" },
+                      { id: "true", label: "Verified" },
+                      { id: "false", label: "Needs Check" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setVerifiedFilter(opt.id)}
+                        className={clsx(
+                          "py-1 px-1.5 text-[11px] rounded-[8px] font-medium transition-all text-center cursor-pointer truncate",
+                          verifiedFilter === opt.id
+                            ? "bg-white/[0.12] text-white font-semibold shadow-xs"
+                            : "text-zinc-400 hover:text-zinc-200"
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Status Filter */}
+                <div>
+                  <label className="text-[10px] uppercase font-semibold text-zinc-400 block mb-1.5">Visibility Status</label>
+                  <div className="grid grid-cols-3 gap-1 p-0.5 bg-black/40 border border-white/[0.06] rounded-[10px]">
+                    {[
+                      { id: "all", label: "All" },
+                      { id: "published", label: "Live" },
+                      { id: "draft", label: "Draft" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setStatusFilter(opt.id)}
+                        className={clsx(
+                          "py-1 px-1.5 text-[11px] rounded-[8px] font-medium transition-all text-center cursor-pointer",
+                          statusFilter === opt.id
+                            ? "bg-white/[0.12] text-white font-semibold shadow-xs"
+                            : "text-zinc-400 hover:text-zinc-200"
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* AI SEO Page Action */}
-          <button
-            onClick={batchEnhancePageGames}
-            disabled={isBatchEnhancing || games.length === 0}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-lg text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0"
-            title="Generate AI SEO descriptions for all games on this page"
-          >
-            {isBatchEnhancing ? <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" /> : <Sparkles className="w-3.5 h-3.5 text-indigo-400" />}
-            <span>{isBatchEnhancing ? "Optimizing..." : "AI SEO Page"}</span>
-          </button>
         </div>
+
+        {/* Active Filter Chips (removable tags if active) */}
+        {activeFilterCount > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {sourceFilter !== "all" && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] bg-orange-500/10 text-orange-300 border border-orange-500/25">
+                Source: {sourceFilter === "aggregated" ? "Imported" : "Uploaded"}
+                <button type="button" onClick={() => setSourceFilter("all")} className="hover:text-white cursor-pointer ml-0.5">
+                  <X className="w-2.5 h-2.5" />
+                </button>
+              </span>
+            )}
+            {verifiedFilter !== "all" && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] bg-orange-500/10 text-orange-300 border border-orange-500/25">
+                Check: {verifiedFilter === "true" ? "Verified" : "Needs Check"}
+                <button type="button" onClick={() => setVerifiedFilter("all")} className="hover:text-white cursor-pointer ml-0.5">
+                  <X className="w-2.5 h-2.5" />
+                </button>
+              </span>
+            )}
+            {statusFilter !== "all" && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] bg-orange-500/10 text-orange-300 border border-orange-500/25">
+                Status: {statusFilter === "published" ? "Live" : "Draft"}
+                <button type="button" onClick={() => setStatusFilter("all")} className="hover:text-white cursor-pointer ml-0.5">
+                  <X className="w-2.5 h-2.5" />
+                </button>
+              </span>
+            )}
+          </div>
+        )}
       </div>
       
-      {/* Table */}
-      <div className="overflow-x-auto bg-[#0c0c0e] border border-[#1f1f22] rounded-xl shadow-lg shadow-black/40 custom-scrollbar">
-        <table className="w-full text-left border-collapse min-w-[960px]">
-          <thead>
-            <tr className="border-b border-[#1f1f22] bg-[#121214] text-zinc-500 text-[10px] uppercase tracking-widest">
-              <th className="py-2.5 px-3 font-bold w-12">Icon</th>
-              <th 
-                className="py-2.5 px-3 font-bold cursor-pointer group hover:text-zinc-300 transition-colors"
-                onClick={() => handleSort('title')}
-              >
-                <div className="flex items-center gap-1">Title {renderSortIcon('title')}</div>
-              </th>
-              <th 
-                className="py-2.5 px-3 font-bold text-center cursor-pointer group hover:text-zinc-300 transition-colors"
-                onClick={() => handleSort('playCount')}
-              >
-                <div className="flex items-center justify-center gap-1">Plays {renderSortIcon('playCount')}</div>
-              </th>
-              <th 
-                className="py-2.5 px-3 font-bold text-center cursor-pointer group hover:text-zinc-300 transition-colors"
-                onClick={() => handleSort('rating')}
-              >
-                <div className="flex items-center justify-center gap-1">Rating {renderSortIcon('rating')}</div>
-              </th>
-              <th 
-                className="py-2.5 px-3 font-bold text-center cursor-pointer group hover:text-zinc-300 transition-colors w-14"
-                onClick={() => handleSort('featured')}
-              >
-                <div className="flex items-center justify-center gap-1">Feat {renderSortIcon('featured')}</div>
-              </th>
-              <th className="py-2.5 px-3 font-bold text-center w-28">Admin Check</th>
-              <th className="py-2.5 px-3 font-bold text-center w-24">Visibility</th>
-              <th className="py-2.5 px-3 font-bold text-right w-24">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {games.map((game) => (
-              <tr key={game._id} className={`border-b border-[#1f1f22] transition-colors ${game.status === 'draft' ? 'bg-[#08080a] opacity-70' : 'hover:bg-[#121214]'}`}>
-                <td className="py-2 px-3">
-                  <Image src={game.thumbnailUrl} alt={game.title} width={36} height={36} className="w-9 h-9 rounded-lg object-cover bg-zinc-900 border border-[#1f1f22] shadow-sm" />
-                </td>
-                <td className="py-2 px-3">
-                  <div className="font-semibold text-zinc-200 flex items-center gap-2 text-sm leading-tight">
-                    <span>{game.title}</span>
-                    {game.source === "aggregated" && (
-                      <span className="bg-indigo-500/10 text-indigo-400 text-[9px] uppercase font-bold px-1.5 py-0.5 rounded shrink-0 border border-indigo-500/20">
-                        Import
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-[10px] text-zinc-500 font-mono mb-0.5 leading-tight">{game.slug}</div>
-                  <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
-                    <span className="text-zinc-600">By <span className="text-zinc-400 font-medium">{game.developer || "Unknown"}</span></span>
-                    {game.category && game.category.length > 0 && (
-                      <>
-                        <span className="text-zinc-700">•</span>
-                        <span className="text-indigo-400/80 font-medium">{game.category.slice(0, 2).join(", ")}{game.category.length > 2 ? '...' : ''}</span>
-                      </>
-                    )}
-                  </div>
-                </td>
-                <td className="py-2 px-3 text-center text-zinc-300 text-xs font-medium">
-                  {game.playCount.toLocaleString()}
-                </td>
-                <td className="py-2 px-3 text-center text-xs">
-                  <div className="flex items-center justify-center gap-1.5">
-                    <span className="text-emerald-400 font-medium">+{game.likes?.length || 0}</span>
-                    <span className="text-zinc-700">/</span>
-                    <span className="text-red-400 font-medium">-{game.dislikes?.length || 0}</span>
-                  </div>
-                </td>
-                <td className="py-2 px-3 text-center">
-                  <button 
-                    onClick={() => toggleFeatured(game._id, game.featured)}
-                    className={`p-1.5 rounded-md transition-colors ${game.featured ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20' : 'text-zinc-600 hover:bg-zinc-800 hover:text-zinc-300'}`}
-                    title={game.featured ? "Remove from Featured" : "Feature on Homepage"}
-                  >
-                    <Star className={`w-3.5 h-3.5 ${game.featured ? 'fill-current' : ''}`} />
-                  </button>
-                </td>
-                {/* Admin Verification Column */}
-                <td className="py-2 px-3 text-center">
-                  <button
-                    onClick={() => toggleVerified(game._id, game.verified)}
-                    title={game.verified ? "Verified by Admin (Click to unverify)" : "Click to mark as Admin Verified"}
-                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wide transition-all border ${
-                      game.verified
-                        ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25 shadow-[0_0_8px_rgba(16,185,129,0.15)]"
-                        : "bg-amber-500/10 text-amber-300 border-amber-500/20 hover:bg-amber-500/20"
-                    }`}
-                  >
-                    {game.verified ? (
-                      <>
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Verified</span>
-                      </>
-                    ) : (
-                      <>
-                        <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Needs Check</span>
-                      </>
-                    )}
-                  </button>
-                </td>
-                {/* Visibility Column */}
-                <td className="py-2 px-3 text-center">
-                  <button 
-                    onClick={() => toggleStatus(game._id, game.status)}
-                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide transition-colors border ${
-                      game.status === 'published' 
-                        ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20' 
-                        : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 border-zinc-700'
-                    }`}
-                  >
-                    {game.status === 'published' ? <><Eye className="w-3 h-3" /> Live</> : <><EyeOff className="w-3 h-3" /> Draft</>}
-                  </button>
-                </td>
-                {/* Actions */}
-                <td className="py-2 px-3 text-right">
-                  <div className="flex justify-end items-center gap-1">
-                    <button
-                      onClick={() => categorizeGameWithAI(game._id)}
-                      disabled={categorizingIds.has(game._id)}
-                      className="p-1.5 text-zinc-500 hover:text-orange-400 hover:bg-orange-500/10 rounded-md transition-colors disabled:opacity-50"
-                      title="✨ AI Auto-Categorize with Gemini"
-                    >
-                      {categorizingIds.has(game._id) ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
-                      ) : (
-                        <Tag className="w-3.5 h-3.5 text-orange-400/80" />
+      {/* Clean Frameless Table */}
+      <div className="border border-white/[0.08] rounded-[18px] overflow-hidden bg-white/[0.01] shadow-xs">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="w-full text-left border-collapse min-w-[960px]">
+            <thead>
+              <tr className="border-b border-white/[0.08] bg-white/[0.02] text-zinc-400 text-[10px] uppercase font-semibold tracking-wider">
+                <th className="py-2.5 px-3 font-semibold w-12">Icon</th>
+                <th 
+                  className="py-2.5 px-3 font-semibold cursor-pointer group hover:text-white transition-colors"
+                  onClick={() => handleSort('title')}
+                >
+                  <div className="flex items-center gap-1">Title {renderSortIcon('title')}</div>
+                </th>
+                <th 
+                  className="py-2.5 px-3 font-semibold text-center cursor-pointer group hover:text-white transition-colors"
+                  onClick={() => handleSort('playCount')}
+                >
+                  <div className="flex items-center justify-center gap-1">Plays {renderSortIcon('playCount')}</div>
+                </th>
+                <th 
+                  className="py-2.5 px-3 font-semibold text-center cursor-pointer group hover:text-white transition-colors"
+                  onClick={() => handleSort('rating')}
+                >
+                  <div className="flex items-center justify-center gap-1">Rating {renderSortIcon('rating')}</div>
+                </th>
+                <th 
+                  className="py-2.5 px-3 font-semibold text-center cursor-pointer group hover:text-white transition-colors w-14"
+                  onClick={() => handleSort('featured')}
+                >
+                  <div className="flex items-center justify-center gap-1">Feat {renderSortIcon('featured')}</div>
+                </th>
+                <th className="py-2.5 px-3 font-semibold text-center w-28">Admin Check</th>
+                <th className="py-2.5 px-3 font-semibold text-center w-24">Visibility</th>
+                <th className="py-2.5 px-3 font-semibold text-right w-28">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.04]">
+              {games.map((game) => (
+                <tr key={game._id} className={`transition-colors ${game.status === 'draft' ? 'bg-white/[0.01] opacity-70' : 'hover:bg-white/[0.02]'}`}>
+                  <td className="py-2.5 px-3">
+                    <Image 
+                      src={game.thumbnailUrl} 
+                      alt={game.title} 
+                      width={36} 
+                      height={36} 
+                      className="w-9 h-9 rounded-[10px] object-cover bg-zinc-900 border border-white/[0.08] shadow-xs" 
+                    />
+                  </td>
+                  <td className="py-2.5 px-3">
+                    <div className="font-semibold text-zinc-200 flex items-center gap-1.5 text-xs leading-tight">
+                      <span>{game.title}</span>
+                      {game.source === "aggregated" && (
+                        <span className="bg-orange-500/10 text-orange-400 text-[9px] uppercase font-bold px-1.5 py-0.2 rounded-full shrink-0 border border-orange-500/20">
+                          Import
+                        </span>
                       )}
-                    </button>
-                    <button
-                      onClick={() => enhanceGameWithAI(game._id)}
-                      disabled={enhancingIds.has(game._id)}
-                      className="p-1.5 text-zinc-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-md transition-colors disabled:opacity-50"
-                      title="✨ Generate AI SEO description with Gemini"
-                    >
-                      {enhancingIds.has(game._id) ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
-                      ) : (
-                        <Sparkles className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="text-[10px] text-zinc-500 font-mono mb-0.5 leading-tight">{game.slug}</div>
+                    <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                      <span className="text-zinc-500">By <span className="text-zinc-300 font-medium">{game.developer || "Bluebuff"}</span></span>
+                      {game.category && game.category.length > 0 && (
+                        <>
+                          <span className="text-zinc-600">•</span>
+                          <span className="text-orange-400 font-medium">{game.category.slice(0, 2).join(", ")}{game.category.length > 2 ? '...' : ''}</span>
+                        </>
                       )}
-                    </button>
-                    <Link
-                      href={`/games/${game.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 text-zinc-500 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-md transition-colors"
-                      title="Test / Play Game in new tab"
-                    >
-                      <Play className="w-3.5 h-3.5" />
-                    </Link>
-                    <Link 
-                      href={`/admin/games/${game._id}/edit`}
-                      className="p-1.5 text-zinc-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-md transition-colors"
-                      title="Edit Game"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </Link>
+                    </div>
+                  </td>
+                  <td className="py-2.5 px-3 text-center text-zinc-300 text-xs font-mono font-medium">
+                    {game.playCount.toLocaleString()}
+                  </td>
+                  <td className="py-2.5 px-3 text-center text-xs">
+                    <div className="flex items-center justify-center gap-1.5 font-mono text-[11px]">
+                      <span className="text-emerald-400 font-medium">+{game.likes?.length || 0}</span>
+                      <span className="text-zinc-600">/</span>
+                      <span className="text-red-400 font-medium">-{game.dislikes?.length || 0}</span>
+                    </div>
+                  </td>
+                  <td className="py-2.5 px-3 text-center">
                     <button 
-                      onClick={() => deleteGame(game._id)}
-                      className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors"
-                      title="Delete Game"
+                      onClick={() => toggleFeatured(game._id, game.featured)}
+                      className={`p-1.5 rounded-full transition-colors cursor-pointer active:scale-95 ${game.featured ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20' : 'text-zinc-500 hover:bg-white/[0.06] hover:text-zinc-300'}`}
+                      title={game.featured ? "Remove from Featured" : "Feature on Homepage"}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Star className={`w-3.5 h-3.5 ${game.featured ? 'fill-current' : ''}`} />
                     </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {games.length === 0 && (
-              <tr>
-                <td colSpan={8} className="py-12 text-center text-zinc-500 text-xs">
-                  No games found matching your filters.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                  </td>
+                  {/* Admin Verification Column */}
+                  <td className="py-2.5 px-3 text-center">
+                    <button
+                      onClick={() => toggleVerified(game._id, game.verified)}
+                      title={game.verified ? "Verified by Admin (Click to unverify)" : "Click to mark as Admin Verified"}
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide transition-all border cursor-pointer active:scale-95 ${
+                        game.verified
+                          ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25"
+                          : "bg-amber-500/10 text-amber-300 border-amber-500/20 hover:bg-amber-500/20"
+                      }`}
+                    >
+                      {game.verified ? (
+                        <>
+                          <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                          <span>Verified</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShieldAlert className="w-3 h-3 text-amber-400" />
+                          <span>Check</span>
+                        </>
+                      )}
+                    </button>
+                  </td>
+                  {/* Visibility Column */}
+                  <td className="py-2.5 px-3 text-center">
+                    <button 
+                      onClick={() => toggleStatus(game._id, game.status)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide transition-colors border cursor-pointer active:scale-95 ${
+                        game.status === 'published' 
+                          ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20' 
+                          : 'bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] border-white/[0.08]'
+                      }`}
+                    >
+                      {game.status === 'published' ? <><Eye className="w-3 h-3" /> Live</> : <><EyeOff className="w-3 h-3" /> Draft</>}
+                    </button>
+                  </td>
+                  {/* Actions */}
+                  <td className="py-2.5 px-3 text-right">
+                    <div className="flex justify-end items-center gap-1">
+                      <button
+                        onClick={() => categorizeGameWithAI(game._id)}
+                        disabled={categorizingIds.has(game._id)}
+                        className="p-1.5 text-zinc-400 hover:text-orange-400 hover:bg-white/[0.06] rounded-full transition-colors disabled:opacity-50 cursor-pointer"
+                        title="✨ AI Auto-Categorize with Gemini"
+                      >
+                        {categorizingIds.has(game._id) ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
+                        ) : (
+                          <Tag className="w-3.5 h-3.5 text-orange-400/80" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => enhanceGameWithAI(game._id)}
+                        disabled={enhancingIds.has(game._id)}
+                        className="p-1.5 text-zinc-400 hover:text-orange-400 hover:bg-white/[0.06] rounded-full transition-colors disabled:opacity-50 cursor-pointer"
+                        title="✨ Generate AI SEO description with Gemini"
+                      >
+                        {enhancingIds.has(game._id) ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
+                        ) : (
+                          <Sparkles className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                      <Link
+                        href={`/games/${game.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 text-zinc-400 hover:text-emerald-400 hover:bg-white/[0.06] rounded-full transition-colors"
+                        title="Play in new tab"
+                      >
+                        <Play className="w-3.5 h-3.5" />
+                      </Link>
+                      <Link 
+                        href={`/admin/games/${game._id}/edit`}
+                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/[0.06] rounded-full transition-colors"
+                        title="Edit Game"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </Link>
+                      <button 
+                        onClick={() => deleteGame(game._id)}
+                        className="p-1.5 text-zinc-400 hover:text-red-400 hover:bg-white/[0.06] rounded-full transition-colors cursor-pointer"
+                        title="Delete Game"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {games.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="py-12 text-center text-zinc-500 text-xs">
+                    No games found matching your filters.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-4 px-2">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 px-1">
           <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wider">
-            Showing <span className="text-zinc-300">{(page - 1) * 50 + 1}</span> to <span className="text-zinc-300">{Math.min(page * 50, totalGames)}</span> of <span className="text-zinc-300">{totalGames}</span> results
+            Showing <span className="text-zinc-300 font-mono">{(page - 1) * 50 + 1}</span> to <span className="text-zinc-300 font-mono">{Math.min(page * 50, totalGames)}</span> of <span className="text-zinc-300 font-mono">{totalGames}</span> results
           </p>
-          <div className="flex gap-1.5">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1 || isFetching}
-              className="p-1.5 rounded-lg bg-[#121214] border border-[#1f1f22] text-zinc-400 hover:text-white hover:bg-[#1a1a1f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+              className="p-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-95"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5" />
             </button>
-            <div className="flex items-center px-3 bg-[#121214] border border-[#1f1f22] rounded-lg text-[11px] text-zinc-300 font-bold shadow-inner">
+            <div className="flex items-center px-3 py-1 bg-black/40 border border-white/[0.08] rounded-full text-[11px] text-zinc-300 font-medium font-mono">
               Page {page} of {totalPages}
             </div>
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages || isFetching}
-              className="p-1.5 rounded-lg bg-[#121214] border border-[#1f1f22] text-zinc-400 hover:text-white hover:bg-[#1a1a1f] disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+              className="p-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-95"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

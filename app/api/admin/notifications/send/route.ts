@@ -12,7 +12,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { title, body, icon, image, url, target, testSubscription } = await req.json();
+    const reqBody = await req.json();
+    const { title, body, icon, image, url, target } = reqBody;
+    const testSubscription = reqBody.testSubscription || reqBody.subscription;
 
     if (!title || !body) {
       return NextResponse.json({ error: 'Title and body are required' }, { status: 400 });

@@ -70,6 +70,9 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const isLoginPage = pathname === "/login" || pathname?.startsWith("/login");
+  const isAdminPage = pathname === "/admin" || pathname?.startsWith("/admin");
+
+  if (isAdminPage) return null;
   const [isRolling, setIsRolling] = useState(false);
   const [categories, setCategories] = useState<{name: string, href: string, icon: React.ElementType}[]>(() =>
     initialCategories.length > 0 ? formatCategoryLinks(initialCategories) : []
