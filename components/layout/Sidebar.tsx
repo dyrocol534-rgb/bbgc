@@ -14,11 +14,11 @@ import {
 import { Skeleton } from "@/components/ui/Skeleton";
 
 const PRIMARY_LINKS = [
-  { name: "Home", href: "/", icon: Home },
-  { name: "New", href: "/category/new", icon: Rocket },
-  { name: "Popular Games", href: "/category/popular", icon: TrendingUp },
-  // { name: "Global Leaderboard", href: "/leaderboard", icon: Trophy },
-  { name: "Featured", href: "/category/featured", icon: Crown },
+  { name: "Home", href: "/", icon: Home, color: "text-blue-400", bg: "bg-blue-500/15 border-blue-500/25" },
+  { name: "New", href: "/category/new", icon: Rocket, color: "text-orange-400", bg: "bg-orange-500/15 border-orange-500/25" },
+  { name: "Popular Games", href: "/category/popular", icon: TrendingUp, color: "text-pink-400", bg: "bg-pink-500/15 border-pink-500/25" },
+  // { name: "Global Leaderboard", href: "/leaderboard", icon: Trophy, color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/25" },
+  { name: "Featured", href: "/category/featured", icon: Crown, color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/25" },
 ];
 
 const getCategoryIcon = (category: string) => {
@@ -144,11 +144,11 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
         className={clsx(
           "md:hidden fixed z-50 select-none",
           "flex items-center justify-center",
-          "w-11 h-11 rounded-full",
-          "bg-gradient-to-br from-[#ff7a1a] via-[#ff6b00] to-[#ea580c]",
-          "border border-orange-400/30",
+          "w-12 h-12 rounded-full",
+          "bg-[#18181c]/90 backdrop-blur-xl",
+          "border border-white/[0.15] shadow-[0_8px_24px_rgba(0,0,0,0.6)]",
           "text-white transition-all duration-300 transform-gpu",
-          "bottom-6 left-4 active:scale-90 hover:scale-105",
+          "bottom-6 left-4 active:scale-95 hover:scale-105",
           isExpanded && "left-[290px]"
         )}
         aria-label={isExpanded ? "Close navigation" : "Open navigation"}
@@ -156,13 +156,13 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
         {isExpanded ? (
           <X className="w-5 h-5 text-white transition-transform duration-200" />
         ) : (
-          <Gamepad2 className="w-5 h-5 text-white transition-transform duration-200" />
+          <Gamepad2 className="w-5 h-5 text-orange-400 transition-transform duration-200" />
         )}
       </button>
 
       <aside 
         className={clsx(
-          "flex flex-col bg-black border-zinc-800/80 transition-all duration-300 ease-in-out z-40 transform-gpu",
+          "flex flex-col bg-[#0d0d10]/95 backdrop-blur-xl border-white/[0.08] transition-all duration-300 ease-in-out z-40 transform-gpu",
           // Desktop styles
           "md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:translate-x-0",
           isExpanded ? "w-72" : "md:w-16 w-0 md:border-r", 
@@ -188,19 +188,22 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             onClick={handleSurpriseMe}
             disabled={isRolling}
             className={clsx(
-              "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all whitespace-nowrap",
-              "bg-[#121214] border border-[#1f1f22] hover:border-orange-500/50 hover:bg-[#1a1410]",
+              "w-full flex items-center gap-3 px-2.5 py-2 rounded-xl transition-all whitespace-nowrap",
+              "bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 hover:from-orange-500/20 hover:to-amber-500/20",
+              "border border-orange-500/25 hover:border-orange-500/40 shadow-xs",
               !isExpanded && "justify-center px-0"
             )}
             title={!isExpanded ? "Surprise Me (Random Game)" : undefined}
           >
-            {isRolling ? (
-              <Loader2 className="w-4.5 h-4.5 shrink-0 text-orange-400 animate-spin" />
-            ) : (
-              <Dices className="w-4.5 h-4.5 shrink-0 text-orange-400" />
-            )}
+            <div className="w-7 h-7 rounded-[8px] bg-gradient-to-br from-[#ff7a1a] to-[#ea580c] flex items-center justify-center shrink-0 shadow-sm">
+              {isRolling ? (
+                <Loader2 className="w-3.5 h-3.5 text-white animate-spin" />
+              ) : (
+                <Dices className="w-3.5 h-3.5 text-white" />
+              )}
+            </div>
             <span className={clsx(
-              "font-bold text-xs sm:text-sm text-orange-100 transition-all duration-300", 
+              "font-semibold text-xs text-orange-200 transition-all duration-300", 
               isExpanded ? "opacity-100" : "opacity-0 hidden"
             )}>
               Surprise Me!
@@ -208,7 +211,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
           </button>
         </div>
 
-        <nav className="flex flex-col gap-0.5 px-2.5 mb-4">
+        <nav className="flex flex-col gap-1 px-2.5 mb-4">
           {PRIMARY_LINKS.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
@@ -218,15 +221,20 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 href={link.href}
                 onClick={() => setIsExpanded(false)}
                 className={clsx(
-                  "flex items-center gap-3 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap",
+                  "flex items-center gap-3 px-2.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap group",
                   isActive 
-                    ? "bg-[#121214] text-white border-l-2 border-orange-500 rounded-l-none" 
-                    : "text-zinc-400 hover:bg-[#121214]/50 hover:text-zinc-200 border-l-2 border-transparent"
+                    ? "bg-white/[0.09] text-white shadow-xs ring-1 ring-white/[0.1]" 
+                    : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
                 )}
                 title={!isExpanded ? link.name : undefined}
               >
-                <Icon className={clsx("w-4.5 h-4.5 shrink-0", isActive ? "text-orange-400" : "text-zinc-500")} />
-                <span className={clsx("transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+                <div className={clsx(
+                  "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 border transition-all",
+                  isActive ? link.bg : "bg-white/[0.04] border-white/[0.06] text-zinc-400 group-hover:text-white group-hover:bg-white/[0.08]"
+                )}>
+                  <Icon className={clsx("w-3.5 h-3.5", isActive ? link.color : "text-zinc-400 group-hover:text-white")} />
+                </div>
+                <span className={clsx("transition-opacity duration-300 font-medium", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
                   {link.name}
                 </span>
               </Link>
@@ -237,7 +245,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
         {/* Rewards & Referral Buttons in Sidebar */}
         <div className="px-2.5 mb-3 flex flex-col gap-1.5">
           <div className={clsx("flex items-center gap-2 mb-0.5 px-1 text-zinc-500 transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-            <span className="text-[10px] font-bold uppercase tracking-widest">Rewards</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Rewards</span>
           </div>
           {/* Refer & Earn */}
           <Link
@@ -250,16 +258,18 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
               setIsExpanded(false);
             }}
             className={clsx(
-              "w-full flex items-center justify-between px-3.5 py-2.5 bg-[#121214] border border-[#1f1f22] hover:border-orange-500/30 hover:bg-[#1a1410] transition-all rounded-xl font-bold group overflow-hidden",
+              "w-full flex items-center justify-between px-2.5 py-2 bg-white/[0.04] border border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.07] transition-all rounded-xl group overflow-hidden",
               !isExpanded && "justify-center"
             )}
             title={!isExpanded ? "Refer & Earn +50 XP" : undefined}
           >
             <div className="flex items-center gap-2.5">
-              <Handshake className="w-4.5 h-4.5 text-orange-400 shrink-0" />
+              <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0">
+                <Handshake className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              </div>
               <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                <span className="text-white text-xs sm:text-sm font-semibold group-hover:text-orange-200 transition-colors">Refer & Earn</span>
-                <span className="text-orange-400/80 text-[9.5px] uppercase tracking-wider font-bold">+50 XP</span>
+                <span className="text-white text-xs font-medium group-hover:text-emerald-300 transition-colors">Refer & Earn</span>
+                <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+50 XP</span>
               </div>
             </div>
           </Link>
@@ -275,16 +285,18 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
               setIsExpanded(false);
             }}
             className={clsx(
-              "w-full flex items-center justify-between px-3.5 py-2.5 bg-[#121214] border border-[#1f1f22] hover:border-orange-500/30 hover:bg-[#1a1512] transition-all rounded-xl font-bold group overflow-hidden",
+              "w-full flex items-center justify-between px-2.5 py-2 bg-white/[0.04] border border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.07] transition-all rounded-xl group overflow-hidden",
               !isExpanded && "justify-center"
             )}
             title={!isExpanded ? "Daily Streak & XP" : undefined}
           >
             <div className="flex items-center gap-2.5">
-              <Flame className="w-4.5 h-4.5 text-orange-500 shrink-0" />
+              <div className="w-7 h-7 rounded-[8px] bg-orange-500/15 border border-orange-500/25 flex items-center justify-center shrink-0">
+                <Flame className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+              </div>
               <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                <span className="text-white text-xs sm:text-sm font-semibold group-hover:text-orange-200 transition-colors">Daily Streak</span>
-                <span className="text-orange-500/80 text-[9.5px] uppercase tracking-wider font-bold">
+                <span className="text-white text-xs font-medium group-hover:text-orange-300 transition-colors">Daily Streak</span>
+                <span className="text-orange-400/90 text-[9.5px] uppercase tracking-wider font-semibold">
                   {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
                 </span>
               </div>
@@ -292,19 +304,19 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
           </Link>
         </div>
 
-        <div className="px-3.5 mb-2.5">
-          <div className="h-px bg-zinc-800/80 w-full mb-2" />
+        <div className="px-3 mb-2">
+          <div className="h-px bg-white/[0.06] w-full mb-2" />
           <div className={clsx("flex items-center gap-2 px-1 text-zinc-500 transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-            <span className="text-[10px] font-bold uppercase tracking-widest">Tags</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Tags</span>
           </div>
         </div>
 
         <nav className="flex flex-col gap-0.5 px-2.5">
           {categories.length === 0 ? (
-            <div className="flex flex-col gap-0.5 w-full">
+            <div className="flex flex-col gap-1 w-full">
               {Array.from({ length: 6 }).map((_, i) => (
-                <div key={`sidebar-skel-${i}`} className="flex items-center gap-3 px-3 py-2">
-                  <Skeleton className="w-4.5 h-4.5 rounded-md shrink-0" />
+                <div key={`sidebar-skel-${i}`} className="flex items-center gap-3 px-2.5 py-1.5">
+                  <Skeleton className="w-6 h-6 rounded-[7px] shrink-0" />
                   <Skeleton className={clsx("h-3.5 rounded-sm transition-all duration-300", isExpanded ? "w-24 opacity-100" : "w-0 opacity-0 hidden")} />
                 </div>
               ))}
@@ -318,15 +330,22 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 href={link.href}
                 onClick={() => setIsExpanded(false)}
                 className={clsx(
-                  "flex items-center gap-3 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap",
+                  "flex items-center gap-3 px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap group",
                   isActive 
-                    ? "bg-[#121214] text-white border-l-2 border-orange-500 rounded-l-none" 
-                    : "text-zinc-500 hover:bg-[#121214]/50 hover:text-zinc-300 border-l-2 border-transparent"
+                    ? "bg-white/[0.09] text-white shadow-xs ring-1 ring-white/[0.1]" 
+                    : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
                 )}
                 title={!isExpanded ? link.name : undefined}
               >
-                <Icon className={clsx("w-4.5 h-4.5 shrink-0", isActive ? "text-orange-400" : "text-zinc-500")} />
-                <span className={clsx("transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+                <div className={clsx(
+                  "w-6 h-6 rounded-[7px] flex items-center justify-center shrink-0 border transition-all",
+                  isActive 
+                    ? "bg-orange-500/15 border-orange-500/25 text-orange-400" 
+                    : "bg-white/[0.03] border-white/[0.05] text-zinc-500 group-hover:text-zinc-300 group-hover:bg-white/[0.06]"
+                )}>
+                  <Icon className="w-3.5 h-3.5" />
+                </div>
+                <span className={clsx("transition-opacity duration-300 font-medium", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
                   {link.name}
                 </span>
               </Link>
@@ -336,13 +355,13 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
       </div>
 
       {/* Footer Area - Compact single row */}
-      <div className={clsx("border-t border-zinc-800/80 px-2.5 py-1.5 overflow-hidden transition-all duration-300 flex items-center justify-between gap-2", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-        <div className="flex items-center gap-1">
+      <div className={clsx("border-t border-white/[0.06] px-3 py-2 overflow-hidden transition-all duration-300 flex items-center justify-between gap-2", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
+        <div className="flex items-center gap-1.5">
           <a
             href="https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-5 h-5 hover:text-green-400 rounded-full transition-colors flex items-center justify-center text-zinc-500"
+            className="w-6 h-6 hover:text-green-400 rounded-full bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-colors flex items-center justify-center text-zinc-400"
             aria-label="WhatsApp"
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
@@ -353,7 +372,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             href="https://instagram.com/mlbbtopup.in"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-5 h-5 hover:text-pink-400 rounded-full transition-colors flex items-center justify-center text-zinc-500"
+            className="w-6 h-6 hover:text-pink-400 rounded-full bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-colors flex items-center justify-center text-zinc-400"
             aria-label="Instagram"
           >
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -366,7 +385,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             href="https://www.linkedin.com/company/bluebuffesports/"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-5 h-5 hover:text-blue-400 rounded-full transition-colors flex items-center justify-center text-zinc-500"
+            className="w-6 h-6 hover:text-blue-400 rounded-full bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-colors flex items-center justify-center text-zinc-400"
             aria-label="LinkedIn"
           >
             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
@@ -374,16 +393,15 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             </svg>
           </a>
         </div>
-        <p className="text-[9px] text-zinc-600 leading-tight">© {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}</p>
+        <p className="text-[10px] text-zinc-500 leading-tight">© {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}</p>
       </div>
 
-      
-      {/* Manual Toggle Button (optional, since hover handles it, but good for UX) */}
+      {/* Manual Toggle Button */}
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
-        className="absolute -right-3 top-6 bg-zinc-800 border border-zinc-700 rounded-full p-1 text-zinc-400 hover:text-white z-40 hidden md:block shadow-lg"
+        className="absolute -right-3 top-6 bg-[#18181b] border border-white/[0.12] rounded-full p-1 text-zinc-400 hover:text-white z-40 hidden md:flex items-center justify-center shadow-md transition-colors"
       >
-        {isExpanded ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+        {isExpanded ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
       </button>
     </aside>
     </>

@@ -74,7 +74,7 @@ export default function Navbar() {
 
   if (isGameSlugPage) {
     return (
-      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-black border-b border-zinc-800/80 flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-[#0d0d10]/85 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
         {/* Left: Back Button (Icon only) */}
         <button
           onClick={() => {
@@ -84,7 +84,7 @@ export default function Navbar() {
               router.push("/");
             }
           }}
-          className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700/80 hover:border-zinc-500 transition-colors shrink-0 active:scale-95 cursor-pointer"
+          className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/[0.08] hover:border-white/[0.15] transition-all shrink-0 active:scale-95 cursor-pointer shadow-sm"
           aria-label="Go Back"
           title="Back"
         >
@@ -116,7 +116,7 @@ export default function Navbar() {
         <div className="relative flex items-center">
           <button
             onClick={handleShare}
-            className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-zinc-900/90 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700/80 hover:border-orange-500/60 transition-colors shrink-0 active:scale-95 cursor-pointer"
+            className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/[0.08] hover:border-orange-500/60 transition-all shrink-0 active:scale-95 cursor-pointer shadow-sm"
             aria-label="Share Game"
             title="Share"
           >
@@ -129,7 +129,7 @@ export default function Navbar() {
 
           {/* Copied confirmation tooltip */}
           {copied && (
-            <span className="absolute -bottom-8 right-0 text-[10px] font-semibold bg-zinc-900 border border-zinc-700 text-emerald-400 px-2 py-0.5 rounded shadow-lg whitespace-nowrap">
+            <span className="absolute -bottom-8 right-0 text-[10px] font-semibold bg-[#18181b] border border-white/[0.12] text-emerald-400 px-2 py-0.5 rounded shadow-lg whitespace-nowrap">
               Link copied!
             </span>
           )}
@@ -140,7 +140,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-black border-b border-zinc-800/80 flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-[#0d0d10]/85 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
         <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
           {logoError ? (
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-orange-500 via-primary to-amber-500 flex items-center justify-center font-black text-white text-lg sm:text-xl shadow-[0_0_15px_rgba(255,107,0,0.35)] border border-white/20 select-none tracking-tight">
@@ -165,10 +165,10 @@ export default function Navbar() {
           <SearchBar />
         </div>
         
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Mobile Search Button */}
           <button 
-            className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-zinc-300 hover:text-white rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-zinc-500 transition-all shrink-0"
+            className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-zinc-300 hover:text-white rounded-full bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] transition-all shrink-0 active:scale-95"
             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
             title="Search"
           >
@@ -179,7 +179,7 @@ export default function Navbar() {
           <button
             onClick={handleSurpriseMe}
             disabled={isRolling}
-            className="group relative flex items-center justify-center w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-dashed border-zinc-700/80 hover:border-orange-500/60 transition-all disabled:opacity-50 shrink-0"
+            className="group relative flex items-center justify-center w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] hover:border-orange-500/60 transition-all disabled:opacity-50 shrink-0 active:scale-95 cursor-pointer shadow-sm"
             title="Surprise Me!"
           >
             {isRolling ? (
@@ -189,7 +189,7 @@ export default function Navbar() {
             )}
 
             {/* Tooltip */}
-            <span className="absolute -bottom-9 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-zinc-900 border border-zinc-700 text-xs text-white px-2 py-1 rounded hidden sm:block z-50">
+            <span className="absolute -bottom-9 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-[#18181b] border border-white/[0.1] text-xs text-white px-2 py-1 rounded-md hidden sm:block z-50 shadow-md">
               Random Game 🎲
             </span>
           </button>
@@ -200,7 +200,7 @@ export default function Navbar() {
           {/* Profile / Menu Button */}
           <button 
             onClick={() => setIsSidebarOpen(true)} 
-            className="relative w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full overflow-hidden border border-zinc-700/80 hover:border-orange-400/80 bg-zinc-900/80 active:scale-95 transition-all flex items-center justify-center shrink-0 touch-manipulation cursor-pointer"
+            className="relative w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full overflow-hidden border border-white/[0.12] hover:border-orange-400/80 bg-white/[0.06] active:scale-95 transition-all flex items-center justify-center shrink-0 touch-manipulation cursor-pointer shadow-sm"
             aria-label="User Profile & Menu"
             title={session?.user?.name || "Account & Menu"}
           >
@@ -215,7 +215,7 @@ export default function Navbar() {
 
       {/* Mobile Search Overlay */}
       {isMobileSearchOpen && (
-        <div className="fixed top-16 left-0 right-0 z-30 bg-zinc-900 border-b border-zinc-800 p-4 sm:hidden shadow-lg animate-in slide-in-from-top-2">
+        <div className="fixed top-16 left-0 right-0 z-30 bg-[#121215]/95 backdrop-blur-xl border-b border-white/[0.08] p-4 sm:hidden shadow-xl animate-in slide-in-from-top-2">
           <SearchBar isMobile={true} onClose={() => setIsMobileSearchOpen(false)} />
         </div>
       )}
@@ -229,11 +229,11 @@ export default function Navbar() {
       )}
 
       <div className={clsx(
-        "fixed top-0 right-0 h-full w-[310px] max-w-[86vw] bg-[#000000] border-l border-[#2c2c2e]/60 z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl",
+        "fixed top-0 right-0 h-full w-[310px] max-w-[86vw] bg-[#0d0d10] border-l border-white/[0.08] z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl",
         isSidebarOpen ? "translate-x-0" : "translate-x-full"
       )}>
         {/* iOS Sheet Header */}
-        <div className="p-4 border-b border-[#1c1c1e] flex items-center justify-between shrink-0 bg-[#000000]">
+        <div className="p-4 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#0d0d10]">
           <div className="flex items-center gap-3 min-w-0">
             {session?.user?.image ? (
               <div className="relative w-11 h-11 rounded-full overflow-hidden shrink-0 border border-white/10 ring-1 ring-white/5">
@@ -412,7 +412,7 @@ export default function Navbar() {
         </div>
 
         {/* Footer Action */}
-        <div className="p-4 border-t border-[#1c1c1e] bg-[#000000] shrink-0">
+        <div className="p-4 border-t border-white/[0.06] bg-[#0d0d10] shrink-0">
           {!session ? (
             <button
               onClick={() => {

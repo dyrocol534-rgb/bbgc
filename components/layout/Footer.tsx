@@ -43,22 +43,24 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-black border-t border-zinc-800/80 mt-auto">
-      <div className="container mx-auto px-4 py-6 sm:py-8">
-        <div className="flex flex-col items-start gap-6 pb-6 border-b border-zinc-800/60">
+    <footer className="bg-[#0c0c0e] border-t border-white/[0.08] mt-auto">
+      <div className="container mx-auto px-4 py-8 sm:py-10">
+        <div className="flex flex-col items-start gap-6 pb-6 border-b border-white/[0.06]">
 
           {/* Row 1: Brand + Play Store */}
-          <div className="flex flex-col items-start gap-3 w-full">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
             {/* Brand */}
-            <div className="flex items-center gap-2.5">
-              <Link href="/" title={`${siteName} Home`}>
-                <Image
-                  src="/logo.png"
-                  alt={siteName}
-                  width={32}
-                  height={32}
-                  className="w-8 h-8 object-contain hover:opacity-80 transition-opacity"
-                />
+            <div className="flex items-center gap-3">
+              <Link href="/" title={`${siteName} Home`} className="relative group">
+                <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center p-1.5 transition-all group-hover:border-orange-500/40">
+                  <Image
+                    src="/logo.png"
+                    alt={siteName}
+                    width={32}
+                    height={32}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
               </Link>
               <div className="flex flex-col text-left">
                 <Link
@@ -67,7 +69,7 @@ export default function Footer() {
                 >
                   {siteName}
                 </Link>
-                <span className="text-[11px] text-zinc-400">
+                <span className="text-[11px] text-zinc-400 flex items-center gap-1">
                   A product from{" "}
                   <a
                     href="https://bluebuff.in"
@@ -81,27 +83,51 @@ export default function Footer() {
                 </span>
               </div>
             </div>
+
+            {/* Play Store Companion Pill */}
+            <a
+              href="https://play.google.com/store/apps/details?id=in.bluebuff.games"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2.5 px-3.5 py-2 rounded-full bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.15] transition-all group self-start sm:self-auto"
+              aria-label="Get it on Google Play"
+            >
+              <svg className="w-4 h-4 shrink-0" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#32BBFF" d="M396.121 229.173 34.445 19.532C25.061 14.118 14.968 13.418 6.458 17.696L261.929 256 396.121 229.173z" />
+                <path fill="#32BBFF" d="m6.458 494.304 255.471-238.303L6.458 17.696C2.592 19.636 0 24.169 0 30.47v451.06c0 6.301 2.592 10.834 6.458 12.774z" />
+                <path fill="#FFD700" d="M419.978 274.638 396.121 261.17 261.929 256l134.192 26.827 23.857 13.469c11.27-6.408 11.27-15.25 0-21.658z" />
+                <path fill="#F3BC00" d="m396.121 282.827-361.676 209.64c9.084 5.203 19.018 4.66 27.547-.407L419.978 274.638 396.121 282.827z" />
+                <path fill="#00F076" d="M261.929 256 6.458 17.696c-1.054.516-2.058 1.142-2.993 1.89L261.929 256z" />
+                <path fill="#00DA65" d="M261.929 256 3.465 492.414c.934.748 1.939 1.374 2.993 1.89L261.929 256z" />
+                <path fill="#FF3A44" d="M419.978 237.362 61.992 19.26C53.463 14.192 43.529 13.65 34.445 19.532L261.929 256 419.978 237.362z" />
+                <path fill="#C31162" d="M261.929 256 34.445 492.468c9.084 5.882 19.018 5.34 27.547.272l358.986-218.103L261.929 256z" />
+              </svg>
+              <div className="flex flex-col text-left">
+                <span className="text-[10px] text-zinc-400 leading-none">Get it on</span>
+                <span className="text-xs font-semibold text-white leading-tight group-hover:text-zinc-200 transition-colors">Google Play</span>
+              </div>
+            </a>
           </div>
 
           {/* Row 2: Newsletter + Social Icons */}
-          <div className="flex flex-col sm:flex-row items-start gap-4 w-full">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 w-full">
             {/* Newsletter */}
-            <form className="flex items-center gap-2 w-full sm:max-w-sm" onSubmit={handleSubscribe}>
+            <form className="flex items-center gap-2 w-full sm:max-w-md" onSubmit={handleSubscribe}>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter email for game updates..."
-                className="bg-zinc-900/90 border border-zinc-800 focus:border-indigo-500 rounded-lg px-3 py-1.5 text-xs text-white placeholder-zinc-500 flex-1 outline-none transition-colors"
+                className="bg-white/[0.05] border border-white/[0.08] focus:border-orange-500/80 rounded-full px-4 py-2 text-xs text-white placeholder-zinc-500 flex-1 outline-none transition-all"
                 disabled={status === "loading"}
                 required
               />
               <button
                 type="submit"
                 disabled={status === "loading" || status === "success"}
-                className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-zinc-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center min-w-[76px] shadow-sm shrink-0"
+                className="bg-white hover:bg-zinc-200 disabled:bg-zinc-800 disabled:text-zinc-500 text-black px-4 py-2 rounded-full text-xs font-semibold transition-all flex items-center justify-center min-w-[80px] shadow-sm shrink-0"
               >
-                {status === "loading" ? <Loader2 className="w-3 h-3 animate-spin" /> : "Subscribe"}
+                {status === "loading" ? <Loader2 className="w-3.5 h-3.5 animate-spin text-black" /> : status === "success" ? <CheckCircle className="w-3.5 h-3.5 text-emerald-600" /> : "Subscribe"}
               </button>
             </form>
 
@@ -111,7 +137,7 @@ export default function Footer() {
                 href="https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-lg bg-zinc-900/80 border border-zinc-800 text-zinc-400 hover:text-green-400 hover:border-green-500/40 transition-colors"
+                className="w-8 h-8 rounded-full bg-white/[0.05] border border-white/[0.08] text-zinc-400 hover:text-green-400 hover:border-green-500/30 hover:bg-white/[0.08] transition-all flex items-center justify-center"
                 aria-label="WhatsApp Channel"
                 title="WhatsApp Channel"
               >
@@ -123,7 +149,7 @@ export default function Footer() {
                 href="https://instagram.com/mlbbtopup.in"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-lg bg-zinc-900/80 border border-zinc-800 text-zinc-400 hover:text-pink-400 hover:border-pink-500/40 transition-colors"
+                className="w-8 h-8 rounded-full bg-white/[0.05] border border-white/[0.08] text-zinc-400 hover:text-pink-400 hover:border-pink-500/30 hover:bg-white/[0.08] transition-all flex items-center justify-center"
                 aria-label="Instagram"
                 title="Instagram"
               >
@@ -137,7 +163,7 @@ export default function Footer() {
                 href="https://www.linkedin.com/company/bluebuffesports/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-lg bg-zinc-900/80 border border-zinc-800 text-zinc-400 hover:text-blue-400 hover:border-blue-500/40 transition-colors"
+                className="w-8 h-8 rounded-full bg-white/[0.05] border border-white/[0.08] text-zinc-400 hover:text-blue-400 hover:border-blue-500/30 hover:bg-white/[0.08] transition-all flex items-center justify-center"
                 aria-label="LinkedIn"
                 title="LinkedIn"
               >
@@ -147,58 +173,31 @@ export default function Footer() {
               </a>
               <a
                 href={`mailto:${supportEmail}`}
-                className="p-2 rounded-lg bg-zinc-900/80 border border-zinc-800 text-zinc-400 hover:text-indigo-400 hover:border-indigo-500/40 transition-colors"
+                className="w-8 h-8 rounded-full bg-white/[0.05] border border-white/[0.08] text-zinc-400 hover:text-white hover:bg-white/[0.08] transition-all flex items-center justify-center"
                 aria-label="Email Support"
                 title="Email Support"
               >
                 <Mail className="w-3.5 h-3.5" />
               </a>
-
-              {/* Divider */}
-              <span className="w-px h-6 bg-zinc-800 mx-1 shrink-0" />
-
-              {/* Play Store Badge */}
-              <a
-                href="https://play.google.com/store/apps/details?id=in.bluebuff.games"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 transition-colors group"
-                aria-label="Get it on Google Play"
-              >
-                <svg className="w-4 h-4 shrink-0" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                  <path fill="#32BBFF" d="M396.121 229.173 34.445 19.532C25.061 14.118 14.968 13.418 6.458 17.696L261.929 256 396.121 229.173z" />
-                  <path fill="#32BBFF" d="m6.458 494.304 255.471-238.303L6.458 17.696C2.592 19.636 0 24.169 0 30.47v451.06c0 6.301 2.592 10.834 6.458 12.774z" />
-                  <path fill="#FFD700" d="M419.978 274.638 396.121 261.17 261.929 256l134.192 26.827 23.857 13.469c11.27-6.408 11.27-15.25 0-21.658z" />
-                  <path fill="#F3BC00" d="m396.121 282.827-361.676 209.64c9.084 5.203 19.018 4.66 27.547-.407L419.978 274.638 396.121 282.827z" />
-                  <path fill="#00F076" d="M261.929 256 6.458 17.696c-1.054.516-2.058 1.142-2.993 1.89L261.929 256z" />
-                  <path fill="#00DA65" d="M261.929 256 3.465 492.414c.934.748 1.939 1.374 2.993 1.89L261.929 256z" />
-                  <path fill="#FF3A44" d="M419.978 237.362 61.992 19.26C53.463 14.192 43.529 13.65 34.445 19.532L261.929 256 419.978 237.362z" />
-                  <path fill="#C31162" d="M261.929 256 34.445 492.468c9.084 5.882 19.018 5.34 27.547.272l358.986-218.103L261.929 256z" />
-                </svg>
-                <div className="flex flex-col text-left">
-                  <span className="text-[10px] text-zinc-400 leading-none">Get it on</span>
-                  <span className="text-xs font-semibold text-white leading-tight group-hover:text-zinc-200 transition-colors">Google Play</span>
-                </div>
-              </a>
             </div>
           </div>
         </div>
 
-
         {/* Links & Copyright Bar */}
-        <div className="pt-4 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-zinc-500">
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px]">
-            <Link href="/" className="hover:text-zinc-300 transition-colors">Games</Link>
-            <Link href="/leaderboard" className="hover:text-zinc-300 transition-colors">Leaderboard</Link>
-            <Link href="/rewards" className="hover:text-zinc-300 transition-colors">Rewards</Link>
-            <Link href="/contact" className="hover:text-zinc-300 transition-colors">Contact</Link>
-            <Link href="/faq" className="hover:text-zinc-300 transition-colors">FAQ</Link>
-            <Link href="/terms" className="hover:text-zinc-300 transition-colors">Terms of Service</Link>
-            <Link href="/privacy" className="hover:text-zinc-300 transition-colors">Privacy Policy</Link>
-            <Link href="/dmca" className="hover:text-zinc-300 transition-colors">DMCA</Link>
+        <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs">
+            <Link href="/" className="hover:text-white transition-colors">Games</Link>
+            <Link href="/leaderboard" className="hover:text-white transition-colors">Leaderboard</Link>
+            <Link href="/rewards" className="hover:text-white transition-colors">Rewards</Link>
+            <Link href="/referral" className="hover:text-white transition-colors">Referral</Link>
+            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+            <Link href="/faq" className="hover:text-white transition-colors">FAQ</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/dmca" className="hover:text-white transition-colors">DMCA</Link>
           </div>
 
-          <p className="text-[11px] text-zinc-500 text-center">
+          <p className="text-xs text-zinc-500 text-center">
             &copy; {currentYear} {siteName}. All rights reserved.
           </p>
         </div>

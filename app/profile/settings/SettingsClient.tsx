@@ -14,16 +14,13 @@ import {
   Trash2, 
   AlertCircle,
   LogOut,
-  Sparkles,
-  ArrowUpRight
+  Sparkles
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { isPushSupported, getExistingSubscription, subscribeUserToPush, unsubscribeUserFromPush } from "@/lib/push-client";
 import { signOut } from "next-auth/react";
 import axios from "axios";
-
-const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=in.bluebuff.games";
 
 interface SettingsClientProps {
   user: {
@@ -448,84 +445,6 @@ export default function SettingsClient({ user }: SettingsClientProps) {
         </div>
       )}
 
-      {/* ── 5. Play Store Section (AT THE VERY BOTTOM - UNIQUE & SIMPLE PREMIUM) ── */}
-      <div className="pt-2">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-3.5 mb-2 flex items-center justify-between">
-          <span>Android App</span>
-          <span className="text-sky-400 flex items-center gap-1 normal-case font-normal text-[11px]">
-            <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-            Free on Google Play
-          </span>
-        </div>
-
-        {/* Unique Companion App Showcase Card */}
-        <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[#161619] via-[#131316] to-[#0d0d0f] border border-white/[0.08] p-5 sm:p-6 shadow-xl group">
-          {/* Subtle Ambient Glow */}
-          <div className="absolute -top-16 -right-16 w-48 h-48 bg-sky-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-sky-500/20 transition-all duration-700" />
-          <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-700" />
-
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-            {/* App Branding & Badges */}
-            <div className="flex items-start sm:items-center gap-3.5">
-              {/* Google Play Triangle App Icon */}
-              <div className="w-12 h-12 rounded-[14px] bg-[#1a1a20] border border-white/[0.12] flex items-center justify-center shrink-0 shadow-lg shadow-black/40 group-hover:border-sky-500/40 transition-colors">
-                <svg className="w-6 h-6" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                  <path fill="#32BBFF" d="M396.121 229.173 34.445 19.532C25.061 14.118 14.968 13.418 6.458 17.696L261.929 256 396.121 229.173z" />
-                  <path fill="#32BBFF" d="m6.458 494.304 255.471-238.303L6.458 17.696C2.592 19.636 0 24.169 0 30.47v451.06c0 6.301 2.592 10.834 6.458 12.774z" />
-                  <path fill="#FFD700" d="M419.978 274.638 396.121 261.17 261.929 256l134.192 26.827 23.857 13.469c11.27-6.408 11.27-15.25 0-21.658z" />
-                  <path fill="#F3BC00" d="m396.121 282.827-361.676 209.64c9.084 5.203 19.018 4.66 27.547-.407L419.978 274.638 396.121 282.827z" />
-                  <path fill="#00F076" d="M261.929 256 6.458 17.696c-1.054.516-2.058 1.142-2.993 1.89L261.929 256z" />
-                  <path fill="#00DA65" d="M261.929 256 3.465 492.414c.934.748 1.939 1.374 2.993 1.89L261.929 256z" />
-                  <path fill="#FF3A44" d="M419.978 237.362 61.992 19.26C53.463 14.192 43.529 13.65 34.445 19.532L261.929 256 419.978 237.362z" />
-                  <path fill="#C31162" d="M261.929 256 34.445 492.468c9.084 5.882 19.018 5.34 27.547.272l358.986-218.103L261.929 256z" />
-                </svg>
-              </div>
-
-              <div className="flex flex-col min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-[15px] font-bold text-white tracking-tight">
-                    Bluebuff Games
-                  </span>
-                  <span className="text-[11px] font-semibold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
-                    ★ 4.8
-                  </span>
-                </div>
-                <span className="text-xs text-zinc-400 mt-0.5">
-                  Official Android App • Fullscreen &amp; Offline Play
-                </span>
-                
-                {/* Feature Pills */}
-                <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                  <span className="text-[10px] font-medium text-zinc-300 bg-white/[0.05] border border-white/[0.06] px-2 py-0.5 rounded-md">
-                    Instant Play
-                  </span>
-                  <span className="text-[10px] font-medium text-zinc-300 bg-white/[0.05] border border-white/[0.06] px-2 py-0.5 rounded-md">
-                    No Lag
-                  </span>
-                  <span className="text-[10px] font-medium text-zinc-300 bg-white/[0.05] border border-white/[0.06] px-2 py-0.5 rounded-md">
-                    Cloud Synced
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Button */}
-            <a
-              href={PLAY_STORE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-zinc-100 active:bg-zinc-200 text-black text-xs sm:text-sm font-semibold shadow-lg shadow-white/10 active:scale-[0.98] transition-all cursor-pointer shrink-0"
-            >
-              <span>Get on Google Play</span>
-              <ArrowUpRight className="w-4 h-4 text-black" />
-            </a>
-          </div>
-        </div>
-
-        <div className="text-[11px] text-zinc-500 px-3.5 mt-2">
-          Designed specifically for Android devices. Get faster frame rates and home screen shortcuts.
-        </div>
-      </div>
 
       {/* ── Delete Confirmation Dialog ── */}
       {showDeleteModal && (
