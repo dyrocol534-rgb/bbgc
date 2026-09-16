@@ -74,8 +74,8 @@ function CompactStatCard({
   sub?: string 
 }) {
   return (
-    <div className="bg-[#0d0d10] border border-zinc-800/60 p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 hover:border-zinc-700/60 transition-colors relative overflow-hidden group">
-      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg ${color} flex items-center justify-center shrink-0 border border-white/5`}>
+    <div className="bg-[#141416] border border-white/[0.07] p-2.5 sm:p-3 rounded-[16px] flex items-center gap-2.5 hover:border-white/[0.12] transition-colors relative overflow-hidden group shadow-xs">
+      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-[8px] ${color} flex items-center justify-center shrink-0 border border-white/5`}>
         <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
       </div>
       <div className="min-w-0 flex-1">
@@ -115,7 +115,7 @@ export default function AdminAnalytics() {
   if (isLoading && !stats) {
     return (
       <div className="flex flex-col justify-center items-center py-20">
-        <Loader2 className="w-6 h-6 text-indigo-500 animate-spin mb-2" />
+        <Loader2 className="w-6 h-6 text-orange-500 animate-spin mb-2" />
         <p className="text-xs text-zinc-400 font-medium">Loading Analytics...</p>
       </div>
     );
@@ -151,38 +151,38 @@ export default function AdminAnalytics() {
   const totalPwaAll = (pwaDevices.Mobile + pwaDevices.Desktop + pwaDevices.Tablet) || 1;
 
   return (
-    <div className="space-y-3 pb-8 max-w-[1400px] mx-auto">
+    <div className="space-y-3 pb-6 max-w-[1400px] mx-auto">
       
       {/* Compact Header & Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-[#0d0d10] p-2 sm:p-2.5 rounded-xl border border-zinc-800/60 w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-[#141416] p-2.5 sm:p-3 rounded-[16px] border border-white/[0.08] w-full shadow-xs">
         <div className="flex items-center gap-2 min-w-0 px-1">
-          <div className="w-6 h-6 rounded-md bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 text-indigo-400">
+          <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center shrink-0 text-orange-400">
             <Activity className="w-3.5 h-3.5" />
           </div>
-          <h1 className="text-xs sm:text-sm font-semibold text-white leading-tight">Analytics</h1>
+          <h1 className="text-xs sm:text-sm font-bold text-white leading-tight">Analytics Overview</h1>
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
           <button
             onClick={() => fetchStats(true)}
             disabled={isRefreshing}
-            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-zinc-300 bg-zinc-900/80 hover:bg-zinc-800 rounded-lg transition-colors border border-zinc-800 disabled:opacity-50 shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-white/[0.05] hover:bg-white/[0.09] active:bg-white/[0.12] rounded-full transition-all border border-white/[0.08] disabled:opacity-50 shrink-0 cursor-pointer"
             title="Refresh Data"
           >
             <RefreshCw className={clsx("w-3 h-3 text-zinc-400", isRefreshing && "animate-spin")} />
             <span className="hidden xs:inline">Refresh</span>
           </button>
 
-          <div className="flex p-0.5 bg-zinc-900/80 border border-zinc-800 rounded-lg shrink-0">
+          <div className="flex p-0.5 bg-[#101012] border border-white/[0.08] rounded-full shrink-0">
             {timeframes.map((tf) => (
               <button
                 key={tf.id}
                 onClick={() => setTimeframe(tf.id)}
                 className={clsx(
-                  "px-2.5 py-1 text-xs font-medium rounded-md transition-colors whitespace-nowrap",
+                  "px-2.5 py-1 text-[11px] font-medium rounded-full transition-all whitespace-nowrap cursor-pointer",
                   timeframe === tf.id
-                    ? "bg-indigo-600 text-white font-semibold"
-                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60"
+                    ? "bg-white text-black font-bold shadow-xs"
+                    : "text-zinc-400 hover:text-white hover:bg-white/[0.05]"
                 )}
               >
                 {tf.label}
@@ -255,14 +255,14 @@ export default function AdminAnalytics() {
       {/* PWA & Notification Ecosystem Breakdown */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3">
         {/* PWA Device Breakdown */}
-        <div className="bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-3 sm:p-3.5 flex flex-col justify-between">
+        <div className="bg-[#141416] border border-white/[0.07] rounded-[18px] p-3 sm:p-3.5 flex flex-col justify-between shadow-xs">
           <div>
             <div className="flex items-center justify-between mb-2.5">
               <h2 className="text-xs font-bold text-white flex items-center gap-1.5">
                 <Smartphone className="w-3.5 h-3.5 text-sky-400" />
                 PWA by Device
               </h2>
-              <span className="text-[9px] text-sky-400 font-bold bg-sky-500/10 px-1.5 py-0.5 rounded">
+              <span className="text-[9px] text-sky-400 font-bold bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/20">
                 {stats.lifetime.pwaInstalls} Installs
               </span>
             </div>
@@ -275,7 +275,7 @@ export default function AdminAnalytics() {
                   </span>
                   <span className="text-zinc-400 font-mono text-[10px]">{pwaDevices.Mobile} ({Math.round((pwaDevices.Mobile / totalPwaAll) * 100)}%)</span>
                 </div>
-                <div className="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-[#1f1f23] rounded-full overflow-hidden">
                   <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(pwaDevices.Mobile / totalPwaAll) * 100}%` }} />
                 </div>
               </div>
@@ -287,7 +287,7 @@ export default function AdminAnalytics() {
                   </span>
                   <span className="text-zinc-400 font-mono text-[10px]">{pwaDevices.Desktop} ({Math.round((pwaDevices.Desktop / totalPwaAll) * 100)}%)</span>
                 </div>
-                <div className="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-[#1f1f23] rounded-full overflow-hidden">
                   <div className="h-full bg-purple-500 rounded-full" style={{ width: `${(pwaDevices.Desktop / totalPwaAll) * 100}%` }} />
                 </div>
               </div>
@@ -299,42 +299,42 @@ export default function AdminAnalytics() {
                   </span>
                   <span className="text-zinc-400 font-mono text-[10px]">{pwaDevices.Tablet} ({Math.round((pwaDevices.Tablet / totalPwaAll) * 100)}%)</span>
                 </div>
-                <div className="w-full h-1.5 bg-zinc-900 rounded-full overflow-hidden">
+                <div className="w-full h-1.5 bg-[#1f1f23] rounded-full overflow-hidden">
                   <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(pwaDevices.Tablet / totalPwaAll) * 100}%` }} />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-3 pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[10px]">
+          <div className="mt-3 pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-[10.5px]">
             <span className="text-zinc-400">Push Notifications</span>
-            <Link href="/admin/notifications" className="text-indigo-400 hover:text-indigo-300 font-bold flex items-center gap-1">
+            <Link href="/admin/notifications" className="text-orange-400 hover:text-orange-300 font-semibold flex items-center gap-1">
               Broadcast <ArrowRight className="w-2.5 h-2.5" />
             </Link>
           </div>
         </div>
 
         {/* Recent PWA Install Activity */}
-        <div className="md:col-span-2 bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-3 sm:p-3.5 flex flex-col justify-between">
+        <div className="md:col-span-2 bg-[#141416] border border-white/[0.07] rounded-[18px] p-3 sm:p-3.5 flex flex-col justify-between shadow-xs">
           <div>
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xs font-bold text-white flex items-center gap-1.5">
-                <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
+                <Smartphone className="w-3.5 h-3.5 text-orange-400" />
                 Recent PWA Installations
               </h2>
               <span className="text-[9px] text-zinc-500">Live Logs</span>
             </div>
 
             {(!stats.lifetime.recentPwaInstalls || stats.lifetime.recentPwaInstalls.length === 0) ? (
-              <div className="p-4 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed text-center">
+              <div className="p-4 bg-white/[0.02] rounded-[14px] border border-white/[0.06] border-dashed text-center">
                 <p className="text-[11px] text-zinc-500">No install logs yet. Logs appear as players add the PWA.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                 {stats.lifetime.recentPwaInstalls.slice(0, 4).map((inst, i) => (
-                  <div key={i} className="flex items-center justify-between p-2 bg-zinc-900/40 border border-zinc-800/80 rounded-lg">
+                  <div key={i} className="flex items-center justify-between p-2 bg-white/[0.03] border border-white/[0.06] rounded-[12px]">
                     <div className="flex items-center gap-2">
-                      <div className="p-1 bg-sky-500/10 text-sky-400 rounded">
+                      <div className="p-1.5 bg-sky-500/10 text-sky-400 rounded-lg">
                         {inst.deviceType === 'Mobile' ? <Smartphone className="w-3.5 h-3.5" /> : inst.deviceType === 'Tablet' ? <Tablet className="w-3.5 h-3.5" /> : <Laptop className="w-3.5 h-3.5" />}
                       </div>
                       <span className="text-xs font-semibold text-zinc-200">{inst.deviceType}</span>
@@ -351,10 +351,10 @@ export default function AdminAnalytics() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3">
         {/* Trend Chart */}
-        <div className="md:col-span-2 bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-3 sm:p-3.5">
+        <div className="md:col-span-2 bg-[#141416] border border-white/[0.07] rounded-[18px] p-3 sm:p-3.5 shadow-xs">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-xs font-bold text-white flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+              <TrendingUp className="w-3.5 h-3.5 text-orange-400" />
               Acquisition Trend
             </h2>
           </div>
@@ -364,10 +364,10 @@ export default function AdminAnalytics() {
         </div>
 
         {/* Device Split Chart */}
-        <div className="bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-3 sm:p-3.5 flex flex-col justify-between">
+        <div className="bg-[#141416] border border-white/[0.07] rounded-[18px] p-3 sm:p-3.5 flex flex-col justify-between shadow-xs">
           <div>
             <h2 className="text-xs font-bold text-white flex items-center gap-1.5 mb-2">
-              <Smartphone className="w-3.5 h-3.5 text-indigo-400" />
+              <Smartphone className="w-3.5 h-3.5 text-orange-400" />
               Players by Platform
             </h2>
             {deviceData.length === 0 ? (
@@ -392,24 +392,24 @@ export default function AdminAnalytics() {
       </div>
 
       {/* Top Games Section */}
-      <div className="bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-3 sm:p-3.5">
+      <div className="bg-[#141416] border border-white/[0.07] rounded-[18px] p-3 sm:p-3.5 shadow-xs">
         <h2 className="text-xs font-bold text-white flex items-center gap-1.5 mb-2.5">
-          <PlayCircle className="w-3.5 h-3.5 text-indigo-400" />
+          <PlayCircle className="w-3.5 h-3.5 text-orange-400" />
           Top Games ({timeframes.find(t => t.id === timeframe)?.label})
         </h2>
         {currentStats.topGames.length === 0 ? (
-          <div className="p-3 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed text-center">
+          <div className="p-3 bg-white/[0.02] rounded-[12px] border border-white/[0.06] border-dashed text-center">
             <p className="text-[11px] text-zinc-500">No play events recorded.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
             {currentStats.topGames.slice(0, 6).map((game, i) => (
-              <div key={game.slug} className="flex items-center justify-between p-2 bg-zinc-900/30 hover:bg-zinc-800/50 rounded-lg transition-colors border border-transparent hover:border-zinc-700">
+              <div key={game.slug} className="flex items-center justify-between p-2 bg-white/[0.03] hover:bg-white/[0.06] rounded-[12px] transition-colors border border-white/[0.05]">
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="text-zinc-500 text-[11px] font-bold w-3">{i + 1}.</span>
                   <p className="text-zinc-200 text-xs font-medium truncate">{game.title}</p>
                 </div>
-                <div className="text-indigo-400 font-bold bg-indigo-500/10 px-2 py-0.5 rounded text-[10px] shrink-0 font-mono">
+                <div className="text-orange-400 font-bold bg-orange-500/10 px-2 py-0.5 rounded-full text-[10px] shrink-0 font-mono border border-orange-500/20">
                   {game.playCount.toLocaleString()}
                 </div>
               </div>
@@ -421,25 +421,25 @@ export default function AdminAnalytics() {
       {/* Community Pulse */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
         {/* Top Rated Games (Lifetime) */}
-        <div className="bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-3 sm:p-3.5">
+        <div className="bg-[#141416] border border-white/[0.07] rounded-[18px] p-3 sm:p-3.5 shadow-xs">
           <h2 className="text-xs font-bold text-white flex items-center gap-1.5 mb-2.5">
             <Star className="w-3.5 h-3.5 text-yellow-500" />
             Highest Rated Games
           </h2>
           {stats.lifetime.topRatedGames.length === 0 ? (
-            <div className="p-3 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed text-center">
+            <div className="p-3 bg-white/[0.02] rounded-[12px] border border-white/[0.06] border-dashed text-center">
               <p className="text-[11px] text-zinc-500">No rated games yet.</p>
             </div>
           ) : (
             <div className="space-y-1.5">
               {stats.lifetime.topRatedGames.slice(0, 4).map((game, i) => (
-                <div key={game.slug} className="flex items-center justify-between p-2 bg-zinc-900/30 rounded-lg">
+                <div key={game.slug} className="flex items-center justify-between p-2 bg-white/[0.03] rounded-[12px] border border-white/[0.05]">
                   <div className="flex items-center gap-2 min-w-0">
                     <span className="text-zinc-500 text-[11px] font-bold w-3">{i + 1}.</span>
                     <p className="text-zinc-200 text-xs font-medium truncate">{game.title}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="text-yellow-500 font-bold bg-yellow-500/10 px-1.5 py-0.5 rounded text-[10px] shrink-0 flex items-center gap-1">
+                    <div className="text-yellow-500 font-bold bg-yellow-500/10 px-2 py-0.5 rounded-full text-[10px] shrink-0 flex items-center gap-1 border border-yellow-500/20">
                       <Star className="w-2.5 h-2.5 fill-yellow-500" />
                       {game.ratio}%
                     </div>
@@ -452,31 +452,31 @@ export default function AdminAnalytics() {
         </div>
 
         {/* Live Feedback Feed */}
-        <div className="bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-3 sm:p-3.5 flex flex-col">
+        <div className="bg-[#141416] border border-white/[0.07] rounded-[18px] p-3 sm:p-3.5 flex flex-col shadow-xs">
           <div className="flex justify-between items-center mb-2.5">
             <h2 className="text-xs font-bold text-white flex items-center gap-1.5">
               <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
               Live Feedback Feed
             </h2>
-            <Link href="/admin/feedback" className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300">View All</Link>
+            <Link href="/admin/feedback" className="text-[10px] font-bold text-orange-400 hover:text-orange-300">View All</Link>
           </div>
           
           <div className="flex-1 overflow-y-auto max-h-[220px] space-y-2 pr-1 custom-scrollbar">
             {stats.lifetime.recentFeedback.length === 0 ? (
-              <div className="p-3 bg-zinc-900/30 rounded-lg border border-zinc-800 border-dashed text-center">
+              <div className="p-3 bg-white/[0.02] rounded-[12px] border border-white/[0.06] border-dashed text-center">
                 <p className="text-[11px] text-zinc-500">No feedback submitted yet.</p>
               </div>
             ) : (
               stats.lifetime.recentFeedback.slice(0, 3).map((fb, i) => (
-                <div key={i} className="bg-zinc-900/50 border border-zinc-800 rounded-lg p-2">
+                <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-[12px] p-2.5">
                   <div className="flex justify-between items-start mb-0.5">
                     <p className="text-[11px] font-bold text-zinc-300 truncate max-w-[150px]">{fb.userEmail}</p>
                     <span className="text-[9px] text-zinc-500">{fb.date}</span>
                   </div>
-                  <p className="text-[11px] text-zinc-400 line-clamp-1 mb-1">{fb.message}</p>
+                  <p className="text-[11px] text-zinc-400 line-clamp-1 mb-1.5">{fb.message}</p>
                   <div className="flex justify-between items-center text-[9px]">
-                    <span className="text-indigo-400 font-medium bg-indigo-500/10 px-1.5 py-0.5 rounded">Game: {fb.gameSlug}</span>
-                    <span className={clsx("font-medium px-1.5 py-0.5 rounded", fb.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400')}>
+                    <span className="text-orange-400 font-medium bg-orange-500/10 px-2 py-0.5 rounded-full border border-orange-500/20">Game: {fb.gameSlug}</span>
+                    <span className={clsx("font-medium px-2 py-0.5 rounded-full border", fb.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20')}>
                       {fb.status}
                     </span>
                   </div>

@@ -68,11 +68,11 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
   ) || NAV_LINKS[0];
 
   return (
-    <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6">
+    <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-5">
       {/* Mobile Drawer Backdrop */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-50 transition-opacity backdrop-blur-sm lg:hidden animate-in fade-in duration-200"
+          className="fixed inset-0 bg-black/70 z-50 transition-opacity backdrop-blur-md lg:hidden animate-in fade-in duration-200"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -80,14 +80,14 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
       {/* Mobile Right-Side Sliding Drawer */}
       <div
         className={clsx(
-          "fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-[#0d0d10] border-l border-zinc-800/80 z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl lg:hidden",
+          "fixed top-0 right-0 h-full w-72 max-w-[86vw] bg-[#0d0d10] border-l border-white/[0.08] z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl lg:hidden",
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
         {/* Drawer Header */}
-        <div className="p-4 bg-[#111114] border-b border-zinc-800/60 flex items-center justify-between">
+        <div className="p-4 bg-[#141416] border-b border-white/[0.08] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+            <div className="w-7 h-7 rounded-[8px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <span className="text-xs font-bold text-white tracking-wide uppercase">Admin Panel</span>
@@ -95,15 +95,15 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="w-7 h-7 rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-full bg-white/[0.08] hover:bg-white/[0.15] text-zinc-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
             aria-label="Close menu"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Drawer Navigation Links */}
-        <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-1.5 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-1 custom-scrollbar bg-[#000000]">
           {NAV_LINKS.map((link) => {
             const isActive = link.exact ? pathname === link.href : pathname.startsWith(link.href);
             const Icon = link.icon;
@@ -114,23 +114,23 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={clsx(
-                  "flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all group",
+                  "flex items-center justify-between px-3 py-2.5 rounded-[14px] text-xs font-medium transition-all group",
                   isActive
-                    ? "bg-zinc-800 text-white font-semibold border border-zinc-700/60 shadow-sm"
-                    : "text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200 border border-transparent"
+                    ? "bg-[#1c1c1e] text-white font-semibold border border-white/[0.1] shadow-xs"
+                    : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200 border border-transparent"
                 )}
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <Icon
                     className={clsx(
-                      "w-4 h-4 shrink-0 transition-transform group-hover:scale-110",
-                      isActive ? "text-indigo-400" : "text-zinc-500 group-hover:text-zinc-300"
+                      "w-4 h-4 shrink-0 transition-transform group-hover:scale-105",
+                      isActive ? "text-orange-400" : "text-zinc-500 group-hover:text-zinc-300"
                     )}
                   />
                   <span className="truncate">{link.name}</span>
                 </div>
                 {isActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0" />
                 )}
               </Link>
             );
@@ -138,11 +138,11 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
         </div>
 
         {/* Drawer Footer */}
-        <div className="p-3 bg-[#111114] border-t border-zinc-800/60">
+        <div className="p-3 bg-[#141416] border-t border-white/[0.08]">
           <Link
             href="/"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center justify-center gap-2 w-full py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white text-xs font-medium rounded-xl transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-2 bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-300 hover:text-white text-xs font-medium rounded-xl transition-all"
           >
             <span>Back to Main Site</span>
           </Link>
@@ -158,14 +158,14 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
             isCollapsed ? "lg:w-16" : "lg:w-56"
           )}
         >
-          <div className="relative bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-2.5 flex flex-col gap-2">
+          <div className="relative bg-[#141416] border border-white/[0.08] rounded-[20px] p-2.5 flex flex-col gap-2 shadow-xs">
             
             {/* Collapse Toggle Button (Desktop) */}
             <button
               type="button"
               onClick={toggleCollapse}
               title={isCollapsed ? "Expand Navigation" : "Collapse Navigation"}
-              className="hidden lg:flex absolute -right-3 top-4 w-6 h-6 bg-[#141418] border border-zinc-800 hover:border-zinc-700 rounded-full items-center justify-center text-zinc-400 hover:text-white z-30 transition-all cursor-pointer shadow-sm"
+              className="hidden lg:flex absolute -right-3 top-4 w-6 h-6 bg-[#1a1a1e] border border-white/[0.1] hover:border-white/[0.2] rounded-full items-center justify-center text-zinc-400 hover:text-white z-30 transition-all cursor-pointer shadow-xs"
             >
               {isCollapsed ? (
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -177,7 +177,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
             {/* Header / Title & Mobile Hamburger */}
             <div className="flex items-center justify-between gap-2 px-1 py-0.5">
               <div className="flex items-center gap-2 overflow-hidden min-w-0">
-                <div className="w-6 h-6 rounded-md bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 text-indigo-400">
+                <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center shrink-0 text-orange-400">
                   <ShieldCheck className="w-3.5 h-3.5" />
                 </div>
                 <div
@@ -191,24 +191,24 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
               </div>
 
               {/* Mobile Status Badge & Hamburger Button */}
-              <div className="flex items-center gap-2 lg:hidden">
-                <span className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-zinc-800/70 border border-zinc-700/50 text-[11px] font-medium text-zinc-300">
-                  <activeLink.icon className="w-3 h-3 text-indigo-400" />
+              <div className="flex items-center gap-1.5 lg:hidden">
+                <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-[10.5px] font-medium text-zinc-300">
+                  <activeLink.icon className="w-3 h-3 text-orange-400" />
                   <span className="truncate max-w-[120px]">{activeLink.name}</span>
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsMobileMenuOpen(true)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white border border-zinc-700/60 transition-colors cursor-pointer"
+                  className="w-7 h-7 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-zinc-300 hover:text-white border border-white/[0.08] transition-colors cursor-pointer"
                   aria-label="Open admin menu"
                 >
-                  <Menu className="w-4 h-4" />
+                  <Menu className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
 
             {/* Desktop Navigation Links */}
-            <nav className="hidden lg:flex lg:flex-col gap-1">
+            <nav className="hidden lg:flex lg:flex-col gap-0.5">
               {NAV_LINKS.map((link) => {
                 const isActive = link.exact ? pathname === link.href : pathname.startsWith(link.href);
                 const Icon = link.icon;
@@ -219,17 +219,17 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
                     href={link.href}
                     title={isCollapsed ? link.name : undefined}
                     className={clsx(
-                      "flex items-center gap-2.5 px-2.5 py-1.5 sm:py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0 group relative",
+                      "flex items-center gap-2.5 px-2.5 py-1.5 rounded-[12px] text-xs font-medium transition-all whitespace-nowrap shrink-0 group relative",
                       isActive
-                        ? "bg-zinc-800/90 text-white font-semibold border border-zinc-700/60"
-                        : "text-zinc-400 hover:bg-zinc-800/40 hover:text-zinc-200 border border-transparent"
+                        ? "bg-[#202024] text-white font-semibold border border-white/[0.1] shadow-xs"
+                        : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200 border border-transparent"
                     )}
                   >
                     <Icon
                       className={clsx(
                         "w-4 h-4 shrink-0 transition-transform group-hover:scale-105",
                         isActive
-                          ? "text-indigo-400"
+                          ? "text-orange-400"
                           : "text-zinc-500 group-hover:text-zinc-300"
                       )}
                     />
@@ -245,7 +245,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
 
                     {/* Floating Tooltip when Collapsed */}
                     {isCollapsed && (
-                      <div className="hidden lg:group-hover:flex absolute left-full ml-2.5 px-2 py-0.5 bg-zinc-900 border border-zinc-800 rounded-md text-white text-[11px] font-medium shadow-md whitespace-nowrap z-50 pointer-events-none items-center">
+                      <div className="hidden lg:group-hover:flex absolute left-full ml-2.5 px-2.5 py-1 bg-[#1c1c1e] border border-white/[0.1] rounded-md text-white text-[11px] font-medium shadow-xl whitespace-nowrap z-50 pointer-events-none items-center">
                         {link.name}
                       </div>
                     )}
@@ -258,7 +258,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
 
         {/* Main Content Area */}
         <main className="flex-1 min-w-0 w-full transition-all duration-300">
-          <div className="bg-[#0d0d10] border border-zinc-800/60 rounded-xl p-3 sm:p-5 lg:p-6">
+          <div className="bg-[#141416] border border-white/[0.08] rounded-[20px] p-3.5 sm:p-5 lg:p-6 shadow-xs">
             {children}
           </div>
         </main>

@@ -24,8 +24,10 @@ export default async function AdminUsersPage() {
   const guests = JSON.parse(JSON.stringify(guestsRaw));
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-text-main mb-6">Users & Subscribers</h2>
+    <div className="space-y-4 max-w-[1400px] mx-auto">
+      <div className="flex items-center gap-2">
+        <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Users &amp; Subscribers</h1>
+      </div>
       <UsersTabs users={users} subscribers={subscribers} guests={guests} />
     </div>
   );

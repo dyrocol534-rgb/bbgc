@@ -106,19 +106,19 @@ export default function AdminUnlockForm() {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-      {/* Compact Obsidian Modal */}
+      {/* Compact Apple iOS Modal */}
       <div
-        className={`w-full max-w-xs sm:max-w-sm bg-[#0e0e12] border border-zinc-800/90 rounded-2xl p-5 sm:p-6 text-center shadow-2xl shadow-black transition-transform duration-200 ${
+        className={`w-full max-w-xs sm:max-w-[340px] bg-[#141416] border border-white/[0.1] rounded-[24px] p-5 sm:p-6 text-center shadow-2xl shadow-black transition-transform duration-200 ${
           isShaking ? "animate-shake" : ""
         }`}
       >
         {/* Compact Icon */}
-        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mx-auto mb-3 text-indigo-400">
+        <div className="w-10 h-10 rounded-[12px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center mx-auto mb-3 text-orange-400 shadow-xs">
           <ShieldCheck className="w-5 h-5" />
         </div>
 
         {/* Title & Subtitle */}
-        <h2 className="text-base sm:text-lg font-bold text-white mb-0.5">Admin Security</h2>
+        <h2 className="text-base sm:text-lg font-bold text-white mb-0.5 tracking-tight">Admin Security</h2>
         <p className="text-[11px] text-zinc-400 mb-4">Enter 6-digit PIN to access</p>
 
         {/* 6-PIN Compact Box Row */}
@@ -137,10 +137,10 @@ export default function AdminUnlockForm() {
               onChange={(e) => handleBoxChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               onFocus={(e) => e.target.select()}
-              className={`w-9 h-11 sm:w-10 sm:h-12 text-center text-lg sm:text-xl font-mono font-bold rounded-xl bg-zinc-900 border transition-all outline-none ${
+              className={`w-9 h-11 sm:w-10 sm:h-12 text-center text-lg sm:text-xl font-mono font-bold rounded-[12px] bg-[#1c1c1e] border transition-all outline-none ${
                 char
-                  ? "border-indigo-500 text-white bg-indigo-500/10"
-                  : "border-zinc-700/80 text-zinc-200 focus:border-indigo-400 focus:bg-zinc-800"
+                  ? "border-orange-500 text-white bg-orange-500/10 ring-1 ring-orange-500/30"
+                  : "border-white/[0.08] text-zinc-200 focus:border-orange-400 focus:bg-[#242428]"
               }`}
             />
           ))}
@@ -151,11 +151,11 @@ export default function AdminUnlockForm() {
           <button
             type="button"
             onClick={() => setShowCharacters(!showCharacters)}
-            className="flex items-center gap-1 hover:text-white transition-colors"
+            className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
           >
             {showCharacters ? (
               <>
-                <EyeOff className="w-3.5 h-3.5 text-indigo-400" />
+                <EyeOff className="w-3.5 h-3.5 text-orange-400" />
                 <span>Hide</span>
               </>
             ) : (
@@ -172,7 +172,7 @@ export default function AdminUnlockForm() {
               setPin(Array(PIN_LENGTH).fill(""));
               inputRefs.current[0]?.focus();
             }}
-            className="hover:text-white text-zinc-500 transition-colors"
+            className="hover:text-white text-zinc-500 transition-colors cursor-pointer"
           >
             Clear
           </button>
@@ -180,7 +180,7 @@ export default function AdminUnlockForm() {
 
         {/* Error Alert */}
         {error && (
-          <div className="text-red-400 text-[11px] font-medium bg-red-500/10 py-1.5 px-3 rounded-lg border border-red-500/20 mb-3">
+          <div className="text-red-400 text-[11px] font-medium bg-red-500/10 py-1.5 px-3 rounded-xl border border-red-500/20 mb-3">
             {error}
           </div>
         )}
@@ -189,13 +189,13 @@ export default function AdminUnlockForm() {
         <button
           onClick={() => handleUnlock(pin.join(""))}
           disabled={isLoading || pin.join("").length === 0}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5 text-xs shadow-md shadow-indigo-600/25 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
+          className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-1.5 text-xs shadow-md shadow-orange-500/20 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer"
         >
           {isLoading ? (
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
           ) : (
             <>
-              <span>Unlock</span>
+              <span>Unlock Dashboard</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </>
           )}
