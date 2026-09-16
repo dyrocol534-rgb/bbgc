@@ -286,25 +286,12 @@ export default async function ProfilePage() {
                     <span className="text-[15px] font-bold text-white tracking-tight">
                       Bluebuff Games
                     </span>
-                    <span className="text-[11px] font-semibold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
-                      ★ 4.8
-                    </span>
+             
                   </div>
                   <span className="text-xs text-zinc-400 mt-0.5">
                     Official Android App • Fullscreen &amp; Offline Play
                   </span>
-                  
-                  <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                    <span className="text-[10px] font-medium text-zinc-300 bg-white/[0.05] border border-white/[0.06] px-2 py-0.5 rounded-md">
-                      Instant Play
-                    </span>
-                    <span className="text-[10px] font-medium text-zinc-300 bg-white/[0.05] border border-white/[0.06] px-2 py-0.5 rounded-md">
-                      No Lag
-                    </span>
-                    <span className="text-[10px] font-medium text-zinc-300 bg-white/[0.05] border border-white/[0.06] px-2 py-0.5 rounded-md">
-                      Cloud Synced
-                    </span>
-                  </div>
+              
                 </div>
               </div>
 

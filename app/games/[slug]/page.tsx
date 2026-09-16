@@ -258,13 +258,13 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                   </h1>
                 </div>
 
-                {/* Categories & Tags */}
-                <div className="flex flex-wrap items-center gap-2">
+                {/* Categories & Tags - Horizontal Scroll with small text */}
+                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-nowrap py-1 -mx-1 px-1">
                   {game.category?.map((cat: string) => (
                     <Link
                       key={cat}
                       href={`/category/${cat.toLowerCase()}`}
-                      className="px-3 py-1 rounded-full text-xs font-semibold capitalize transition-all bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/25 cursor-pointer"
+                      className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold capitalize transition-all bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/25 shrink-0 whitespace-nowrap cursor-pointer active:scale-95"
                     >
                       {cat}
                     </Link>
@@ -272,7 +272,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                   {game.tags?.map((tag: string) => (
                     <span
                       key={tag}
-                      className="px-2.5 py-0.5 rounded-full text-[11px] text-zinc-400 bg-white/[0.04] border border-white/[0.07]"
+                      className="px-2 py-0.5 rounded-full text-[10px] text-zinc-400 bg-white/[0.04] border border-white/[0.07] shrink-0 whitespace-nowrap"
                     >
                       #{tag}
                     </span>
@@ -281,17 +281,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
               </div>
 
               {/* iOS Quick Spec Row */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-white/[0.06]">
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-                  <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/25 flex items-center justify-center text-amber-400 shrink-0">
-                    <Star className="w-4 h-4 fill-amber-400" />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[10px] text-zinc-400 font-medium uppercase tracking-wider">Rating</span>
-                    <span className="text-xs font-semibold text-white truncate">4.8 / 5.0</span>
-                  </div>
-                </div>
-
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-white/[0.06]">
                 <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
                   <div className="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-500/25 flex items-center justify-center text-cyan-400 shrink-0">
                     <Layers className="w-4 h-4" />
@@ -311,16 +301,6 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                   <div className="flex flex-col min-w-0">
                     <span className="text-[10px] text-zinc-400 font-medium uppercase tracking-wider">Devices</span>
                     <span className="text-xs font-semibold text-white truncate">Mobile, iOS &amp; PC</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-indigo-400 shrink-0">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[10px] text-zinc-400 font-medium uppercase tracking-wider">Access</span>
-                    <span className="text-xs font-semibold text-white truncate">Instant Play</span>
                   </div>
                 </div>
               </div>
