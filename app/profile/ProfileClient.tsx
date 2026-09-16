@@ -11,6 +11,7 @@ interface ProfileClientProps {
 }
 
 function FieldRow({
+  iconBg,
   icon,
   label,
   value,
@@ -22,6 +23,7 @@ function FieldRow({
   onCancel,
   emptyText,
 }: {
+  iconBg: string;
   icon: React.ReactNode;
   label: string;
   value: string;
@@ -34,38 +36,40 @@ function FieldRow({
   emptyText: string;
 }) {
   return (
-    <div className="group">
-      <div className="flex items-center justify-between mb-1.5">
-        <div className="flex items-center gap-1.5 text-zinc-500">
-          {icon}
-          <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
+    <div className="p-3.5 sm:p-4 hover:bg-white/[0.02] transition-colors">
+      <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center gap-2.5">
+          <div className={`w-7 h-7 rounded-[8px] ${iconBg} text-white flex items-center justify-center shrink-0 shadow-sm`}>
+            {icon}
+          </div>
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">{label}</span>
         </div>
         {!isEditing && (
           <button
             onClick={onEdit}
-            className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-zinc-600 hover:text-indigo-400 hover:bg-indigo-500/10 transition-all"
-            title={`Edit ${label}`}
+            className="px-2.5 py-1 rounded-full text-[11px] font-medium text-sky-400 hover:text-sky-300 bg-sky-500/10 hover:bg-sky-500/15 border border-sky-500/20 transition-all flex items-center gap-1 cursor-pointer"
           >
-            <Edit2 className="w-3 h-3" />
+            <Edit2 className="w-2.5 h-2.5" />
+            <span>Edit</span>
           </button>
         )}
       </div>
 
       {isEditing ? (
-        <div className="space-y-2">
+        <div className="mt-2.5 space-y-2">
           {editContent}
           <div className="flex gap-1.5 justify-end">
             <button
               onClick={onCancel}
               disabled={isLoading}
-              className="flex items-center gap-1 px-2.5 py-1.5 text-xs text-zinc-400 hover:text-white bg-zinc-800/60 hover:bg-zinc-700/60 border border-zinc-700/50 rounded-lg transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs text-zinc-400 hover:text-white bg-white/[0.06] hover:bg-white/[0.1] rounded-full transition-colors"
             >
               <X className="w-3 h-3" /> Cancel
             </button>
             <button
               onClick={onSave}
               disabled={isLoading}
-              className="flex items-center gap-1 px-2.5 py-1.5 text-xs text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors disabled:opacity-60"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-full transition-colors disabled:opacity-60 shadow-sm"
             >
               {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
               Save
@@ -73,8 +77,8 @@ function FieldRow({
           </div>
         </div>
       ) : (
-        <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap">
-          {value || <span className="italic text-zinc-600 text-xs">{emptyText}</span>}
+        <p className="text-xs sm:text-[13px] text-zinc-300 leading-relaxed whitespace-pre-wrap pl-9">
+          {value || <span className="italic text-zinc-500 text-xs">{emptyText}</span>}
         </p>
       )}
     </div>
@@ -150,95 +154,102 @@ export default function ProfileClient({ initialBio, initialPhone }: ProfileClien
   };
 
   return (
-    <div className="space-y-5">
-      <FieldRow
-        icon={<Phone className="w-3 h-3" />}
-        label="Phone"
-        value={phone}
-        isEditing={isEditingPhone}
-        isLoading={isPhoneLoading}
-        onEdit={() => { setTempPhone(phone); setIsEditingPhone(true); }}
-        onSave={handleSavePhone}
-        onCancel={() => { setTempPhone(phone); setIsEditingPhone(false); }}
-        emptyText="No phone number set."
-        editContent={
-          <input
-            type="tel"
-            value={tempPhone}
-            onChange={(e) => setTempPhone(e.target.value)}
-            className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/60 transition-colors"
-            placeholder="+1 (555) 000-0000"
-            autoFocus
-          />
-        }
-      />
+    <div className="space-y-4">
+      {/* iOS Inset Group */}
+      <div className="bg-[#141416] rounded-[22px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-sm">
+        <FieldRow
+          iconBg="bg-[#34C759]"
+          icon={<Phone className="w-3.5 h-3.5" />}
+          label="Phone Number"
+          value={phone}
+          isEditing={isEditingPhone}
+          isLoading={isPhoneLoading}
+          onEdit={() => { setTempPhone(phone); setIsEditingPhone(true); }}
+          onSave={handleSavePhone}
+          onCancel={() => { setTempPhone(phone); setIsEditingPhone(false); }}
+          emptyText="No phone number configured."
+          editContent={
+            <input
+              type="tel"
+              value={tempPhone}
+              onChange={(e) => setTempPhone(e.target.value)}
+              className="w-full bg-[#121214] border border-white/[0.12] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-orange-500/80 transition-colors"
+              placeholder="+1 (555) 000-0000"
+              autoFocus
+            />
+          }
+        />
 
-      <div className="h-px bg-zinc-800/50" />
+        <FieldRow
+          iconBg="bg-[#5856D6]"
+          icon={<AlignLeft className="w-3.5 h-3.5" />}
+          label="About Bio"
+          value={bio}
+          isEditing={isEditingBio}
+          isLoading={isBioLoading}
+          onEdit={() => { setTempBio(bio); setIsEditingBio(true); }}
+          onSave={handleSaveBio}
+          onCancel={() => { setTempBio(bio); setIsEditingBio(false); }}
+          emptyText="Write something about yourself…"
+          editContent={
+            <textarea
+              value={tempBio}
+              onChange={(e) => setTempBio(e.target.value)}
+              className="w-full bg-[#121214] border border-white/[0.12] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-orange-500/80 transition-colors min-h-[85px] resize-none"
+              placeholder="Tell others what you like to play…"
+              autoFocus
+            />
+          }
+        />
+      </div>
 
-      <FieldRow
-        icon={<AlignLeft className="w-3 h-3" />}
-        label="About Me"
-        value={bio}
-        isEditing={isEditingBio}
-        isLoading={isBioLoading}
-        onEdit={() => { setTempBio(bio); setIsEditingBio(true); }}
-        onSave={handleSaveBio}
-        onCancel={() => { setTempBio(bio); setIsEditingBio(false); }}
-        emptyText="No bio provided yet."
-        editContent={
-          <textarea
-            value={tempBio}
-            onChange={(e) => setTempBio(e.target.value)}
-            className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-3 py-2 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/60 transition-colors min-h-[90px] resize-none"
-            placeholder="Write something about yourself…"
-            autoFocus
-          />
-        }
-      />
-
-      <div className="h-px bg-zinc-800/50" />
-
-      {/* Account Settings / Danger Zone */}
-      <div className="pt-2">
-        <div className="flex items-center gap-1.5 text-zinc-500 mb-2">
-          <ShieldAlert className="w-3 h-3 text-red-400/80" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Account Settings</span>
-        </div>
-        
+      {/* Quick Action to Settings */}
+      <div className="pt-1">
         <button
           onClick={() => {
             setShowDeleteModal(true);
             setDeleteConfirmationText("");
             setDeleteError("");
           }}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold text-red-400 hover:text-red-300 bg-red-950/20 hover:bg-red-950/40 border border-red-800/40 hover:border-red-700/60 rounded-xl transition-all shadow-sm"
+          className="w-full flex items-center justify-between p-3.5 rounded-[18px] bg-red-500/[0.04] hover:bg-red-500/[0.08] border border-red-500/20 hover:border-red-500/30 transition-colors text-left group cursor-pointer"
         >
-          <Trash2 className="w-3.5 h-3.5" />
-          Delete Account & Data
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-[8px] bg-red-500/15 border border-red-500/25 flex items-center justify-center text-red-400 shrink-0">
+              <Trash2 className="w-3.5 h-3.5" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-medium text-red-400 group-hover:text-red-300 transition-colors">
+                Delete Account &amp; Data
+              </span>
+              <span className="text-[10px] text-zinc-500">Permanently erase progress</span>
+            </div>
+          </div>
+          <span className="text-[11px] font-semibold text-red-400/80 group-hover:text-red-400">
+            Action ↗
+          </span>
         </button>
       </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-zinc-900 border border-red-900/50 rounded-2xl p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md bg-[#18181b] border border-red-500/30 rounded-[24px] p-6 shadow-2xl space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 shrink-0">
+              <div className="w-10 h-10 rounded-[12px] bg-red-500/15 border border-red-500/25 flex items-center justify-center text-red-400 shrink-0">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">Delete Account</h3>
+                <h3 className="text-base font-bold text-white tracking-tight">Delete Account</h3>
                 <p className="text-xs text-zinc-400">This action is permanent and cannot be undone.</p>
               </div>
             </div>
 
-            <div className="bg-red-950/20 border border-red-900/30 rounded-xl p-3 text-xs text-zinc-300 space-y-1.5">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-[16px] p-3.5 text-xs text-zinc-300 space-y-1.5">
               <p className="font-semibold text-red-300">The following data will be permanently wiped:</p>
-              <ul className="list-disc pl-4 space-y-0.5 text-zinc-400">
+              <ul className="list-disc pl-4 space-y-0.5 text-zinc-400 text-[11px]">
                 <li>Your profile details, phone, and bio</li>
                 <li>Earned XP, leaderboards, and streak progress</li>
                 <li>Favorites and gameplay history</li>
-                <li>Account credentials and login sessions</li>
               </ul>
             </div>
 
@@ -254,7 +265,7 @@ export default function ProfileClient({ initialBio, initialPhone }: ProfileClien
                   if (deleteError) setDeleteError("");
                 }}
                 placeholder="DELETE"
-                className="w-full bg-zinc-950 border border-zinc-800 focus:border-red-500 rounded-xl px-3 py-2 text-sm text-white placeholder-zinc-700 outline-none font-mono"
+                className="w-full bg-[#121214] border border-white/[0.12] focus:border-red-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-700 outline-none font-mono"
                 autoFocus
               />
               {deleteError && (
@@ -262,12 +273,12 @@ export default function ProfileClient({ initialBio, initialPhone }: ProfileClien
               )}
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-zinc-800">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/[0.08]">
               <button
                 type="button"
                 onClick={() => setShowDeleteModal(false)}
                 disabled={isDeleting}
-                className="px-4 py-2 text-xs font-medium text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 rounded-xl transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-xs font-medium text-zinc-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.1] rounded-full transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -275,7 +286,7 @@ export default function ProfileClient({ initialBio, initialPhone }: ProfileClien
                 type="button"
                 onClick={handleDeleteAccount}
                 disabled={isDeleting || deleteConfirmationText.trim().toUpperCase() !== "DELETE"}
-                className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-500 disabled:bg-red-950 disabled:text-zinc-600 rounded-xl transition-all shadow-sm"
+                className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-500 disabled:bg-red-950 disabled:text-zinc-600 rounded-full transition-all shadow-sm"
               >
                 {isDeleting ? (
                   <>
