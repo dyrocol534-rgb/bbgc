@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal, preconnect, prefetchDNS } from 'react-dom';
-import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, Smartphone, X, Play, RotateCcw, Gamepad2 } from 'lucide-react';
+import { Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, MessageSquareWarning, X, Play, RotateCcw, Gamepad2 } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
 import { ConsoleLoader } from '@/components/ui/ConsoleLoader';
@@ -35,11 +35,9 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   const [isForceLandscape, setIsForceLandscape] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [showQrModal, setShowQrModal] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState('');
 
   const [likeCount, setLikeCount] = useState(game.likes?.length || 0);
   const [dislikeCount, setDislikeCount] = useState(game.dislikes?.length || 0);
@@ -52,7 +50,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    setCurrentUrl(window.location.href);
     axios.post(`/api/games/${game.slug}/interact`, { action: 'status' })
       .then(res => {
         setIsLiked(res.data.isLiked);
@@ -306,7 +303,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     return () => document.removeEventListener('fullscreenchange', handler);
   }, []);
 
-  const closeQrModal = useCallback(() => setShowQrModal(false), []);
   const closeFeedbackModal = useCallback(() => {
     setShowFeedbackModal(false);
     setFeedbackText('');
@@ -614,29 +610,11 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             <button onClick={() => setShowFeedbackModal(true)} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0" title="Feedback">
               <MessageSquareWarning className="w-3.5 h-3.5" />
             </button>
-            <button onClick={() => setShowQrModal(true)} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 group" title="Play on Mobile">
-              <Smartphone className="w-3.5 h-3.5 group-hover:text-orange-400" />
-            </button>
             <button onClick={toggleFullscreen} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-zinc-800/80 rounded-full border border-white/5 text-zinc-300 hover:bg-zinc-700 hover:text-white transition-colors shrink-0 hidden md:flex" title="Fullscreen">
               {isFullscreen ? <Minimize className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
             </button>
           </div>
         </div>
-
-        {/* QR Modal */}
-        {showQrModal && typeof document !== 'undefined' && createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200" onClick={closeQrModal}>
-            <div className="relative bg-[#0e0e12] border border-[#27272a] rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-              <button onClick={closeQrModal} className="absolute top-3.5 right-3.5 p-1.5 text-zinc-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5" /></button>
-              <div className="bg-white p-3 rounded-2xl mb-5 shadow-xl">
-                <Image src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}&margin=0`} alt="QR" width={160} height={160} className="w-40 h-40 rounded-lg" unoptimized />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Take the fun with you!</h3>
-              <p className="text-zinc-400 text-xs sm:text-sm">Scan to play <strong>{game.title}</strong> on your phone or tablet.</p>
-            </div>
-          </div>,
-          document.body
-        )}
 
         {/* Feedback Modal */}
         {showFeedbackModal && typeof document !== 'undefined' && createPortal(

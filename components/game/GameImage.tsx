@@ -52,9 +52,7 @@ export default function GameImage({
     <div className="relative w-full h-full overflow-hidden">
       {/* Visual skeleton shimmer placeholder while downloading */}
       {!isLoaded && (
-        <div className="absolute inset-0 skeleton-shimmer z-0 flex items-center justify-center">
-          <Gamepad2 className="w-7 h-7 text-zinc-500/40 animate-pulse" />
-        </div>
+        <div className="absolute inset-0 skeleton-shimmer z-0" />
       )}
 
       {useFallbackImg ? (

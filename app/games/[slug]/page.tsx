@@ -4,9 +4,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import GamePlayer from '@/components/game/GamePlayer';
 import GameImage from '@/components/game/GameImage';
+import GameDescription from '@/components/game/GameDescription';
 import { getPublishedGameBySlug, getRandomSuggestedGames } from '@/lib/services/gameService';
 import { getSidebarBentoSpanClass } from '@/lib/bento';
-import { Gamepad2, Sparkles, Smartphone, Monitor, HelpCircle, ShieldCheck, Calendar, Code2, Layers, Globe, ChevronDown, Flame } from 'lucide-react';
+import { Gamepad2, Smartphone, Monitor, Layers, Globe } from 'lucide-react';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -278,9 +279,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                 </div>
 
                 {/* Description */}
-                <p className="text-sm sm:text-[15px] text-zinc-400 leading-relaxed whitespace-pre-line">
-                  {game.description}
-                </p>
+                <GameDescription description={game.description} />
 
                 {/* Spec pills */}
                 <div className="flex items-center gap-2 pt-1 border-t border-zinc-800/60">
@@ -293,89 +292,29 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                     <span className="text-zinc-200 font-semibold">Browser · Mobile · PC</span>
                   </div>
                 </div>
-              </div>
 
-
-              {/* Premium Collapsible Sections: Controls & FAQ */}
-              <div className="space-y-3 pt-2">
-                {/* How to Play Collapsible */}
-                <details open className="group bg-black border border-zinc-800/80 rounded-xl overflow-hidden transition-all">
-                  <summary className="flex items-center justify-between p-3.5 sm:p-4 cursor-pointer select-none list-none hover:bg-zinc-900/40 transition-colors">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 shrink-0">
-                        <Gamepad2 className="w-4 h-4" />
-                      </div>
-                      <span className="text-sm sm:text-base font-bold text-white group-hover:text-orange-300 transition-colors">
-                        How to Play {game.title}
-                      </span>
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 group-open:rotate-180 transition-transform duration-200 shrink-0 ml-2" />
-                  </summary>
-
-                  <div className="px-3.5 sm:px-4 pb-4 pt-1 border-t border-zinc-800/60">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-3 text-xs">
-                      {/* Desktop Controls */}
-                      <div className="bg-zinc-900/50 border border-zinc-800/60 rounded-lg p-3 space-y-2">
-                        <div className="font-semibold text-zinc-200 flex items-center gap-2">
-                          <Monitor className="w-3.5 h-3.5 text-orange-400" />
-                          <span>Desktop Controls</span>
-                        </div>
-                        <div className="flex flex-wrap gap-1.5">
-                          <span className="px-2 py-0.5 bg-zinc-800 border border-zinc-700/60 text-zinc-300 font-mono text-[10px] font-semibold rounded">WASD / Arrows</span>
-                          <span className="px-2 py-0.5 bg-zinc-800 border border-zinc-700/60 text-zinc-300 font-mono text-[10px] font-semibold rounded">Space</span>
-                          <span className="px-2 py-0.5 bg-zinc-800 border border-zinc-700/60 text-zinc-300 font-mono text-[10px] font-semibold rounded">Mouse</span>
-                        </div>
-                        <p className="text-zinc-400 leading-relaxed text-[11px]">
-                          Use keyboard controls to steer and accelerate. Use mouse to interact with in-game menus.
-                        </p>
-                      </div>
-
-                      {/* Mobile Controls */}
-                      <div className="bg-zinc-900/50 border border-zinc-800/60 rounded-lg p-3 space-y-2">
-                        <div className="font-semibold text-zinc-200 flex items-center gap-2">
-                          <Smartphone className="w-3.5 h-3.5 text-sky-400" />
-                          <span>Mobile & Tablet Controls</span>
-                        </div>
-                        <div className="flex flex-wrap gap-1.5">
-                          <span className="px-2 py-0.5 bg-zinc-800 border border-zinc-700/60 text-zinc-300 font-mono text-[10px] font-semibold rounded">Touch Screen</span>
-                          <span className="px-2 py-0.5 bg-zinc-800 border border-zinc-700/60 text-zinc-300 font-mono text-[10px] font-semibold rounded">Virtual Controls</span>
-                        </div>
-                        <p className="text-zinc-400 leading-relaxed text-[11px]">
-                          Tap and swipe using on-screen virtual buttons designed for mobile screens.
-                        </p>
-                      </div>
+                {/* Useful Game Controls */}
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="text-zinc-400 font-medium flex items-center gap-1.5">
+                      <Monitor className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                      Controls:
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <kbd className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[10px] font-semibold rounded">WASD / Arrows</kbd>
+                      <kbd className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[10px] font-semibold rounded">Space</kbd>
+                      <kbd className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[10px] font-semibold rounded">Mouse</kbd>
                     </div>
                   </div>
-                </details>
 
-                {/* Frequently Asked Questions Collapsible */}
-                <details open className="group bg-black border border-zinc-800/80 rounded-xl overflow-hidden transition-all">
-                  <summary className="flex items-center justify-between p-3.5 sm:p-4 cursor-pointer select-none list-none hover:bg-zinc-900/40 transition-colors">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 shrink-0">
-                        <HelpCircle className="w-4 h-4" />
-                      </div>
-                      <span className="text-sm sm:text-base font-bold text-white group-hover:text-orange-300 transition-colors">
-                        Frequently Asked Questions
-                      </span>
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 group-open:rotate-180 transition-transform duration-200 shrink-0 ml-2" />
-                  </summary>
-
-                  <div className="px-3.5 sm:px-4 pb-3 pt-1 border-t border-zinc-800/60 divide-y divide-zinc-800/60">
-                    {gameFaqs.map((faq, i) => (
-                      <details key={i} className="group/faq py-3 cursor-pointer">
-                        <summary className="text-xs sm:text-sm font-semibold text-zinc-300 group-hover/faq:text-white list-none flex justify-between items-center select-none gap-2">
-                          <span>{faq.q}</span>
-                          <ChevronDown className="w-3.5 h-3.5 text-zinc-500 group-hover/faq:text-zinc-300 group-open/faq:rotate-180 transition-transform duration-200 shrink-0" />
-                        </summary>
-                        <p className="text-xs text-zinc-400 mt-2 leading-relaxed pl-1 border-l-2 border-orange-500/30">
-                          {faq.a}
-                        </p>
-                      </details>
-                    ))}
+                  <div className="flex items-center gap-2">
+                    <span className="text-zinc-400 font-medium flex items-center gap-1.5">
+                      <Smartphone className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                      Mobile:
+                    </span>
+                    <kbd className="px-2 py-0.5 bg-zinc-900 border border-zinc-800 text-zinc-300 font-mono text-[10px] font-semibold rounded">Touch Screen</kbd>
                   </div>
-                </details>
+                </div>
               </div>
             </div>
           </div>
