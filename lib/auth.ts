@@ -1,7 +1,9 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import dbConnect from "./mongodb";
 import User from "@/models/User";
+import Otp from "@/models/Otp";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -19,9 +21,91 @@ export const authOptions: NextAuthOptions = {
         },
       },
     }),
+    CredentialsProvider({
+      id: "email-otp",
+      name: "Email OTP",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        otp: { label: "Verification Code", type: "text" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.otp) {
+          throw new Error("Email and verification code are required");
+        }
+
+        const normalizedEmail = credentials.email.toLowerCase().trim();
+        const submittedOtp = credentials.otp.trim();
+
+        await dbConnect();
+
+        const otpRecord = await Otp.findOne({ email: normalizedEmail });
+        if (!otpRecord) {
+          throw new Error("Verification code expired or not found. Please request a new code.");
+        }
+
+        if (new Date() > otpRecord.expiresAt) {
+          await Otp.deleteOne({ _id: otpRecord._id });
+          throw new Error("Verification code has expired. Please request a new code.");
+        }
+
+        if (otpRecord.attempts >= 5) {
+          await Otp.deleteOne({ _id: otpRecord._id });
+          throw new Error("Too many failed attempts. Please request a new code.");
+        }
+
+        if (otpRecord.otp !== submittedOtp) {
+          otpRecord.attempts += 1;
+          await otpRecord.save();
+          throw new Error("Invalid verification code. Please try again.");
+        }
+
+        // OTP is valid! Remove it immediately so it cannot be reused
+        await Otp.deleteOne({ _id: otpRecord._id });
+
+        // Find or create user
+        let user = await User.findOne({ email: normalizedEmail });
+
+        const generateReferralCode = (email: string) => {
+          const prefix = (email || "US").substring(0, 2).toUpperCase().replace(/[^A-Z0-9]/g, "X");
+          const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+          let randomPart = "";
+          for (let i = 0; i < 8; i++) {
+            randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          return `${prefix}${randomPart}XBUFF`;
+        };
+
+        if (!user) {
+          const defaultName = normalizedEmail.split("@")[0] || "Player";
+          const capitalizedName = defaultName.charAt(0).toUpperCase() + defaultName.slice(1);
+          
+          user = await User.create({
+            name: capitalizedName,
+            email: normalizedEmail,
+            image: "",
+            referralCode: generateReferralCode(normalizedEmail),
+            createdAt: new Date(),
+            lastActiveAt: new Date(),
+          });
+        } else {
+          user.lastActiveAt = new Date();
+          if (!user.referralCode) {
+            user.referralCode = generateReferralCode(normalizedEmail);
+          }
+          await user.save();
+        }
+
+        return {
+          id: user._id.toString(),
+          email: user.email,
+          name: user.name,
+          image: user.image || "",
+        };
+      },
+    }),
   ],
   pages: {
-    signIn: '/login',
+    signIn: "/login",
   },
   callbacks: {
     async signIn({ user, account }) {
