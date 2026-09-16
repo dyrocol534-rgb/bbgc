@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import GameCard from '@/components/game/GameCard';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Gamepad2, Sparkles, HelpCircle } from 'lucide-react';
+import { Gamepad2, HelpCircle } from 'lucide-react';
 import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
 import { getPublishedGamesByCategory } from '@/lib/services/gameService';
 import Link from 'next/link';
@@ -150,21 +150,17 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         </div>
       )}
 
-      {/* SEO Information Footer for Category */}
+      {/* SEO Footer */}
       {games.length > 0 && (
-        <div className="bg-[#0c0c0e] rounded-2xl p-5 sm:p-6 border border-[#1f1f22] space-y-4 text-xs text-zinc-400">
-          <h2 className="text-sm font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-indigo-400" />
-            About {catTitle} Games on {siteName}
-          </h2>
-          <p className="leading-relaxed">
-            Welcome to the premier collection of free online <strong className="text-zinc-200">{catTitle.toLowerCase()} games</strong> on {siteName}. All of our {catTitle.toLowerCase()} games are curated for instant fun without needing any installation, third-party software, or plugins. Whether you are on a school Chromebook, office laptop, iPhone, Android device, or iPad, you can enjoy seamless {catTitle.toLowerCase()} gameplay with zero delay.
+        <div className="border-t border-[#1f1f22] pt-4 text-xs text-zinc-500 space-y-3">
+          <p>
+            Free {catTitle.toLowerCase()} games — no download, no login needed. Play instantly on any device.
           </p>
-          <div className="pt-2 flex flex-wrap gap-2">
-            <span className="font-semibold text-zinc-300">Explore more:</span>
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            <span className="text-zinc-400 font-medium">More:</span>
             {['action', 'puzzle', 'racing', 'sports', 'shooting', 'io', 'adventure'].filter(c => c !== category.toLowerCase()).map(c => (
-              <Link key={c} href={`/category/${c}`} className="text-indigo-400 hover:text-indigo-300 font-medium capitalize underline underline-offset-2">
-                {c} games
+              <Link key={c} href={`/category/${c}`} className="text-indigo-400 hover:text-indigo-300 capitalize">
+                {c}
               </Link>
             ))}
           </div>
