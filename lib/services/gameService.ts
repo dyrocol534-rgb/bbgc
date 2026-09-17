@@ -326,7 +326,10 @@ export const getCachedPublishedCategories = unstable_cache(
       const categories = await Game.distinct("category", { status: "published" });
       const validCategories = categories
         .filter((c: any) => typeof c === "string" && c.trim() !== "")
-        .map((c: string) => c.toLowerCase())
+        .map((c: string) => {
+          const lower = c.trim().toLowerCase();
+          return lower === ".io" ? "io" : lower;
+        })
         .filter((value: string, index: number, self: string[]) => self.indexOf(value) === index)
         .sort();
       return validCategories;

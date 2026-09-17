@@ -51,16 +51,14 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
             {/* Brand */}
             <div className="flex items-center gap-3">
-              <Link href="/" title={`${siteName} Home`} className="relative group">
-                <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center p-1.5 transition-all group-hover:border-white/30">
-                  <Image
-                    src="/logo.png"
-                    alt={siteName}
-                    width={32}
-                    height={32}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
+              <Link href="/" title={`${siteName} Home`} className="shrink-0 group">
+                <Image
+                  src="/logo.png"
+                  alt={siteName}
+                  width={34}
+                  height={34}
+                  className="w-8.5 h-8.5 object-contain group-hover:opacity-90 transition-opacity"
+                />
               </Link>
               <div className="flex flex-col text-left">
                 <Link
@@ -84,12 +82,12 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Play Store Companion Pill */}
+            {/* Play Store Link - Simple, without card effect */}
             <a
               href="https://play.google.com/store/apps/details?id=in.bluebuff.games"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2.5 px-3.5 py-2 rounded-full bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.15] transition-all group self-start sm:self-auto"
+              className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group self-start sm:self-auto py-0.5"
               aria-label="Get it on Google Play"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
@@ -103,8 +101,8 @@ export default function Footer() {
                 <path fill="#C31162" d="M261.929 256 34.445 492.468c9.084 5.882 19.018 5.34 27.547.272l358.986-218.103L261.929 256z" />
               </svg>
               <div className="flex flex-col text-left">
-                <span className="text-[10px] text-zinc-400 leading-none">Get it on</span>
-                <span className="text-xs font-semibold text-white leading-tight group-hover:text-zinc-200 transition-colors">Google Play</span>
+                <span className="text-[10px] text-zinc-500 leading-none">Get it on</span>
+                <span className="text-xs font-semibold text-zinc-300 group-hover:text-white transition-colors leading-tight">Google Play</span>
               </div>
             </a>
           </div>

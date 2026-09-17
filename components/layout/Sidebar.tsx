@@ -50,14 +50,27 @@ const getCategoryIcon = (category: string) => {
 };
 
 function formatCategoryLinks(categoryList: string[]) {
-  return categoryList.map((c: string) => {
-    const displayName = c === "io" ? ".io" : c.charAt(0).toUpperCase() + c.slice(1);
-    return {
+  const seen = new Set<string>();
+  const links: { name: string; href: string; icon: React.ElementType }[] = [];
+
+  for (const rawCat of categoryList) {
+    if (!rawCat || typeof rawCat !== "string") continue;
+    const norm = rawCat.trim().toLowerCase();
+    const canonicalCat = norm === ".io" ? "io" : norm;
+    const displayName = canonicalCat === "io" ? ".io" : canonicalCat.charAt(0).toUpperCase() + canonicalCat.slice(1);
+
+    if (seen.has(canonicalCat) || seen.has(displayName)) continue;
+    seen.add(canonicalCat);
+    seen.add(displayName);
+
+    links.push({
       name: displayName,
-      href: `/category/${c}`,
-      icon: getCategoryIcon(c),
-    };
-  });
+      href: `/category/${canonicalCat}`,
+      icon: getCategoryIcon(canonicalCat),
+    });
+  }
+
+  return links;
 }
 
 interface SidebarProps {
@@ -328,12 +341,12 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 </div>
               ))}
             </div>
-          ) : categories.map((link) => {
+          ) : categories.map((link, idx) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
             return (
               <Link
-                key={link.name}
+                key={`${link.href}-${idx}`}
                 href={link.href}
                 onClick={() => setIsExpanded(false)}
                 className={clsx(

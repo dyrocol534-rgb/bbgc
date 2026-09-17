@@ -260,18 +260,18 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
 
                 {/* Categories & Tags - Horizontal Scroll with small text */}
                 <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none flex-nowrap py-0.5 -mx-1 px-1">
-                  {game.category?.map((cat: string) => (
+                  {Array.from(new Set(game.category || [])).map((cat: string, idx: number) => (
                     <Link
-                      key={cat}
-                      href={`/category/${cat.toLowerCase()}`}
+                      key={`cat-${cat}-${idx}`}
+                      href={`/category/${cat.toLowerCase().replace(/^\./, "")}`}
                       className="px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize transition-all bg-white/[0.08] hover:bg-white/[0.14] text-white border border-white/[0.12] shrink-0 whitespace-nowrap cursor-pointer active:scale-95"
                     >
                       {cat}
                     </Link>
                   ))}
-                  {game.tags?.map((tag: string) => (
+                  {Array.from(new Set(game.tags || [])).map((tag: string, idx: number) => (
                     <span
-                      key={tag}
+                      key={`tag-${tag}-${idx}`}
                       className="px-2 py-0.5 rounded-full text-[9.5px] text-zinc-400 bg-white/[0.04] border border-white/[0.07] shrink-0 whitespace-nowrap"
                     >
                       #{tag}
