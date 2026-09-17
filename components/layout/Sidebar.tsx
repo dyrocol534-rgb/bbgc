@@ -106,6 +106,23 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
     fetchCategories();
   }, [initialCategories, isAdminPage]);
 
+  // Auto-close on route navigation
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [pathname]);
+
+  // Listen for mobile header hamburger toggle
+  useEffect(() => {
+    const handleToggle = () => setIsExpanded(prev => !prev);
+    const handleClose = () => setIsExpanded(false);
+    window.addEventListener("toggle-navigation-sidebar", handleToggle);
+    window.addEventListener("close-navigation-sidebar", handleClose);
+    return () => {
+      window.removeEventListener("toggle-navigation-sidebar", handleToggle);
+      window.removeEventListener("close-navigation-sidebar", handleClose);
+    };
+  }, []);
+
   if (isAdminPage) return null;
 
   const handleSurpriseMe = async () => {
@@ -147,283 +164,439 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
         </div>
       )}
 
-      {/* Mobile Backdrop */}
+      {/* ── Mobile Backdrop ─────────────────────────────────────── */}
       {isExpanded && (
         <div 
-          className="fixed inset-0 top-13 sm:top-16 bg-black/60 z-30 md:hidden backdrop-blur-xs transition-opacity duration-300"
+          className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 md:hidden transition-opacity duration-300"
           onClick={() => setIsExpanded(false)}
         />
       )}
 
-      {/* Mobile Floating Circular Action Button (FAB) */}
+      {/* ── Mobile Floating Circular Action Button (FAB) ─────────── */}
       {!isLoginPage && (
         <button 
           type="button"
           onClick={() => setIsExpanded(prev => !prev)}
           className={clsx(
-            "md:hidden fixed z-50 select-none",
-            "flex items-center justify-center",
-            "w-12 h-12 rounded-full",
-            "bg-[#18181c]/90 backdrop-blur-xl",
-            "border border-white/[0.15] shadow-[0_8px_24px_rgba(0,0,0,0.6)]",
-            "text-white transition-all duration-300 transform-gpu",
-            "bottom-6 left-4 active:scale-95 hover:scale-105",
-            isExpanded && "left-[290px]"
+            "md:hidden fixed z-40 select-none flex items-center justify-center w-11 h-11 rounded-full bg-[#18181c]/90 backdrop-blur-xl border border-white/[0.15] shadow-[0_8px_24px_rgba(0,0,0,0.6)] text-white transition-all duration-300 transform-gpu bottom-5 left-4 active:scale-95 hover:scale-105 cursor-pointer",
+            isExpanded && "hidden"
           )}
-          aria-label={isExpanded ? "Close navigation" : "Open navigation"}
+          aria-label="Open navigation"
+          title="Open navigation"
         >
-          {isExpanded ? (
-            <X className="w-5 h-5 text-white transition-transform duration-200" />
-          ) : (
-            <Gamepad2 className="w-5 h-5 text-white transition-transform duration-200" />
-          )}
+          <Gamepad2 className="w-5 h-5 text-white" />
         </button>
       )}
 
-      <aside 
+      {/* ── Mobile Off-Canvas Navigation Drawer ─────────────────── */}
+      <div 
         className={clsx(
-          "flex flex-col bg-[#0d0d10]/95 backdrop-blur-xl border-white/[0.08] transition-all duration-300 ease-in-out z-40 transform-gpu",
-          // Desktop styles
-          "md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:translate-x-0",
-          isExpanded ? "w-72" : "md:w-16 w-0 md:border-r", 
-          // Mobile styles
-          "fixed top-13 sm:top-16 bottom-0 left-0 h-[calc(100vh-3.25rem)] sm:h-[calc(100vh-4rem)] md:shadow-none border-r",
-          !isExpanded && "max-md:-translate-x-full"
+          "fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-[#0d0d10] border-r border-white/[0.08] flex flex-col shadow-2xl transition-transform duration-300 ease-out md:hidden",
+          isExpanded ? "translate-x-0" : "-translate-x-full pointer-events-none"
         )}
-        onMouseEnter={() => {
-          if (typeof window !== "undefined" && window.innerWidth >= 768 && !isExpanded) {
-            setIsExpanded(true);
-          }
-        }}
-        onMouseLeave={() => {
-          if (typeof window !== "undefined" && window.innerWidth >= 768) {
-            setIsExpanded(false);
-          }
-        }}
       >
-      {/* Scrollable Navigation Area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar py-3">
-        <div className="px-2.5 mb-3">
-          <button
-            onClick={handleSurpriseMe}
-            disabled={isRolling}
-            className={clsx(
-              "w-full flex items-center gap-3 px-2.5 py-2 rounded-xl transition-all whitespace-nowrap",
-              "bg-white/[0.05] hover:bg-white/[0.09]",
-              "border border-white/[0.08] hover:border-white/20 shadow-xs",
-              !isExpanded && "justify-center px-0"
-            )}
-            title={!isExpanded ? "Surprise Me (Random Game)" : undefined}
-          >
-            <div className="w-7 h-7 rounded-[8px] bg-white/[0.1] border border-white/15 flex items-center justify-center shrink-0 shadow-sm text-white">
-              {isRolling ? (
-                <Loader2 className="w-3.5 h-3.5 text-white animate-spin" />
-              ) : (
-                <Dices className="w-3.5 h-3.5 text-white" />
-              )}
+        {/* Drawer Header */}
+        <div className="p-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#0d0d10]">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center font-black text-white text-base shadow-sm border border-white/20 select-none">
+              B
             </div>
-            <span className={clsx(
-              "font-semibold text-xs text-zinc-200 transition-all duration-300", 
-              isExpanded ? "opacity-100" : "opacity-0 hidden"
-            )}>
-              Surprise Me!
-            </span>
+            <span className="text-sm font-bold text-white tracking-tight">Navigation</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsExpanded(false)}
+            className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-zinc-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Close navigation"
+          >
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <nav className="flex flex-col gap-1 px-2.5 mb-4">
-          {PRIMARY_LINKS.map((link) => {
-            const Icon = link.icon;
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={() => setIsExpanded(false)}
-                className={clsx(
-                  "flex items-center gap-3 px-2.5 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap group",
-                  isActive 
-                    ? "bg-white/[0.09] text-white shadow-xs ring-1 ring-white/[0.1]" 
-                    : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
-                )}
-                title={!isExpanded ? link.name : undefined}
+        {/* Drawer Body */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar p-3 flex flex-col justify-between">
+          <div>
+            {/* Surprise Me Button */}
+            <div className="mb-3">
+              <button
+                type="button"
+                onClick={handleSurpriseMe}
+                disabled={isRolling}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.08] shadow-xs cursor-pointer active:scale-95"
               >
-                <div className={clsx(
-                  "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 border transition-all",
-                  isActive ? link.bg : "bg-white/[0.04] border-white/[0.06] text-zinc-400 group-hover:text-white group-hover:bg-white/[0.08]"
-                )}>
-                  <Icon className={clsx("w-3.5 h-3.5", isActive ? link.color : "text-zinc-400 group-hover:text-white")} />
+                <div className="w-7 h-7 rounded-[8px] bg-white/[0.1] border border-white/15 flex items-center justify-center shrink-0 shadow-sm text-white">
+                  {isRolling ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Dices className="w-3.5 h-3.5 text-white" />}
                 </div>
-                <span className={clsx("transition-opacity duration-300 font-medium", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                  {link.name}
-                </span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Rewards & Referral Buttons in Sidebar */}
-        <div className="px-2.5 mb-3 flex flex-col gap-1.5">
-          <div className={clsx("flex items-center gap-2 mb-0.5 px-1 text-zinc-500 transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Rewards</span>
-          </div>
-          {/* Refer & Earn */}
-          <Link
-            href="/referral"
-            onClick={(e) => {
-              if (!session?.user) {
-                e.preventDefault();
-                router.push("/login");
-              }
-              setIsExpanded(false);
-            }}
-            className={clsx(
-              "w-full flex items-center justify-between px-2.5 py-2 bg-white/[0.04] border border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.07] transition-all rounded-xl group overflow-hidden",
-              !isExpanded && "justify-center"
-            )}
-            title={!isExpanded ? "Refer & Earn +50 XP" : undefined}
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0">
-                <Handshake className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              </div>
-              <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                <span className="text-white text-xs font-medium group-hover:text-emerald-300 transition-colors">Refer & Earn</span>
-                <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+50 XP</span>
-              </div>
+                <span className="font-semibold text-xs text-zinc-200">Surprise Me!</span>
+              </button>
             </div>
-          </Link>
 
-          {/* Daily Streak */}
-          <Link
-            href="/rewards"
-            onClick={(e) => {
-              if (!session?.user) {
-                e.preventDefault();
-                router.push("/login");
-              }
-              setIsExpanded(false);
-            }}
-            className={clsx(
-              "w-full flex items-center justify-between px-2.5 py-2 bg-white/[0.04] border border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.07] transition-all rounded-xl group overflow-hidden",
-              !isExpanded && "justify-center"
-            )}
-            title={!isExpanded ? "Daily Streak & XP" : undefined}
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-[8px] bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0">
-                <Flame className="w-3.5 h-3.5 text-white shrink-0" />
-              </div>
-              <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                <span className="text-white text-xs font-medium group-hover:text-zinc-200 transition-colors">Daily Streak</span>
-                <span className="text-zinc-400 text-[9.5px] uppercase tracking-wider font-semibold">
-                  {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
-                </span>
-              </div>
-            </div>
-          </Link>
-        </div>
+            {/* Primary Navigation */}
+            <nav className="flex flex-col gap-1 mb-4">
+              {PRIMARY_LINKS.map((link) => {
+                const Icon = link.icon;
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={`mob-${link.name}`}
+                    href={link.href}
+                    onClick={() => setIsExpanded(false)}
+                    className={clsx(
+                      "flex items-center gap-3 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap",
+                      isActive 
+                        ? "bg-white/[0.09] text-white ring-1 ring-white/[0.1]" 
+                        : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
+                    )}
+                  >
+                    <div className={clsx(
+                      "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 border",
+                      isActive ? link.bg : "bg-white/[0.04] border-white/[0.06] text-zinc-400"
+                    )}>
+                      <Icon className={clsx("w-3.5 h-3.5", isActive ? link.color : "text-zinc-400")} />
+                    </div>
+                    <span className="font-medium">{link.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
 
-        <div className="px-3 mb-2">
-          <div className="h-px bg-white/[0.06] w-full mb-2" />
-          <div className={clsx("flex items-center gap-2 px-1 text-zinc-500 transition-opacity duration-300", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Tags</span>
-          </div>
-        </div>
-
-        <nav className="flex flex-col gap-0.5 px-2.5">
-          {categories.length === 0 ? (
-            <div className="flex flex-col gap-1 w-full">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={`sidebar-skel-${i}`} className="flex items-center gap-3 px-2.5 py-1.5">
-                  <Skeleton className="w-6 h-6 rounded-[7px] shrink-0" />
-                  <Skeleton className={clsx("h-3.5 rounded-sm transition-all duration-300", isExpanded ? "w-24 opacity-100" : "w-0 opacity-0 hidden")} />
-                </div>
-              ))}
-            </div>
-          ) : categories.map((link, idx) => {
-            const Icon = link.icon;
-            const isActive = pathname === link.href;
-            return (
+            {/* Rewards */}
+            <div className="mb-3 flex flex-col gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 px-1">Rewards</span>
               <Link
-                key={`${link.href}-${idx}`}
-                href={link.href}
-                onClick={() => setIsExpanded(false)}
-                className={clsx(
-                  "flex items-center gap-3 px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap group",
-                  isActive 
-                    ? "bg-white/[0.09] text-white ring-1 ring-white/[0.1]" 
-                    : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
-                )}
-                title={!isExpanded ? link.name : undefined}
+                href="/referral"
+                onClick={(e) => {
+                  if (!session?.user) {
+                    e.preventDefault();
+                    router.push("/login");
+                  }
+                  setIsExpanded(false);
+                }}
+                className="w-full flex items-center justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:bg-white/[0.07] rounded-xl transition-all"
               >
-                <div className={clsx(
-                  "w-6 h-6 rounded-[7px] flex items-center justify-center shrink-0 border transition-all",
-                  isActive 
-                    ? "bg-white/[0.12] border-white/20 text-white" 
-                    : "bg-white/[0.03] border-white/[0.05] text-zinc-500 group-hover:text-zinc-300 group-hover:bg-white/[0.06]"
-                )}>
-                  <Icon className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0">
+                    <Handshake className="w-3.5 h-3.5 text-emerald-400" />
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-white text-xs font-medium">Refer & Earn</span>
+                    <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+50 XP</span>
+                  </div>
                 </div>
-                <span className={clsx("transition-opacity duration-300 font-medium", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                  {link.name}
-                </span>
               </Link>
-            );
-          })}
-        </nav>
+              <Link
+                href="/rewards"
+                onClick={(e) => {
+                  if (!session?.user) {
+                    e.preventDefault();
+                    router.push("/login");
+                  }
+                  setIsExpanded(false);
+                }}
+                className="w-full flex items-center justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:bg-white/[0.07] rounded-xl transition-all"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-[8px] bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
+                    <Flame className="w-3.5 h-3.5 text-amber-400" />
+                  </div>
+                  <div className="flex flex-col items-start">
+                    <span className="text-white text-xs font-medium">Daily Streak</span>
+                    <span className="text-zinc-400 text-[9.5px] uppercase tracking-wider font-semibold">
+                      {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </div>
+
+            {/* Categories */}
+            <div className="mb-2">
+              <div className="h-px bg-white/[0.06] w-full mb-2" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 px-1">Categories</span>
+            </div>
+
+            <nav className="flex flex-col gap-0.5">
+              {categories.map((link, idx) => {
+                const Icon = link.icon;
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={`mob-cat-${link.href}-${idx}`}
+                    href={link.href}
+                    onClick={() => setIsExpanded(false)}
+                    className={clsx(
+                      "flex items-center gap-3 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap",
+                      isActive ? "bg-white/[0.09] text-white ring-1 ring-white/[0.1]" : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
+                    )}
+                  >
+                    <div className={clsx(
+                      "w-7 h-7 rounded-[7px] flex items-center justify-center shrink-0 border",
+                      isActive ? "bg-white/[0.12] border-white/20 text-white" : "bg-white/[0.03] border-white/[0.05] text-zinc-500"
+                    )}>
+                      <Icon className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="font-medium">{link.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Mobile Footer */}
+          <div className="border-t border-white/[0.06] pt-3 mt-4 flex items-center justify-between text-[10px] text-zinc-500">
+            <span>© {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff"}</span>
+          </div>
+        </div>
       </div>
 
-      {/* Footer Area - Compact single row */}
-      <div className={clsx("border-t border-white/[0.06] px-3 py-2 overflow-hidden transition-all duration-300 flex items-center justify-between gap-2", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-        <div className="flex items-center gap-1.5">
-          <a
-            href="https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-6 h-6 hover:text-green-400 rounded-full bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-colors flex items-center justify-center text-zinc-400"
-            aria-label="WhatsApp"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
-              <path d="M12.031 21.054c-1.845 0-3.623-.473-5.221-1.372l-.375-.213-3.87.102 1.041-3.771-.233-.37c-.985-1.573-1.503-3.39-1.503-5.26 0-5.465 4.453-9.914 9.932-9.914 2.65 0 5.143 1.033 7.018 2.909 1.874 1.877 2.908 4.368 2.908 7.022 0 5.466-4.453 9.914-9.931 9.914h.202zm5.728-7.795c-.314-.158-1.859-.918-2.146-1.023-.287-.105-.497-.158-.707.158-.21.314-.808 1.023-1.002 1.231-.194.208-.388.234-.702.076-2.023-1.008-3.32-2.142-4.135-4.264-.105-.285.105-.436.26-.59.139-.14.314-.367.472-.55.158-.184.21-.314.314-.525.105-.21.052-.394-.026-.552-.079-.158-.707-1.705-.968-2.336-.254-.616-.511-.532-.707-.542-.184-.01-.394-.01-.604-.01-.21 0-.551.079-.84.394-.288.315-1.101 1.076-1.101 2.624 0 1.549 1.127 3.045 1.285 3.255.158.21 2.217 3.385 5.372 4.747 3.155 1.362 3.155.918 3.731.866.577-.052 1.859-.761 2.121-1.496.262-.735.262-1.365.184-1.496-.078-.131-.288-.21-.603-.368z" />
-            </svg>
-          </a>
-          <a
-            href="https://instagram.com/mlbbtopup.in"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-6 h-6 hover:text-pink-400 rounded-full bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-colors flex items-center justify-center text-zinc-400"
-            aria-label="Instagram"
-          >
-            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-              <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
-            </svg>
-          </a>
-          <a
-            href="https://www.linkedin.com/company/bluebuffesports/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-6 h-6 hover:text-blue-400 rounded-full bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-colors flex items-center justify-center text-zinc-400"
-            aria-label="LinkedIn"
-          >
-            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.74a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z" />
-            </svg>
-          </a>
-        </div>
-        <p className="text-[10px] text-zinc-500 leading-tight">© {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}</p>
-      </div>
-
-      {/* Manual Toggle Button */}
-      <button 
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="absolute -right-3 top-6 bg-[#18181b] border border-white/[0.12] rounded-full p-1 text-zinc-400 hover:text-white z-40 hidden md:flex items-center justify-center shadow-md transition-colors"
+      {/* ── Desktop Sticky Sidebar ──────────────────────────────── */}
+      <aside 
+        className={clsx(
+          "hidden md:flex flex-col bg-[#0d0d10]/95 backdrop-blur-xl border-r border-white/[0.08] sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] transition-[width] duration-300 ease-in-out z-30 shrink-0 select-none relative",
+          isExpanded ? "w-64" : "w-[68px]"
+        )}
       >
-        {isExpanded ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-      </button>
-    </aside>
+        {/* Manual Toggle Button on Desktop */}
+        <button 
+          type="button"
+          onClick={() => setIsExpanded(prev => !prev)}
+          className="absolute -right-3 top-5 w-6 h-6 rounded-full bg-[#18181b] hover:bg-[#27272a] border border-white/20 text-zinc-300 hover:text-white flex items-center justify-center shadow-lg z-40 transition-transform hover:scale-110 active:scale-95 cursor-pointer"
+          aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
+          title={isExpanded ? "Collapse" : "Expand"}
+        >
+          {isExpanded ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+        </button>
+
+        {/* Scrollable Navigation Area */}
+        <div className={clsx(
+          "flex-1 overflow-y-auto overflow-x-hidden py-3 flex flex-col justify-between",
+          isExpanded ? "custom-scrollbar" : "no-scrollbar"
+        )}>
+          <div>
+            {/* Surprise Me Button */}
+            <div className={clsx("mb-3", isExpanded ? "px-3" : "px-2 flex justify-center")}>
+              <button
+                type="button"
+                onClick={handleSurpriseMe}
+                disabled={isRolling}
+                className={clsx(
+                  "flex items-center rounded-xl transition-all whitespace-nowrap cursor-pointer active:scale-95 group",
+                  isExpanded 
+                    ? "w-full gap-3 px-3 py-2 bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.08] hover:border-white/20 shadow-xs" 
+                    : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
+                )}
+                title={!isExpanded ? "Surprise Me (Random Game)" : undefined}
+              >
+                <div className="w-7 h-7 rounded-[8px] bg-white/[0.1] border border-white/15 flex items-center justify-center shrink-0 shadow-sm text-white group-hover:bg-white/[0.15] transition-all">
+                  {isRolling ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Dices className="w-3.5 h-3.5 text-white" />}
+                </div>
+                {isExpanded && (
+                  <span className="font-semibold text-xs text-zinc-200 truncate">Surprise Me!</span>
+                )}
+              </button>
+            </div>
+
+            {/* Primary Navigation Links */}
+            <nav className={clsx("flex flex-col gap-1 mb-4", isExpanded ? "px-3" : "px-2 items-center")}>
+              {PRIMARY_LINKS.map((link) => {
+                const Icon = link.icon;
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={clsx(
+                      "flex items-center rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap group",
+                      isActive 
+                        ? (isExpanded ? "bg-white/[0.09] text-white shadow-xs ring-1 ring-white/[0.1]" : "text-white")
+                        : "text-zinc-400 hover:bg-white/[0.04] hover:text-white",
+                      isExpanded ? "w-full gap-3 px-3 py-2" : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
+                    )}
+                    title={!isExpanded ? link.name : undefined}
+                  >
+                    <div className={clsx(
+                      "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 border transition-all",
+                      isActive ? link.bg : "bg-white/[0.04] border-white/[0.06] text-zinc-400 group-hover:text-white group-hover:bg-white/[0.08]"
+                    )}>
+                      <Icon className={clsx("w-3.5 h-3.5", isActive ? link.color : "text-zinc-400 group-hover:text-white")} />
+                    </div>
+                    {isExpanded && (
+                      <span className="font-medium truncate">{link.name}</span>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            {/* Rewards & Referral Buttons */}
+            <div className={clsx("mb-3 flex flex-col gap-1.5", isExpanded ? "px-3" : "px-2 items-center")}>
+              {isExpanded && (
+                <div className="flex items-center gap-2 mb-0.5 px-1 text-zinc-500">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Rewards</span>
+                </div>
+              )}
+              {/* Refer & Earn */}
+              <Link
+                href="/referral"
+                onClick={(e) => {
+                  if (!session?.user) {
+                    e.preventDefault();
+                    router.push("/login");
+                  }
+                }}
+                className={clsx(
+                  "flex items-center transition-all rounded-xl group overflow-hidden",
+                  isExpanded 
+                    ? "w-full justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.07]" 
+                    : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
+                )}
+                title={!isExpanded ? "Refer & Earn (+50 XP)" : undefined}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/25 transition-all">
+                    <Handshake className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  </div>
+                  {isExpanded && (
+                    <div className="flex flex-col items-start whitespace-nowrap min-w-0">
+                      <span className="text-white text-xs font-medium group-hover:text-emerald-300 transition-colors truncate">Refer & Earn</span>
+                      <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+50 XP</span>
+                    </div>
+                  )}
+                </div>
+              </Link>
+
+              {/* Daily Streak */}
+              <Link
+                href="/rewards"
+                onClick={(e) => {
+                  if (!session?.user) {
+                    e.preventDefault();
+                    router.push("/login");
+                  }
+                }}
+                className={clsx(
+                  "flex items-center transition-all rounded-xl group overflow-hidden",
+                  isExpanded 
+                    ? "w-full justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.07]" 
+                    : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
+                )}
+                title={!isExpanded ? "Daily Streak & XP" : undefined}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-7 h-7 rounded-[8px] bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0 group-hover:bg-white/[0.12] transition-all">
+                    <Flame className="w-3.5 h-3.5 text-white shrink-0" />
+                  </div>
+                  {isExpanded && (
+                    <div className="flex flex-col items-start whitespace-nowrap min-w-0">
+                      <span className="text-white text-xs font-medium group-hover:text-zinc-200 transition-colors truncate">Daily Streak</span>
+                      <span className="text-zinc-400 text-[9.5px] uppercase tracking-wider font-semibold">
+                        {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </Link>
+            </div>
+
+            {/* Divider */}
+            <div className={clsx("mb-2", isExpanded ? "px-3" : "px-2")}>
+              <div className="h-px bg-white/[0.06] w-full mb-2" />
+              {isExpanded && (
+                <div className="flex items-center gap-2 px-1 text-zinc-500">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Categories</span>
+                </div>
+              )}
+            </div>
+
+            {/* Category Navigation */}
+            <nav className={clsx("flex flex-col gap-0.5", isExpanded ? "px-3" : "px-2 items-center")}>
+              {categories.length === 0 ? (
+                <div className="flex flex-col gap-1 w-full items-center">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={`sidebar-skel-${i}`} className={clsx("flex items-center py-1.5", isExpanded ? "w-full gap-3 px-3" : "w-10 h-10 justify-center")}>
+                      <Skeleton className="w-7 h-7 rounded-[7px] shrink-0" />
+                      {isExpanded && <Skeleton className="h-3.5 w-24 rounded-sm" />}
+                    </div>
+                  ))}
+                </div>
+              ) : categories.map((link, idx) => {
+                const Icon = link.icon;
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={`${link.href}-${idx}`}
+                    href={link.href}
+                    className={clsx(
+                      "flex items-center rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap group",
+                      isActive 
+                        ? (isExpanded ? "bg-white/[0.09] text-white ring-1 ring-white/[0.1]" : "text-white") 
+                        : "text-zinc-400 hover:bg-white/[0.04] hover:text-white",
+                      isExpanded ? "w-full gap-3 px-3 py-1.5" : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
+                    )}
+                    title={!isExpanded ? link.name : undefined}
+                  >
+                    <div className={clsx(
+                      "w-7 h-7 rounded-[7px] flex items-center justify-center shrink-0 border transition-all",
+                      isActive 
+                        ? "bg-white/[0.12] border-white/20 text-white" 
+                        : "bg-white/[0.03] border-white/[0.05] text-zinc-500 group-hover:text-zinc-300 group-hover:bg-white/[0.06]"
+                    )}>
+                      <Icon className="w-3.5 h-3.5" />
+                    </div>
+                    {isExpanded && (
+                      <span className="font-medium truncate">{link.name}</span>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Footer Area (only when expanded) */}
+          {isExpanded && (
+            <div className="border-t border-white/[0.06] px-3 py-2 mt-4 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1.5">
+                <a
+                  href="https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-6 h-6 hover:text-green-400 rounded-full bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-colors flex items-center justify-center text-zinc-400"
+                  aria-label="WhatsApp"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3">
+                    <path d="M12.031 21.054c-1.845 0-3.623-.473-5.221-1.372l-.375-.213-3.87.102 1.041-3.771-.233-.37c-.985-1.573-1.503-3.39-1.503-5.26 0-5.465 4.453-9.914 9.932-9.914 2.65 0 5.143 1.033 7.018 2.909 1.874 1.877 2.908 4.368 2.908 7.022 0 5.466-4.453 9.914-9.931 9.914h.202zm5.728-7.795c-.314-.158-1.859-.918-2.146-1.023-.287-.105-.497-.158-.707.158-.21.314-.808 1.023-1.002 1.231-.194.208-.388.234-.702.076-2.023-1.008-3.32-2.142-4.135-4.264-.105-.285.105-.436.26-.59.139-.14.314-.367.472-.55.158-.184.21-.314.314-.525.105-.21.052-.394-.026-.552-.079-.158-.707-1.705-.968-2.336-.254-.616-.511-.532-.707-.542-.184-.01-.394-.01-.604-.01-.21 0-.551.079-.84.394-.288.315-1.101 1.076-1.101 2.624 0 1.549 1.127 3.045 1.285 3.255.158.21 2.217 3.385 5.372 4.747 3.155 1.362 3.155.918 3.731.866.577-.052 1.859-.761 2.121-1.496.262-.735.262-1.365.184-1.496-.078-.131-.288-.21-.603-.368z" />
+                  </svg>
+                </a>
+                <a
+                  href="https://instagram.com/mlbbtopup.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-6 h-6 hover:text-pink-400 rounded-full bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-colors flex items-center justify-center text-zinc-400"
+                  aria-label="Instagram"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                  </svg>
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/bluebuffesports/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-6 h-6 hover:text-blue-400 rounded-full bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-colors flex items-center justify-center text-zinc-400"
+                  aria-label="LinkedIn"
+                >
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.25V10.9H6.46M7.86 6.74a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24z" />
+                  </svg>
+                </a>
+              </div>
+              <p className="text-[10px] text-zinc-500 leading-tight">© {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}</p>
+            </div>
+          )}
+        </div>
+      </aside>
     </>
   );
 }

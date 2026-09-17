@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronRight, Coins, Flame, HeartHandshake, ShoppingBag, Trophy, ArrowLeft, Share2, Check, Settings, Sparkles, Handshake, Rocket } from "lucide-react";
+import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronRight, Coins, Flame, HeartHandshake, ShoppingBag, Trophy, ArrowLeft, Share2, Check, Settings, Sparkles, Handshake, Rocket, Menu } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -152,7 +152,19 @@ export default function Navbar() {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-[#0d0d10]/85 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
-        <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
+        <div className="flex items-center gap-2">
+          {/* Mobile Navigation Drawer Toggle */}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("toggle-navigation-sidebar"))}
+            className="md:hidden w-[34px] h-[34px] flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.15] text-zinc-300 hover:text-white border border-white/[0.08] transition-all cursor-pointer shadow-xs active:scale-90"
+            aria-label="Toggle navigation menu"
+            title="Menu"
+          >
+            <Menu className="w-4 h-4 stroke-[2.2]" />
+          </button>
+
+          <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
           {logoError ? (
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center font-black text-white text-lg sm:text-xl shadow-[0_0_15px_rgba(255,255,255,0.15)] border border-white/20 select-none tracking-tight">
               B
@@ -171,6 +183,7 @@ export default function Navbar() {
             </div>
           )}
         </Link>
+      </div>
         
         <div className="flex-1 max-w-xl mx-4 hidden sm:block">
           <SearchBar />

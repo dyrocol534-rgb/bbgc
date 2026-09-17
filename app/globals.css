@@ -63,24 +63,33 @@ input, textarea {
 
 /* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent; 
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #334155; 
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.16); 
+  border-radius: 9999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #475569; 
+  background: rgba(255, 255, 255, 0.28); 
 }
 
 /* Firefox */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #334155 transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+
+/* No Scrollbar Utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* ─── Shimmer Skeleton ─────────────────────────────────── */

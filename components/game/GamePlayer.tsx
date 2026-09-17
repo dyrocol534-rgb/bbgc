@@ -291,19 +291,57 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     setIsForceLandscape(prev => !prev);
   };
 
-  // Desktop fullscreen
+  // Desktop and responsive fullscreen toggle
   const toggleFullscreen = () => {
+    // If on mobile / tablet (<1024px), use mobile fullscreen portal
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      if (!isPlaying) {
+        handlePlayNow();
+      } else {
+        setIsMobileFS(prev => !prev);
+      }
+      return;
+    }
+
+    // On desktop, start playing if not started yet
+    if (!isPlaying) {
+      setIsPlaying(true);
+    }
+
     if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen().catch(console.error);
+      if (containerRef.current) {
+        const el = containerRef.current;
+        const requestFS =
+          el.requestFullscreen ||
+          (el as any).webkitRequestFullscreen ||
+          (el as any).mozRequestFullScreen ||
+          (el as any).msRequestFullscreen;
+        if (requestFS) {
+          requestFS.call(el).catch(console.error);
+        }
+      }
     } else {
-      document.exitFullscreen();
+      const exitFS =
+        document.exitFullscreen ||
+        (document as any).webkitExitFullscreen ||
+        (document as any).mozCancelFullScreen ||
+        (document as any).msExitFullscreen;
+      if (exitFS) {
+        exitFS.call(document).catch(console.error);
+      }
     }
   };
 
   useEffect(() => {
     const handler = () => setIsFullscreen(!!document.fullscreenElement);
     document.addEventListener('fullscreenchange', handler);
-    return () => document.removeEventListener('fullscreenchange', handler);
+    document.addEventListener('webkitfullscreenchange', handler);
+    document.addEventListener('mozfullscreenchange', handler);
+    return () => {
+      document.removeEventListener('fullscreenchange', handler);
+      document.removeEventListener('webkitfullscreenchange', handler);
+      document.removeEventListener('mozfullscreenchange', handler);
+    };
   }, []);
 
   const closeFeedbackModal = useCallback(() => {
@@ -477,7 +515,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 loading="lazy"
                 style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
                 allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
-                onLoad={() => setIsLoading(false)}
               />
             </div>
           </div>
@@ -487,129 +524,138 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
       {/* ── MAIN PAGE CONTENT ─────────────────────────────────────── */}
       <div className="flex flex-col gap-3 relative w-full">
-        {!isPlaying ? (
-          /* iOS Arcade Hero Section with Top-to-Bottom Game Icon Gradient to Deep Black */
-          <div className="relative flex flex-col items-center justify-center py-4 sm:py-5 px-4 w-full rounded-[20px] border border-white/[0.08] overflow-hidden bg-gradient-to-b from-[#18181e] via-[#08080a] to-[#000000]">
-            {/* Top hairline highlight */}
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent z-10" />
+        <div 
+          ref={containerRef}
+          className={clsx(
+            "relative w-full transition-all",
+            isFullscreen 
+              ? "fixed inset-0 z-[99999] w-screen h-screen bg-black flex flex-col items-center justify-center rounded-none border-none overflow-hidden" 
+              : "rounded-[20px]"
+          )}
+        >
+          {!isPlaying ? (
+            /* iOS Arcade Hero Section with Top-to-Bottom Game Icon Gradient to Deep Black */
+            <div className="relative flex flex-col items-center justify-center py-4 sm:py-5 px-4 w-full rounded-[20px] border border-white/[0.08] overflow-hidden bg-gradient-to-b from-[#18181e] via-[#08080a] to-[#000000]">
+              {/* Top hairline highlight */}
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent z-10" />
 
-            {/* Dynamic Game-Themed Top-to-Bottom Gradient & Artwork Backdrop */}
-            {cleanThumb && (
-              <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-                <div 
-                  className="absolute -top-8 inset-x-0 h-[80%] opacity-55 blur-3xl scale-125 transition-all"
-                  style={{
-                    backgroundImage: `url(${cleanThumb})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center top',
-                  }}
-                />
-                {/* Smooth top-to-bottom darkening fade deeply into black */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-[#060608]/80 to-[#000000]" />
-              </div>
-            )}
-
-            {/* Content */}
-            <div className="relative z-10 flex flex-col items-center w-full text-center">
-              {cleanThumb ? (
-                <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-[18px] overflow-hidden mb-2.5 border border-white/20 shadow-md group ring-1 ring-white/10">
-                  <GameImage 
-                    src={cleanThumb} 
-                    alt={game.title} 
-                    priority={true} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+              {/* Dynamic Game-Themed Top-to-Bottom Gradient & Artwork Backdrop */}
+              {cleanThumb && (
+                <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+                  <div 
+                    className="absolute -top-8 inset-x-0 h-[80%] opacity-55 blur-3xl scale-125 transition-all"
+                    style={{
+                      backgroundImage: `url(${cleanThumb})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center top',
+                    }}
                   />
-                </div>
-              ) : (
-                <div className="w-18 h-18 sm:w-20 sm:h-20 aspect-square rounded-[18px] bg-zinc-800 flex items-center justify-center mb-2.5 border border-white/20 shadow-lg text-white font-black text-2xl sm:text-3xl select-none">
-                  {initialLetter}
+                  {/* Smooth top-to-bottom darkening fade deeply into black */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-[#060608]/80 to-[#000000]" />
                 </div>
               )}
 
-              <h1 className="text-lg sm:text-xl font-bold text-white mb-1.5 text-center tracking-tight">
-                {game.title}
-              </h1>
-              
-              {/* Category Pill */}
-              <div className="flex items-center justify-center mb-3.5">
-                <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/[0.08] border border-white/[0.12] text-[11px] font-semibold text-zinc-200 shadow-xs backdrop-blur-md">
-                  <span>🕹️</span>
-                  <span className="capitalize">{game.category?.[0] || "Arcade"}</span>
-                </span>
-              </div>
+              {/* Content */}
+              <div className="relative z-10 flex flex-col items-center w-full text-center">
+                {cleanThumb ? (
+                  <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-[18px] overflow-hidden mb-2.5 border border-white/20 shadow-md group ring-1 ring-white/10">
+                    <GameImage 
+                      src={cleanThumb} 
+                      alt={game.title} 
+                      priority={true} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                    />
+                  </div>
+                ) : (
+                  <div className="w-18 h-18 sm:w-20 sm:h-20 aspect-square rounded-[18px] bg-zinc-800 flex items-center justify-center mb-2.5 border border-white/20 shadow-lg text-white font-black text-2xl sm:text-3xl select-none">
+                    {initialLetter}
+                  </div>
+                )}
 
-              {/* iOS Big Pill Play Button */}
-              <button
-                ref={playButtonRef}
-                onClick={handlePlayNow}
-                className="px-7 py-2.5 sm:px-8 sm:py-2.5 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black text-xs sm:text-sm font-bold rounded-full shadow-[0_6px_20px_rgba(255,255,255,0.15)] transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <Play className="w-3.5 h-3.5 fill-current transition-transform" />
-                <span>Play Now</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* Desktop Inline Player */
-          <div
-            ref={containerRef}
-            className={clsx(
-              "hidden lg:flex relative bg-black rounded-2xl overflow-hidden shadow-2xl flex-col items-center justify-center group border border-white/[0.08]",
-              isFullscreen ? "w-screen h-screen rounded-none border-none" : "w-full"
-            )}
-            style={{ aspectRatio: !isFullscreen ? aspectRatio : 'auto' }}
-          >
-            {isLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10">
-                <ConsoleLoader className="w-20 h-20 text-primary-light" label="Loading Game Assets..." />
-              </div>
-            )}
-            <iframe
-              src={game.playUrl}
-              title={game.title}
-              loading="lazy"
-              className="w-full h-full absolute inset-0 border-0"
-              allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
-              onLoad={() => setIsLoading(false)}
-            />
-            {isFullscreen && (
-              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                <button 
-                  onClick={toggleFullscreen} 
-                  className="flex items-center gap-2 px-4 py-2 bg-black/80 backdrop-blur-md text-white rounded-full border border-white/15 text-xs font-semibold active:scale-95 transition-all cursor-pointer"
+                <h1 className="text-lg sm:text-xl font-bold text-white mb-1.5 text-center tracking-tight">
+                  {game.title}
+                </h1>
+                
+                {/* Category Pill */}
+                <div className="flex items-center justify-center mb-3.5">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/[0.08] border border-white/[0.12] text-[11px] font-semibold text-zinc-200 shadow-xs backdrop-blur-md">
+                    <span>🕹️</span>
+                    <span className="capitalize">{game.category?.[0] || "Arcade"}</span>
+                  </span>
+                </div>
+
+                {/* iOS Big Pill Play Button */}
+                <button
+                  ref={playButtonRef}
+                  onClick={handlePlayNow}
+                  className="px-7 py-2.5 sm:px-8 sm:py-2.5 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black text-xs sm:text-sm font-bold rounded-full shadow-[0_6px_20px_rgba(255,255,255,0.15)] transition-all flex items-center gap-2 cursor-pointer"
                 >
-                  <Minimize className="w-3.5 h-3.5" /> Exit Fullscreen
+                  <Play className="w-3.5 h-3.5 fill-current transition-transform" />
+                  <span>Play Now</span>
                 </button>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          ) : (
+            /* Desktop Inline Player */
+            <div
+              className={clsx(
+                "hidden lg:flex relative bg-black rounded-2xl overflow-hidden shadow-2xl flex-col items-center justify-center group border border-white/[0.08]",
+                isFullscreen ? "w-full h-full rounded-none border-none" : "w-full"
+              )}
+              style={{ aspectRatio: !isFullscreen ? aspectRatio : 'auto' }}
+            >
+              {isLoading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10">
+                  <ConsoleLoader className="w-20 h-20 text-primary-light" label="Loading Game Assets..." />
+                </div>
+              )}
+              <iframe
+                src={game.playUrl}
+                title={game.title}
+                loading="lazy"
+                className="w-full h-full absolute inset-0 border-0"
+                allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+                onLoad={() => setIsLoading(false)}
+              />
+              {isFullscreen && (
+                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                  <button 
+                    onClick={toggleFullscreen} 
+                    className="flex items-center gap-2 px-4 py-2 bg-black/80 backdrop-blur-md text-white rounded-full border border-white/15 text-xs font-semibold active:scale-95 transition-all cursor-pointer"
+                  >
+                    <Minimize className="w-3.5 h-3.5" /> Exit Fullscreen
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
-        {/* Mobile placeholder while in FS (keeps layout from collapsing) */}
-        {isPlaying && isMobileFS && (
-          <div className="lg:hidden w-full rounded-2xl bg-zinc-950 flex items-center justify-center border border-white/[0.06]" style={{ aspectRatio }}>
-            <p className="text-zinc-500 text-xs font-medium">Playing in fullscreen…</p>
-          </div>
-        )}
+          {/* Mobile placeholder while in FS (keeps layout from collapsing) */}
+          {isPlaying && isMobileFS && (
+            <div className="lg:hidden w-full rounded-2xl bg-zinc-950 flex items-center justify-center border border-white/[0.06]" style={{ aspectRatio }}>
+              <p className="text-zinc-500 text-xs font-medium">Playing in fullscreen…</p>
+            </div>
+          )}
 
-        {/* Mobile inline player (when NOT in mobile FS) */}
-        {isPlaying && !isMobileFS && (
-          <div className="lg:hidden relative bg-black rounded-2xl overflow-hidden shadow-2xl w-full border border-white/[0.08]" style={{ aspectRatio }}>
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10">
-                <Loader2 className="w-8 h-8 animate-spin text-white" />
-              </div>
-            )}
-            <iframe
-              src={game.playUrl}
-              title={game.title}
-              loading="lazy"
-              className="w-full h-full absolute inset-0 border-0"
-              allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
-              onLoad={() => setIsLoading(false)}
-            />
-          </div>
-        )}
+          {/* Mobile inline player (when NOT in mobile FS) */}
+          {isPlaying && !isMobileFS && (
+            <div className="lg:hidden relative bg-black rounded-2xl overflow-hidden shadow-2xl w-full border border-white/[0.08]" style={{ aspectRatio }}>
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10">
+                  <Loader2 className="w-8 h-8 animate-spin text-white" />
+                </div>
+              )}
+              <iframe
+                src={game.playUrl}
+                title={game.title}
+                loading="lazy"
+                className="w-full h-full absolute inset-0 border-0"
+                allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+                onLoad={() => setIsLoading(false)}
+              />
+            </div>
+          )}
+        </div>
 
         {/* ── iOS ACTION BAR (always visible below player) ─── */}
         <div className="flex flex-row items-center justify-between bg-[#141416]/90 backdrop-blur-xl rounded-2xl p-2 px-3 border border-white/[0.08] gap-2 shadow-md">
@@ -693,10 +739,10 @@ export default function GamePlayer({ game }: GamePlayerProps) {
               <MessageSquareWarning className="w-3.5 h-3.5" />
             </button>
 
-            {/* Desktop Fullscreen Button */}
+            {/* Fullscreen Button */}
             <button 
               onClick={toggleFullscreen} 
-              className="w-8 h-8 items-center justify-center bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 rounded-full border border-white/[0.08] text-zinc-300 hover:text-white transition-all shrink-0 hidden md:flex cursor-pointer shadow-sm" 
+              className="w-8 h-8 flex items-center justify-center bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 rounded-full border border-white/[0.08] text-zinc-300 hover:text-white transition-all shrink-0 cursor-pointer shadow-sm" 
               title="Fullscreen"
             >
               {isFullscreen ? <Minimize className="w-3.5 h-3.5" /> : <Maximize className="w-3.5 h-3.5" />}
