@@ -1,4 +1,4 @@
-﻿import nodemailer from "nodemailer";
+import nodemailer from "nodemailer";
 
 function createTransporter(user?: string, pass?: string) {
   if (!user || !pass) return null;
@@ -43,7 +43,7 @@ export async function sendOtpEmail({ to, otp }: { to: string; otp: string }) {
         <table role="presentation" width="100%" style="max-width: 440px; background-color: #141416; border: 1px solid #27272a; border-radius: 20px; overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,0.6);" cellspacing="0" cellpadding="0">
           <!-- Header Accent -->
           <tr>
-            <td style="height: 4px; background: linear-gradient(90deg, #ff7a1a, #ff9500, #ffb340);"></td>
+            <td style="height: 3px; background: linear-gradient(90deg, #ffffff, #71717a, #ffffff);"></td>
           </tr>
           <!-- Content -->
           <tr>
@@ -60,7 +60,7 @@ export async function sendOtpEmail({ to, otp }: { to: string; otp: string }) {
                 <p style="margin: 0 0 12px; font-size: 12px; color: #a1a1aa; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">
                   One-Time Verification Code
                 </p>
-                <div style="font-family: 'SF Mono', Consolas, Monaco, monospace; font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #ff9500; padding: 8px 0; user-select: all;">
+                <div style="font-family: 'SF Mono', Consolas, Monaco, monospace; font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #ffffff; padding: 8px 0; user-select: all;">
                   ${otp}
                 </div>
                 <p style="margin: 12px 0 0; font-size: 11px; color: #71717a;">

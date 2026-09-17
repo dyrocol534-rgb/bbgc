@@ -572,64 +572,62 @@ export default function ImportGamesPage() {
       )}
 
       {/* Modern Compact Pagination Bar */}
-      {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-white/[0.06]">
-          <div className="text-xs text-zinc-400">
-            Page <span className="font-semibold text-white font-mono">{page}</span> of <span className="font-semibold text-white font-mono">{totalPages}</span>
-            <span className="text-zinc-600 mx-2">•</span>
-            <span className="text-zinc-500">{feedTotal} titles available</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page <= 1}
-              className="flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300 disabled:opacity-30 disabled:hover:bg-white/[0.04] rounded-full transition-all text-xs font-semibold cursor-pointer disabled:cursor-not-allowed active:scale-95"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
-              <span>Prev</span>
-            </button>
-
-            {/* Jump to page form */}
-            <div className="flex items-center gap-1 px-2 py-1 bg-white/[0.02] border border-white/[0.06] rounded-full">
-              <span className="text-[11px] text-zinc-500 font-mono">Jump:</span>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                const input = (e.currentTarget.elements.namedItem("pageInput") as HTMLInputElement).value;
-                const p = parseInt(input, 10);
-                if (!isNaN(p) && p >= 1 && p <= totalPages) {
-                  setPage(p);
-                }
-              }} className="flex items-center gap-1">
-                <input 
-                  type="number" 
-                  name="pageInput"
-                  defaultValue={page}
-                  min="1"
-                  key={`page-input-${page}`}
-                  className="w-10 px-1 py-0.5 bg-[#101012] border border-white/[0.08] rounded text-center text-white focus:outline-none focus:border-white/50 text-xs font-mono font-bold"
-                  title="Press Enter to jump to page"
-                />
-                <button 
-                  type="submit" 
-                  className="px-2 py-0.5 bg-white hover:bg-zinc-200 text-black rounded-full text-[10.5px] font-bold transition-all shadow-xs cursor-pointer active:scale-95"
-                >
-                  Go
-                </button>
-              </form>
-            </div>
-
-            <button 
-              onClick={() => setPage(p => p + 1)}
-              disabled={page >= totalPages}
-              className="flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300 disabled:opacity-30 disabled:hover:bg-white/[0.04] rounded-full transition-all text-xs font-semibold cursor-pointer disabled:cursor-not-allowed active:scale-95"
-            >
-              <span>Next</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-white/[0.06]">
+        <div className="text-xs text-zinc-400">
+          Page <span className="font-semibold text-white font-mono">{page}</span> of catalog feed
+          <span className="text-zinc-600 mx-2">•</span>
+          <span className="text-zinc-500">{filteredGames.length} games on this page</span>
         </div>
-      )}
+
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page <= 1}
+            className="flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300 disabled:opacity-30 disabled:hover:bg-white/[0.04] rounded-full transition-all text-xs font-semibold cursor-pointer disabled:cursor-not-allowed active:scale-95"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+            <span>Prev</span>
+          </button>
+
+          {/* Jump to page form */}
+          <div className="flex items-center gap-1 px-2 py-1 bg-white/[0.02] border border-white/[0.06] rounded-full">
+            <span className="text-[11px] text-zinc-500 font-mono">Jump:</span>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const input = (e.currentTarget.elements.namedItem("pageInput") as HTMLInputElement).value;
+              const p = parseInt(input, 10);
+              if (!isNaN(p) && p >= 1) {
+                setPage(p);
+              }
+            }} className="flex items-center gap-1">
+              <input 
+                type="number" 
+                name="pageInput"
+                defaultValue={page}
+                min="1"
+                key={`page-input-${page}`}
+                className="w-10 px-1 py-0.5 bg-[#101012] border border-white/[0.08] rounded text-center text-white focus:outline-none focus:border-white/50 text-xs font-mono font-bold"
+                title="Press Enter to jump to page"
+              />
+              <button 
+                type="submit" 
+                className="px-2 py-0.5 bg-white hover:bg-zinc-200 text-black rounded-full text-[10.5px] font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+              >
+                Go
+              </button>
+            </form>
+          </div>
+
+          <button 
+            onClick={() => setPage(p => p + 1)}
+            disabled={games.length === 0}
+            className="flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300 disabled:opacity-30 disabled:hover:bg-white/[0.04] rounded-full transition-all text-xs font-semibold cursor-pointer disabled:cursor-not-allowed active:scale-95"
+          >
+            <span>Next</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
 
       {/* Interactive Play & Inspect Modal */}
       {previewGame && (

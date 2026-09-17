@@ -85,7 +85,7 @@ export default function NotificationPrompt() {
           <button
             onClick={handleSubscribe}
             disabled={loading}
-            className="px-2.5 py-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 text-white text-[11px] font-semibold rounded-full transition-all disabled:opacity-50 flex items-center gap-1 shadow-xs shadow-orange-500/20 cursor-pointer"
+            className="px-2.5 py-1 bg-white hover:bg-zinc-200 active:scale-95 text-black text-[11px] font-bold rounded-full transition-all disabled:opacity-50 flex items-center gap-1 shadow-xs shadow-white/10 cursor-pointer"
           >
             {loading && <Loader2 className="w-3 h-3 animate-spin" />}
             <span>{loading ? "Enabling..." : "Turn On"}</span>
