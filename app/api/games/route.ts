@@ -38,8 +38,12 @@ export async function GET(request: Request) {
     }
     
     const skip = (page - 1) * limit;
+    const isAutocomplete = Boolean(query && limit <= 10);
     
-    const total = await Game.countDocuments(dbQuery);
+    let total = 0;
+    if (sort === 'random' || !isAutocomplete) {
+      total = await Game.countDocuments(dbQuery);
+    }
     let games;
     
     if (sort === 'random') {
@@ -66,7 +70,19 @@ export async function GET(request: Request) {
         .lean();
     }
       
-    return NextResponse.json({ games, total, page, limit, hasMore: sort === 'random' ? games.length === limit : skip + games.length < total });
+    const hasMore = sort === 'random'
+      ? games.length === limit
+      : isAutocomplete
+        ? games.length === limit
+        : skip + games.length < total;
+
+    return NextResponse.json({
+      games,
+      total: isAutocomplete ? games.length : total,
+      page,
+      limit,
+      hasMore,
+    });
   } catch (error) {
     console.error("Error fetching games:", error);
     return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });
