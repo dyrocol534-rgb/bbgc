@@ -35,8 +35,10 @@ export async function POST(
       deviceType = "mobile";
     }
 
-    // Log the play event for time-series analytics (24h/7d/30d)
-    await PlayEvent.create({ gameSlug: slug, deviceType });
+    // Log the play event asynchronously for time-series analytics (non-blocking)
+    PlayEvent.create({ gameSlug: slug, deviceType }).catch((err) =>
+      console.error("Async play event log error:", err)
+    );
 
     const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || request.headers.get("cf-connecting-ip") || "Unknown";
 
@@ -96,12 +98,19 @@ export async function POST(
     } else {
       // Track anonymous user via guestId cookie
       const cookieStore = await cookies();
-      const guestIdCookie = cookieStore.get('guestId');
-      if (guestIdCookie?.value) {
-        // Since we cannot easily $pull and $push in an upsert without conflicts if the doc doesn't exist,
-        // we'll do a findOneAndUpdate which handles it cleanly or create it.
-        const guestId = guestIdCookie.value;
-        const GuestSession = (await import('@/models/GuestSession')).default;
+      let guestId = cookieStore.get('guestId')?.value;
+      if (!guestId) {
+        guestId = crypto.randomUUID();
+        cookieStore.set('guestId', guestId, {
+          maxAge: 60 * 60 * 24 * 365,
+          path: '/',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+        });
+      }
+      
+      const GuestSession = (await import('@/models/GuestSession')).default;
         
         let guestSession = await GuestSession.findOne({ guestId });
         if (!guestSession) {
@@ -128,9 +137,8 @@ export async function POST(
           );
         }
       }
-    }
       
-    return NextResponse.json({ success: true, playCount: game.playCount, xpAwarded });
+      return NextResponse.json({ success: true, playCount: game.playCount, xpAwarded });
   } catch (error) {
     console.error("Error incrementing play count:", error);
     return NextResponse.json({ error: "Failed to increment play count" }, { status: 500 });

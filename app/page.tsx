@@ -1,10 +1,6 @@
-import dynamic from "next/dynamic";
 import { Gamepad2, Sparkles, ShieldCheck, Zap, Smartphone, Globe, HelpCircle, ChevronDown, Puzzle, Car, Trophy, Crosshair, Compass, Crown } from "lucide-react";
-import { getServerSession } from "next-auth";
-import { cookies } from "next/headers";
-import { authOptions } from "@/lib/auth";
 import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
-import { getInitialHomeGames, getRecentGamesForUserOrGuest, getPublishedGamesByCategory } from "@/lib/services/gameService";
+import { getInitialHomeGames, getPublishedGamesByCategory } from "@/lib/services/gameService";
 import GameCard from "@/components/game/GameCard";
 import ContinuePlayingRow from "@/components/game/ContinuePlayingRow";
 import HorizontalGameSection from "@/components/game/HorizontalGameSection";
@@ -12,24 +8,15 @@ import Link from "next/link";
 
 import InfiniteGameGrid from "@/components/game/InfiniteGameGrid";
 
-export const revalidate = 60; // Revalidate page every 60 seconds
+export const revalidate = 300; // Edge ISR: Revalidate page every 5 minutes
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
-  const session = await getServerSession(authOptions);
+export default async function Home() {
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
   const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
   const siteUrl = rawSiteUrl.replace(/\/+$/, "");
-  
-  const resolvedParams = await searchParams;
-  const pageParam = typeof resolvedParams.page === 'string' ? parseInt(resolvedParams.page, 10) : 1;
-  const page = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
 
-  const cookieStore = await cookies();
-  const guestId = cookieStore.get('guestId')?.value;
-
-  const [initialAllGames, userRecentGames, featuredGames] = await Promise.all([
-    getInitialHomeGames(page),
-    getRecentGamesForUserOrGuest(session, guestId),
+  const [initialAllGames, featuredGames] = await Promise.all([
+    getInitialHomeGames(1),
     getPublishedGamesByCategory("featured"),
   ]);
 
@@ -89,9 +76,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
           </div>
         )}
 
-        {userRecentGames.length > 0 && (
-          <ContinuePlayingRow games={userRecentGames} />
-        )}
+        {/* Client-hydrated Continue Playing Row (Zero SSR overhead) */}
+        <ContinuePlayingRow />
 
         {/* Featured Games */}
         {featuredGames.length > 0 && (
@@ -142,11 +128,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               />
             </div>
             
-            {/* SEO Bot Pagination */}
+            {/* SEO Bot Navigation */}
             <div className="sr-only">
-              <nav aria-label="Pagination">
-                {page > 1 && <a href={`/?page=${page - 1}`}>Previous Page</a>}
-                {initialAllGames.length === 24 && <a href={`/?page=${page + 1}`}>Next Page</a>}
+              <nav aria-label="Game Categories">
+                <a href="/category/popular">Popular Games</a>
+                <a href="/category/new">New Games</a>
+                <a href="/category/featured">Featured Games</a>
               </nav>
             </div>
           </section>

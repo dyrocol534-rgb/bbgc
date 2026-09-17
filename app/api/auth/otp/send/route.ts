@@ -1,10 +1,35 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Otp from "@/models/Otp";
 import { sendOtpEmail } from "@/lib/email";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
+    const clientIp = getClientIp(req);
+
+    // 1. IP-level Rate Limiting: Max 5 OTP requests per 15 minutes per IP
+    const ipLimit = checkRateLimit({
+      key: `otp_ip_${clientIp}`,
+      limit: 5,
+      windowMs: 15 * 60 * 1000,
+    });
+
+    if (!ipLimit.success) {
+      const minutes = Math.ceil(ipLimit.retryAfterMs / (60 * 1000));
+      return NextResponse.json(
+        { error: `Too many verification requests. Please wait ${minutes} minute${minutes > 1 ? "s" : ""} before trying again.` },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": Math.ceil(ipLimit.retryAfterMs / 1000).toString(),
+            "X-RateLimit-Limit": "5",
+            "X-RateLimit-Remaining": "0",
+          },
+        }
+      );
+    }
+
     const body = await req.json();
     const { email } = body;
 
@@ -26,9 +51,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 2. Target Email Rate Limiting: Max 4 requests per 15 minutes for the same email
+    const emailLimit = checkRateLimit({
+      key: `otp_email_${normalizedEmail}`,
+      limit: 4,
+      windowMs: 15 * 60 * 1000,
+    });
+
+    if (!emailLimit.success) {
+      const minutes = Math.ceil(emailLimit.retryAfterMs / (60 * 1000));
+      return NextResponse.json(
+        { error: `Too many codes requested for this email. Please try again in ${minutes} minute${minutes > 1 ? "s" : ""}.` },
+        { status: 429 }
+      );
+    }
+
     await dbConnect();
 
-    // Rate-limiting check: 60-second cooldown
+    // 3. Consecutive cooldown check: 60-second cooldown
     const recentOtp = await Otp.findOne({ email: normalizedEmail }).sort({ createdAt: -1 });
     if (recentOtp) {
       const timeSinceCreation = (Date.now() - new Date(recentOtp.createdAt).getTime()) / 1000;

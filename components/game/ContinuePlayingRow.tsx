@@ -1,12 +1,67 @@
-import Link from 'next/link';
-import GameImage from '@/components/game/GameImage';
-import { RotateCcw } from 'lucide-react';
+"use client";
+
+import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
+import GameImage from "@/components/game/GameImage";
+import { RotateCcw } from "lucide-react";
 
 interface ContinuePlayingRowProps {
-  games: any[];
+  initialGames?: any[];
 }
 
-export default function ContinuePlayingRow({ games }: ContinuePlayingRowProps) {
+export default function ContinuePlayingRow({ initialGames }: ContinuePlayingRowProps) {
+  const [games, setGames] = useState<any[]>(initialGames || []);
+  const hasFetchedRef = useRef(false);
+
+  useEffect(() => {
+    // Prevent duplicate fetches
+    if (hasFetchedRef.current) return;
+    if (initialGames && initialGames.length > 0) {
+      setGames(initialGames);
+      return;
+    }
+
+    hasFetchedRef.current = true;
+
+    // Check sessionStorage cache for instant display
+    try {
+      const cached = sessionStorage.getItem("user_recent_games");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setGames(parsed);
+          return;
+        }
+      }
+    } catch {
+      // Ignore sessionStorage errors
+    }
+
+    let isMounted = true;
+    fetch("/api/user/recent")
+      .then((res) => {
+        if (!res.ok) return { games: [] };
+        return res.json();
+      })
+      .then((data) => {
+        if (isMounted && Array.isArray(data?.games)) {
+          setGames(data.games);
+          try {
+            sessionStorage.setItem("user_recent_games", JSON.stringify(data.games));
+          } catch {
+            // Ignore
+          }
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load recent games:", err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Run strictly once on mount
+
   if (!games || games.length === 0) return null;
 
   const displayGames = games.slice(0, 10);

@@ -35,6 +35,11 @@ export default function GameImage({
     return s;
   }, [src]);
 
+  // Bypass Next.js image proxy for external gaming CDNs to save serverless transformation costs and latency
+  const isExternalCdn = useMemo(() => {
+    return /gamemonetize|gamedistribution|gamepix|cdn\.jsdelivr|unsplash|googleusercontent/i.test(cleanSrc);
+  }, [cleanSrc]);
+
   if (imgError || !cleanSrc) {
     return (
       <div className="flex flex-col items-center justify-center text-zinc-400 w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700/50 p-2 text-center select-none">
@@ -73,6 +78,7 @@ export default function GameImage({
           src={cleanSrc}
           alt={alt}
           fill
+          unoptimized={isExternalCdn}
           quality={75}
           preload={priority}
           sizes={sizes}

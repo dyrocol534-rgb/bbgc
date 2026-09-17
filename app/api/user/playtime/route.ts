@@ -53,11 +53,19 @@ export async function POST(req: NextRequest) {
     } else {
       // Guest tracking
       const cookieStore = await cookies();
-      const guestIdCookie = cookieStore.get('guestId');
+      let guestId = cookieStore.get('guestId')?.value;
+      if (!guestId) {
+        guestId = crypto.randomUUID();
+        cookieStore.set('guestId', guestId, {
+          maxAge: 60 * 60 * 24 * 365,
+          path: '/',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+        });
+      }
       
-      if (guestIdCookie?.value) {
-        const guestId = guestIdCookie.value;
-        const GuestSession = (await import('@/models/GuestSession')).default;
+      const GuestSession = (await import('@/models/GuestSession')).default;
         
         const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || req.headers.get("cf-connecting-ip") || "Unknown";
         
@@ -81,10 +89,7 @@ export async function POST(req: NextRequest) {
           );
         }
         
-        return NextResponse.json({ success: true, newPlaytime: (guestSession.playtimeSeconds || 0) + elapsedSeconds, xpAwarded: 0 });
-      }
-
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        return NextResponse.json({ success: true, newPlaytime: (guestSession?.playtimeSeconds || 0) + elapsedSeconds, xpAwarded: 0 });
     }
   } catch (error) {
     console.error("Playtime tracking error:", error);

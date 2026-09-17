@@ -11,6 +11,18 @@ import { Gamepad2, Smartphone, Monitor, Layers, Globe, ChevronRight, Star, Info,
 
 export const revalidate = 3600; // Revalidate every hour
 
+export async function generateStaticParams() {
+  try {
+    const { getCachedPublishedGamePool } = await import('@/lib/services/gameService');
+    const pool = await getCachedPublishedGamePool();
+    // Pre-render top 30 most popular games at build time; others generate on-demand with 1-hour ISR cache
+    return pool.slice(0, 30).map((game) => ({ slug: game.slug }));
+  } catch (error) {
+    console.error("Error generating static params for games:", error);
+    return [];
+  }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const game = await getPublishedGameBySlug(slug);

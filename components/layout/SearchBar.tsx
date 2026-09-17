@@ -7,34 +7,110 @@ import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
 
+// In-memory LRU search cache across component mounts
+const memorySearchCache = new Map<string, any[]>();
+const MAX_CACHE_SIZE = 50;
+
+function getCachedSearch(key: string): any[] | null {
+  if (memorySearchCache.has(key)) {
+    return memorySearchCache.get(key) || [];
+  }
+  if (typeof window !== "undefined") {
+    try {
+      const stored = sessionStorage.getItem(`search_cache_${key}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        memorySearchCache.set(key, parsed);
+        return parsed;
+      }
+    } catch {
+      // Ignore sessionStorage failure
+    }
+  }
+  return null;
+}
+
+function setCachedSearch(key: string, data: any[]) {
+  if (memorySearchCache.size >= MAX_CACHE_SIZE) {
+    const firstKey = memorySearchCache.keys().next().value;
+    if (firstKey) memorySearchCache.delete(firstKey);
+  }
+  memorySearchCache.set(key, data);
+  if (typeof window !== "undefined") {
+    try {
+      sessionStorage.setItem(`search_cache_${key}`, JSON.stringify(data));
+    } catch {
+      // Ignore sessionStorage full
+    }
+  }
+}
+
 export default function SearchBar({ isMobile = false, onClose }: { isMobile?: boolean, onClose?: () => void }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const router = useRouter();
 
   useEffect(() => {
+    const trimmed = query.trim().toLowerCase();
+
+    if (trimmed.length < 2) {
+      setResults([]);
+      setShowDropdown(false);
+      setIsSearching(false);
+      return;
+    }
+
+    // 1. Instant Cache Check (0ms latency, zero backend hit)
+    const cachedResults = getCachedSearch(trimmed);
+    if (cachedResults) {
+      setResults(cachedResults);
+      setShowDropdown(true);
+      setIsSearching(false);
+      return;
+    }
+
+    // 2. Cancel previous pending fetch
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // 3. Debounced network fetch (250ms)
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    setIsSearching(true);
+
     const timer = setTimeout(async () => {
-      if (query.trim().length > 1) {
-        setIsSearching(true);
-        try {
-          const res = await fetch(`/api/games?q=${encodeURIComponent(query.trim())}&limit=5`);
-          const data = await res.json();
-          setResults(data.games || []);
-          setShowDropdown(true);
-        } catch (error) {
-          console.error(error);
-        } finally {
+      try {
+        const res = await fetch(`/api/games?q=${encodeURIComponent(trimmed)}&limit=5`, {
+          signal: controller.signal,
+        });
+        if (!res.ok) throw new Error("Search failed");
+        const data = await res.json();
+        const games = data.games || [];
+        
+        // Cache result for instant subsequent lookups
+        setCachedSearch(trimmed, games);
+        setResults(games);
+        setShowDropdown(true);
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.error("Search error:", error);
+        }
+      } finally {
+        if (!controller.signal.aborted) {
           setIsSearching(false);
         }
-      } else {
-        setResults([]);
-        setShowDropdown(false);
       }
-    }, 300);
-    return () => clearTimeout(timer);
+    }, 250);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
   }, [query]);
 
   useEffect(() => {

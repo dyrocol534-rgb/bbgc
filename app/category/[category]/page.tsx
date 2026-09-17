@@ -3,10 +3,21 @@ import GameCard from '@/components/game/GameCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Gamepad2, HelpCircle } from 'lucide-react';
 import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
-import { getPublishedGamesByCategory } from '@/lib/services/gameService';
+import { getPublishedGamesByCategory, getCachedPublishedCategories } from '@/lib/services/gameService';
 import Link from 'next/link';
 
 export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  try {
+    const categories = await getCachedPublishedCategories();
+    const all = Array.from(new Set(["featured", "popular", "new", "updated", "io", "action", "puzzle", "racing", "sports", ...categories]));
+    return all.map((category) => ({ category }));
+  } catch (error) {
+    console.error("Error generating static params for categories:", error);
+    return [];
+  }
+}
 
 function formatCategoryTitle(category: string): string {
   const lower = category.toLowerCase();

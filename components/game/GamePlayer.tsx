@@ -473,6 +473,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
               <iframe
                 ref={iframeRef}
                 src={game.playUrl}
+                title={game.title}
+                loading="lazy"
                 style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
                 allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
                 onLoad={() => setIsLoading(false)}
@@ -564,6 +566,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             )}
             <iframe
               src={game.playUrl}
+              title={game.title}
+              loading="lazy"
               className="w-full h-full absolute inset-0 border-0"
               allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
               onLoad={() => setIsLoading(false)}
@@ -598,6 +602,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             )}
             <iframe
               src={game.playUrl}
+              title={game.title}
+              loading="lazy"
               className="w-full h-full absolute inset-0 border-0"
               allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
               onLoad={() => setIsLoading(false)}
