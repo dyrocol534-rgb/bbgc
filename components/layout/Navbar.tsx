@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronRight, Coins, Flame, HeartHandshake, ShoppingBag, Trophy, ArrowLeft, Share2, Check, Settings, Sparkles } from "lucide-react";
+import { Search, Gamepad2, User as UserIcon, LogOut, X, UploadCloud, Dices, Loader2, ChevronRight, Coins, Flame, HeartHandshake, ShoppingBag, Trophy, ArrowLeft, Share2, Check, Settings, Sparkles, Handshake, Rocket } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -430,6 +430,44 @@ export default function Navbar() {
                 </div>
                 <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
               </Link>
+
+              {/* Sponsor Us or Partnership (Disabled) */}
+              <div
+                className="flex items-center justify-between px-3 py-2 opacity-45 cursor-not-allowed select-none"
+                title="Coming Soon"
+              >
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="w-6 h-6 rounded-md bg-white/[0.06] border border-white/[0.08] text-zinc-400 flex items-center justify-center shrink-0 shadow-sm">
+                    <Handshake className="w-3.5 h-3.5 text-zinc-400" />
+                  </div>
+                  <div className="flex flex-col text-left min-w-0">
+                    <span className="text-[12.5px] font-medium text-zinc-300 tracking-tight truncate">Sponsor Us or Partnership</span>
+                    <span className="text-[9.5px] text-zinc-500 truncate">Brand &amp; partner collaborations</span>
+                  </div>
+                </div>
+                <span className="text-[9px] font-medium text-zinc-500 bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded-full shrink-0 ml-2">
+                  Soon
+                </span>
+              </div>
+
+              {/* Publish Your Game to Us (Disabled) */}
+              <div
+                className="flex items-center justify-between px-3 py-2 opacity-45 cursor-not-allowed select-none"
+                title="Coming Soon"
+              >
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="w-6 h-6 rounded-md bg-white/[0.06] border border-white/[0.08] text-zinc-400 flex items-center justify-center shrink-0 shadow-sm">
+                    <Rocket className="w-3.5 h-3.5 text-zinc-400" />
+                  </div>
+                  <div className="flex flex-col text-left min-w-0">
+                    <span className="text-[12.5px] font-medium text-zinc-300 tracking-tight truncate">Publish Your Game to Us</span>
+                    <span className="text-[9.5px] text-zinc-500 truncate">Submit games to our platform</span>
+                  </div>
+                </div>
+                <span className="text-[9px] font-medium text-zinc-500 bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded-full shrink-0 ml-2">
+                  Soon
+                </span>
+              </div>
             </div>
           </div>
 

@@ -314,21 +314,62 @@ export default function PWAInstallButton({
 
   if (variant === "bottomBanner") {
     return (
-      <div className="flex flex-col gap-1 w-full">
-        {/* Device-adaptive priority: iOS first on Apple devices, Play Store first on Android */}
-        {isIOS ? (
-          <>
-            {renderPWABanner()}
-            {renderPlayStoreBanner()}
-            {renderWebsiteBanner()}
-          </>
-        ) : (
-          <>
-            {renderPlayStoreBanner()}
-            {renderPWABanner()}
-            {renderWebsiteBanner()}
-          </>
-        )}
+      <div className="w-full">
+        {/* Compact Single-Row Platform Bar */}
+        <div className="grid grid-cols-3 gap-1.5 w-full">
+          {/* iOS / PWA Button */}
+          <button
+            onClick={handlePWAInstall}
+            className="flex items-center justify-center gap-1.5 h-[34px] px-2 rounded-lg bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/20 transition-all text-center group cursor-pointer active:scale-95"
+            title={isIOS ? "Install iOS App" : isInstalled ? "App Installed" : "Install Web App"}
+          >
+            {isIOS ? (
+              <Apple className="w-3.5 h-3.5 text-white shrink-0" />
+            ) : isInstalled ? (
+              <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            ) : (
+              <Download className="w-3.5 h-3.5 text-white shrink-0" />
+            )}
+            <span className="text-[11px] font-medium text-zinc-200 group-hover:text-white truncate">
+              {isIOS ? "iOS App" : isInstalled ? "Installed" : "Web App"}
+            </span>
+          </button>
+
+          {/* Google Play Button */}
+          <button
+            onClick={handlePlayStoreClick}
+            className="flex items-center justify-center gap-1.5 h-[34px] px-2 rounded-lg bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/20 transition-all text-center group cursor-pointer active:scale-95"
+            title="Download on Google Play Store"
+          >
+            <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#32BBFF" d="M396.121 229.173 34.445 19.532C25.061 14.118 14.968 13.418 6.458 17.696L261.929 256 396.121 229.173z" />
+              <path fill="#32BBFF" d="m6.458 494.304 255.471-238.303L6.458 17.696C2.592 19.636 0 24.169 0 30.47v451.06c0 6.301 2.592 10.834 6.458 12.774z" />
+              <path fill="#FFD700" d="M419.978 274.638 396.121 261.17 261.929 256l134.192 26.827 23.857 13.469c11.27-6.408 11.27-15.25 0-21.658z" />
+              <path fill="#F3BC00" d="m396.121 282.827-361.676 209.64c9.084 5.203 19.018 4.66 27.547-.407L419.978 274.638 396.121 282.827z" />
+              <path fill="#00F076" d="M261.929 256 6.458 17.696c-1.054.516-2.058 1.142-2.993 1.89L261.929 256z" />
+              <path fill="#00DA65" d="M261.929 256 3.465 492.414c.934.748 1.939 1.374 2.993 1.89L261.929 256z" />
+              <path fill="#FF3A44" d="M419.978 237.362 61.992 19.26C53.463 14.192 43.529 13.65 34.445 19.532L261.929 256 419.978 237.362z" />
+              <path fill="#C31162" d="M261.929 256 34.445 492.468c9.084 5.882 19.018 5.34 27.547.272l358.986-218.103L261.929 256z" />
+            </svg>
+            <span className="text-[11px] font-medium text-zinc-200 group-hover:text-white truncate">
+              Android
+            </span>
+          </button>
+
+          {/* Website Button */}
+          <a
+            href="https://games.bluebuff.in"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1.5 h-[34px] px-2 rounded-lg bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/20 transition-all text-center group cursor-pointer active:scale-95"
+            title="Play on games.bluebuff.in"
+          >
+            <Globe className="w-3.5 h-3.5 text-zinc-300 group-hover:text-white shrink-0" />
+            <span className="text-[11px] font-medium text-zinc-200 group-hover:text-white truncate">
+              Website
+            </span>
+          </a>
+        </div>
 
         {/* Temporary toast */}
         {toastMessage && (
