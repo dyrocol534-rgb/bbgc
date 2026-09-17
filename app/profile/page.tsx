@@ -199,7 +199,7 @@ export default async function ProfilePage() {
               </div>
 
               {orderedRecent.length > 0 ? (
-                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[88px] sm:auto-cols-[104px] md:auto-cols-[112px] auto-rows-[95px] sm:auto-rows-[112px] md:auto-rows-[120px] gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[74px] sm:auto-cols-[84px] md:auto-cols-[92px] auto-rows-[78px] sm:auto-rows-[88px] md:auto-rows-[96px] gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
                   {orderedRecent.map((game: any, index: number) => {
                     const spanClass = getHorizontalBentoSpanClass(index);
                     const imageContainerClass = getImageContainerClass(spanClass);
@@ -245,7 +245,7 @@ export default async function ProfilePage() {
               </div>
 
               {orderedFavorites.length > 0 ? (
-                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[88px] sm:auto-cols-[104px] md:auto-cols-[112px] auto-rows-[95px] sm:auto-rows-[112px] md:auto-rows-[120px] gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[74px] sm:auto-cols-[84px] md:auto-cols-[92px] auto-rows-[78px] sm:auto-rows-[88px] md:auto-rows-[96px] gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
                   {orderedFavorites.map((game: any, index: number) => {
                     const spanClass = getHorizontalBentoSpanClass(index);
                     const imageContainerClass = getImageContainerClass(spanClass);

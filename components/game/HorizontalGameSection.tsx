@@ -21,7 +21,7 @@ export default function HorizontalGameSection({
   const displayGames = games.slice(0, 9);
 
   return (
-    <section className="space-y-3 sm:space-y-4">
+    <section className="space-y-2.5 sm:space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 tracking-tight">
           <Icon className="w-5 h-5 text-orange-400 shrink-0" />
@@ -35,7 +35,7 @@ export default function HorizontalGameSection({
         </Link>
       </div>
 
-      <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[105px] sm:auto-cols-[125px] md:auto-cols-[140px] auto-rows-[125px] sm:auto-rows-[145px] md:auto-rows-[160px] gap-2 sm:gap-2.5 overflow-x-auto pb-2 pt-1 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+      <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[64px] sm:auto-cols-[72px] md:auto-cols-[80px] auto-rows-[66px] sm:auto-rows-[76px] md:auto-rows-[84px] gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 pt-0.5 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
         {displayGames.map((game, index) => {
           const spanClass = getHorizontalBentoSpanClass(index);
           const imageContainerClass = getImageContainerClass(spanClass);
