@@ -12,6 +12,17 @@ import SearchBar from "./SearchBar";
 import NotificationBell from "../notifications/NotificationBell";
 
 
+function MovingOuterRing({ className }: { className?: string }) {
+  return (
+    <span
+      className={clsx(
+        "absolute -inset-[2.5px] rounded-full border border-dashed border-current/40 animate-[spin_10s_linear_infinite] pointer-events-none select-none",
+        className
+      )}
+    />
+  );
+}
+
 export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -168,28 +179,29 @@ export default function Navbar() {
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Mobile Search Button */}
           <button 
-            className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-zinc-300 hover:text-white rounded-full bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] transition-all shrink-0 active:scale-95"
+            className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-[#0A84FF] rounded-full bg-[#0A84FF]/12 hover:bg-[#0A84FF]/22 border border-[#0A84FF]/30 backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-150 shrink-0 active:scale-90"
             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
             title="Search"
           >
-            <Search className="w-4 h-4" />
+            <Search className="w-4 h-4 stroke-[2.2]" />
           </button>
           
           {/* Surprise Me / Dice Button */}
           <button
             onClick={handleSurpriseMe}
             disabled={isRolling}
-            className="group relative flex items-center justify-center w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] hover:border-orange-500/60 transition-all disabled:opacity-50 shrink-0 active:scale-95 cursor-pointer shadow-sm"
+            className="group relative flex items-center justify-center w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full bg-[#BF5AF2]/12 hover:bg-[#BF5AF2]/22 border border-[#BF5AF2]/30 text-[#BF5AF2] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-150 disabled:opacity-50 shrink-0 active:scale-90 cursor-pointer"
             title="Surprise Me!"
           >
+            <MovingOuterRing />
             {isRolling ? (
-              <Loader2 className="w-4 h-4 text-orange-400 animate-spin" />
+              <Loader2 className="w-4 h-4 text-[#BF5AF2] animate-spin" />
             ) : (
-              <Dices className="w-4 h-4 text-zinc-300 group-hover:text-white transition-colors transform group-hover:rotate-12" />
+              <Dices className="w-4 h-4 text-[#BF5AF2] group-hover:text-[#D17BFA] transition-transform duration-200 group-hover:rotate-12 stroke-[2.2]" />
             )}
 
             {/* Tooltip */}
-            <span className="absolute -bottom-9 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-[#18181b] border border-white/[0.1] text-xs text-white px-2 py-1 rounded-md hidden sm:block z-50 shadow-md">
+            <span className="absolute -bottom-9 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/[0.12] text-[11px] font-medium text-white px-2.5 py-1 rounded-xl hidden sm:block z-50 shadow-2xl">
               Random Game 🎲
             </span>
           </button>
@@ -200,14 +212,14 @@ export default function Navbar() {
           {/* Profile / Menu Button */}
           <button 
             onClick={() => setIsSidebarOpen(true)} 
-            className="relative w-[34px] h-[34px] sm:w-9 sm:h-9 rounded-full overflow-hidden border border-white/[0.12] hover:border-orange-400/80 bg-white/[0.06] active:scale-95 transition-all flex items-center justify-center shrink-0 touch-manipulation cursor-pointer shadow-sm"
+            className="relative w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full overflow-hidden border border-[#FF9F0A]/40 hover:border-[#FF9F0A]/70 bg-[#FF9F0A]/12 ring-1 ring-[#FF9F0A]/25 backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_8px_rgba(0,0,0,0.3)] active:scale-90 transition-all duration-150 flex items-center justify-center shrink-0 touch-manipulation cursor-pointer"
             aria-label="User Profile & Menu"
             title={session?.user?.name || "Account & Menu"}
           >
             {session?.user?.image ? (
               <Image src={session.user.image} alt="User" fill sizes="36px" className="object-cover" />
             ) : (
-              <UserIcon className="w-4 h-4 text-zinc-300" />
+              <UserIcon className="w-4 h-4 text-[#FF9F0A] stroke-[2.2]" />
             )}
           </button>
         </div>
@@ -233,34 +245,34 @@ export default function Navbar() {
         isSidebarOpen ? "translate-x-0" : "translate-x-full"
       )}>
         {/* iOS Sheet Header */}
-        <div className="p-4 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#0d0d10]">
-          <div className="flex items-center gap-3 min-w-0">
+        <div className="p-3 sm:p-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#0d0d10]">
+          <div className="flex items-center gap-2.5 min-w-0">
             {session?.user?.image ? (
-              <div className="relative w-11 h-11 rounded-full overflow-hidden shrink-0 border border-white/10 ring-1 ring-white/5">
-                <Image src={session.user.image} alt="User" fill sizes="44px" className="object-cover" />
+              <div className="relative w-9 h-9 rounded-full overflow-hidden shrink-0 border border-white/10 ring-1 ring-white/5">
+                <Image src={session.user.image} alt="User" fill sizes="36px" className="object-cover" />
               </div>
             ) : (
-              <div className="w-11 h-11 rounded-full bg-[#1c1c1e] border border-white/10 flex items-center justify-center shrink-0 text-[#8e8e93]">
-                <UserIcon className="w-5 h-5" />
+              <div className="w-9 h-9 rounded-full bg-[#1c1c1e] border border-white/10 flex items-center justify-center shrink-0 text-[#8e8e93]">
+                <UserIcon className="w-4 h-4" />
               </div>
             )}
             <div className="flex flex-col min-w-0">
-              <span className="text-[15px] font-semibold text-white tracking-tight truncate leading-tight">
+              <span className="text-[14px] font-semibold text-white tracking-tight truncate leading-tight">
                 {session?.user?.name || "Guest Player"}
               </span>
               <div className="mt-0.5">
                 {session ? (
                   session.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") ? (
-                    <span className="inline-flex items-center text-[11px] font-medium text-[#ff9f0a]">
+                    <span className="inline-flex items-center text-[10.5px] font-medium text-[#ff9f0a]">
                       Administrator
                     </span>
                   ) : (
-                    <span className="inline-flex items-center text-[11px] text-[#8e8e93]">
+                    <span className="inline-flex items-center text-[10.5px] text-[#8e8e93]">
                       Member
                     </span>
                   )
                 ) : (
-                  <span className="text-[11px] text-[#8e8e93]">Play &amp; Earn XP</span>
+                  <span className="text-[10.5px] text-[#8e8e93]">Play &amp; Earn XP</span>
                 )}
               </div>
             </div>
@@ -287,10 +299,10 @@ export default function Navbar() {
         </div>
 
         {/* Drawer Body */}
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col justify-between gap-4 custom-scrollbar bg-[#000000]">
-          <div className="flex flex-col gap-3.5">
+        <div className="flex-1 overflow-y-auto p-3 flex flex-col justify-between gap-3 custom-scrollbar bg-[#000000]">
+          <div className="flex flex-col gap-2.5">
             {/* Unique Dynamic Dual Capsule: XP & Streak */}
-            <div className="bg-[#141416] border border-white/[0.07] rounded-[22px] p-1.5 flex items-center shadow-sm">
+            <div className="bg-[#141416] border border-white/[0.07] rounded-xl p-1 flex items-center shadow-sm">
               <Link 
                 href="/rewards" 
                 onClick={(e) => {
@@ -300,19 +312,19 @@ export default function Navbar() {
                   }
                   setIsSidebarOpen(false);
                 }}
-                className="flex-1 flex items-center gap-2.5 px-3 py-2 rounded-2xl hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex-1 flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
               >
-                <div className="w-7 h-7 rounded-full bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
-                  <Coins className="w-3.5 h-3.5 text-amber-400" />
+                <div className="w-6 h-6 rounded-full bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
+                  <Coins className="w-3 h-3 text-amber-400" />
                 </div>
                 <div className="flex flex-col text-left min-w-0">
-                  <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">XP Balance</span>
-                  <span className="text-sm font-bold text-white tracking-tight leading-tight">0 XP</span>
+                  <span className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">XP Balance</span>
+                  <span className="text-[12.5px] font-bold text-white tracking-tight leading-tight">0 XP</span>
                 </div>
               </Link>
 
               {/* Vertical Hairline Divider */}
-              <div className="w-px h-8 bg-white/[0.08] shrink-0" />
+              <div className="w-px h-6 bg-white/[0.08] shrink-0" />
 
               <Link 
                 href="/rewards" 
@@ -323,36 +335,36 @@ export default function Navbar() {
                   }
                   setIsSidebarOpen(false);
                 }}
-                className="flex-1 flex items-center gap-2.5 px-3 py-2 rounded-2xl hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex-1 flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
               >
-                <div className="w-7 h-7 rounded-full bg-orange-500/15 border border-orange-500/25 flex items-center justify-center shrink-0">
-                  <Flame className="w-3.5 h-3.5 text-orange-400" />
+                <div className="w-6 h-6 rounded-full bg-orange-500/15 border border-orange-500/25 flex items-center justify-center shrink-0">
+                  <Flame className="w-3 h-3 text-orange-400" />
                 </div>
                 <div className="flex flex-col text-left min-w-0">
-                  <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">Streak</span>
-                  <span className="text-sm font-bold text-white tracking-tight leading-tight">0 Days</span>
+                  <span className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">Streak</span>
+                  <span className="text-[12.5px] font-bold text-white tracking-tight leading-tight">0 Days</span>
                 </div>
               </Link>
             </div>
 
             {/* iOS Inset Grouped Navigation */}
-            <div className="bg-[#141416] rounded-[22px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-sm">
+            <div className="bg-[#141416] rounded-xl border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-sm">
               {session && (
                 <Link 
                   href="/profile" 
                   onClick={() => setIsSidebarOpen(false)} 
-                  className="flex items-center justify-between px-3.5 py-3 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                  className="flex items-center justify-between px-3 py-2 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <div className="w-7 h-7 rounded-[8px] bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-sm">
-                      <UserIcon className="w-4 h-4 text-white" />
+                    <div className="w-6 h-6 rounded-md bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-sm">
+                      <UserIcon className="w-3.5 h-3.5 text-white" />
                     </div>
                     <div className="flex flex-col text-left min-w-0">
-                      <span className="text-[13.5px] font-medium text-white tracking-tight truncate">My Profile</span>
-                      <span className="text-[10.5px] text-zinc-400 truncate">Account &amp; gameplay stats</span>
+                      <span className="text-[12.5px] font-medium text-white tracking-tight truncate">My Profile</span>
+                      <span className="text-[9.5px] text-zinc-400 truncate">Account &amp; gameplay stats</span>
                     </div>
                   </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
+                  <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
                 </Link>
               )}
 
@@ -365,22 +377,22 @@ export default function Navbar() {
                   }
                   setIsSidebarOpen(false);
                 }}
-                className="flex items-center justify-between px-3.5 py-3 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex items-center justify-between px-3 py-2 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-[8px] bg-[#34C759] text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <HeartHandshake className="w-4 h-4 text-white" />
+                  <div className="w-6 h-6 rounded-md bg-[#34C759] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <HeartHandshake className="w-3.5 h-3.5 text-white" />
                   </div>
                   <div className="flex flex-col text-left min-w-0">
-                    <span className="text-[13.5px] font-medium text-white tracking-tight truncate">Refer &amp; Earn</span>
-                    <span className="text-[10.5px] text-zinc-400 truncate">Invite friends for bonus XP</span>
+                    <span className="text-[12.5px] font-medium text-white tracking-tight truncate">Refer &amp; Earn</span>
+                    <span className="text-[9.5px] text-zinc-400 truncate">Invite friends for bonus XP</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                  <span className="text-[10.5px] font-semibold text-[#34c759] bg-[#34c759]/15 px-2 py-0.5 rounded-full whitespace-nowrap shrink-0">
+                <div className="flex items-center gap-1 shrink-0 ml-2">
+                  <span className="text-[9.5px] font-semibold text-[#34c759] bg-[#34c759]/15 px-1.5 py-0.5 rounded-full whitespace-nowrap shrink-0">
                     +50 XP
                   </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0" />
+                  <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0" />
                 </div>
               </Link>
 
@@ -388,38 +400,55 @@ export default function Navbar() {
               <Link
                 href="/profile/settings"
                 onClick={() => setIsSidebarOpen(false)}
-                className="flex items-center justify-between px-3.5 py-3 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex items-center justify-between px-3 py-2 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-7 h-7 rounded-[8px] bg-[#8E8E93] text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <Settings className="w-4 h-4 text-white" />
+                  <div className="w-6 h-6 rounded-md bg-[#8E8E93] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <Settings className="w-3.5 h-3.5 text-white" />
                   </div>
                   <div className="flex flex-col text-left min-w-0">
-                    <span className="text-[13.5px] font-medium text-white tracking-tight truncate">Settings</span>
-                    <span className="text-[10.5px] text-zinc-400 truncate">Notifications, audio &amp; app</span>
+                    <span className="text-[12.5px] font-medium text-white tracking-tight truncate">Settings</span>
+                    <span className="text-[9.5px] text-zinc-400 truncate">Notifications, audio &amp; app</span>
                   </div>
                 </div>
-                <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
+                <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
+              </Link>
+              {/* Our Products Link to /products */}
+              <Link
+                href="/products"
+                onClick={() => setIsSidebarOpen(false)}
+                className="flex items-center justify-between px-3 py-2 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+              >
+                <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                  <div className="w-6 h-6 rounded-md bg-[#FF9500] text-white flex items-center justify-center shrink-0 shadow-sm">
+                    <ShoppingBag className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <div className="flex flex-col text-left min-w-0">
+                    <span className="text-[12.5px] font-medium text-white tracking-tight truncate">Our Products</span>
+                    <span className="text-[9.5px] text-zinc-400 truncate">Products you may like</span>
+                  </div>
+                </div>
+                <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
               </Link>
             </div>
           </div>
 
           {/* Bottom Area: Play Store App Card & Footer */}
-          <div className="flex flex-col gap-2.5 pt-2">
+          <div className="flex flex-col gap-1.5 pt-1">
             {/* Play Store moved to bottom */}
             <PWAInstallButton variant="bottomBanner" onInstall={() => setIsSidebarOpen(false)} />
           </div>
         </div>
 
         {/* Footer Action */}
-        <div className="p-4 border-t border-white/[0.06] bg-[#0d0d10] shrink-0">
+        <div className="p-3 border-t border-white/[0.06] bg-[#0d0d10] shrink-0">
           {!session ? (
             <button
               onClick={() => {
                 setIsSidebarOpen(false);
                 router.push("/login");
               }}
-              className="w-full py-2.5 px-4 bg-[#007AFF] hover:bg-[#0071E3] active:bg-[#0062C4] text-white font-semibold text-[14px] rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm touch-manipulation cursor-pointer"
+              className="w-full py-2 px-3.5 bg-[#007AFF] hover:bg-[#0071E3] active:bg-[#0062C4] text-white font-semibold text-[13px] rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm touch-manipulation cursor-pointer"
             >
               <UserIcon className="w-4 h-4" />
               <span>Sign In with Google</span>
@@ -429,7 +458,7 @@ export default function Navbar() {
               <Link 
                 href="/admin" 
                 onClick={() => setIsSidebarOpen(false)} 
-                className="w-full py-2.5 px-4 bg-[#141416] hover:bg-[#1f1f23] active:bg-[#28282c] text-[#ff9f0a] font-semibold text-[13px] rounded-xl border border-white/[0.06] transition-colors flex items-center justify-center gap-2 touch-manipulation cursor-pointer"
+                className="w-full py-2 px-3.5 bg-[#141416] hover:bg-[#1f1f23] active:bg-[#28282c] text-[#ff9f0a] font-semibold text-[12.5px] rounded-xl border border-white/[0.06] transition-colors flex items-center justify-center gap-2 touch-manipulation cursor-pointer"
               >
                 <UploadCloud className="w-4 h-4 text-[#ff9f0a]" />
                 <span>Admin Dashboard</span>

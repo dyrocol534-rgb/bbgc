@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { Download, Check, Share, PlusSquare, X, Apple, ChevronRight } from "lucide-react";
+import { Download, Check, Share, PlusSquare, X, Apple, ChevronRight, Globe } from "lucide-react";
 
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=in.bluebuff.games";
 
@@ -195,11 +195,11 @@ export default function PWAInstallButton({
     <button
       key="playstore-banner"
       onClick={handlePlayStoreClick}
-      className="w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/[0.15] transition-all group text-left cursor-pointer active:scale-[0.98]"
+      className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/[0.15] transition-all group text-left cursor-pointer active:scale-[0.98]"
     >
-      <div className="flex items-center gap-2.5 min-w-0">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sky-500/15 to-blue-500/15 border border-sky-500/25 flex items-center justify-center shrink-0">
-          <svg className="w-4 h-4" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-sky-500/15 to-blue-500/15 border border-sky-500/25 flex items-center justify-center shrink-0">
+          <svg className="w-3 h-3" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
             <path
               fill="#32BBFF"
               d="M396.121 229.173 34.445 19.532C25.061 14.118 14.968 13.418 6.458 17.696L261.929 256 396.121 229.173z"
@@ -235,11 +235,11 @@ export default function PWAInstallButton({
           </svg>
         </div>
         <div className="flex flex-col min-w-0">
-          <span className="text-xs font-semibold text-white truncate">Google Play App</span>
-          <span className="text-[10px] text-zinc-400 truncate">Free on Android</span>
+          <span className="text-[11px] font-semibold text-white truncate leading-none">Google Play App</span>
+          <span className="text-[9px] text-zinc-400 truncate leading-tight mt-0.5">Free on Android</span>
         </div>
       </div>
-      <span className="text-[11px] font-medium text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2.5 py-1 rounded-full shrink-0 group-hover:bg-sky-500/20 transition-colors flex items-center gap-1">
+      <span className="text-[9.5px] font-medium text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded-full shrink-0 group-hover:bg-sky-500/20 transition-colors flex items-center gap-0.5">
         Install ↗
       </span>
     </button>
@@ -249,23 +249,23 @@ export default function PWAInstallButton({
     <button
       key="pwa-banner"
       onClick={handlePWAInstall}
-      className="w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/[0.15] transition-all group text-left cursor-pointer active:scale-[0.98]"
+      className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/[0.15] transition-all group text-left cursor-pointer active:scale-[0.98]"
     >
-      <div className="flex items-center gap-2.5 min-w-0">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500/15 to-purple-500/15 border border-indigo-500/25 flex items-center justify-center shrink-0">
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-indigo-500/15 to-purple-500/15 border border-indigo-500/25 flex items-center justify-center shrink-0">
           {isIOS ? (
-            <Apple className="w-4 h-4 text-zinc-200" />
+            <Apple className="w-3 h-3 text-zinc-200" />
           ) : isInstalled ? (
-            <Check className="w-4 h-4 text-emerald-400" />
+            <Check className="w-3 h-3 text-emerald-400" />
           ) : (
-            <Download className="w-4 h-4 text-indigo-400" />
+            <Download className="w-3 h-3 text-indigo-400" />
           )}
         </div>
         <div className="flex flex-col min-w-0">
-          <span className="text-xs font-semibold text-white truncate">
+          <span className="text-[11px] font-semibold text-white truncate leading-none">
             {isIOS ? "Install iOS App" : isInstalled ? "App Installed" : "Install Web App (PWA)"}
           </span>
-          <span className="text-[10px] text-zinc-400 truncate">
+          <span className="text-[9px] text-zinc-400 truncate leading-tight mt-0.5">
             {isIOS
               ? "Add to Home Screen"
               : isInstalled
@@ -276,31 +276,57 @@ export default function PWAInstallButton({
       </div>
 
       {isInstalled ? (
-        <span className="text-[10.5px] font-semibold text-emerald-400 bg-emerald-500/15 border border-emerald-500/25 px-2.5 py-1 rounded-full shrink-0 flex items-center gap-1">
-          <Check className="w-3 h-3" />
+        <span className="text-[9px] font-semibold text-emerald-400 bg-emerald-500/15 border border-emerald-500/25 px-2 py-0.5 rounded-full shrink-0 flex items-center gap-0.5">
+          <Check className="w-2.5 h-2.5" />
           <span>Installed</span>
         </span>
       ) : (
-        <span className="text-[11px] font-medium text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-full shrink-0 group-hover:bg-indigo-500/20 transition-colors flex items-center gap-1">
+        <span className="text-[9.5px] font-medium text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full shrink-0 group-hover:bg-indigo-500/20 transition-colors flex items-center gap-0.5">
           {isIOS ? "Add +" : "Install +"}
         </span>
       )}
     </button>
   );
 
+  const renderWebsiteBanner = () => (
+    <a
+      key="website-banner"
+      href="https://games.bluebuff.in"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/[0.15] transition-all group text-left cursor-pointer active:scale-[0.98]"
+    >
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-emerald-500/15 to-teal-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0">
+          <Globe className="w-3 h-3 text-emerald-400" />
+        </div>
+        <div className="flex flex-col min-w-0">
+          <span className="text-[11px] font-semibold text-white truncate leading-none">games.bluebuff.in</span>
+          <span className="text-[9px] text-zinc-400 truncate leading-tight mt-0.5">Play on website</span>
+        </div>
+      </div>
+
+      <span className="text-[9.5px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full shrink-0 group-hover:bg-emerald-500/20 transition-colors flex items-center gap-0.5">
+        Play ↗
+      </span>
+    </a>
+  );
+
   if (variant === "bottomBanner") {
     return (
-      <div className="flex flex-col gap-2 w-full">
+      <div className="flex flex-col gap-1 w-full">
         {/* Device-adaptive priority: iOS first on Apple devices, Play Store first on Android */}
         {isIOS ? (
           <>
             {renderPWABanner()}
             {renderPlayStoreBanner()}
+            {renderWebsiteBanner()}
           </>
         ) : (
           <>
             {renderPlayStoreBanner()}
             {renderPWABanner()}
+            {renderWebsiteBanner()}
           </>
         )}
 
