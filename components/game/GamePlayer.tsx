@@ -486,10 +486,10 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       )}
 
       {/* ── MAIN PAGE CONTENT ─────────────────────────────────────── */}
-      <div className="flex flex-col gap-3 relative w-full max-w-[840px] mx-auto">
+      <div className="flex flex-col gap-3 relative w-full">
         {!isPlaying ? (
           /* iOS Arcade Hero Section with Top-to-Bottom Game Icon Gradient to Deep Black */
-          <div className="relative flex flex-col items-center justify-center py-4 sm:py-5 px-4 w-full rounded-[24px] border border-white/[0.08] overflow-hidden bg-gradient-to-b from-[#18181e] via-[#08080a] to-[#000000]">
+          <div className="relative flex flex-col items-center justify-center py-4 sm:py-5 px-4 w-full rounded-[20px] border border-white/[0.08] overflow-hidden bg-gradient-to-b from-[#18181e] via-[#08080a] to-[#000000]">
             {/* Top hairline highlight */}
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent z-10" />
 

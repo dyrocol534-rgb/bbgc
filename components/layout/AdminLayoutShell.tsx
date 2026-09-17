@@ -7,7 +7,7 @@ import {
   BarChart3, Gamepad2, DownloadCloud, UploadCloud, 
   BellRing, Activity, MessageSquareWarning, Users, 
   ChevronLeft, ChevronRight, LayoutDashboard,
-  Menu, X
+  Menu, X, Mail
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -24,6 +24,7 @@ const NAV_LINKS = [
   { name: "Scanner", href: "/admin/scanner", icon: Activity, exact: false },
   { name: "Feedback", href: "/admin/feedback", icon: MessageSquareWarning, exact: false },
   { name: "Users", href: "/admin/users", icon: Users, exact: false },
+  { name: "Subscribers", href: "/admin/subscribers", icon: Mail, exact: false },
 ];
 
 export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
