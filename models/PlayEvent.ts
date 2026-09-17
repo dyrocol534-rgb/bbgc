@@ -12,9 +12,12 @@ const PlayEventSchema: Schema<IPlayEvent> = new Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-// Index to optimize querying plays by gameSlug and date range
-PlayEventSchema.index({ gameSlug: 1, createdAt: -1 });
+// High-performance indexes for time-series aggregation in admin analytics
 PlayEventSchema.index({ createdAt: -1 });
+PlayEventSchema.index({ createdAt: -1, deviceType: 1 });
+PlayEventSchema.index({ createdAt: -1, gameSlug: 1 });
+PlayEventSchema.index({ gameSlug: 1, createdAt: -1 });
+
 // Auto-expire raw play event records after 30 days to keep database storage lightweight and prevent Atlas quota exhaustion
 PlayEventSchema.index({ createdAt: 1 }, { expireAfterSeconds: 30 * 86400 });
 

@@ -111,32 +111,23 @@ export async function POST(
       }
       
       const GuestSession = (await import('@/models/GuestSession')).default;
-        
-        let guestSession = await GuestSession.findOne({ guestId });
-        if (!guestSession) {
-          await GuestSession.create({
-            guestId,
-            recentlyPlayed: [slug],
-            lastActiveAt: new Date(),
-            gamesPlayedCount: 1,
-            lastIp: ip
-          });
-        } else {
-          // Remove if exists, then push to front
-          await GuestSession.updateOne(
-            { guestId },
-            { $pull: { recentlyPlayed: slug } }
-          );
-          await GuestSession.updateOne(
-            { guestId },
-            { 
-              $push: { recentlyPlayed: { $each: [slug], $position: 0, $slice: 12 } },
-              $set: { lastActiveAt: new Date(), updatedAt: new Date(), lastIp: ip },
-              $inc: { gamesPlayedCount: 1 }
-            }
-          );
-        }
-      }
+      
+      // Pull previous entry of this slug if present, then atomically prepend with max slice 12
+      await GuestSession.updateOne(
+        { guestId },
+        { $pull: { recentlyPlayed: slug } }
+      );
+      await GuestSession.updateOne(
+        { guestId },
+        { 
+          $push: { recentlyPlayed: { $each: [slug], $position: 0, $slice: 12 } },
+          $set: { lastActiveAt: new Date(), updatedAt: new Date(), lastIp: ip },
+          $inc: { gamesPlayedCount: 1 },
+          $setOnInsert: { guestId, playtimeSeconds: 0, createdAt: new Date() }
+        },
+        { upsert: true }
+      );
+    }
       
       return NextResponse.json({ success: true, playCount: game.playCount, xpAwarded });
   } catch (error) {

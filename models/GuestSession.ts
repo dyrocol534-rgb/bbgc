@@ -22,5 +22,9 @@ const GuestSessionSchema: Schema<IGuestSession> = new Schema({
   lastIp: { type: String },
 });
 
+// Auto-purge abandoned guest sessions after 90 days (7,776,000 seconds) to prevent unbounded storage bloat
+GuestSessionSchema.index({ updatedAt: 1 }, { expireAfterSeconds: 90 * 86400 });
+GuestSessionSchema.index({ lastActiveAt: -1 });
+
 const GuestSession: Model<IGuestSession> = mongoose.models.GuestSession || mongoose.model<IGuestSession>('GuestSession', GuestSessionSchema);
 export default GuestSession;

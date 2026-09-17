@@ -66,30 +66,23 @@ export async function POST(req: NextRequest) {
       }
       
       const GuestSession = (await import('@/models/GuestSession')).default;
-        
-        const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || req.headers.get("cf-connecting-ip") || "Unknown";
-        
-        let guestSession = await GuestSession.findOne({ guestId });
-        
-        if (!guestSession) {
-          guestSession = await GuestSession.create({
-            guestId,
-            playtimeSeconds: elapsedSeconds,
-            lastActiveAt: new Date(),
-            updatedAt: new Date(),
-            lastIp: ip
-          });
-        } else {
-          await GuestSession.updateOne(
-            { guestId },
-            { 
-              $inc: { playtimeSeconds: elapsedSeconds },
-              $set: { lastActiveAt: new Date(), updatedAt: new Date(), lastIp: ip }
-            }
-          );
-        }
-        
-        return NextResponse.json({ success: true, newPlaytime: (guestSession?.playtimeSeconds || 0) + elapsedSeconds, xpAwarded: 0 });
+      const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || req.headers.get("cf-connecting-ip") || "Unknown";
+      
+      const updatedGuest = await GuestSession.findOneAndUpdate(
+        { guestId },
+        {
+          $inc: { playtimeSeconds: elapsedSeconds },
+          $set: { lastActiveAt: new Date(), updatedAt: new Date(), lastIp: ip },
+          $setOnInsert: { guestId, recentlyPlayed: [], gamesPlayedCount: 0, createdAt: new Date() }
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      ).lean();
+      
+      return NextResponse.json({
+        success: true,
+        newPlaytime: updatedGuest?.playtimeSeconds || elapsedSeconds,
+        xpAwarded: 0
+      });
     }
   } catch (error) {
     console.error("Playtime tracking error:", error);
