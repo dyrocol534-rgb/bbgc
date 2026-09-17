@@ -148,14 +148,14 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                   className="object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm bg-gradient-to-tr from-orange-500 to-amber-500">
+                <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm bg-zinc-800">
                   {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U"}
                 </div>
               )}
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="text-[14px] font-semibold text-white truncate group-hover:text-orange-400 transition-colors">
+                <span className="text-[14px] font-semibold text-white truncate group-hover:text-zinc-200 transition-colors">
                   {user.name || "Gamer"}
                 </span>
                 <span className="inline-flex items-center gap-1 text-[9.5px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-full shrink-0">
@@ -302,7 +302,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
           >
             <div className="flex items-center gap-2.5 min-w-0 pr-3">
               <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 shadow-xs transition-colors ${
-                soundEnabled ? "bg-[#FF9500] text-white" : "bg-zinc-800 text-zinc-400"
+                soundEnabled ? "bg-white text-black" : "bg-zinc-800 text-zinc-400"
               }`}>
                 {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
               </div>

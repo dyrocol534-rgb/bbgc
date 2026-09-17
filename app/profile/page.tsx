@@ -73,7 +73,7 @@ export default async function ProfilePage() {
                     className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border border-white/[0.12] shadow-md object-cover bg-zinc-800"
                   />
                 ) : (
-                  <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-xl font-black text-white border border-white/[0.12] shadow-md">
+                  <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-zinc-800 flex items-center justify-center text-xl font-black text-white border border-white/[0.12] shadow-md">
                     {(session.user.name || "U").charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -97,12 +97,12 @@ export default async function ProfilePage() {
                 href="/referral"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-xs font-semibold text-zinc-200 hover:text-white transition-all"
               >
-                <Gift className="w-3.5 h-3.5 text-orange-400" />
+                <Gift className="w-3.5 h-3.5 text-white" />
                 <span>Invite Friends</span>
               </Link>
               <Link
                 href="/profile/settings"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500 hover:bg-orange-600 text-xs font-semibold text-white transition-all shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-zinc-200 text-xs font-bold text-black transition-all shadow-sm"
               >
                 <span>Preferences</span>
               </Link>
@@ -117,8 +117,8 @@ export default async function ProfilePage() {
             href="/rewards" 
             className="bg-[#141416] p-3 rounded-[20px] border border-white/[0.07] flex items-center gap-2.5 hover:bg-white/[0.04] active:scale-[0.98] transition-all group shadow-sm"
           >
-            <div className="w-8 h-8 rounded-full bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
-              <Coins className="w-4 h-4 text-amber-400" />
+            <div className="w-8 h-8 rounded-full bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0">
+              <Coins className="w-4 h-4 text-white" />
             </div>
             <div className="flex flex-col text-left min-w-0">
               <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-1">XP Balance</span>
@@ -131,8 +131,8 @@ export default async function ProfilePage() {
             href="/rewards" 
             className="bg-[#141416] p-3 rounded-[20px] border border-white/[0.07] flex items-center gap-2.5 hover:bg-white/[0.04] active:scale-[0.98] transition-all group shadow-sm"
           >
-            <div className="w-8 h-8 rounded-full bg-orange-500/15 border border-orange-500/25 flex items-center justify-center shrink-0">
-              <Flame className="w-4 h-4 text-orange-400" />
+            <div className="w-8 h-8 rounded-full bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0">
+              <Flame className="w-4 h-4 text-white" />
             </div>
             <div className="flex flex-col text-left min-w-0">
               <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-1">Streak</span>

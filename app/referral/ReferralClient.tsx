@@ -47,12 +47,12 @@ export default function ReferralClient({ referralCode }: ReferralClientProps) {
   return (
     <div className="relative overflow-hidden rounded-[20px] bg-[#141416] border border-white/[0.08] p-4 sm:p-5 shadow-xs space-y-4">
       {/* Ambient background glow */}
-      <div className="absolute -top-16 -right-16 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/[0.03] rounded-full blur-3xl pointer-events-none" />
 
       {/* Code Display Hero */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-[9px] bg-gradient-to-tr from-orange-500 to-amber-500 flex items-center justify-center text-white shrink-0 shadow-xs">
+          <div className="w-8 h-8 rounded-[9px] bg-white/[0.1] border border-white/10 flex items-center justify-center text-white shrink-0 shadow-xs">
             <Gift className="w-4 h-4" />
           </div>
           <div>
@@ -139,7 +139,7 @@ export default function ReferralClient({ referralCode }: ReferralClientProps) {
           onClick={handleNativeShare}
           className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-300 hover:text-white text-[11px] font-semibold transition-all cursor-pointer ml-auto"
         >
-          <Sparkles className="w-3 h-3 text-orange-400" />
+          <Sparkles className="w-3 h-3 text-white" />
           <span>More Apps</span>
         </button>
       </div>

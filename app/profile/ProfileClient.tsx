@@ -69,7 +69,7 @@ function FieldRow({
             <button
               onClick={onSave}
               disabled={isLoading}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-full transition-colors disabled:opacity-60 shadow-sm"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-black bg-white hover:bg-zinc-200 rounded-full transition-colors disabled:opacity-60 shadow-sm"
             >
               {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
               Save
@@ -173,7 +173,7 @@ export default function ProfileClient({ initialBio, initialPhone }: ProfileClien
               type="tel"
               value={tempPhone}
               onChange={(e) => setTempPhone(e.target.value)}
-              className="w-full bg-[#121214] border border-white/[0.12] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-orange-500/80 transition-colors"
+              className="w-full bg-[#121214] border border-white/[0.12] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/50 transition-colors"
               placeholder="+1 (555) 000-0000"
               autoFocus
             />
@@ -195,7 +195,7 @@ export default function ProfileClient({ initialBio, initialPhone }: ProfileClien
             <textarea
               value={tempBio}
               onChange={(e) => setTempBio(e.target.value)}
-              className="w-full bg-[#121214] border border-white/[0.12] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-orange-500/80 transition-colors min-h-[85px] resize-none"
+              className="w-full bg-[#121214] border border-white/[0.12] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-white/50 transition-colors min-h-[85px] resize-none"
               placeholder="Tell others what you like to play…"
               autoFocus
             />

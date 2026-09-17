@@ -169,7 +169,7 @@ export default async function ReferralPage() {
                       <div className="mt-1 bg-[#1f1f23] h-1.5 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-500 ${
-                            isCompleted ? "bg-[#34C759]" : "bg-gradient-to-r from-amber-500 to-orange-500"
+                            isCompleted ? "bg-[#34C759]" : "bg-white"
                           }`}
                           style={{ width: `${progress}%` }}
                         />

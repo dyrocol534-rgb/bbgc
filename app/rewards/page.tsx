@@ -98,8 +98,8 @@ export default async function RewardsPage() {
             <div className="bg-[#141416] p-3.5 rounded-[18px] border border-white/[0.07] flex flex-col justify-between shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[9.5px] font-semibold text-zinc-400 uppercase tracking-wider">Daily Streak</span>
-                <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/25 flex items-center justify-center shrink-0 shadow-xs">
-                  <Flame className="w-3 h-3 text-orange-400" />
+                <div className="w-6 h-6 rounded-[7px] bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0 shadow-xs">
+                  <Flame className="w-3 h-3 text-white" />
                 </div>
               </div>
               <div>
@@ -108,7 +108,7 @@ export default async function RewardsPage() {
                   <span className="text-xs font-normal text-zinc-400 ml-1">Days</span>
                 </p>
                 <p className="text-[10.5px] text-zinc-500 mt-0.5">
-                  Next: <span className="text-orange-400 font-semibold">+{XP_CONFIG.DAILY_LOGIN + nextStreakBonus} XP</span>
+                  Next: <span className="text-white font-semibold">+{XP_CONFIG.DAILY_LOGIN + nextStreakBonus} XP</span>
                 </p>
               </div>
             </div>
@@ -161,8 +161,8 @@ export default async function RewardsPage() {
             {/* Daily Streak */}
             <div className="bg-[#141416] p-3.5 rounded-[18px] border border-white/[0.07] flex flex-col justify-between space-y-2.5 shadow-xs hover:border-white/[0.12] transition-colors">
               <div className="flex items-start gap-2.5">
-                <div className="w-7 h-7 rounded-[8px] bg-[#FF9500] text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Flame className="w-3.5 h-3.5" />
+                <div className="w-7 h-7 rounded-[8px] bg-white/10 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Flame className="w-3.5 h-3.5 text-white" />
                 </div>
                 <div>
                   <p className="text-xs sm:text-sm font-semibold text-white">Daily Streak Check-in</p>
@@ -172,7 +172,7 @@ export default async function RewardsPage() {
                 </div>
               </div>
               <div>
-                <span className="inline-flex text-[10.5px] font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2.5 py-0.5 rounded-full">
+                <span className="inline-flex text-[10.5px] font-bold text-white bg-white/10 border border-white/20 px-2.5 py-0.5 rounded-full">
                   Up to +{XP_CONFIG.DAILY_LOGIN + XP_CONFIG.MAX_STREAK_BONUS} XP / Day
                 </span>
               </div>
