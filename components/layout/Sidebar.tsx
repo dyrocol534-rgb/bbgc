@@ -69,17 +69,16 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const isLoginPage = pathname === "/login" || pathname?.startsWith("/login");
-  const isAdminPage = pathname === "/admin" || pathname?.startsWith("/admin");
-
-  if (isAdminPage) return null;
   const [isRolling, setIsRolling] = useState(false);
   const [categories, setCategories] = useState<{name: string, href: string, icon: React.ElementType}[]>(() =>
     initialCategories.length > 0 ? formatCategoryLinks(initialCategories) : []
   );
 
+  const isLoginPage = pathname === "/login" || pathname?.startsWith("/login");
+  const isAdminPage = pathname === "/admin" || pathname?.startsWith("/admin");
+
   useEffect(() => {
-    if (initialCategories.length > 0) return;
+    if (initialCategories.length > 0 || isAdminPage) return;
     async function fetchCategories() {
       try {
         const res = await fetch("/api/categories");
@@ -92,7 +91,9 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
       }
     }
     fetchCategories();
-  }, [initialCategories]);
+  }, [initialCategories, isAdminPage]);
+
+  if (isAdminPage) return null;
 
   const handleSurpriseMe = async () => {
     if (isRolling) return;
