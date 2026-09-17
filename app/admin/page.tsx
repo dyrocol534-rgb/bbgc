@@ -60,34 +60,53 @@ interface Stats {
   signupsTrend: { date: string; users: number; guests: number }[];
 }
 
-function CompactStatCard({ 
+function StatCard({ 
   icon: Icon, 
   label, 
   value, 
-  color, 
-  sub 
+  iconColor, 
+  sub,
+  highlight,
+  badge
 }: { 
   icon: React.ElementType; 
   label: string; 
   value: string | number; 
-  color: string; 
-  sub?: string 
+  iconColor: string; 
+  sub?: string;
+  highlight?: boolean;
+  badge?: string;
 }) {
   return (
-    <div className="border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.05] p-3 rounded-[16px] flex items-center gap-2.5 transition-all shadow-xs group">
-      <div className={`w-8 h-8 rounded-[10px] ${color} flex items-center justify-center shrink-0 border border-white/5 group-hover:scale-105 transition-transform`}>
-        <Icon className="w-4 h-4" />
+    <div className={clsx(
+      "relative p-3 rounded-[16px] border transition-all duration-150 flex flex-col justify-between group overflow-hidden",
+      highlight
+        ? "bg-gradient-to-b from-orange-500/[0.08] to-white/[0.01] border-orange-500/25 shadow-xs"
+        : "bg-white/[0.02] hover:bg-white/[0.04] border-white/[0.06]"
+    )}>
+      <div className="flex items-center justify-between mb-1.5">
+        <div className={clsx(
+          "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 border transition-transform duration-200 group-hover:scale-105",
+          iconColor
+        )}>
+          <Icon className="w-3.5 h-3.5" />
+        </div>
+        {badge && (
+          <span className="text-[8.5px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded-full bg-white/[0.05] text-zinc-400 border border-white/[0.06] font-mono">
+            {badge}
+          </span>
+        )}
       </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider truncate">{label}</p>
-        <p className="text-base sm:text-lg font-bold text-white leading-tight font-mono truncate mt-0.5">{value}</p>
-        {sub && <p className="text-[9.5px] text-zinc-500 truncate mt-0.5">{sub}</p>}
+      <div>
+        <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">{label}</p>
+        <p className="text-lg sm:text-xl font-bold text-white tracking-tight font-mono leading-tight mt-0.5">{value}</p>
+        {sub && <p className="text-[9.5px] text-zinc-500 font-medium truncate mt-0.5">{sub}</p>}
       </div>
     </div>
   );
 }
 
-const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#71717a'];
+const PIE_COLORS = ['#38bdf8', '#818cf8', '#34d399', '#71717a'];
 
 export default function AdminAnalytics() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -114,9 +133,9 @@ export default function AdminAnalytics() {
 
   if (isLoading && !stats) {
     return (
-      <div className="flex flex-col justify-center items-center py-20">
-        <Loader2 className="w-6 h-6 text-orange-500 animate-spin mb-2" />
-        <p className="text-xs text-zinc-400 font-medium">Loading Analytics...</p>
+      <div className="flex flex-col justify-center items-center py-24">
+        <Loader2 className="w-5 h-5 text-orange-500 animate-spin mb-2" />
+        <p className="text-xs text-zinc-400 font-medium tracking-wide">Loading metrics...</p>
       </div>
     );
   }
@@ -142,28 +161,29 @@ export default function AdminAnalytics() {
 
   const timeframes: { id: "24h" | "7d" | "30d" | "lifetime", label: string }[] = [
     { id: "24h", label: "24h" },
-    { id: "7d", label: "7d" },
-    { id: "30d", label: "30d" },
+    { id: "7d", label: "7D" },
+    { id: "30d", label: "30D" },
     { id: "lifetime", label: "All Time" },
   ];
 
   const pwaDevices = stats.lifetime.pwaDevices || { Mobile: 0, Desktop: 0, Tablet: 0 };
   const totalPwaAll = (pwaDevices.Mobile + pwaDevices.Desktop + pwaDevices.Tablet) || 1;
 
+  const pwaConversionRate = totalActive > 0 && currentStats.pwaInstalls
+    ? ((currentStats.pwaInstalls / totalActive) * 100).toFixed(1)
+    : "0.0";
+
   return (
-    <div className="space-y-4 pb-6 max-w-[1400px] mx-auto">
+    <div className="space-y-3.5 pb-6 max-w-[1400px] mx-auto">
       
-      {/* Compact Frameless Header & Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+      {/* Frameless Compact Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 tracking-tight">
-            <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center shrink-0 text-orange-400">
-              <Activity className="w-3.5 h-3.5" />
-            </div>
-            Analytics Overview
+          <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+            Platform Analytics
           </h1>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            Real-time player engagement, retention, and platform performance.
+          <p className="text-[11px] text-zinc-400">
+            Real-time player engagement, retention, and catalog performance.
           </p>
         </div>
 
@@ -175,7 +195,7 @@ export default function AdminAnalytics() {
                 key={tf.id}
                 onClick={() => setTimeframe(tf.id)}
                 className={clsx(
-                  "px-3 py-1 text-xs font-medium rounded-full transition-all whitespace-nowrap cursor-pointer",
+                  "px-2.5 py-0.8 text-[11px] font-medium rounded-full transition-all whitespace-nowrap cursor-pointer",
                   timeframe === tf.id
                     ? "bg-white/[0.12] text-white font-semibold shadow-xs"
                     : "text-zinc-400 hover:text-zinc-200"
@@ -189,207 +209,137 @@ export default function AdminAnalytics() {
           <button
             onClick={() => fetchStats(true)}
             disabled={isRefreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-white/[0.04] hover:bg-white/[0.08] rounded-full transition-all border border-white/[0.08] disabled:opacity-50 shrink-0 cursor-pointer active:scale-95"
+            className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-zinc-300 bg-white/[0.04] hover:bg-white/[0.08] rounded-full transition-all border border-white/[0.08] disabled:opacity-50 shrink-0 cursor-pointer active:scale-95"
             title="Refresh Data"
           >
-            <RefreshCw className={clsx("w-3.5 h-3.5 text-zinc-400", isRefreshing && "animate-spin")} />
+            <RefreshCw className={clsx("w-3 h-3 text-zinc-400", isRefreshing && "animate-spin")} />
             <span className="hidden sm:inline">Refresh</span>
           </button>
         </div>
       </div>
 
-      {/* Primary KPI Grid (Includes Total Playtime) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-2.5">
-        <CompactStatCard
+      {/* Primary KPI Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <StatCard
           icon={Users}
           label="Active Players"
           value={totalActive.toLocaleString()}
-          sub={`${memberPct}% Mem / ${guestPct}% Guest`}
-          color="bg-indigo-500/15 text-indigo-400"
+          sub={`${memberPct}% Mem • ${guestPct}% Guest`}
+          iconColor="bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
+          highlight={true}
+          badge="Traffic"
         />
-        <CompactStatCard
+        <StatCard
           icon={PlayCircle}
           label="Game Plays"
           value={currentStats.totalPlays.toLocaleString()}
-          sub="Game clicks"
-          color="bg-blue-500/15 text-blue-400"
+          sub={`${currentStats.avgPlaysPerActive} plays/visitor`}
+          iconColor="bg-orange-500/10 text-orange-400 border-orange-500/20"
+          badge="Plays"
         />
-        <CompactStatCard
+        <StatCard
           icon={Clock}
-          label={isLifetime ? "Total Playtime" : "Playtime"}
+          label={isLifetime ? "Total Playtime" : "Time Spent"}
           value={currentStats.playtime || stats.lifetime.totalPlaytimeFormatted || "0m"}
-          sub={`${currentStats.memberPlaytime || '0m'} Mem / ${currentStats.guestPlaytime || '0m'} Guest`}
-          color="bg-violet-500/15 text-violet-400"
+          sub={`${currentStats.memberPlaytime || '0m'} mem / ${currentStats.guestPlaytime || '0m'} guest`}
+          iconColor="bg-violet-500/10 text-violet-400 border-violet-500/20"
+          badge="Time"
         />
-        <CompactStatCard
-          icon={Smartphone}
-          label="PWA Installs"
-          value={currentStats.pwaInstalls?.toLocaleString() || "0"}
-          sub="Homescreen adds"
-          color="bg-sky-500/15 text-sky-400"
-        />
-        <CompactStatCard
-          icon={BellRing}
-          label="Push Subscribers"
-          value={currentStats.pushSubscribers?.toLocaleString() || stats.lifetime.pushSubscribers?.toLocaleString() || "0"}
-          sub="Web Push"
-          color="bg-emerald-500/15 text-emerald-400"
-        />
-        <CompactStatCard
-          icon={MousePointerClick}
-          label="Plays / Visitor"
-          value={currentStats.avgPlaysPerActive}
-          sub="Per visitor"
-          color="bg-teal-500/15 text-teal-400"
-        />
-        <CompactStatCard
+        <StatCard
           icon={Heart}
           label="Retention Rate"
           value={`${currentStats.retentionRate ?? stats.lifetime.retentionRate ?? 0}%`}
           sub="Returning players"
-          color="bg-amber-500/15 text-amber-400"
-        />
-        <CompactStatCard
-          icon={UserPlus}
-          label="Registered Users"
-          value={currentStats.newUsers.toLocaleString()}
-          sub="Registered accounts"
-          color="bg-pink-500/15 text-pink-400"
+          iconColor="bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+          badge="Cohort"
         />
       </div>
 
-      {/* PWA & Notification Ecosystem Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        {/* PWA Device Breakdown */}
-        <div className="border border-white/[0.08] bg-white/[0.01] rounded-[18px] p-3.5 sm:p-4 flex flex-col justify-between shadow-xs">
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Smartphone className="w-3.5 h-3.5 text-sky-400" />
-                PWA by Device
-              </h2>
-              <span className="text-[10px] text-sky-400 font-bold bg-sky-500/10 px-2.5 py-0.5 rounded-full border border-sky-500/20">
-                {stats.lifetime.pwaInstalls} Installs
-              </span>
-            </div>
-
-            <div className="space-y-2.5 mt-1">
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-zinc-300 font-medium flex items-center gap-1.5">
-                    <Smartphone className="w-3.5 h-3.5 text-blue-400" /> Mobile
-                  </span>
-                  <span className="text-zinc-400 font-mono text-[11px]">{pwaDevices.Mobile} ({Math.round((pwaDevices.Mobile / totalPwaAll) * 100)}%)</span>
-                </div>
-                <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full transition-all duration-300" style={{ width: `${(pwaDevices.Mobile / totalPwaAll) * 100}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-zinc-300 font-medium flex items-center gap-1.5">
-                    <Laptop className="w-3.5 h-3.5 text-purple-400" /> Desktop
-                  </span>
-                  <span className="text-zinc-400 font-mono text-[11px]">{pwaDevices.Desktop} ({Math.round((pwaDevices.Desktop / totalPwaAll) * 100)}%)</span>
-                </div>
-                <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-500 rounded-full transition-all duration-300" style={{ width: `${(pwaDevices.Desktop / totalPwaAll) * 100}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-zinc-300 font-medium flex items-center gap-1.5">
-                    <Tablet className="w-3.5 h-3.5 text-emerald-400" /> Tablet
-                  </span>
-                  <span className="text-zinc-400 font-mono text-[11px]">{pwaDevices.Tablet} ({Math.round((pwaDevices.Tablet / totalPwaAll) * 100)}%)</span>
-                </div>
-                <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-500 rounded-full transition-all duration-300" style={{ width: `${(pwaDevices.Tablet / totalPwaAll) * 100}%` }} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-            <span className="text-zinc-400">Push Notifications</span>
-            <Link href="/admin/notifications" className="text-orange-400 hover:text-orange-300 font-semibold flex items-center gap-1 transition-colors">
-              Broadcast <ArrowRight className="w-3 h-3" />
-            </Link>
-          </div>
-        </div>
-
-        {/* Recent PWA Install Activity */}
-        <div className="md:col-span-2 border border-white/[0.08] bg-white/[0.01] rounded-[18px] p-3.5 sm:p-4 flex flex-col justify-between shadow-xs">
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Smartphone className="w-3.5 h-3.5 text-orange-400" />
-                Recent PWA Installations
-              </h2>
-              <span className="text-[10px] text-zinc-500 font-mono">Live Logs</span>
-            </div>
-
-            {(!stats.lifetime.recentPwaInstalls || stats.lifetime.recentPwaInstalls.length === 0) ? (
-              <div className="p-4 bg-white/[0.02] rounded-[14px] border border-white/[0.06] border-dashed text-center">
-                <p className="text-xs text-zinc-500">No install logs yet. Logs appear as players add the PWA.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {stats.lifetime.recentPwaInstalls.slice(0, 4).map((inst, i) => (
-                  <div key={i} className="flex items-center justify-between p-2.5 bg-white/[0.02] border border-white/[0.06] rounded-[12px]">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 bg-sky-500/10 text-sky-400 rounded-lg">
-                        {inst.deviceType === 'Mobile' ? <Smartphone className="w-3.5 h-3.5" /> : inst.deviceType === 'Tablet' ? <Tablet className="w-3.5 h-3.5" /> : <Laptop className="w-3.5 h-3.5" />}
-                      </div>
-                      <span className="text-xs font-semibold text-zinc-200">{inst.deviceType}</span>
-                    </div>
-                    <span className="text-[10px] text-zinc-400 font-mono">{inst.installedAt}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+      {/* Secondary KPIs */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <StatCard
+          icon={Smartphone}
+          label="PWA Installs"
+          value={currentStats.pwaInstalls?.toLocaleString() || "0"}
+          sub={`${pwaConversionRate}% conversion`}
+          iconColor="bg-sky-500/10 text-sky-400 border-sky-500/20"
+        />
+        <StatCard
+          icon={BellRing}
+          label="Push Audience"
+          value={currentStats.pushSubscribers?.toLocaleString() || stats.lifetime.pushSubscribers?.toLocaleString() || "0"}
+          sub="Web push subscribers"
+          iconColor="bg-teal-500/10 text-teal-400 border-teal-500/20"
+        />
+        <StatCard
+          icon={UserPlus}
+          label="New Accounts"
+          value={currentStats.newUsers.toLocaleString()}
+          sub={isLifetime ? "Lifetime signups" : "New accounts"}
+          iconColor="bg-pink-500/10 text-pink-400 border-pink-500/20"
+        />
+        <StatCard
+          icon={Gamepad2}
+          label="Live Games"
+          value={stats.lifetime.totalGames.toLocaleString()}
+          sub="Published titles"
+          iconColor="bg-amber-500/10 text-amber-400 border-amber-500/20"
+        />
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2.5">
         {/* Trend Chart */}
-        <div className="md:col-span-2 border border-white/[0.08] bg-white/[0.01] rounded-[18px] p-3.5 sm:p-4 shadow-xs">
-          <div className="flex justify-between items-center mb-2.5">
-            <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5 text-orange-400" />
-              Acquisition Trend
-            </h2>
+        <div className="lg:col-span-2 p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06] flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2.5">
+            <div>
+              <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+                <TrendingUp className="w-3.5 h-3.5 text-orange-400" />
+                Player Acquisition Trend
+              </h2>
+              <p className="text-[10px] text-zinc-500">Daily registered vs guest player signups</p>
+            </div>
+            <div className="flex items-center gap-3 text-[10.5px] font-medium">
+              <span className="flex items-center gap-1 text-emerald-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Users
+              </span>
+              <span className="flex items-center gap-1 text-amber-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Guests
+              </span>
+            </div>
           </div>
-          <div className="h-[160px] sm:h-[180px] w-full">
+          <div className="h-[150px] sm:h-[165px] w-full">
             <AcquisitionChart data={chartData} />
           </div>
         </div>
 
         {/* Device Split Chart */}
-        <div className="border border-white/[0.08] bg-white/[0.01] rounded-[18px] p-3.5 sm:p-4 flex flex-col justify-between shadow-xs">
+        <div className="p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06] flex flex-col justify-between">
           <div>
-            <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5 mb-2.5">
-              <Smartphone className="w-3.5 h-3.5 text-orange-400" />
-              Players by Platform
-            </h2>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Smartphone className="w-3.5 h-3.5 text-orange-400" />
+                Device Mix
+              </h2>
+              <span className="text-[9.5px] text-zinc-500 font-mono">Platform Split</span>
+            </div>
             {deviceData.length === 0 ? (
-              <div className="h-[140px] flex items-center justify-center text-xs text-zinc-500">
+              <div className="h-[130px] flex items-center justify-center text-xs text-zinc-500">
                 No device data
               </div>
             ) : (
-              <div className="h-[140px] sm:h-[160px] w-full">
+              <div className="h-[130px] w-full">
                 <DeviceChart data={deviceData} />
               </div>
             )}
-            <div className="flex flex-wrap justify-center gap-2.5 mt-2">
+            <div className="flex flex-wrap justify-center gap-2.5 mt-2 pt-2 border-t border-white/[0.04]">
               {deviceData.map((d, i) => (
                 <div key={d.name} className="flex items-center gap-1 text-[10px] text-zinc-400">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                  {d.name} ({Math.round((d.value / (currentStats.totalPlays || 1)) * 100) || 0}%)
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                  <span className="text-zinc-300 font-medium">{d.name}</span>
+                  <span className="font-mono text-zinc-500">
+                    {Math.round((d.value / (currentStats.totalPlays || 1)) * 100) || 0}%
+                  </span>
                 </div>
               ))}
             </div>
@@ -397,59 +347,128 @@ export default function AdminAnalytics() {
         </div>
       </div>
 
-      {/* Top Games Section */}
-      <div className="border border-white/[0.08] bg-white/[0.01] rounded-[18px] p-3.5 sm:p-4 shadow-xs">
-        <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5 mb-3">
-          <PlayCircle className="w-3.5 h-3.5 text-orange-400" />
-          Top Games ({timeframes.find(t => t.id === timeframe)?.label})
-        </h2>
-        {currentStats.topGames.length === 0 ? (
-          <div className="p-4 bg-white/[0.02] rounded-[12px] border border-white/[0.06] border-dashed text-center">
-            <p className="text-xs text-zinc-500">No play events recorded.</p>
+      {/* Top Games & PWA Ecosystem */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2.5">
+        {/* Top Played Games */}
+        <div className="lg:col-span-2 p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06]">
+          <div className="flex items-center justify-between mb-2.5">
+            <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+              <PlayCircle className="w-3.5 h-3.5 text-orange-400" />
+              Most Played Titles ({timeframes.find(t => t.id === timeframe)?.label})
+            </h2>
+            <Link href="/admin/games" className="text-[10.5px] font-medium text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-1">
+              Catalog <ArrowRight className="w-2.5 h-2.5" />
+            </Link>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {currentStats.topGames.slice(0, 6).map((game, i) => (
-              <div key={game.slug} className="flex items-center justify-between p-2.5 bg-white/[0.02] hover:bg-white/[0.05] rounded-[12px] transition-colors border border-white/[0.05]">
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-zinc-500 text-xs font-bold w-4">{i + 1}.</span>
-                  <p className="text-zinc-200 text-xs font-medium truncate">{game.title}</p>
+
+          {currentStats.topGames.length === 0 ? (
+            <div className="p-6 bg-white/[0.01] rounded-[12px] border border-white/[0.04] border-dashed text-center">
+              <p className="text-xs text-zinc-500">No play events recorded for this timeframe.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              {currentStats.topGames.slice(0, 6).map((game, i) => (
+                <div key={game.slug} className="flex items-center justify-between p-2 bg-white/[0.02] hover:bg-white/[0.04] rounded-[12px] transition-colors border border-white/[0.03]">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-zinc-500 text-[11px] font-mono font-bold w-3.5">{i + 1}.</span>
+                    <p className="text-zinc-200 text-xs font-semibold truncate">{game.title}</p>
+                  </div>
+                  <div className="text-orange-400 font-semibold bg-orange-500/10 px-2 py-0.2 rounded-full text-[10px] shrink-0 font-mono border border-orange-500/20">
+                    {game.playCount.toLocaleString()}
+                  </div>
                 </div>
-                <div className="text-orange-400 font-bold bg-orange-500/10 px-2.5 py-0.5 rounded-full text-[10px] shrink-0 font-mono border border-orange-500/20">
-                  {game.playCount.toLocaleString()} plays
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* PWA Device Installation Split */}
+        <div className="p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Smartphone className="w-3.5 h-3.5 text-sky-400" />
+                PWA Device Mix
+              </h2>
+              <span className="text-[9.5px] text-sky-400 font-bold bg-sky-500/10 px-2 py-0.2 rounded-full border border-sky-500/20 font-mono">
+                {stats.lifetime.pwaInstalls} Installs
+              </span>
+            </div>
+
+            <div className="space-y-2 mt-2">
+              <div>
+                <div className="flex justify-between text-[11px] mb-0.5">
+                  <span className="text-zinc-300 font-medium flex items-center gap-1 text-[11px]">
+                    <Smartphone className="w-3 h-3 text-sky-400" /> Mobile
+                  </span>
+                  <span className="text-zinc-400 font-mono text-[10.5px]">{pwaDevices.Mobile} ({Math.round((pwaDevices.Mobile / totalPwaAll) * 100)}%)</span>
+                </div>
+                <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className="h-full bg-sky-400 rounded-full transition-all duration-300" style={{ width: `${(pwaDevices.Mobile / totalPwaAll) * 100}%` }} />
                 </div>
               </div>
-            ))}
+
+              <div>
+                <div className="flex justify-between text-[11px] mb-0.5">
+                  <span className="text-zinc-300 font-medium flex items-center gap-1 text-[11px]">
+                    <Laptop className="w-3 h-3 text-purple-400" /> Desktop
+                  </span>
+                  <span className="text-zinc-400 font-mono text-[10.5px]">{pwaDevices.Desktop} ({Math.round((pwaDevices.Desktop / totalPwaAll) * 100)}%)</span>
+                </div>
+                <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className="h-full bg-purple-400 rounded-full transition-all duration-300" style={{ width: `${(pwaDevices.Desktop / totalPwaAll) * 100}%` }} />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-[11px] mb-0.5">
+                  <span className="text-zinc-300 font-medium flex items-center gap-1 text-[11px]">
+                    <Tablet className="w-3 h-3 text-emerald-400" /> Tablet
+                  </span>
+                  <span className="text-zinc-400 font-mono text-[10.5px]">{pwaDevices.Tablet} ({Math.round((pwaDevices.Tablet / totalPwaAll) * 100)}%)</span>
+                </div>
+                <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-400 rounded-full transition-all duration-300" style={{ width: `${(pwaDevices.Tablet / totalPwaAll) * 100}%` }} />
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+
+          <div className="mt-3 pt-2.5 border-t border-white/[0.04] flex items-center justify-between text-[11px]">
+            <span className="text-zinc-400">Push Notifications</span>
+            <Link href="/admin/notifications" className="text-orange-400 hover:text-orange-300 font-semibold flex items-center gap-1 transition-colors">
+              Broadcast <ArrowRight className="w-2.5 h-2.5" />
+            </Link>
+          </div>
+        </div>
       </div>
 
-      {/* Community Pulse */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      {/* Community Pulse: Highest Rated & Feedback */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
         {/* Top Rated Games (Lifetime) */}
-        <div className="border border-white/[0.08] bg-white/[0.01] rounded-[18px] p-3.5 sm:p-4 shadow-xs">
-          <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5 mb-3">
-            <Star className="w-3.5 h-3.5 text-yellow-500" />
+        <div className="p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06]">
+          <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5 mb-2.5">
+            <Star className="w-3.5 h-3.5 text-amber-400" />
             Highest Rated Games
           </h2>
           {stats.lifetime.topRatedGames.length === 0 ? (
-            <div className="p-4 bg-white/[0.02] rounded-[12px] border border-white/[0.06] border-dashed text-center">
-              <p className="text-xs text-zinc-500">No rated games yet.</p>
+            <div className="p-6 bg-white/[0.01] rounded-[12px] border border-white/[0.04] border-dashed text-center">
+              <p className="text-xs text-zinc-500">No game reviews yet.</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {stats.lifetime.topRatedGames.slice(0, 4).map((game, i) => (
-                <div key={game.slug} className="flex items-center justify-between p-2.5 bg-white/[0.02] rounded-[12px] border border-white/[0.05]">
+                <div key={game.slug} className="flex items-center justify-between p-2 bg-white/[0.02] rounded-[12px] border border-white/[0.03]">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-zinc-500 text-xs font-bold w-4">{i + 1}.</span>
-                    <p className="text-zinc-200 text-xs font-medium truncate">{game.title}</p>
+                    <span className="text-zinc-500 text-[11px] font-mono font-bold w-3.5">{i + 1}.</span>
+                    <p className="text-zinc-200 text-xs font-semibold truncate">{game.title}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="text-yellow-400 font-bold bg-yellow-500/10 px-2.5 py-0.5 rounded-full text-[10px] shrink-0 flex items-center gap-1 border border-yellow-500/20">
-                      <Star className="w-3 h-3 fill-yellow-400" />
+                    <div className="text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.2 rounded-full text-[10px] shrink-0 flex items-center gap-1 border border-amber-500/20 font-mono">
+                      <Star className="w-3 h-3 fill-amber-400" />
                       {game.ratio}%
                     </div>
-                    <span className="text-zinc-500 text-[10px]">{game.totalVotes} votes</span>
+                    <span className="text-zinc-500 text-[10px] font-mono">{game.totalVotes} votes</span>
                   </div>
                 </div>
               ))}
@@ -458,33 +477,33 @@ export default function AdminAnalytics() {
         </div>
 
         {/* Live Feedback Feed */}
-        <div className="border border-white/[0.08] bg-white/[0.01] rounded-[18px] p-3.5 sm:p-4 flex flex-col shadow-xs">
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+        <div className="p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06] flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-2.5">
+            <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
               <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
-              Live Feedback Feed
+              Recent Player Feedback
             </h2>
-            <Link href="/admin/feedback" className="text-xs font-semibold text-orange-400 hover:text-orange-300 transition-colors">
-              View All
+            <Link href="/admin/feedback" className="text-[10.5px] font-medium text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-1">
+              View All <ArrowRight className="w-2.5 h-2.5" />
             </Link>
           </div>
           
-          <div className="flex-1 overflow-y-auto max-h-[220px] space-y-2 pr-1 custom-scrollbar">
+          <div className="space-y-1.5">
             {stats.lifetime.recentFeedback.length === 0 ? (
-              <div className="p-4 bg-white/[0.02] rounded-[12px] border border-white/[0.06] border-dashed text-center">
+              <div className="p-6 bg-white/[0.01] rounded-[12px] border border-white/[0.04] border-dashed text-center">
                 <p className="text-xs text-zinc-500">No feedback submitted yet.</p>
               </div>
             ) : (
               stats.lifetime.recentFeedback.slice(0, 3).map((fb, i) => (
-                <div key={i} className="bg-white/[0.02] border border-white/[0.06] rounded-[12px] p-2.5">
-                  <div className="flex justify-between items-start mb-1">
-                    <p className="text-xs font-semibold text-zinc-200 truncate max-w-[150px]">{fb.userEmail}</p>
-                    <span className="text-[10px] text-zinc-500">{fb.date}</span>
+                <div key={i} className="bg-white/[0.02] border border-white/[0.04] rounded-[12px] p-2">
+                  <div className="flex justify-between items-start mb-0.5">
+                    <p className="text-xs font-semibold text-zinc-200 truncate max-w-[170px]">{fb.userEmail}</p>
+                    <span className="text-[9.5px] text-zinc-500 font-mono">{fb.date}</span>
                   </div>
-                  <p className="text-xs text-zinc-400 line-clamp-1 mb-2">{fb.message}</p>
-                  <div className="flex justify-between items-center text-[10px]">
-                    <span className="text-orange-400 font-medium bg-orange-500/10 px-2.5 py-0.5 rounded-full border border-orange-500/20">Game: {fb.gameSlug}</span>
-                    <span className={clsx("font-medium px-2.5 py-0.5 rounded-full border capitalize", fb.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20')}>
+                  <p className="text-[11px] text-zinc-400 line-clamp-1 mb-1.5">{fb.message}</p>
+                  <div className="flex justify-between items-center text-[9.5px]">
+                    <span className="text-orange-400 font-medium bg-orange-500/10 px-1.5 py-0.2 rounded-full border border-orange-500/20">Game: {fb.gameSlug}</span>
+                    <span className={clsx("font-medium px-1.5 py-0.2 rounded-full border capitalize", fb.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20')}>
                       {fb.status}
                     </span>
                   </div>

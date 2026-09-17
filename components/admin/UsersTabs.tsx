@@ -2,7 +2,11 @@
 
 import { useState, useMemo } from "react";
 import clsx from "clsx";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { 
+  Search, ChevronLeft, ChevronRight, X, User, Flame, 
+  Coins, Clock, Gamepad2, Calendar, Mail, Phone, 
+  ShieldCheck, Share2, Sparkles, Activity, Globe, Heart
+} from "lucide-react";
 import Image from "next/image";
 
 interface UsersTabsProps {
@@ -14,12 +18,13 @@ interface UsersTabsProps {
 const ITEMS_PER_PAGE = 25;
 
 export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps) {
-  const [activeTab, setActiveTab] = useState<"subscribers" | "users" | "guests">("users");
+  const [activeTab, setActiveTab] = useState<"users" | "guests" | "subscribers">("users");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "guest" | "subscriber"; data: any } | null>(null);
 
   // Reset page when tab or search changes
-  const handleTabChange = (tab: "subscribers" | "users" | "guests") => {
+  const handleTabChange = (tab: "users" | "guests" | "subscribers") => {
     setActiveTab(tab);
     setCurrentPage(1);
     setSearchTerm("");
@@ -42,7 +47,8 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
         return item.guestId?.toLowerCase().includes(lowerSearch);
       } else {
         return item.name?.toLowerCase().includes(lowerSearch) || 
-               item.email?.toLowerCase().includes(lowerSearch);
+               item.email?.toLowerCase().includes(lowerSearch) ||
+               item.phone?.toLowerCase().includes(lowerSearch);
       }
     });
   }, [activeTab, subscribers, users, guests, searchTerm]);
@@ -55,7 +61,7 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
 
   return (
     <div className="space-y-3">
-      {/* Header: Search and Tabs directly on page without extra outer card */}
+      {/* Top Bar: Tabs & Search Input */}
       <div className="flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2.5">
         <div className="flex overflow-x-auto scrollbar-none w-full sm:w-auto bg-[#101012] p-1 rounded-full border border-white/[0.08]">
           <button
@@ -103,200 +109,412 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
             placeholder={`Search ${activeTab}...`}
             value={searchTerm}
             onChange={handleSearch}
-            className="w-full sm:w-64 bg-[#101012] border border-white/[0.08] rounded-full pl-9 pr-3.5 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/[0.2] transition-colors"
+            className="w-full sm:w-64 bg-[#101012] border border-white/[0.08] rounded-full pl-9 pr-8 py-1.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/[0.2] transition-colors"
           />
-        </div>
-      </div>
-
-      <div className="border border-white/[0.08] rounded-[18px] overflow-hidden">
-        
-        {/* Mobile View (Cards) */}
-        <div className="block sm:hidden divide-y divide-white/[0.05]">
-          {paginatedData.length === 0 ? (
-            <div className="p-6 text-center text-zinc-500 text-xs font-medium">
-              {searchTerm ? "No results found." : `No ${activeTab} found.`}
-            </div>
-          ) : (
-            paginatedData.map((item: any) => (
-              <div key={item._id} className="p-3 space-y-1.5 hover:bg-white/[0.02] transition-colors">
-                {activeTab === "users" && (
-                  <div className="flex items-center gap-2.5">
-                    {item.image ? (
-                      <Image src={item.image} alt={item.name} width={30} height={30} className="w-7 h-7 rounded-full object-cover shrink-0 border border-white/[0.1]" />
-                    ) : (
-                      <div className="w-7 h-7 rounded-full bg-orange-500/15 flex items-center justify-center text-orange-400 font-bold shrink-0 text-xs border border-orange-500/30">
-                        {item.name?.charAt(0) || '?'}
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      <div className="text-zinc-200 font-semibold text-xs truncate">{item.name}</div>
-                      <div className="text-[9.5px] text-zinc-500">Joined: {new Date(item.createdAt).toLocaleDateString()}</div>
-                    </div>
-                  </div>
-                )}
-                {activeTab === "guests" && (
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center text-zinc-400 font-bold shrink-0 text-xs">
-                      G
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-zinc-200 font-semibold text-xs truncate">{item.guestId?.slice(0, 12)}...</div>
-                      <div className="text-[9.5px] text-zinc-500">First Visit: {new Date(item.createdAt).toLocaleDateString()}</div>
-                    </div>
-                  </div>
-                )}
-                
-                <div className={clsx("flex flex-col gap-1", (activeTab === "users" || activeTab === "guests") && "pl-9")}>
-                  {activeTab === "users" && <div className="text-[11px] font-medium text-zinc-400 break-all">{item.email}</div>}
-                  {activeTab === "users" && (
-                    <div className="flex flex-wrap gap-1 mt-0.5">
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-amber-500/10 text-amber-400 border-amber-500/20 whitespace-nowrap">🪙 {item.xp || 0} XP</span>
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-orange-500/10 text-orange-400 border-orange-500/20 whitespace-nowrap">🔥 {item.currentStreak || 0}</span>
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-violet-500/10 text-violet-400 border-violet-500/20 whitespace-nowrap">⏱️ {Math.floor((item.playtimeSeconds || 0)/60)}m</span>
-                      {item.phone && <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-emerald-500/10 text-emerald-400 border-emerald-500/20 whitespace-nowrap">📱 {item.phone}</span>}
-                    </div>
-                  )}
-                  {activeTab === "guests" && (
-                    <div className="flex flex-wrap gap-1 mt-0.5">
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-violet-500/10 text-violet-400 border-violet-500/20 whitespace-nowrap">⏱️ {Math.floor((item.playtimeSeconds || 0)/60)}m play</span>
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-sky-500/10 text-sky-400 border-sky-500/20 whitespace-nowrap">🎮 {item.gamesPlayedCount || 0} plays</span>
-                    </div>
-                  )}
-                  {activeTab === "subscribers" && (
-                    <>
-                      <div className="text-xs font-semibold text-zinc-200 break-all">{item.email}</div>
-                      <div className="text-[9.5px] text-zinc-500">
-                        Subscribed: {new Date(item.subscribedAt).toLocaleDateString()}
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            ))
+          {searchTerm && (
+            <button 
+              type="button" 
+              onClick={() => setSearchTerm("")}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-zinc-500 hover:text-white cursor-pointer"
+            >
+              <X className="w-3 h-3" />
+            </button>
           )}
         </div>
+      </div>
 
-        {/* Desktop View (Table) */}
-        <div className="hidden sm:block overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse min-w-[700px]">
-            <thead>
-              <tr className="bg-[#101012] border-b border-white/[0.06] text-zinc-500 text-[9.5px] font-bold uppercase tracking-wider">
-                {activeTab === "users" && <th className="px-3.5 py-2.5 w-4/12">User</th>}
-                {activeTab === "guests" && <th className="px-3.5 py-2.5 w-2/12">Guest ID</th>}
-                {activeTab === "subscribers" && <th className="px-3.5 py-2.5 w-3/12">Email Address</th>}
-                <th className="px-3.5 py-2.5 w-2/12">{activeTab === "subscribers" ? "Subscribed Date" : (activeTab === "guests" ? "First Visit" : "Joined Date")}</th>
-                {(activeTab === "users" || activeTab === "guests") && <th className="px-3.5 py-2.5 w-3/12">Stats</th>}
-                {(activeTab === "users" || activeTab === "guests") && <th className="px-3.5 py-2.5 w-2/12">Last Active</th>}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/[0.05] text-xs">
-              {paginatedData.length === 0 ? (
-                <tr>
-                  <td colSpan={activeTab === "subscribers" ? 2 : 4} className="p-8 text-center text-zinc-500 text-xs">
-                    {searchTerm ? "No results found matching your search." : `No ${activeTab} found.`}
-                  </td>
-                </tr>
-              ) : (
-                paginatedData.map((item: any) => (
-                  <tr key={item._id} className="hover:bg-white/[0.02] transition-colors">
-                    {activeTab === "users" && (
-                      <td className="px-3.5 py-2">
-                        <div className="flex items-center gap-2.5">
-                          {item.image ? (
-                            <Image src={item.image} alt={item.name} width={26} height={26} className="w-6.5 h-6.5 rounded-full object-cover shrink-0 border border-white/[0.1]" />
-                          ) : (
-                            <div className="w-6.5 h-6.5 rounded-full bg-orange-500/15 flex items-center justify-center text-orange-400 font-bold shrink-0 text-[10px] border border-orange-500/30">
-                              {item.name?.charAt(0) || '?'}
-                            </div>
-                          )}
-                          <div className="flex flex-col min-w-0">
-                            <span className="font-semibold text-xs text-zinc-200 truncate max-w-[150px] lg:max-w-[200px]" title={item.name}>{item.name}</span>
-                            <span className="text-[10px] text-zinc-500 truncate max-w-[150px] lg:max-w-[200px]" title={item.email}>{item.email}</span>
-                            {item.phone && <span className="text-[9.5px] font-medium text-emerald-400/80 truncate max-w-[150px] lg:max-w-[200px]" title={item.phone}>📱 {item.phone}</span>}
-                          </div>
-                        </div>
-                      </td>
-                    )}
-                    {activeTab === "guests" && (
-                      <td className="px-3.5 py-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-white/[0.06] flex items-center justify-center text-zinc-400 font-bold shrink-0 text-[10px]">
-                            G
-                          </div>
-                          <span className="font-semibold text-xs text-zinc-200 truncate max-w-[120px]" title={item.guestId}>{item.guestId?.slice(0, 16)}...</span>
-                        </div>
-                      </td>
-                    )}
-                    {activeTab === "subscribers" && (
-                      <td className="px-3.5 py-2 text-zinc-200 font-semibold text-xs truncate max-w-[150px] lg:max-w-[200px]" title={item.email}>
-                        {item.email}
-                      </td>
-                    )}
-                    <td className="px-3.5 py-2 text-zinc-400 text-[10px] font-mono whitespace-nowrap">
-                      {new Date(activeTab === "subscribers" ? item.subscribedAt : item.createdAt).toLocaleDateString() + ' ' + new Date(activeTab === "subscribers" ? item.subscribedAt : item.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                    </td>
-                    {(activeTab === "users" || activeTab === "guests") && (
-                      <td className="px-3.5 py-1.5">
-                        <div className="flex flex-wrap gap-1 max-w-[240px]">
-                          {activeTab === "users" && (
-                            <>
-                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-amber-500/10 text-amber-400 border-amber-500/20 flex-shrink-0">🪙 {item.xp || 0} XP</span>
-                              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-orange-500/10 text-orange-400 border-orange-500/20 flex-shrink-0">🔥 {item.currentStreak || 0}</span>
-                            </>
-                          )}
-                          <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-violet-500/10 text-violet-400 border-violet-500/20 flex-shrink-0">⏱️ {Math.floor((item.playtimeSeconds || 0)/60)}m</span>
-                          {activeTab === "guests" && (
-                            <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-sky-500/10 text-sky-400 border-sky-500/20 flex-shrink-0">🎮 {item.gamesPlayedCount || 0} plays</span>
-                          )}
-                        </div>
-                      </td>
-                    )}
-                    {(activeTab === "users" || activeTab === "guests") && (
-                      <td className="px-3.5 py-2 whitespace-nowrap">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] text-zinc-400 font-mono">{item.lastActiveAt ? new Date(item.lastActiveAt).toLocaleDateString() + ' ' + new Date(item.lastActiveAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Never'}</span>
-                          <span className="text-[9px] text-zinc-600">{item.lastIp ? item.lastIp : '(IP not logged)'}</span>
-                        </div>
-                      </td>
-                    )}
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-        
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-white/[0.06] px-3.5 py-2 bg-[#101012]">
-            <span className="text-[11px] text-zinc-500 hidden sm:inline">
-              Showing <span className="text-zinc-300 font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="text-zinc-300 font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredData.length)}</span> of <span className="text-zinc-300 font-medium">{filteredData.length}</span> results
-            </span>
-            <span className="text-[11px] text-zinc-500 sm:hidden">
-              Page {currentPage} of {totalPages}
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="p-1 rounded-full text-zinc-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <span className="text-xs text-zinc-300 font-medium px-1.5 hidden sm:inline">
-                {currentPage} / {totalPages}
-              </span>
-              <button
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="p-1 rounded-full text-zinc-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+      {/* Clean Interactive List / Rows (Frameless Apple aesthetic) */}
+      <div className="divide-y divide-white/[0.04] pt-1">
+        {paginatedData.length === 0 ? (
+          <div className="py-16 text-center text-zinc-500 text-xs">
+            {searchTerm ? "No results found matching your query." : `No ${activeTab} registered yet.`}
           </div>
+        ) : (
+          paginatedData.map((item: any) => {
+            const isUser = activeTab === "users";
+            const isGuest = activeTab === "guests";
+            const isSub = activeTab === "subscribers";
+
+            return (
+              <div
+                key={item._id}
+                onClick={() => setSelectedEntity({ type: isUser ? "user" : isGuest ? "guest" : "subscriber", data: item })}
+                className="py-2.5 px-2 sm:px-3 flex items-center justify-between gap-3 hover:bg-white/[0.03] rounded-[14px] transition-colors cursor-pointer group"
+              >
+                {/* Left: Avatar & Identity */}
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  {isUser && (
+                    item.image ? (
+                      <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] overflow-hidden bg-zinc-900 border border-white/[0.08] shrink-0">
+                        <Image src={item.image} alt={item.name} width={40} height={40} className="w-full h-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] bg-orange-500/15 border border-orange-500/25 flex items-center justify-center text-orange-400 font-bold shrink-0 text-xs">
+                        {item.name?.charAt(0)?.toUpperCase() || '?'}
+                      </div>
+                    )
+                  )}
+
+                  {isGuest && (
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-zinc-400 font-bold shrink-0 text-xs font-mono">
+                      G
+                    </div>
+                  )}
+
+                  {isSub && (
+                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 shrink-0">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                  )}
+
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-zinc-100 text-xs sm:text-sm truncate group-hover:text-orange-300 transition-colors leading-tight">
+                        {isUser ? item.name : isGuest ? `Guest ${item.guestId?.slice(0, 10)}...` : item.email}
+                      </p>
+                      {isUser && item.profileCompleted && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" title="Profile completed" />
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[10.5px] text-zinc-500 mt-0.5 truncate">
+                      {isUser && <span className="truncate text-zinc-400">{item.email}</span>}
+                      {isGuest && <span className="font-mono text-zinc-400 truncate">ID: {item.guestId}</span>}
+                      {isSub && (
+                        <span className="text-zinc-400">Subscribed {new Date(item.subscribedAt).toLocaleDateString()}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Quick Micro Stats & Chevron */}
+                <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
+                  {isUser && (
+                    <div className="hidden sm:flex items-center gap-1.5">
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-300 border-amber-500/20 font-mono">
+                        🪙 {item.xp || 0}
+                      </span>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-orange-500/10 text-orange-300 border-orange-500/20 font-mono">
+                        🔥 {item.currentStreak || 0}
+                      </span>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-violet-500/10 text-violet-300 border-violet-500/20 font-mono">
+                        ⏱️ {Math.floor((item.playtimeSeconds || 0) / 60)}m
+                      </span>
+                    </div>
+                  )}
+
+                  {isGuest && (
+                    <div className="hidden sm:flex items-center gap-1.5 font-mono text-[10px]">
+                      <span className="px-2 py-0.5 rounded-full border bg-violet-500/10 text-violet-300 border-violet-500/20">
+                        ⏱️ {Math.floor((item.playtimeSeconds || 0) / 60)}m
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full border bg-sky-500/10 text-sky-300 border-sky-500/20">
+                        🎮 {item.gamesPlayedCount || 0} plays
+                      </span>
+                    </div>
+                  )}
+
+                  {isSub && (
+                    <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide border bg-teal-500/10 text-teal-300 border-teal-500/20 uppercase">
+                      Newsletter
+                    </span>
+                  )}
+
+                  <div className="w-4 flex items-center justify-center">
+                    <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+                  </div>
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-3 px-1">
+          <span className="text-[11px] text-zinc-500">
+            Showing <span className="text-zinc-300 font-mono font-medium">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to{" "}
+            <span className="text-zinc-300 font-mono font-medium">{Math.min(currentPage * ITEMS_PER_PAGE, filteredData.length)}</span> of{" "}
+            <span className="text-zinc-300 font-mono font-medium">{filteredData.length}</span> results
+          </span>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-95"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
+            <div className="flex items-center px-3 py-1 bg-black/40 border border-white/[0.08] rounded-full text-[11px] text-zinc-300 font-medium font-mono">
+              {currentPage} / {totalPages}
+            </div>
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-1.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-400 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer active:scale-95"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Sheet Modal */}
+      {selectedEntity && (
+        <div 
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedEntity(null);
+          }}
+        >
+          <div className="bg-[#121214] border-t sm:border border-white/[0.1] rounded-t-[28px] sm:rounded-[24px] max-w-lg w-full max-h-[92vh] flex flex-col shadow-2xl shadow-black/80 overflow-hidden animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200">
+            {/* Sheet Top Bar */}
+            <div className="p-4 sm:p-5 pb-4 border-b border-white/[0.06] flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3.5 min-w-0">
+                {selectedEntity.type === "user" && (
+                  selectedEntity.data.image ? (
+                    <div className="relative w-12 h-12 rounded-[14px] overflow-hidden bg-zinc-900 border border-white/10 shrink-0 shadow-md">
+                      <Image src={selectedEntity.data.image} alt={selectedEntity.data.name} width={48} height={48} className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-[14px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 font-bold shrink-0 text-base shadow-md">
+                      {selectedEntity.data.name?.charAt(0)?.toUpperCase() || '?'}
+                    </div>
+                  )
+                )}
+
+                {selectedEntity.type === "guest" && (
+                  <div className="w-12 h-12 rounded-[14px] bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-zinc-300 font-bold shrink-0 text-lg font-mono shadow-md">
+                    G
+                  </div>
+                )}
+
+                {selectedEntity.type === "subscriber" && (
+                  <div className="w-12 h-12 rounded-[14px] bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-400 font-bold shrink-0 text-lg shadow-md">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                )}
+
+                <div className="min-w-0">
+                  <h2 className="text-sm sm:text-base font-semibold text-white tracking-tight truncate leading-tight">
+                    {selectedEntity.type === "user" 
+                      ? selectedEntity.data.name 
+                      : selectedEntity.type === "guest" 
+                        ? `Guest Session` 
+                        : selectedEntity.data.email}
+                  </h2>
+                  <div className="flex items-center gap-2 mt-1 text-[11px] text-zinc-400 truncate">
+                    <span className="text-orange-400 font-medium capitalize">
+                      {selectedEntity.type === "user" ? "Registered Player" : selectedEntity.type === "guest" ? "Anonymous Guest" : "Email Subscriber"}
+                    </span>
+                    <span className="text-zinc-600">•</span>
+                    <span className="font-mono text-zinc-500 text-[10.5px]">
+                      {selectedEntity.data.createdAt ? new Date(selectedEntity.data.createdAt).toLocaleDateString() : "Active"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedEntity(null)}
+                className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-zinc-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Sheet Body (Scrollable) */}
+            <div className="p-4 sm:p-5 overflow-y-auto space-y-4 custom-scrollbar">
+              {/* User Specific Performance Grid */}
+              {selectedEntity.type === "user" && (
+                <>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border border-amber-500/20 bg-amber-500/[0.06]">
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-amber-300">
+                        <Coins className="w-3.5 h-3.5" />
+                        <span>{selectedEntity.data.xp || 0}</span>
+                      </div>
+                      <span className="text-[10px] text-zinc-500 mt-0.5">Current XP</span>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border border-orange-500/20 bg-orange-500/[0.06]">
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-orange-300">
+                        <Flame className="w-3.5 h-3.5" />
+                        <span>{selectedEntity.data.currentStreak || 0} days</span>
+                      </div>
+                      <span className="text-[10px] text-zinc-500 mt-0.5">Play Streak</span>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border border-violet-500/20 bg-violet-500/[0.06]">
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-violet-300">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>{Math.floor((selectedEntity.data.playtimeSeconds || 0) / 60)}m</span>
+                      </div>
+                      <span className="text-[10px] text-zinc-500 mt-0.5">Total Playtime</span>
+                    </div>
+                  </div>
+
+                  {/* Account & Engagement Details */}
+                  <div className="p-3.5 rounded-[16px] bg-white/[0.02] border border-white/[0.06] space-y-3 text-xs">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Email</span>
+                        <p className="text-zinc-200 font-mono text-[11px] break-all">{selectedEntity.data.email}</p>
+                      </div>
+
+                      <div className="space-y-1">
+                        <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Phone</span>
+                        <p className="text-zinc-200 font-mono text-[11px]">{selectedEntity.data.phone || "Not provided"}</p>
+                      </div>
+
+                      <div className="space-y-1">
+                        <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Lifetime XP</span>
+                        <p className="text-white font-mono font-bold text-sm">{(selectedEntity.data.lifetimeXp || selectedEntity.data.xp || 0).toLocaleString()}</p>
+                      </div>
+
+                      <div className="space-y-1">
+                        <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Games Played</span>
+                        <p className="text-white font-mono font-bold text-sm">{(selectedEntity.data.gamesPlayedCount || 0).toLocaleString()}</p>
+                      </div>
+
+                      <div className="space-y-1">
+                        <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Joined Date</span>
+                        <p className="text-zinc-300 font-medium text-[11px]">
+                          {selectedEntity.data.createdAt ? new Date(selectedEntity.data.createdAt).toLocaleDateString() : "Recently"}
+                        </p>
+                      </div>
+
+                      <div className="space-y-1">
+                        <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Last Active</span>
+                        <p className="text-zinc-300 font-medium text-[11px]">
+                          {selectedEntity.data.lastActiveAt ? new Date(selectedEntity.data.lastActiveAt).toLocaleString() : "Recently"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {selectedEntity.data.bio && (
+                      <div className="pt-2 border-t border-white/[0.04]">
+                        <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold block mb-1">Player Bio</span>
+                        <p className="text-zinc-300 text-[11.5px] italic bg-black/20 p-2 rounded-[10px] border border-white/[0.04]">
+                          &ldquo;{selectedEntity.data.bio}&rdquo;
+                        </p>
+                      </div>
+                    )}
+
+                    {selectedEntity.data.favorites && selectedEntity.data.favorites.length > 0 && (
+                      <div className="pt-2 border-t border-white/[0.04]">
+                        <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold block mb-1.5">Favorite Games</span>
+                        <div className="flex flex-wrap gap-1">
+                          {selectedEntity.data.favorites.map((fav: string) => (
+                            <span key={fav} className="px-2 py-0.5 bg-rose-500/10 text-rose-300 border border-rose-500/20 rounded-full text-[10px] font-mono">
+                              ❤️ {fav}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Guest Session Specific Details */}
+              {selectedEntity.type === "guest" && (
+                <>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex flex-col items-center justify-center py-3 px-2 rounded-[14px] border border-violet-500/20 bg-violet-500/[0.06]">
+                      <div className="flex items-center gap-1.5 text-sm font-bold text-violet-300 font-mono">
+                        <Clock className="w-4 h-4" />
+                        <span>{Math.floor((selectedEntity.data.playtimeSeconds || 0) / 60)} mins</span>
+                      </div>
+                      <span className="text-[10px] text-zinc-500 mt-0.5">Guest Playtime</span>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center py-3 px-2 rounded-[14px] border border-sky-500/20 bg-sky-500/[0.06]">
+                      <div className="flex items-center gap-1.5 text-sm font-bold text-sky-300 font-mono">
+                        <Gamepad2 className="w-4 h-4" />
+                        <span>{selectedEntity.data.gamesPlayedCount || 0} plays</span>
+                      </div>
+                      <span className="text-[10px] text-zinc-500 mt-0.5">Games Played</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-[16px] bg-white/[0.02] border border-white/[0.06] space-y-3 text-xs">
+                    <div className="grid grid-cols-1 gap-2.5">
+                      <div className="space-y-1">
+                        <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Guest Session ID</span>
+                        <p className="text-zinc-200 font-mono text-[11px] break-all bg-black/30 p-2 rounded-[10px] border border-white/[0.04]">
+                          {selectedEntity.data.guestId}
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 pt-1">
+                        <div className="space-y-1">
+                          <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">First Visit</span>
+                          <p className="text-zinc-300 font-medium text-[11px]">
+                            {selectedEntity.data.createdAt ? new Date(selectedEntity.data.createdAt).toLocaleDateString() : "Recently"}
+                          </p>
+                        </div>
+
+                        <div className="space-y-1">
+                          <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Last Active</span>
+                          <p className="text-zinc-300 font-medium text-[11px]">
+                            {selectedEntity.data.lastActiveAt ? new Date(selectedEntity.data.lastActiveAt).toLocaleString() : "Recently"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {selectedEntity.data.lastIp && (
+                        <div className="space-y-1 pt-1">
+                          <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Last IP Address</span>
+                          <p className="text-zinc-400 font-mono text-[11px]">{selectedEntity.data.lastIp}</p>
+                        </div>
+                      )}
+
+                      {selectedEntity.data.recentlyPlayed && selectedEntity.data.recentlyPlayed.length > 0 && (
+                        <div className="pt-2 border-t border-white/[0.04]">
+                          <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold block mb-1.5">Recently Played</span>
+                          <div className="flex flex-wrap gap-1">
+                            {selectedEntity.data.recentlyPlayed.map((slug: string) => (
+                              <span key={slug} className="px-2 py-0.5 bg-orange-500/10 text-orange-300 border border-orange-500/20 rounded-full text-[10px] font-mono">
+                                🎮 {slug}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Subscriber Specific Details */}
+              {selectedEntity.type === "subscriber" && (
+                <div className="p-3.5 rounded-[16px] bg-white/[0.02] border border-white/[0.06] space-y-3 text-xs">
+                  <div className="space-y-1">
+                    <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Subscriber Email</span>
+                    <p className="text-white font-medium text-sm break-all">{selectedEntity.data.email}</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/[0.04]">
+                    <div className="space-y-1">
+                      <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Subscription Date</span>
+                      <p className="text-zinc-300 font-medium text-[11px]">
+                        {selectedEntity.data.subscribedAt ? new Date(selectedEntity.data.subscribedAt).toLocaleString() : "Recently"}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Channel</span>
+                      <p className="text-teal-400 font-semibold text-[11px] uppercase">Email Newsletter</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

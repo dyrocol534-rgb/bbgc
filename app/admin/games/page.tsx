@@ -4,9 +4,9 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { 
   Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, 
-  ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ShieldCheck, 
+  ChevronLeft, ChevronRight, ShieldCheck, 
   ShieldAlert, Play, Sparkles, Tag, Gamepad2, SlidersHorizontal, 
-  X, Filter 
+  X, Filter, ThumbsUp, ThumbsDown, Calendar, User, ExternalLink 
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -47,6 +47,9 @@ export default function AdminGamesPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalGames, setTotalGames] = useState(0);
+
+  // Selected game for detail modal
+  const [selectedGame, setSelectedGame] = useState<GameData | null>(null);
 
   // Filter Popover State
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -114,6 +117,9 @@ export default function AdminGamesPage() {
     try {
       await axios.patch(`/api/admin/games/${id}`, { status: newStatus });
       setGames(games.map(g => g._id === id ? { ...g, status: newStatus } : g));
+      if (selectedGame?._id === id) {
+        setSelectedGame(prev => prev ? { ...prev, status: newStatus } : null);
+      }
     } catch (error) {
       console.error("Failed to update status", error);
       alert("Error updating status");
@@ -125,6 +131,9 @@ export default function AdminGamesPage() {
     try {
       await axios.patch(`/api/admin/games/${id}`, { verified: newVerified });
       setGames(games.map(g => g._id === id ? { ...g, verified: newVerified } : g));
+      if (selectedGame?._id === id) {
+        setSelectedGame(prev => prev ? { ...prev, verified: newVerified } : null);
+      }
     } catch (error) {
       console.error("Failed to update verification", error);
       alert("Error updating verification");
@@ -135,6 +144,9 @@ export default function AdminGamesPage() {
     try {
       await axios.patch(`/api/admin/games/${id}`, { featured: !currentFeatured });
       setGames(games.map(g => g._id === id ? { ...g, featured: !currentFeatured } : g));
+      if (selectedGame?._id === id) {
+        setSelectedGame(prev => prev ? { ...prev, featured: !currentFeatured } : null);
+      }
     } catch (error) {
       console.error("Failed to update featured", error);
       alert("Error updating featured status");
@@ -148,6 +160,9 @@ export default function AdminGamesPage() {
       await axios.delete(`/api/admin/games/${id}`);
       setGames(games.filter(g => g._id !== id));
       setTotalGames(prev => Math.max(0, prev - 1));
+      if (selectedGame?._id === id) {
+        setSelectedGame(null);
+      }
     } catch (error) {
       console.error("Failed to delete game", error);
       alert("Error deleting game");
@@ -179,6 +194,9 @@ export default function AdminGamesPage() {
       const { data } = await axios.post('/api/admin/ai/categorize', { gameId });
       if (data.success && data.categories) {
         setGames(games.map(g => g._id === gameId ? { ...g, category: data.categories } : g));
+        if (selectedGame?._id === gameId) {
+          setSelectedGame(prev => prev ? { ...prev, category: data.categories } : null);
+        }
         alert(`✨ AI Categorized: [${data.categories.join(", ")}]`);
       }
     } catch (error: any) {
@@ -219,20 +237,6 @@ export default function AdminGamesPage() {
       </div>
     );
   }
-
-  const handleSort = (field: string) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortOrder("desc");
-    }
-  };
-
-  const renderSortIcon = (field: string) => {
-    if (sortField !== field) return <ArrowDown className="w-3 h-3 opacity-0 group-hover:opacity-30 transition-opacity" />;
-    return sortOrder === "asc" ? <ArrowUp className="w-3 h-3 text-orange-400" /> : <ArrowDown className="w-3 h-3 text-orange-400" />;
-  };
 
   return (
     <div className="space-y-4 max-w-[1400px] mx-auto">
@@ -292,17 +296,17 @@ export default function AdminGamesPage() {
             <button
               type="button"
               onClick={() => setIsFilterOpen(!isFilterOpen)}
+              aria-label="Filter games"
               className={clsx(
-                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all border cursor-pointer active:scale-95 shrink-0",
+                "relative flex items-center justify-center w-8 h-8 rounded-full text-xs font-semibold transition-all border cursor-pointer active:scale-95 shrink-0",
                 activeFilterCount > 0 || isFilterOpen
                   ? "bg-orange-500/15 text-orange-300 border-orange-500/35 shadow-xs"
                   : "bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border-white/[0.08]"
               )}
             >
               <SlidersHorizontal className="w-3.5 h-3.5 text-orange-400" />
-              <span>Filter</span>
               {activeFilterCount > 0 && (
-                <span className="w-4 h-4 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[9.5px] font-bold flex items-center justify-center font-mono">
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[9.5px] font-bold flex items-center justify-center font-mono ring-2 ring-[#0d0d10]">
                   {activeFilterCount}
                 </span>
               )}
@@ -310,7 +314,7 @@ export default function AdminGamesPage() {
 
             {/* Filter Dropdown Popover */}
             {isFilterOpen && (
-              <div className="absolute left-0 sm:left-0 mt-2 w-72 p-3.5 bg-[#141417] border border-white/[0.12] rounded-[18px] shadow-2xl z-50 space-y-3 animate-in fade-in zoom-in-95 duration-150">
+              <div className="absolute right-0 sm:left-0 sm:right-auto mt-2 w-72 max-w-[calc(100vw-2rem)] p-3.5 bg-[#141417] border border-white/[0.12] rounded-[18px] shadow-2xl z-50 space-y-3 animate-in fade-in zoom-in-95 duration-150">
                 <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
                   <span className="text-xs font-bold text-white flex items-center gap-1.5">
                     <Filter className="w-3.5 h-3.5 text-orange-400" />
@@ -413,7 +417,7 @@ export default function AdminGamesPage() {
           </div>
         </div>
 
-        {/* Active Filter Chips (removable tags if active) */}
+        {/* Active Filter Chips */}
         {activeFilterCount > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">
             {sourceFilter !== "all" && (
@@ -444,195 +448,90 @@ export default function AdminGamesPage() {
         )}
       </div>
       
-      {/* Clean Frameless Table */}
-      <div className="border border-white/[0.08] rounded-[18px] overflow-hidden bg-white/[0.01] shadow-xs">
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse min-w-[960px]">
-            <thead>
-              <tr className="border-b border-white/[0.08] bg-white/[0.02] text-zinc-400 text-[10px] uppercase font-semibold tracking-wider">
-                <th className="py-2.5 px-3 font-semibold w-12">Icon</th>
-                <th 
-                  className="py-2.5 px-3 font-semibold cursor-pointer group hover:text-white transition-colors"
-                  onClick={() => handleSort('title')}
-                >
-                  <div className="flex items-center gap-1">Title {renderSortIcon('title')}</div>
-                </th>
-                <th 
-                  className="py-2.5 px-3 font-semibold text-center cursor-pointer group hover:text-white transition-colors"
-                  onClick={() => handleSort('playCount')}
-                >
-                  <div className="flex items-center justify-center gap-1">Plays {renderSortIcon('playCount')}</div>
-                </th>
-                <th 
-                  className="py-2.5 px-3 font-semibold text-center cursor-pointer group hover:text-white transition-colors"
-                  onClick={() => handleSort('rating')}
-                >
-                  <div className="flex items-center justify-center gap-1">Rating {renderSortIcon('rating')}</div>
-                </th>
-                <th 
-                  className="py-2.5 px-3 font-semibold text-center cursor-pointer group hover:text-white transition-colors w-14"
-                  onClick={() => handleSort('featured')}
-                >
-                  <div className="flex items-center justify-center gap-1">Feat {renderSortIcon('featured')}</div>
-                </th>
-                <th className="py-2.5 px-3 font-semibold text-center w-28">Admin Check</th>
-                <th className="py-2.5 px-3 font-semibold text-center w-24">Visibility</th>
-                <th className="py-2.5 px-3 font-semibold text-right w-28">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/[0.04]">
-              {games.map((game) => (
-                <tr key={game._id} className={`transition-colors ${game.status === 'draft' ? 'bg-white/[0.01] opacity-70' : 'hover:bg-white/[0.02]'}`}>
-                  <td className="py-2.5 px-3">
-                    <Image 
-                      src={game.thumbnailUrl} 
-                      alt={game.title} 
-                      width={36} 
-                      height={36} 
-                      className="w-9 h-9 rounded-[10px] object-cover bg-zinc-900 border border-white/[0.08] shadow-xs" 
-                    />
-                  </td>
-                  <td className="py-2.5 px-3">
-                    <div className="font-semibold text-zinc-200 flex items-center gap-1.5 text-xs leading-tight">
-                      <span>{game.title}</span>
-                      {game.source === "aggregated" && (
-                        <span className="bg-orange-500/10 text-orange-400 text-[9px] uppercase font-bold px-1.5 py-0.2 rounded-full shrink-0 border border-orange-500/20">
-                          Import
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-[10px] text-zinc-500 font-mono mb-0.5 leading-tight">{game.slug}</div>
-                    <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
-                      <span className="text-zinc-500">By <span className="text-zinc-300 font-medium">{game.developer || "Bluebuff"}</span></span>
-                      {game.category && game.category.length > 0 && (
-                        <>
-                          <span className="text-zinc-600">•</span>
-                          <span className="text-orange-400 font-medium">{game.category.slice(0, 2).join(", ")}{game.category.length > 2 ? '...' : ''}</span>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                  <td className="py-2.5 px-3 text-center text-zinc-300 text-xs font-mono font-medium">
-                    {game.playCount.toLocaleString()}
-                  </td>
-                  <td className="py-2.5 px-3 text-center text-xs">
-                    <div className="flex items-center justify-center gap-1.5 font-mono text-[11px]">
-                      <span className="text-emerald-400 font-medium">+{game.likes?.length || 0}</span>
-                      <span className="text-zinc-600">/</span>
-                      <span className="text-red-400 font-medium">-{game.dislikes?.length || 0}</span>
-                    </div>
-                  </td>
-                  <td className="py-2.5 px-3 text-center">
-                    <button 
-                      onClick={() => toggleFeatured(game._id, game.featured)}
-                      className={`p-1.5 rounded-full transition-colors cursor-pointer active:scale-95 ${game.featured ? 'text-amber-400 bg-amber-400/10 hover:bg-amber-400/20' : 'text-zinc-500 hover:bg-white/[0.06] hover:text-zinc-300'}`}
-                      title={game.featured ? "Remove from Featured" : "Feature on Homepage"}
-                    >
-                      <Star className={`w-3.5 h-3.5 ${game.featured ? 'fill-current' : ''}`} />
-                    </button>
-                  </td>
-                  {/* Admin Verification Column */}
-                  <td className="py-2.5 px-3 text-center">
-                    <button
-                      onClick={() => toggleVerified(game._id, game.verified)}
-                      title={game.verified ? "Verified by Admin (Click to unverify)" : "Click to mark as Admin Verified"}
-                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide transition-all border cursor-pointer active:scale-95 ${
-                        game.verified
-                          ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25"
-                          : "bg-amber-500/10 text-amber-300 border-amber-500/20 hover:bg-amber-500/20"
-                      }`}
-                    >
-                      {game.verified ? (
-                        <>
-                          <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                          <span>Verified</span>
-                        </>
-                      ) : (
-                        <>
-                          <ShieldAlert className="w-3 h-3 text-amber-400" />
-                          <span>Check</span>
-                        </>
-                      )}
-                    </button>
-                  </td>
-                  {/* Visibility Column */}
-                  <td className="py-2.5 px-3 text-center">
-                    <button 
-                      onClick={() => toggleStatus(game._id, game.status)}
-                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide transition-colors border cursor-pointer active:scale-95 ${
-                        game.status === 'published' 
-                          ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border-emerald-500/20' 
-                          : 'bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] border-white/[0.08]'
-                      }`}
-                    >
-                      {game.status === 'published' ? <><Eye className="w-3 h-3" /> Live</> : <><EyeOff className="w-3 h-3" /> Draft</>}
-                    </button>
-                  </td>
-                  {/* Actions */}
-                  <td className="py-2.5 px-3 text-right">
-                    <div className="flex justify-end items-center gap-1">
-                      <button
-                        onClick={() => categorizeGameWithAI(game._id)}
-                        disabled={categorizingIds.has(game._id)}
-                        className="p-1.5 text-zinc-400 hover:text-orange-400 hover:bg-white/[0.06] rounded-full transition-colors disabled:opacity-50 cursor-pointer"
-                        title="✨ AI Auto-Categorize with Gemini"
-                      >
-                        {categorizingIds.has(game._id) ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
-                        ) : (
-                          <Tag className="w-3.5 h-3.5 text-orange-400/80" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => enhanceGameWithAI(game._id)}
-                        disabled={enhancingIds.has(game._id)}
-                        className="p-1.5 text-zinc-400 hover:text-orange-400 hover:bg-white/[0.06] rounded-full transition-colors disabled:opacity-50 cursor-pointer"
-                        title="✨ Generate AI SEO description with Gemini"
-                      >
-                        {enhancingIds.has(game._id) ? (
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
-                        ) : (
-                          <Sparkles className="w-3.5 h-3.5" />
-                        )}
-                      </button>
-                      <Link
-                        href={`/games/${game.slug}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1.5 text-zinc-400 hover:text-emerald-400 hover:bg-white/[0.06] rounded-full transition-colors"
-                        title="Play in new tab"
-                      >
-                        <Play className="w-3.5 h-3.5" />
-                      </Link>
-                      <Link 
-                        href={`/admin/games/${game._id}/edit`}
-                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-white/[0.06] rounded-full transition-colors"
-                        title="Edit Game"
-                      >
-                        <Pencil className="w-3.5 h-3.5" />
-                      </Link>
-                      <button 
-                        onClick={() => deleteGame(game._id)}
-                        className="p-1.5 text-zinc-400 hover:text-red-400 hover:bg-white/[0.06] rounded-full transition-colors cursor-pointer"
-                        title="Delete Game"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {games.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="py-12 text-center text-zinc-500 text-xs">
-                    No games found matching your filters.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+      {/* Clean iOS List View (Outside: Limited Details) */}
+      {games.length === 0 ? (
+        <div className="py-16 text-center text-zinc-500 text-xs">
+          <Gamepad2 className="w-8 h-8 text-zinc-600 mx-auto mb-2 opacity-50" />
+          No games found matching your filters.
         </div>
-      </div>
+      ) : (
+        <div className="divide-y divide-white/[0.04] pt-1">
+          {games.map((game) => (
+            <div
+              key={game._id}
+              onClick={() => setSelectedGame(game)}
+              className={`py-2.5 px-2 sm:px-3 flex items-center justify-between gap-3 hover:bg-white/[0.03] rounded-[14px] transition-colors cursor-pointer group ${
+                game.status === 'draft' ? 'opacity-65' : ''
+              }`}
+            >
+              {/* Left: Thumbnail & Title Info */}
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-[12px] overflow-hidden bg-zinc-900 border border-white/[0.08] shrink-0">
+                  <Image 
+                    src={game.thumbnailUrl} 
+                    alt={game.title} 
+                    width={44} 
+                    height={44} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
+                  />
+                </div>
+                
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="font-semibold text-zinc-100 text-xs sm:text-sm truncate group-hover:text-orange-300 transition-colors leading-tight">
+                      {game.title}
+                    </h3>
+                    {game.featured && (
+                      <Star className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
+                    )}
+                    {game.source === "aggregated" && (
+                      <span className="bg-orange-500/10 text-orange-400 text-[8.5px] uppercase font-bold px-1.5 py-0.2 rounded-full shrink-0 border border-orange-500/20">
+                        Import
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center gap-1.5 text-[10.5px] text-zinc-500 mt-0.5 truncate">
+                    <span className="text-zinc-400 font-medium truncate">{game.developer || "Bluebuff Games"}</span>
+                    {game.category && game.category.length > 0 && (
+                      <>
+                        <span className="text-zinc-600">•</span>
+                        <span className="text-orange-400/90 font-medium capitalize truncate">
+                          {game.category[0]}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Limited quick stats & Chevron */}
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                {/* Play Count */}
+                <span className="hidden md:inline-block font-mono text-[11px] text-zinc-400 font-medium w-20 text-right">
+                  {game.playCount.toLocaleString()} plays
+                </span>
+
+                {/* Status Pill - fixed width for perfect vertical alignment */}
+                <div className="w-14 flex justify-center">
+                  <span className={`w-full py-0.5 text-center rounded-full text-[10px] font-semibold tracking-wide border uppercase ${
+                    game.status === 'published'
+                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                      : 'bg-white/[0.04] text-zinc-400 border-white/[0.08]'
+                  }`}>
+                    {game.status === 'published' ? 'Live' : 'Draft'}
+                  </span>
+                </div>
+
+                {/* Open details chevron */}
+                <div className="w-4 flex items-center justify-center">
+                  <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Pagination Controls */}
       {totalPages > 1 && (
@@ -658,6 +557,231 @@ export default function AdminGamesPage() {
             >
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Detailed Game Sheet / Modal */}
+      {selectedGame && (
+        <div 
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedGame(null);
+          }}
+        >
+          <div className="bg-[#121214] border-t sm:border border-white/[0.1] rounded-t-[28px] sm:rounded-[24px] max-w-lg w-full max-h-[92vh] flex flex-col shadow-2xl shadow-black/80 overflow-hidden animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200">
+            {/* Modal Top Bar */}
+            <div className="p-4 sm:p-5 pb-4 border-b border-white/[0.06] flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="relative w-12 h-12 rounded-[14px] overflow-hidden bg-zinc-900 border border-white/10 shrink-0 shadow-md">
+                  <Image 
+                    src={selectedGame.thumbnailUrl} 
+                    alt={selectedGame.title} 
+                    width={48} 
+                    height={48} 
+                    className="w-full h-full object-cover" 
+                  />
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-sm sm:text-base font-semibold text-white tracking-tight truncate leading-tight">
+                    {selectedGame.title}
+                  </h2>
+                  <div className="flex items-center gap-2 mt-1 text-[11px] text-zinc-400 truncate">
+                    <span className="truncate">{selectedGame.developer || "Bluebuff"}</span>
+                    <span className="text-zinc-600">•</span>
+                    <span className="text-orange-400/90 font-medium">
+                      {selectedGame.source === "aggregated" ? "Imported" : "Uploaded"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedGame(null)}
+                className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-zinc-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body (Scrollable) */}
+            <div className="p-4 sm:p-5 overflow-y-auto space-y-4 custom-scrollbar">
+              {/* Quick Interactive Toggles Row */}
+              <div className="grid grid-cols-3 gap-2">
+                {/* Visibility Toggle */}
+                <button
+                  type="button"
+                  onClick={() => toggleStatus(selectedGame._id, selectedGame.status)}
+                  className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border transition-all cursor-pointer active:scale-95 ${
+                    selectedGame.status === 'published'
+                      ? 'bg-emerald-500/[0.08] border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/[0.12]'
+                      : 'bg-white/[0.02] border-white/[0.06] text-zinc-400 hover:bg-white/[0.04]'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide">
+                    {selectedGame.status === 'published' ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-zinc-500" />}
+                    <span>{selectedGame.status === 'published' ? 'Live' : 'Draft'}</span>
+                  </div>
+                  <span className="text-[10px] text-zinc-500 mt-0.5">Visibility</span>
+                </button>
+
+                {/* Admin Verification Toggle */}
+                <button
+                  type="button"
+                  onClick={() => toggleVerified(selectedGame._id, selectedGame.verified)}
+                  className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border transition-all cursor-pointer active:scale-95 ${
+                    selectedGame.verified
+                      ? 'bg-emerald-500/[0.08] border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/[0.12]'
+                      : 'bg-amber-500/[0.08] border-amber-500/25 text-amber-400 hover:bg-amber-500/[0.12]'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide">
+                    {selectedGame.verified ? <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> : <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />}
+                    <span>{selectedGame.verified ? 'Verified' : 'Check'}</span>
+                  </div>
+                  <span className="text-[10px] text-zinc-500 mt-0.5">Quality</span>
+                </button>
+
+                {/* Featured Toggle */}
+                <button
+                  type="button"
+                  onClick={() => toggleFeatured(selectedGame._id, selectedGame.featured)}
+                  className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border transition-all cursor-pointer active:scale-95 ${
+                    selectedGame.featured
+                      ? 'bg-amber-500/[0.08] border-amber-500/25 text-amber-400 hover:bg-amber-500/[0.12]'
+                      : 'bg-white/[0.02] border-white/[0.06] text-zinc-400 hover:bg-white/[0.04]'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide">
+                    <Star className={`w-3.5 h-3.5 ${selectedGame.featured ? 'fill-amber-400 text-amber-400' : 'text-zinc-500'}`} />
+                    <span>{selectedGame.featured ? 'Featured' : 'Standard'}</span>
+                  </div>
+                  <span className="text-[10px] text-zinc-500 mt-0.5">Feature</span>
+                </button>
+              </div>
+
+              {/* Stats & Metadata Section */}
+              <div className="p-3.5 rounded-[16px] bg-white/[0.02] border border-white/[0.06] space-y-3">
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="space-y-1">
+                    <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Total Plays</span>
+                    <p className="text-white font-mono font-bold text-base">
+                      {selectedGame.playCount.toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Rating</span>
+                    <div className="flex items-center gap-2 font-mono text-xs pt-0.5">
+                      <span className="text-emerald-400 font-medium flex items-center gap-1">
+                        <ThumbsUp className="w-3 h-3" /> {selectedGame.likes?.length || 0}
+                      </span>
+                      <span className="text-zinc-600">/</span>
+                      <span className="text-rose-400 font-medium flex items-center gap-1">
+                        <ThumbsDown className="w-3 h-3" /> {selectedGame.dislikes?.length || 0}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Added</span>
+                    <p className="text-zinc-300 font-medium text-[11px]">
+                      {selectedGame.createdAt ? new Date(selectedGame.createdAt).toLocaleDateString() : "Recently"}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Route</span>
+                    <p className="text-zinc-400 font-mono text-[10.5px] truncate">
+                      /games/{selectedGame.slug}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Categories */}
+                <div className="pt-2 border-t border-white/[0.04]">
+                  <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold block mb-1.5">Categories</span>
+                  <div className="flex flex-wrap gap-1">
+                    {selectedGame.category && selectedGame.category.length > 0 ? (
+                      selectedGame.category.map((c) => (
+                        <span 
+                          key={c}
+                          className="px-2 py-0.5 bg-orange-500/10 text-orange-300 border border-orange-500/20 rounded-full text-[10px] font-medium uppercase"
+                        >
+                          {c}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-zinc-500 text-xs">None</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2 pt-1">
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href={`/games/${selectedGame.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/[0.08] rounded-full text-xs font-semibold transition-all active:scale-95"
+                  >
+                    <Play className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Play Game</span>
+                    <ExternalLink className="w-3 h-3 text-zinc-500" />
+                  </Link>
+
+                  <Link
+                    href={`/admin/games/${selectedGame._id}/edit`}
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/[0.08] rounded-full text-xs font-semibold transition-all active:scale-95"
+                  >
+                    <Pencil className="w-3.5 h-3.5 text-orange-400" />
+                    <span>Edit Details</span>
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => categorizeGameWithAI(selectedGame._id)}
+                    disabled={categorizingIds.has(selectedGame._id)}
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-orange-500/10 hover:bg-orange-500/15 text-orange-300 border border-orange-500/20 rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+                  >
+                    {categorizingIds.has(selectedGame._id) ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
+                    ) : (
+                      <Tag className="w-3.5 h-3.5 text-orange-400" />
+                    )}
+                    <span>AI Categorize</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => enhanceGameWithAI(selectedGame._id)}
+                    disabled={enhancingIds.has(selectedGame._id)}
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-orange-500/10 hover:bg-orange-500/15 text-orange-300 border border-orange-500/20 rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+                  >
+                    {enhancingIds.has(selectedGame._id) ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
+                    ) : (
+                      <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+                    )}
+                    <span>AI SEO</span>
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => deleteGame(selectedGame._id)}
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-500/[0.06] hover:bg-rose-500/[0.12] text-rose-400 border border-rose-500/15 rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer mt-1"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Delete Game</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

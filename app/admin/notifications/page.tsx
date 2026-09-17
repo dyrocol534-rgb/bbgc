@@ -247,12 +247,12 @@ export default function AdminPushNotificationsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
           {/* View Tab Switcher */}
           <div className="flex items-center p-0.5 bg-black/40 border border-white/[0.08] rounded-full text-xs">
             <button
               onClick={() => setActiveTab("compose")}
-              className={`px-3 py-1 rounded-full font-medium transition-all ${
+              className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
                 activeTab === "compose"
                   ? "bg-white/[0.12] text-white shadow-xs font-semibold"
                   : "text-zinc-400 hover:text-zinc-200"
@@ -262,7 +262,7 @@ export default function AdminPushNotificationsPage() {
             </button>
             <button
               onClick={() => setActiveTab("subscribers")}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-medium transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
                 activeTab === "subscribers"
                   ? "bg-white/[0.12] text-white shadow-xs font-semibold"
                   : "text-zinc-400 hover:text-zinc-200"
@@ -280,115 +280,45 @@ export default function AdminPushNotificationsPage() {
             onClick={fetchStats}
             disabled={loadingStats}
             title="Refresh statistics"
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-white/[0.04] hover:bg-white/[0.08] rounded-full transition-all border border-white/[0.08] disabled:opacity-50 shrink-0 active:scale-95 cursor-pointer ml-auto sm:ml-0"
+            className="flex items-center justify-center w-7 h-7 text-xs font-medium text-zinc-300 bg-white/[0.04] hover:bg-white/[0.08] rounded-full transition-all border border-white/[0.08] disabled:opacity-50 shrink-0 active:scale-95 cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-zinc-400 ${loadingStats ? "animate-spin" : ""}`} />
-            <span className="hidden sm:inline">Refresh</span>
           </button>
         </div>
       </div>
 
-      {/* Metric Stats Cards Row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
-        <div className="border border-white/[0.08] bg-white/[0.02] p-3 rounded-[16px] flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-[10px] bg-orange-500/10 border border-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">
-            <Users className="w-4 h-4" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block truncate">Total Subscribers</span>
-            <div className="text-base sm:text-lg font-bold text-white font-mono leading-tight mt-0.5">
-              {loadingStats ? "..." : stats?.total.toLocaleString() || 0}
-            </div>
-          </div>
-        </div>
-
-        <div className="border border-white/[0.08] bg-white/[0.02] p-3 rounded-[16px] flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-[10px] bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
-            <Smartphone className="w-4 h-4" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block truncate">Mobile</span>
-            <div className="text-base sm:text-lg font-bold text-white font-mono leading-tight mt-0.5">
-              {loadingStats ? "..." : stats?.devices.mobile.toLocaleString() || 0}
-            </div>
-          </div>
-        </div>
-
-        <div className="border border-white/[0.08] bg-white/[0.02] p-3 rounded-[16px] flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-[10px] bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
-            <Monitor className="w-4 h-4" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block truncate">Desktop</span>
-            <div className="text-base sm:text-lg font-bold text-white font-mono leading-tight mt-0.5">
-              {loadingStats ? "..." : stats?.devices.desktop.toLocaleString() || 0}
-            </div>
-          </div>
-        </div>
-
-        <div className="border border-white/[0.08] bg-white/[0.02] p-3 rounded-[16px] flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-[10px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-            <Tablet className="w-4 h-4" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block truncate">Tablet</span>
-            <div className="text-base sm:text-lg font-bold text-white font-mono leading-tight mt-0.5">
-              {loadingStats ? "..." : stats?.devices.tablet.toLocaleString() || 0}
-            </div>
-          </div>
-        </div>
-      </div>
-
       {activeTab === "compose" ? (
-        <>
-          {/* Quick Notification Presets */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <label className="text-[10.5px] font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-orange-400" />
-                Quick Templates
-              </label>
-              {selectedTemplate && (
+        <div className="space-y-4">
+          {/* Quick Notification Templates as Compact Horizontal Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-0.5">
+            <span className="text-[10.5px] font-semibold text-zinc-500 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-orange-400" />
+              Presets:
+            </span>
+            {TEMPLATES.map((tmpl) => {
+              const isSelected = selectedTemplate === tmpl.name;
+              return (
                 <button
-                  onClick={handleResetForm}
-                  className="text-[10.5px] text-zinc-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+                  key={tmpl.name}
+                  onClick={() => applyTemplate(tmpl)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer shrink-0 border ${
+                    isSelected
+                      ? "bg-orange-500/15 border-orange-500/35 text-orange-300 font-semibold shadow-xs"
+                      : "bg-white/[0.03] hover:bg-white/[0.07] border-white/[0.06] text-zinc-400 hover:text-zinc-200"
+                  }`}
                 >
-                  <RotateCcw className="w-3 h-3" />
-                  Clear Form
+                  {tmpl.name}
                 </button>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {TEMPLATES.map((tmpl) => {
-                const Icon = tmpl.icon;
-                const isSelected = selectedTemplate === tmpl.name;
-                return (
-                  <button
-                    key={tmpl.name}
-                    onClick={() => applyTemplate(tmpl)}
-                    className={`flex items-center gap-2.5 p-2.5 rounded-[14px] text-left transition-all group active:scale-[0.98] cursor-pointer ${
-                      isSelected
-                        ? "bg-orange-500/10 border border-orange-500/40 ring-1 ring-orange-500/20 shadow-xs"
-                        : "bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/[0.15]"
-                    }`}
-                  >
-                    <div className={`p-1.5 rounded-[8px] shrink-0 transition-transform group-hover:scale-105 ${
-                      isSelected
-                        ? "bg-orange-500/20 text-orange-300"
-                        : "bg-orange-500/10 border border-orange-500/20 text-orange-400"
-                    }`}>
-                      <Icon className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <span className={`text-xs font-medium block truncate ${isSelected ? "text-orange-200 font-semibold" : "text-zinc-300 group-hover:text-white"}`}>
-                        {tmpl.name}
-                      </span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+              );
+            })}
+            {selectedTemplate && (
+              <button
+                onClick={handleResetForm}
+                className="text-[10.5px] text-zinc-500 hover:text-zinc-300 px-2 py-1 transition-colors cursor-pointer shrink-0 ml-auto"
+              >
+                Reset
+              </button>
+            )}
           </div>
 
           {/* Feedback Banner */}
@@ -416,42 +346,28 @@ export default function AdminPushNotificationsPage() {
           )}
 
           {/* Composer & Preview Columns */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">
-            {/* Form Column */}
-            <div className="lg:col-span-7 space-y-3.5 border border-white/[0.08] p-3.5 sm:p-4 rounded-[18px] bg-white/[0.01]">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <Send className="w-3.5 h-3.5 text-orange-400" />
-                  Compose Message
-                </h3>
-                <span className="text-[11px] text-zinc-500">Supports emojis & rich previews</span>
-              </div>
-
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+            {/* Form Column - Clean & Flat */}
+            <div className="lg:col-span-7 space-y-3.5">
               <div className="space-y-3 text-xs">
-                {/* Title */}
+                {/* Title & Emojis */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-medium text-zinc-300 flex items-center gap-1">
-                      Notification Title <span className="text-orange-400">*</span>
+                    <label className="font-semibold text-zinc-300 flex items-center gap-1 text-xs">
+                      Title
                     </label>
-                    <span className={`text-[10px] font-mono ${title.length > 50 ? "text-amber-400 font-semibold" : "text-zinc-500"}`}>
-                      {title.length} / 50 rec.
-                    </span>
-                  </div>
-                  
-                  {/* Quick Emojis toolbar */}
-                  <div className="flex items-center gap-1 mb-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-                    <span className="text-[10px] text-zinc-500 mr-0.5 shrink-0">Add:</span>
-                    {QUICK_EMOJIS.map((emoji) => (
-                      <button
-                        key={emoji}
-                        type="button"
-                        onClick={() => addEmojiToTitle(emoji)}
-                        className="px-1.5 py-0.5 bg-white/[0.04] hover:bg-white/[0.10] border border-white/[0.06] rounded-[6px] text-xs transition-colors cursor-pointer shrink-0"
-                      >
-                        {emoji}
-                      </button>
-                    ))}
+                    <div className="flex items-center gap-1">
+                      {QUICK_EMOJIS.slice(0, 6).map((emoji) => (
+                        <button
+                          key={emoji}
+                          type="button"
+                          onClick={() => addEmojiToTitle(emoji)}
+                          className="w-5 h-5 flex items-center justify-center text-xs hover:scale-125 transition-transform cursor-pointer"
+                        >
+                          {emoji}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <input
@@ -462,18 +378,18 @@ export default function AdminPushNotificationsPage() {
                       setSelectedTemplate(null);
                     }}
                     placeholder="🔥 Don't lose your streak!"
-                    className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs text-white placeholder-zinc-500 transition-all outline-none"
+                    className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-[12px] px-3.5 py-2 text-xs text-white placeholder-zinc-500 transition-all outline-none"
                   />
                 </div>
 
-                {/* Body */}
+                {/* Message Body */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-medium text-zinc-300 flex items-center gap-1">
-                      Message Body <span className="text-orange-400">*</span>
+                    <label className="font-semibold text-zinc-300 text-xs">
+                      Message Body
                     </label>
-                    <span className={`text-[10px] font-mono ${body.length > 120 ? "text-amber-400 font-semibold" : "text-zinc-500"}`}>
-                      {body.length} / 120 rec.
+                    <span className="text-[10px] font-mono text-zinc-500">
+                      {body.length} / 120
                     </span>
                   </div>
                   <textarea
@@ -484,20 +400,20 @@ export default function AdminPushNotificationsPage() {
                     }}
                     rows={2}
                     placeholder="Write a catchy short hook to bring players back..."
-                    className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs text-white placeholder-zinc-500 transition-all resize-none outline-none leading-relaxed"
+                    className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-[12px] px-3.5 py-2 text-xs text-white placeholder-zinc-500 transition-all resize-none outline-none leading-relaxed"
                   />
                 </div>
 
-                {/* Target Route & Banner Image URL */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* Target Route & Image URL */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-medium text-zinc-300 mb-1">Target Route</label>
+                    <label className="block font-semibold text-zinc-300 mb-1 text-xs">Target Route</label>
                     <input
                       type="text"
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
                       placeholder="/ or /games/slug"
-                      className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs text-white placeholder-zinc-500 transition-all outline-none"
+                      className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-[12px] px-3 py-1.5 text-xs text-white placeholder-zinc-500 transition-all outline-none"
                     />
 
                     {/* Quick Route Pills */}
@@ -507,7 +423,7 @@ export default function AdminPushNotificationsPage() {
                           key={r.path}
                           type="button"
                           onClick={() => setUrl(r.path)}
-                          className={`text-[9.5px] px-2 py-0.5 rounded-full border transition-colors cursor-pointer ${
+                          className={`text-[10px] px-2 py-0.5 rounded-full border transition-colors cursor-pointer ${
                             url === r.path
                               ? "bg-orange-500/15 border-orange-500/30 text-orange-300 font-semibold"
                               : "bg-white/[0.02] border-white/[0.06] text-zinc-400 hover:text-zinc-200"
@@ -520,38 +436,38 @@ export default function AdminPushNotificationsPage() {
                   </div>
 
                   <div>
-                    <label className="block font-medium text-zinc-300 mb-1">
-                      Banner Image URL <span className="text-zinc-500 font-normal">(Optional)</span>
+                    <label className="block font-semibold text-zinc-300 mb-1 text-xs">
+                      Banner Image <span className="text-zinc-500 font-normal">(Optional)</span>
                     </label>
                     <input
                       type="text"
                       value={imageUrl}
                       onChange={(e) => setImageUrl(e.target.value)}
                       placeholder="https://..."
-                      className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs text-white placeholder-zinc-500 transition-all outline-none"
+                      className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-[12px] px-3 py-1.5 text-xs text-white placeholder-zinc-500 transition-all outline-none"
                     />
-                    <p className="text-[10px] text-zinc-500 mt-1">Recommended 16:9 ratio for rich notifications.</p>
+                    <p className="text-[10px] text-zinc-500 mt-1">16:9 banner image URL</p>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-white/[0.08]">
+              <div className="flex items-center gap-2 pt-2">
                 <button
                   type="button"
                   onClick={handleSendTest}
                   disabled={isSendingTest || isSending}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 text-xs font-semibold rounded-full border border-white/[0.08] transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-200 text-xs font-semibold rounded-full border border-white/[0.08] transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
                 >
                   {isSendingTest ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
-                      <span>Sending to Your Device...</span>
+                      <span>Sending Test...</span>
                     </>
                   ) : (
                     <>
                       <ShieldCheck className="w-3.5 h-3.5 text-orange-400" />
-                      <span>Test on My Device</span>
+                      <span>Test on Device</span>
                     </>
                   )}
                 </button>
@@ -566,7 +482,7 @@ export default function AdminPushNotificationsPage() {
                     setShowConfirmModal(true);
                   }}
                   disabled={isSending || isSendingTest || stats?.total === 0}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-bold rounded-full transition-all disabled:opacity-50 shadow-xs active:scale-95 cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-bold rounded-full transition-all disabled:opacity-50 shadow-xs active:scale-95 cursor-pointer"
                 >
                   {isSending ? (
                     <>
@@ -576,7 +492,7 @@ export default function AdminPushNotificationsPage() {
                   ) : (
                     <>
                       <Send className="w-3.5 h-3.5" />
-                      <span>Broadcast to All ({stats?.total || 0})</span>
+                      <span>Broadcast ({stats?.total || 0})</span>
                     </>
                   )}
                 </button>
@@ -584,13 +500,13 @@ export default function AdminPushNotificationsPage() {
             </div>
 
             {/* Live Preview Column */}
-            <div className="lg:col-span-5 border border-white/[0.08] p-3.5 sm:p-4 rounded-[18px] bg-white/[0.01] space-y-3">
+            <div className="lg:col-span-5 space-y-2.5">
               {/* Preview Header & Platform Switcher */}
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <Radio className="w-3.5 h-3.5 text-orange-400" />
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                  <Radio className="w-3 h-3 text-orange-400" />
                   Live Preview
-                </h4>
+                </span>
 
                 {/* Device Selector */}
                 <div className="flex items-center p-0.5 bg-black/40 border border-white/[0.08] rounded-full text-[10px]">
@@ -712,63 +628,63 @@ export default function AdminPushNotificationsPage() {
               )}
             </div>
           </div>
-        </>
+        </div>
       ) : (
         /* Active Subscribers Directory Tab */
-        <div className="border border-white/[0.08] p-4 rounded-[18px] bg-white/[0.01] space-y-3">
+        <div className="p-4 sm:p-5 rounded-[20px] bg-white/[0.02] border border-white/[0.06] space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-orange-400" />
-              Recently Subscribed Devices
+              Subscribed Devices
             </h3>
-            <span className="text-xs text-zinc-500 font-mono">
-              {stats?.recent?.length || 0} recent entries
+            <span className="text-[10.5px] text-zinc-500 font-mono">
+              {stats?.recent?.length || 0} active endpoints
             </span>
           </div>
 
           {stats?.recent && stats.recent.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-zinc-400">
-                <thead className="bg-white/[0.02] border-y border-white/[0.06] text-[10px] uppercase font-semibold text-zinc-500 tracking-wider">
-                  <tr>
-                    <th className="py-2 px-3">Device Type</th>
-                    <th className="py-2 px-3">Browser / Platform</th>
-                    <th className="py-2 px-3">Subscribed On</th>
-                    <th className="py-2 px-3">Push Gateway</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/[0.04]">
-                  {stats.recent.map((sub) => {
-                    const isMobile = sub.deviceType === "mobile";
-                    const isTablet = sub.deviceType === "tablet";
-                    return (
-                      <tr key={sub._id} className="hover:bg-white/[0.02] transition-colors">
-                        <td className="py-2.5 px-3">
-                          <span className="inline-flex items-center gap-1.5 font-medium text-zinc-200 capitalize">
-                            {isMobile ? (
-                              <Smartphone className="w-3.5 h-3.5 text-blue-400" />
-                            ) : isTablet ? (
-                              <Tablet className="w-3.5 h-3.5 text-emerald-400" />
-                            ) : (
-                              <Monitor className="w-3.5 h-3.5 text-purple-400" />
-                            )}
-                            {sub.deviceType || "Desktop"}
+            <div className="divide-y divide-white/[0.04]">
+              {stats.recent.map((sub) => {
+                const isMobile = sub.deviceType === "mobile";
+                const isTablet = sub.deviceType === "tablet";
+                return (
+                  <div key={sub._id} className="py-2.5 px-1.5 flex items-center justify-between gap-3 hover:bg-white/[0.02] rounded-[12px] transition-colors">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <div className="w-8 h-8 rounded-[10px] bg-white/[0.04] border border-white/[0.08] flex items-center justify-center shrink-0">
+                        {isMobile ? (
+                          <Smartphone className="w-3.5 h-3.5 text-sky-400" />
+                        ) : isTablet ? (
+                          <Tablet className="w-3.5 h-3.5 text-emerald-400" />
+                        ) : (
+                          <Monitor className="w-3.5 h-3.5 text-purple-400" />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold text-zinc-200 capitalize">
+                            {sub.deviceType || "Desktop"} Device
                           </span>
-                        </td>
-                        <td className="py-2.5 px-3 max-w-xs truncate text-[11px] text-zinc-300">
-                          {sub.userAgent || "Unknown Browser"}
-                        </td>
-                        <td className="py-2.5 px-3 text-[11px] text-zinc-400 whitespace-nowrap">
-                          {new Date(sub.createdAt).toLocaleDateString()} {new Date(sub.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                        </td>
-                        <td className="py-2.5 px-3 text-[10px] font-mono text-zinc-500 max-w-[200px] truncate">
-                          {sub.endpoint ? sub.endpoint.split("/")[2] : "Push Service"}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          <span className="text-[9.5px] text-zinc-500 font-mono truncate">
+                            {sub.endpoint ? sub.endpoint.split("/")[2] : "Gateway"}
+                          </span>
+                        </div>
+                        <p className="text-[10.5px] text-zinc-400 truncate max-w-sm mt-0.5 font-mono">
+                          {sub.userAgent || "Web Browser"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <span className="text-[10.5px] text-zinc-400 font-mono block">
+                        {new Date(sub.createdAt).toLocaleDateString()}
+                      </span>
+                      <span className="text-[9.5px] text-zinc-600 font-mono">
+                        {new Date(sub.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <div className="py-12 text-center text-zinc-500 text-xs">

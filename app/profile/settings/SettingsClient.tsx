@@ -5,7 +5,6 @@ import {
   Bell, 
   BellRing, 
   Loader2, 
-  ShieldCheck, 
   Volume2, 
   VolumeX, 
   Check, 
@@ -13,8 +12,7 @@ import {
   ChevronRight, 
   Trash2, 
   AlertCircle,
-  LogOut,
-  Sparkles
+  LogOut
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -254,26 +252,6 @@ export default function SettingsClient({ user }: SettingsClientProps) {
               <span className="text-[10.5px] text-zinc-500 font-medium">Unavailable</span>
             )}
           </div>
-
-          {/* Delivery Status Row */}
-          <div className="flex items-center justify-between p-3 sm:p-3.5 hover:bg-white/[0.02] transition-colors">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-[8px] bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-xs">
-                <ShieldCheck className="w-3.5 h-3.5" />
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-[13px] font-medium text-white tracking-tight">Delivery Protocol</span>
-                <span className="text-[10.5px] text-zinc-400">Web Push Standard (VAPID)</span>
-              </div>
-            </div>
-            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-              isSubscribed 
-                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
-                : "bg-zinc-800 text-zinc-400"
-            }`}>
-              {isSubscribed ? "Connected" : "Inactive"}
-            </span>
-          </div>
         </div>
 
         {/* Feedback Alert if present */}
@@ -308,10 +286,6 @@ export default function SettingsClient({ user }: SettingsClientProps) {
             </p>
           </div>
         )}
-
-        <div className="text-[10px] text-zinc-500 px-1 mt-1.5">
-          We send smart reminders before your daily streak expires and when major new games are published.
-        </div>
       </div>
 
       {/* ── 3. Gameplay Preferences (iOS Inset Group) ── */}
@@ -359,30 +333,6 @@ export default function SettingsClient({ user }: SettingsClientProps) {
               />
             </button>
           </div>
-
-          {/* Cloud Sync Row */}
-          <div className="flex items-center justify-between p-3 sm:p-3.5 hover:bg-white/[0.02] transition-colors">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-[8px] bg-[#34C759] text-white flex items-center justify-center shrink-0 shadow-xs">
-                <Sparkles className="w-3.5 h-3.5" />
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-[13px] font-medium text-white tracking-tight">Cloud Progress Sync</span>
-                <span className="text-[10.5px] text-zinc-400">
-                  {user ? "Scores, XP and streaks backed up automatically" : "Guest mode — sign in to sync progress"}
-                </span>
-              </div>
-            </div>
-            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-              user ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-zinc-800 text-zinc-400"
-            }`}>
-              {user ? "Active" : "Guest"}
-            </span>
-          </div>
-        </div>
-
-        <div className="text-[10px] text-zinc-500 px-1 mt-1.5">
-          Sound preferences are applied across all instant and arcade game sessions.
         </div>
       </div>
 

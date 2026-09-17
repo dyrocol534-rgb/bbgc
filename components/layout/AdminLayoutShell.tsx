@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { 
   BarChart3, Gamepad2, DownloadCloud, UploadCloud, 
   BellRing, Activity, MessageSquareWarning, Users, 
-  ChevronLeft, ChevronRight, ShieldCheck, LayoutDashboard,
+  ChevronLeft, ChevronRight, LayoutDashboard,
   Menu, X
 } from "lucide-react";
 import clsx from "clsx";
@@ -86,12 +86,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
       >
         {/* Drawer Header */}
         <div className="p-4 bg-[#141416] border-b border-white/[0.08] flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-[8px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
-              <ShieldCheck className="w-4 h-4" />
-            </div>
-            <span className="text-xs font-bold text-white tracking-wide uppercase">Admin Panel</span>
-          </div>
+          <span className="text-xs font-bold text-white tracking-wide uppercase">Admin Panel</span>
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(false)}
@@ -158,7 +153,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
             isCollapsed ? "lg:w-16" : "lg:w-56"
           )}
         >
-          <div className="relative bg-[#141416] border border-white/[0.08] rounded-[20px] p-2.5 flex flex-col gap-2 shadow-xs">
+          <div className="relative bg-transparent border-0 p-1 lg:bg-[#141416] lg:border lg:border-white/[0.08] lg:rounded-[20px] lg:p-2.5 flex flex-col gap-2 shadow-none lg:shadow-xs">
             
             {/* Collapse Toggle Button (Desktop) */}
             <button
@@ -176,18 +171,13 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
 
             {/* Header / Title & Mobile Hamburger */}
             <div className="flex items-center justify-between gap-2 px-1 py-0.5">
-              <div className="flex items-center gap-2 overflow-hidden min-w-0">
-                <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center shrink-0 text-orange-400">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                </div>
-                <div
-                  className={clsx(
-                    "flex items-center transition-all duration-300 min-w-0",
-                    isCollapsed ? "lg:opacity-0 lg:w-0 lg:hidden" : "opacity-100"
-                  )}
-                >
-                  <h2 className="text-xs font-semibold text-white leading-tight truncate">Admin Panel</h2>
-                </div>
+              <div
+                className={clsx(
+                  "flex items-center transition-all duration-300 min-w-0 overflow-hidden",
+                  isCollapsed ? "lg:opacity-0 lg:w-0 lg:hidden" : "opacity-100"
+                )}
+              >
+                <h2 className="text-xs font-semibold text-white leading-tight truncate">Admin Panel</h2>
               </div>
 
               {/* Mobile Status Badge & Hamburger Button */}
