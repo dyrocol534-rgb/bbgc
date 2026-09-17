@@ -26,7 +26,7 @@ const PRODUCTS = [
 
 export default function ProductsPage() {
   return (
-    <div className="min-h-[75vh] py-6 sm:py-8 max-w-md mx-auto px-4">
+    <div className="min-h-[75vh] py-5 sm:py-8 w-full max-w-md mx-auto px-3.5 sm:px-4 box-border overflow-hidden">
       {/* Back button */}
       <div className="mb-4">
         <Link
@@ -38,7 +38,7 @@ export default function ProductsPage() {
         </Link>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 w-full max-w-full">
         {/* Header */}
         <div>
           <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
@@ -50,7 +50,7 @@ export default function ProductsPage() {
         </div>
 
         {/* 1-Row List of Products */}
-        <div className="flex flex-col gap-2 pt-1">
+        <div className="flex flex-col gap-2 pt-1 w-full">
           {PRODUCTS.map((prod) => {
             const Icon = prod.icon;
             return (
@@ -59,13 +59,13 @@ export default function ProductsPage() {
                 href={prod.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-[#141416] hover:bg-[#19191d] border border-white/[0.08] hover:border-white/[0.16] transition-all group text-left cursor-pointer active:scale-[0.99] shadow-xs"
+                className="w-full max-w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-[#141416] hover:bg-[#19191d] border border-white/[0.08] hover:border-white/[0.16] transition-all group text-left cursor-pointer active:scale-[0.98] shadow-xs overflow-hidden"
               >
-                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 pr-2">
+                <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 mr-2.5">
                   <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] bg-white/[0.06] border border-white/10 flex items-center justify-center shrink-0">
                     <Icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-white" />
                   </div>
-                  <div className="flex flex-col min-w-0">
+                  <div className="flex flex-col min-w-0 flex-1">
                     <span className="text-xs sm:text-[13px] font-semibold text-white truncate leading-tight group-hover:text-zinc-200 transition-colors">
                       {prod.title}
                     </span>
@@ -75,7 +75,7 @@ export default function ProductsPage() {
                   </div>
                 </div>
 
-                <span className="text-[11px] font-semibold text-black bg-white hover:bg-zinc-200 px-3 py-1 rounded-full shrink-0 flex items-center gap-1 transition-all shadow-xs">
+                <span className="text-[11px] font-semibold text-black bg-white group-hover:bg-zinc-200 px-2.5 sm:px-3 py-1 rounded-full shrink-0 flex items-center gap-1 transition-all shadow-xs">
                   <span>{prod.action}</span>
                   <ArrowUpRight className="w-3 h-3" />
                 </span>
