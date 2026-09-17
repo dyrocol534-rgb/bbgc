@@ -8,6 +8,7 @@ import ProfileClient from "./ProfileClient";
 import { Clock, Heart, Gamepad2, Settings, ChevronLeft, Coins, Flame, Gift } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { getHorizontalBentoSpanClass, getImageContainerClass } from "@/lib/bento";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -18,8 +19,8 @@ export default async function ProfilePage() {
 
   await dbConnect();
 
-  const userFavorites = (session.user as any).favorites || [];
-  const userRecent = ((session.user as any).recentlyPlayed || []).slice(0, 8);
+  const userFavorites = ((session.user as any).favorites || []).slice(0, 9);
+  const userRecent = ((session.user as any).recentlyPlayed || []).slice(0, 9);
 
   const favoriteGames = await Game.find({ slug: { $in: userFavorites } }).lean();
   const recentGames = await Game.find({ slug: { $in: userRecent } }).lean();
@@ -27,8 +28,8 @@ export default async function ProfilePage() {
   const favoriteMap = new Map(favoriteGames.map(g => [(g as any).slug, g]));
   const recentMap = new Map(recentGames.map(g => [(g as any).slug, g]));
 
-  const orderedFavorites = userFavorites.map((slug: string) => favoriteMap.get(slug)).filter(Boolean);
-  const orderedRecent = userRecent.map((slug: string) => recentMap.get(slug)).filter(Boolean);
+  const orderedFavorites = userFavorites.map((slug: string) => favoriteMap.get(slug)).filter(Boolean).slice(0, 9);
+  const orderedRecent = userRecent.map((slug: string) => recentMap.get(slug)).filter(Boolean).slice(0, 9);
 
   const xp = (session.user as any).xp || 0;
   const streak = (session.user as any).currentStreak || 0;
@@ -178,29 +179,43 @@ export default async function ProfilePage() {
           </div>
 
           {/* ── Right: Games History & Favorites ── */}
-          <div className="space-y-8">
-
-            {/* Recently Played */}
-            <div>
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-2.5 flex items-center justify-between">
+          <div className="space-y-5">
+            {/* Recently Played Section */}
+            <section className="space-y-2">
+              <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-[6px] bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <div className="w-5 h-5 rounded-[6px] bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-xs">
                     <Clock className="w-3 h-3" />
                   </div>
-                  <span>Recently Played</span>
+                  <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                    Recently Played
+                  </h2>
                 </div>
                 {orderedRecent.length > 0 && (
-                  <span className="text-zinc-500 text-[11px] font-normal normal-case">
+                  <span className="text-zinc-500 text-xs font-normal">
                     {orderedRecent.length} game{orderedRecent.length !== 1 ? "s" : ""}
                   </span>
                 )}
               </div>
 
               {orderedRecent.length > 0 ? (
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 xl:grid-cols-4 gap-3">
-                  {orderedRecent.map((game: any) => (
-                    <GameCard key={`recent-${game.slug}`} game={game} />
-                  ))}
+                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[88px] sm:auto-cols-[104px] md:auto-cols-[112px] auto-rows-[95px] sm:auto-rows-[112px] md:auto-rows-[120px] gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+                  {orderedRecent.map((game: any, index: number) => {
+                    const spanClass = getHorizontalBentoSpanClass(index);
+                    const imageContainerClass = getImageContainerClass(spanClass);
+
+                    return (
+                      <div
+                        key={`recent-${game.slug}-${index}`}
+                        className={`${spanClass} snap-start h-full`}
+                      >
+                        <GameCard
+                          game={game}
+                          imageContainerClassName={imageContainerClass}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <EmptyState 
@@ -209,29 +224,44 @@ export default async function ProfilePage() {
                   sub="Browse trending titles to build your gameplay record." 
                 />
               )}
-            </div>
+            </section>
 
-            {/* Favorite Games */}
-            <div>
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-2.5 flex items-center justify-between">
+            {/* Favorite Games Section */}
+            <section className="space-y-2">
+              <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-[6px] bg-[#FF2D55] text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <div className="w-5 h-5 rounded-[6px] bg-[#FF2D55] text-white flex items-center justify-center shrink-0 shadow-xs">
                     <Heart className="w-3 h-3" />
                   </div>
-                  <span>Favorite Games</span>
+                  <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                    Favorite Games
+                  </h2>
                 </div>
                 {orderedFavorites.length > 0 && (
-                  <span className="text-zinc-500 text-[11px] font-normal normal-case">
+                  <span className="text-zinc-500 text-xs font-normal">
                     {orderedFavorites.length} game{orderedFavorites.length !== 1 ? "s" : ""}
                   </span>
                 )}
               </div>
 
               {orderedFavorites.length > 0 ? (
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 xl:grid-cols-4 gap-3">
-                  {orderedFavorites.map((game: any) => (
-                    <GameCard key={`fav-${game.slug}`} game={game} />
-                  ))}
+                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[88px] sm:auto-cols-[104px] md:auto-cols-[112px] auto-rows-[95px] sm:auto-rows-[112px] md:auto-rows-[120px] gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+                  {orderedFavorites.map((game: any, index: number) => {
+                    const spanClass = getHorizontalBentoSpanClass(index);
+                    const imageContainerClass = getImageContainerClass(spanClass);
+
+                    return (
+                      <div
+                        key={`fav-${game.slug}-${index}`}
+                        className={`${spanClass} snap-start h-full`}
+                      >
+                        <GameCard
+                          game={game}
+                          imageContainerClassName={imageContainerClass}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
                 <EmptyState 
@@ -240,8 +270,7 @@ export default async function ProfilePage() {
                   sub="Tap the heart icon on any game card to bookmark it here." 
                 />
               )}
-            </div>
-
+            </section>
           </div>
         </div>
       </div>
