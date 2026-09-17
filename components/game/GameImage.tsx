@@ -39,7 +39,7 @@ export default function GameImage({
     return (
       <div className="flex flex-col items-center justify-center text-zinc-400 w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700/50 p-2 text-center select-none">
         <div className="w-10 h-10 rounded-xl bg-zinc-800/80 border border-zinc-700/60 flex items-center justify-center mb-1.5 shadow-inner">
-          <Gamepad2 className="w-5 h-5 text-orange-400 opacity-80" />
+          <Gamepad2 className="w-5 h-5 text-white opacity-80" />
         </div>
         <span className="text-[10px] font-semibold text-zinc-300 line-clamp-2 px-1 leading-tight">
           {alt || "Game"}

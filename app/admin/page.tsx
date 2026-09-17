@@ -81,7 +81,7 @@ function StatCard({
     <div className={clsx(
       "relative p-3 rounded-[16px] border transition-all duration-150 flex flex-col justify-between group overflow-hidden",
       highlight
-        ? "bg-gradient-to-b from-orange-500/[0.08] to-white/[0.01] border-orange-500/25 shadow-xs"
+        ? "bg-white/[0.05] border-white/20 shadow-xs"
         : "bg-white/[0.02] hover:bg-white/[0.04] border-white/[0.06]"
     )}>
       <div className="flex items-center justify-between mb-1.5">
@@ -134,7 +134,7 @@ export default function AdminAnalytics() {
   if (isLoading && !stats) {
     return (
       <div className="flex flex-col justify-center items-center py-24">
-        <Loader2 className="w-5 h-5 text-orange-500 animate-spin mb-2" />
+        <Loader2 className="w-5 h-5 text-white animate-spin mb-2" />
         <p className="text-xs text-zinc-400 font-medium tracking-wide">Loading metrics...</p>
       </div>
     );
@@ -234,7 +234,7 @@ export default function AdminAnalytics() {
           label="Game Plays"
           value={currentStats.totalPlays.toLocaleString()}
           sub={`${currentStats.avgPlaysPerActive} plays/visitor`}
-          iconColor="bg-orange-500/10 text-orange-400 border-orange-500/20"
+          iconColor="bg-white/10 text-white border-white/15"
           badge="Plays"
         />
         <StatCard
@@ -294,7 +294,7 @@ export default function AdminAnalytics() {
           <div className="flex items-center justify-between mb-2.5">
             <div>
               <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5 text-orange-400" />
+                <TrendingUp className="w-3.5 h-3.5 text-white" />
                 Player Acquisition Trend
               </h2>
               <p className="text-[10px] text-zinc-500">Daily registered vs guest player signups</p>
@@ -318,7 +318,7 @@ export default function AdminAnalytics() {
           <div>
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Smartphone className="w-3.5 h-3.5 text-orange-400" />
+                <Smartphone className="w-3.5 h-3.5 text-white" />
                 Device Mix
               </h2>
               <span className="text-[9.5px] text-zinc-500 font-mono">Platform Split</span>
@@ -353,10 +353,10 @@ export default function AdminAnalytics() {
         <div className="lg:col-span-2 p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06]">
           <div className="flex items-center justify-between mb-2.5">
             <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-              <PlayCircle className="w-3.5 h-3.5 text-orange-400" />
+              <PlayCircle className="w-3.5 h-3.5 text-white" />
               Most Played Titles ({timeframes.find(t => t.id === timeframe)?.label})
             </h2>
-            <Link href="/admin/games" className="text-[10.5px] font-medium text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-1">
+            <Link href="/admin/games" className="text-[10.5px] font-medium text-zinc-400 hover:text-white transition-colors flex items-center gap-1">
               Catalog <ArrowRight className="w-2.5 h-2.5" />
             </Link>
           </div>
@@ -373,7 +373,7 @@ export default function AdminAnalytics() {
                     <span className="text-zinc-500 text-[11px] font-mono font-bold w-3.5">{i + 1}.</span>
                     <p className="text-zinc-200 text-xs font-semibold truncate">{game.title}</p>
                   </div>
-                  <div className="text-orange-400 font-semibold bg-orange-500/10 px-2 py-0.2 rounded-full text-[10px] shrink-0 font-mono border border-orange-500/20">
+                  <div className="text-white font-semibold bg-white/10 px-2 py-0.2 rounded-full text-[10px] shrink-0 font-mono border border-white/15">
                     {game.playCount.toLocaleString()}
                   </div>
                 </div>
@@ -436,7 +436,7 @@ export default function AdminAnalytics() {
 
           <div className="mt-3 pt-2.5 border-t border-white/[0.04] flex items-center justify-between text-[11px]">
             <span className="text-zinc-400">Push Notifications</span>
-            <Link href="/admin/notifications" className="text-orange-400 hover:text-orange-300 font-semibold flex items-center gap-1 transition-colors">
+            <Link href="/admin/notifications" className="text-zinc-400 hover:text-white font-semibold flex items-center gap-1 transition-colors">
               Broadcast <ArrowRight className="w-2.5 h-2.5" />
             </Link>
           </div>
@@ -483,7 +483,7 @@ export default function AdminAnalytics() {
               <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
               Recent Player Feedback
             </h2>
-            <Link href="/admin/feedback" className="text-[10.5px] font-medium text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-1">
+            <Link href="/admin/feedback" className="text-[10.5px] font-medium text-zinc-400 hover:text-white transition-colors flex items-center gap-1">
               View All <ArrowRight className="w-2.5 h-2.5" />
             </Link>
           </div>
@@ -502,7 +502,7 @@ export default function AdminAnalytics() {
                   </div>
                   <p className="text-[11px] text-zinc-400 line-clamp-1 mb-1.5">{fb.message}</p>
                   <div className="flex justify-between items-center text-[9.5px]">
-                    <span className="text-orange-400 font-medium bg-orange-500/10 px-1.5 py-0.2 rounded-full border border-orange-500/20">Game: {fb.gameSlug}</span>
+                    <span className="text-zinc-300 font-medium bg-white/[0.06] px-1.5 py-0.2 rounded-full border border-white/10">Game: {fb.gameSlug}</span>
                     <span className={clsx("font-medium px-1.5 py-0.2 rounded-full border capitalize", fb.status === 'resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20')}>
                       {fb.status}
                     </span>

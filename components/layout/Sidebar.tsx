@@ -15,10 +15,10 @@ import { Skeleton } from "@/components/ui/Skeleton";
 
 const PRIMARY_LINKS = [
   { name: "Home", href: "/", icon: Home, color: "text-blue-400", bg: "bg-blue-500/15 border-blue-500/25" },
-  { name: "New", href: "/category/new", icon: Rocket, color: "text-orange-400", bg: "bg-orange-500/15 border-orange-500/25" },
+  { name: "New", href: "/category/new", icon: Rocket, color: "text-white", bg: "bg-white/[0.08] border-white/[0.12]" },
   { name: "Popular Games", href: "/category/popular", icon: TrendingUp, color: "text-pink-400", bg: "bg-pink-500/15 border-pink-500/25" },
   // { name: "Global Leaderboard", href: "/leaderboard", icon: Trophy, color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/25" },
-  { name: "Featured", href: "/category/featured", icon: Crown, color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/25" },
+  { name: "Featured", href: "/category/featured", icon: Crown, color: "text-white", bg: "bg-white/[0.08] border-white/[0.12]" },
 ];
 
 const getCategoryIcon = (category: string) => {
@@ -162,7 +162,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
           {isExpanded ? (
             <X className="w-5 h-5 text-white transition-transform duration-200" />
           ) : (
-            <Gamepad2 className="w-5 h-5 text-orange-400 transition-transform duration-200" />
+            <Gamepad2 className="w-5 h-5 text-white transition-transform duration-200" />
           )}
         </button>
       )}
@@ -196,13 +196,13 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             disabled={isRolling}
             className={clsx(
               "w-full flex items-center gap-3 px-2.5 py-2 rounded-xl transition-all whitespace-nowrap",
-              "bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-orange-500/5 hover:from-orange-500/20 hover:to-amber-500/20",
-              "border border-orange-500/25 hover:border-orange-500/40 shadow-xs",
+              "bg-white/[0.05] hover:bg-white/[0.09]",
+              "border border-white/[0.08] hover:border-white/20 shadow-xs",
               !isExpanded && "justify-center px-0"
             )}
             title={!isExpanded ? "Surprise Me (Random Game)" : undefined}
           >
-            <div className="w-7 h-7 rounded-[8px] bg-gradient-to-br from-[#ff7a1a] to-[#ea580c] flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-7 h-7 rounded-[8px] bg-white/[0.1] border border-white/15 flex items-center justify-center shrink-0 shadow-sm text-white">
               {isRolling ? (
                 <Loader2 className="w-3.5 h-3.5 text-white animate-spin" />
               ) : (
@@ -210,7 +210,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
               )}
             </div>
             <span className={clsx(
-              "font-semibold text-xs text-orange-200 transition-all duration-300", 
+              "font-semibold text-xs text-zinc-200 transition-all duration-300", 
               isExpanded ? "opacity-100" : "opacity-0 hidden"
             )}>
               Surprise Me!
@@ -298,12 +298,12 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             title={!isExpanded ? "Daily Streak & XP" : undefined}
           >
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-[8px] bg-orange-500/15 border border-orange-500/25 flex items-center justify-center shrink-0">
-                <Flame className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+              <div className="w-7 h-7 rounded-[8px] bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0">
+                <Flame className="w-3.5 h-3.5 text-white shrink-0" />
               </div>
               <div className={clsx("flex flex-col items-start transition-opacity duration-300 whitespace-nowrap", isExpanded ? "opacity-100" : "opacity-0 hidden")}>
-                <span className="text-white text-xs font-medium group-hover:text-orange-300 transition-colors">Daily Streak</span>
-                <span className="text-orange-400/90 text-[9.5px] uppercase tracking-wider font-semibold">
+                <span className="text-white text-xs font-medium group-hover:text-zinc-200 transition-colors">Daily Streak</span>
+                <span className="text-zinc-400 text-[9.5px] uppercase tracking-wider font-semibold">
                   {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
                 </span>
               </div>
@@ -339,7 +339,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 className={clsx(
                   "flex items-center gap-3 px-2.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap group",
                   isActive 
-                    ? "bg-white/[0.09] text-white shadow-xs ring-1 ring-white/[0.1]" 
+                    ? "bg-white/[0.09] text-white ring-1 ring-white/[0.1]" 
                     : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
                 )}
                 title={!isExpanded ? link.name : undefined}
@@ -347,7 +347,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 <div className={clsx(
                   "w-6 h-6 rounded-[7px] flex items-center justify-center shrink-0 border transition-all",
                   isActive 
-                    ? "bg-orange-500/15 border-orange-500/25 text-orange-400" 
+                    ? "bg-white/[0.12] border-white/20 text-white" 
                     : "bg-white/[0.03] border-white/[0.05] text-zinc-500 group-hover:text-zinc-300 group-hover:bg-white/[0.06]"
                 )}>
                   <Icon className="w-3.5 h-3.5" />

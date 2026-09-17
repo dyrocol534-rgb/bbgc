@@ -107,7 +107,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
           <section className="space-y-4">
             <div className="flex items-center justify-between">
               <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-                <Gamepad2 className="w-5 h-5 text-orange-400" />
+                <Gamepad2 className="w-5 h-5 text-white" />
                 All Games
               </h1>
             </div>
@@ -157,7 +157,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
           <footer className="bg-black rounded-2xl p-6 sm:p-8 border border-zinc-800/80 space-y-6 text-xs text-zinc-400">
             <div className="space-y-2">
               <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-orange-400" />
+                <Sparkles className="w-4 h-4 text-white" />
                 Play Free Online Games on {siteName}
               </h2>
               <p className="leading-relaxed text-zinc-300">
@@ -168,7 +168,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
             {/* Feature Highlights Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="flex items-start gap-3 p-3.5 bg-zinc-900 border border-zinc-800/80 rounded-xl">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-400">
+                <div className="w-8 h-8 rounded-lg bg-white/[0.08] border border-white/10 flex items-center justify-center shrink-0 text-white">
                   <Zap className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
@@ -178,7 +178,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               </div>
 
               <div className="flex items-start gap-3 p-3.5 bg-[#121214] border border-zinc-800/80 rounded-xl">
-                <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0 text-sky-400">
+                <div className="w-8 h-8 rounded-lg bg-white/[0.08] border border-white/10 flex items-center justify-center shrink-0 text-white">
                   <Smartphone className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
@@ -188,7 +188,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               </div>
 
               <div className="flex items-start gap-3 p-3.5 bg-[#121214] border border-zinc-800/80 rounded-xl">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0 text-emerald-400">
+                <div className="w-8 h-8 rounded-lg bg-white/[0.08] border border-white/10 flex items-center justify-center shrink-0 text-white">
                   <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
@@ -203,15 +203,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ [
               {/* Popular Categories */}
               <div className="lg:col-span-5 space-y-3">
                 <h3 className="font-bold text-xs text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                  <Gamepad2 className="w-3.5 h-3.5 text-orange-400" />
+                  <Gamepad2 className="w-3.5 h-3.5 text-white" />
                   Popular Game Categories
                 </h3>
                 <div className="grid grid-cols-2 gap-2">
                   {[
-                    { name: "Action Games", href: "/category/action", icon: Zap, color: "text-amber-400" },
-                    { name: "Puzzle Games", href: "/category/puzzle", icon: Puzzle, color: "text-emerald-400" },
-                    { name: "Racing Games", href: "/category/racing", icon: Car, color: "text-rose-400" },
-                    { name: "Sports Games", href: "/category/sports", icon: Trophy, color: "text-orange-400" },
+                    { name: "Action Games", href: "/category/action", icon: Zap, color: "text-zinc-300" },
+                    { name: "Puzzle Games", href: "/category/puzzle", icon: Puzzle, color: "text-zinc-300" },
+                    { name: "Racing Games", href: "/category/racing", icon: Car, color: "text-zinc-300" },
+                    { name: "Sports Games", href: "/category/sports", icon: Trophy, color: "text-zinc-300" },
                     { name: "Shooting Games", href: "/category/shooting", icon: Crosshair, color: "text-red-400" },
                     { name: "IO Games", href: "/category/io", icon: Globe, color: "text-cyan-400" },
                     { name: "Adventure Games", href: "/category/adventure", icon: Compass, color: "text-blue-400" },

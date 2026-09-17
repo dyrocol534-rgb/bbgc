@@ -51,23 +51,23 @@ export default function NotificationBell() {
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         disabled={loading}
-        className={`group relative flex items-center justify-center w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full backdrop-blur-xl transition-all duration-150 shrink-0 active:scale-90 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_8px_rgba(0,0,0,0.3)] ${
+        className={`group relative flex items-center justify-center w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full backdrop-blur-xl transition-all duration-150 shrink-0 active:scale-90 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_2px_8px_rgba(0,0,0,0.3)] ${
           isSubscribed
-            ? "border border-[#30D158]/35 bg-[#30D158]/15 text-[#30D158] hover:bg-[#30D158]/25 hover:border-[#30D158]/60"
-            : "border border-[#FF9F0A]/30 bg-[#FF9F0A]/12 text-[#FF9F0A] hover:bg-[#FF9F0A]/22 hover:border-[#FF9F0A]/50"
+            ? "border border-white/30 bg-white/[0.12] text-white hover:bg-white/[0.18]"
+            : "border border-white/[0.1] bg-white/[0.06] hover:bg-white/[0.12] hover:border-white/[0.25] text-white"
         }`}
         title={isSubscribed ? "Notifications Enabled" : "Enable Notifications"}
         aria-label={isSubscribed ? "Mute Notifications" : "Allow Notifications"}
       >
         {loading ? (
-          <Loader2 className="w-4 h-4 text-[#FF9F0A] animate-spin" />
+          <Loader2 className="w-4 h-4 text-white animate-spin" />
         ) : isSubscribed ? (
           <div className="relative flex items-center justify-center">
-            <BellRing className="w-4 h-4 text-[#30D158] group-hover:scale-110 transition-transform stroke-[2.2]" />
-            <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-[#30D158] ring-2 ring-[#0d0d10]" />
+            <BellRing className="w-4 h-4 text-white group-hover:scale-110 transition-transform stroke-[2.2]" />
+            <span className="absolute -top-1 -right-1 w-1.5 h-1.5 rounded-full bg-emerald-400 ring-2 ring-[#0d0d10]" />
           </div>
         ) : (
-          <Bell className="w-4 h-4 text-[#FF9F0A] group-hover:text-[#FFB340] transition-transform duration-200 group-hover:rotate-6 stroke-[2.2]" />
+          <Bell className="w-4 h-4 text-white group-hover:text-zinc-200 transition-transform duration-200 group-hover:rotate-6 stroke-[2.2]" />
         )}
 
         {/* iOS Frosted Tooltip */}

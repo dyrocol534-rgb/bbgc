@@ -264,7 +264,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                     <Link
                       key={cat}
                       href={`/category/${cat.toLowerCase()}`}
-                      className="px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize transition-all bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/25 shrink-0 whitespace-nowrap cursor-pointer active:scale-95"
+                      className="px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize transition-all bg-white/[0.08] hover:bg-white/[0.14] text-white border border-white/[0.12] shrink-0 whitespace-nowrap cursor-pointer active:scale-95"
                     >
                       {cat}
                     </Link>
@@ -308,7 +308,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
               {/* About This Game Description */}
               <div className="space-y-1.5 pt-2 border-t border-white/[0.06]">
                 <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                  <Info className="w-3.5 h-3.5 text-orange-400" />
+                  <Info className="w-3.5 h-3.5 text-white" />
                   About This Game
                 </h3>
                 <GameDescription description={game.description} />
@@ -317,13 +317,13 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
               {/* iOS Controls Section */}
               <div className="space-y-2 pt-2 border-t border-white/[0.06]">
                 <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                  <Gamepad2 className="w-3.5 h-3.5 text-orange-400" />
+                  <Gamepad2 className="w-3.5 h-3.5 text-white" />
                   Controls &amp; How to Play
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <div className="flex items-center justify-between p-2.5 rounded-[12px] bg-white/[0.03] border border-white/[0.06]">
                     <span className="text-[11.5px] font-medium text-zinc-300 flex items-center gap-2">
-                      <Monitor className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+                      <Monitor className="w-3.5 h-3.5 text-white shrink-0" />
                       Desktop Keyboard
                     </span>
                     <div className="flex items-center gap-1">
@@ -351,7 +351,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 tracking-tight">
-                    <Gamepad2 className="w-5 h-5 text-orange-400 shrink-0" />
+                    <Gamepad2 className="w-5 h-5 text-white shrink-0" />
                     You May Also Like
                   </h2>
                 </div>
@@ -362,7 +362,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                       <Link 
                         key={`${g.slug}-${index}`} 
                         href={`/games/${g.slug}`} 
-                        className={`group block relative rounded-[18px] overflow-hidden bg-[#141416] border border-white/[0.08] hover:border-orange-500/50 transition-all duration-300 shadow-sm hover:shadow-orange-500/15 ${spanClass} min-h-[80px] active:scale-[0.98]`}
+                        className={`group block relative rounded-[18px] overflow-hidden bg-[#141416] border border-white/[0.08] hover:border-white/30 transition-all duration-300 shadow-sm hover:shadow-white/5 ${spanClass} min-h-[80px] active:scale-[0.98]`}
                       >
                         <GameImage 
                           src={g.thumbnailUrl} 
@@ -371,7 +371,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                           className="transition-transform duration-300 group-hover:scale-105"
                         />
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2 pt-5 z-10">
-                          <p className="text-white text-[11px] sm:text-xs font-semibold truncate group-hover:text-orange-300 transition-colors leading-tight">
+                          <p className="text-white text-[11px] sm:text-xs font-semibold truncate group-hover:text-white transition-colors leading-tight">
                             {g.title}
                           </p>
                         </div>

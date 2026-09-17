@@ -394,7 +394,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                   }}
                 />
               ) : (
-                <div style={{ width: 18, height: 18, borderRadius: 4, background: 'linear-gradient(135deg, #ff6b00, #ea580c)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 10, fontWeight: 900, flexShrink: 0, userSelect: 'none' }}>
+                <div style={{ width: 18, height: 18, borderRadius: 4, background: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 10, fontWeight: 900, flexShrink: 0, userSelect: 'none' }}>
                   {initialLetter}
                 </div>
               )}
@@ -409,10 +409,10 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   width: 24, height: 24,
-                  background: isForceLandscape ? 'rgba(255, 107, 0, 0.25)' : '#222226',
-                  border: isForceLandscape ? '1px solid rgba(255, 107, 0, 0.6)' : '1px solid rgba(255,255,255,0.08)',
+                  background: isForceLandscape ? 'rgba(255, 255, 255, 0.2)' : '#222226',
+                  border: isForceLandscape ? '1px solid rgba(255, 255, 255, 0.5)' : '1px solid rgba(255,255,255,0.08)',
                   borderRadius: 6,
-                  color: isForceLandscape ? '#ff6b00' : '#d4d4d8',
+                  color: isForceLandscape ? '#ffffff' : '#d4d4d8',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                   padding: 0,
@@ -459,7 +459,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           }}>
             {isLoading && (
               <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#18181b', zIndex: 10 }}>
-                <ConsoleLoader className="w-12 h-12 text-[#ff6b00]" label="Loading Game..." />
+                <ConsoleLoader className="w-12 h-12 text-white" label="Loading Game..." />
               </div>
             )}
             <div style={{
@@ -519,7 +519,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                   />
                 </div>
               ) : (
-                <div className="w-18 h-18 sm:w-20 sm:h-20 aspect-square rounded-[18px] bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 flex items-center justify-center mb-2.5 border border-white/20 shadow-lg text-white font-black text-2xl sm:text-3xl select-none">
+                <div className="w-18 h-18 sm:w-20 sm:h-20 aspect-square rounded-[18px] bg-zinc-800 flex items-center justify-center mb-2.5 border border-white/20 shadow-lg text-white font-black text-2xl sm:text-3xl select-none">
                   {initialLetter}
                 </div>
               )}
@@ -540,7 +540,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
               <button
                 ref={playButtonRef}
                 onClick={handlePlayNow}
-                className="px-7 py-2.5 sm:px-8 sm:py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.98] text-white text-xs sm:text-sm font-semibold rounded-full shadow-[0_6px_20px_rgba(249,115,22,0.3)] transition-all flex items-center gap-2 cursor-pointer"
+                className="px-7 py-2.5 sm:px-8 sm:py-2.5 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black text-xs sm:text-sm font-bold rounded-full shadow-[0_6px_20px_rgba(255,255,255,0.15)] transition-all flex items-center gap-2 cursor-pointer"
               >
                 <Play className="w-3.5 h-3.5 fill-current transition-transform" />
                 <span>Play Now</span>
@@ -593,7 +593,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           <div className="lg:hidden relative bg-black rounded-2xl overflow-hidden shadow-2xl w-full border border-white/[0.08]" style={{ aspectRatio }}>
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-zinc-900 z-10">
-                <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+                <Loader2 className="w-8 h-8 animate-spin text-white" />
               </div>
             )}
             <iframe
@@ -618,7 +618,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 />
               </div>
             ) : (
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center text-white text-xs font-black shadow-sm shrink-0 select-none">
+              <div className="w-8 h-8 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center text-white text-xs font-black shadow-sm shrink-0 select-none">
                 {initialLetter}
               </div>
             )}
@@ -635,7 +635,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 onClick={() => handleInteract('like')} 
                 className={clsx(
                   "flex items-center gap-1 px-2.5 py-1 rounded-full transition-all text-xs font-medium cursor-pointer active:scale-95", 
-                  isLiked ? "text-orange-400 bg-orange-500/15" : "text-zinc-300 hover:text-white"
+                  isLiked ? "text-white bg-white/20" : "text-zinc-300 hover:text-white"
                 )}
                 title="Like"
               >
@@ -716,7 +716,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
               </button>
               
               <div className="flex items-center gap-2.5 mb-2">
-                <div className="w-8 h-8 rounded-xl bg-orange-500/15 border border-orange-500/25 flex items-center justify-center text-orange-400 shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-white/[0.08] border border-white/[0.12] flex items-center justify-center text-white shrink-0">
                   <MessageSquareWarning className="w-4 h-4" />
                 </div>
                 <div>
@@ -733,7 +733,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 value={feedbackText} 
                 onChange={e => setFeedbackText(e.target.value)} 
                 placeholder="Write your feedback or issue description here..." 
-                className="w-full bg-white/[0.04] border border-white/[0.1] focus:border-orange-500/80 rounded-2xl p-3.5 text-zinc-100 placeholder-zinc-500 text-xs sm:text-sm min-h-[110px] outline-none transition-all mb-4" 
+                className="w-full bg-white/[0.04] border border-white/[0.1] focus:border-white/40 rounded-2xl p-3.5 text-zinc-100 placeholder-zinc-500 text-xs sm:text-sm min-h-[110px] outline-none transition-all mb-4" 
               />
 
               <div className="flex items-center justify-end gap-2.5">
@@ -746,7 +746,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 <button 
                   onClick={submitFeedback} 
                   disabled={isSubmittingFeedback || !feedbackText.trim()} 
-                  className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-95 text-white text-xs font-semibold rounded-full transition-all shadow-md shadow-orange-500/20 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                  className="px-5 py-2.5 bg-white hover:bg-zinc-200 active:scale-95 text-black text-xs font-bold rounded-full transition-all shadow-md shadow-white/10 disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                 >
                   {isSubmittingFeedback ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
                   <span>Submit Feedback</span>

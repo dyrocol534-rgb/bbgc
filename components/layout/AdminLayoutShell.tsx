@@ -119,13 +119,13 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
                   <Icon
                     className={clsx(
                       "w-4 h-4 shrink-0 transition-transform group-hover:scale-105",
-                      isActive ? "text-orange-400" : "text-zinc-500 group-hover:text-zinc-300"
+                      isActive ? "text-white" : "text-zinc-500 group-hover:text-zinc-300"
                     )}
                   />
                   <span className="truncate">{link.name}</span>
                 </div>
                 {isActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white shrink-0" />
                 )}
               </Link>
             );
@@ -183,7 +183,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
               {/* Mobile Status Badge & Hamburger Button */}
               <div className="flex items-center gap-1.5 lg:hidden">
                 <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-[10.5px] font-medium text-zinc-300">
-                  <activeLink.icon className="w-3 h-3 text-orange-400" />
+                  <activeLink.icon className="w-3 h-3 text-white" />
                   <span className="truncate max-w-[120px]">{activeLink.name}</span>
                 </span>
                 <button
@@ -219,7 +219,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
                       className={clsx(
                         "w-4 h-4 shrink-0 transition-transform group-hover:scale-105",
                         isActive
-                          ? "text-orange-400"
+                          ? "text-white"
                           : "text-zinc-500 group-hover:text-zinc-300"
                       )}
                     />

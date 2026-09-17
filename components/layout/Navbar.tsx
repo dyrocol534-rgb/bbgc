@@ -16,7 +16,7 @@ function MovingOuterRing({ className }: { className?: string }) {
   return (
     <span
       className={clsx(
-        "absolute -inset-[2.5px] rounded-full border border-dashed border-current/40 animate-[spin_10s_linear_infinite] pointer-events-none select-none",
+        "absolute -inset-[2.5px] rounded-full border border-dashed border-white/40 animate-[spin_10s_linear_infinite] pointer-events-none select-none",
         className
       )}
     />
@@ -105,7 +105,7 @@ export default function Navbar() {
         {/* Center: Website Logo / Home Link */}
         <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
           {logoError ? (
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-orange-500 via-primary to-amber-500 flex items-center justify-center font-black text-white text-base shadow-sm border border-white/20 select-none">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center font-black text-white text-base shadow-sm border border-white/20 select-none">
               B
             </div>
           ) : (
@@ -127,7 +127,7 @@ export default function Navbar() {
         <div className="relative flex items-center">
           <button
             onClick={handleShare}
-            className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/[0.08] hover:border-orange-500/60 transition-all shrink-0 active:scale-95 cursor-pointer shadow-sm"
+            className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/[0.08] hover:border-white/40 transition-all shrink-0 active:scale-95 cursor-pointer shadow-sm"
             aria-label="Share Game"
             title="Share"
           >
@@ -154,7 +154,7 @@ export default function Navbar() {
       <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-[#0d0d10]/85 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
         <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
           {logoError ? (
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-orange-500 via-primary to-amber-500 flex items-center justify-center font-black text-white text-lg sm:text-xl shadow-[0_0_15px_rgba(255,107,0,0.35)] border border-white/20 select-none tracking-tight">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center font-black text-white text-lg sm:text-xl shadow-[0_0_15px_rgba(255,255,255,0.15)] border border-white/20 select-none tracking-tight">
               B
             </div>
           ) : (
@@ -179,7 +179,7 @@ export default function Navbar() {
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Mobile Search Button */}
           <button 
-            className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-[#0A84FF] rounded-full bg-[#0A84FF]/12 hover:bg-[#0A84FF]/22 border border-[#0A84FF]/30 backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-150 shrink-0 active:scale-90"
+            className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-white rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-150 shrink-0 active:scale-90"
             onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
             title="Search"
           >
@@ -190,14 +190,14 @@ export default function Navbar() {
           <button
             onClick={handleSurpriseMe}
             disabled={isRolling}
-            className="group relative flex items-center justify-center w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full bg-[#BF5AF2]/12 hover:bg-[#BF5AF2]/22 border border-[#BF5AF2]/30 text-[#BF5AF2] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-150 disabled:opacity-50 shrink-0 active:scale-90 cursor-pointer"
+            className="group relative flex items-center justify-center w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-white backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-150 disabled:opacity-50 shrink-0 active:scale-90 cursor-pointer"
             title="Surprise Me!"
           >
             <MovingOuterRing />
             {isRolling ? (
-              <Loader2 className="w-4 h-4 text-[#BF5AF2] animate-spin" />
+              <Loader2 className="w-4 h-4 text-white animate-spin" />
             ) : (
-              <Dices className="w-4 h-4 text-[#BF5AF2] group-hover:text-[#D17BFA] transition-transform duration-200 group-hover:rotate-12 stroke-[2.2]" />
+              <Dices className="w-4 h-4 text-white transition-transform duration-200 group-hover:rotate-12 stroke-[2.2]" />
             )}
 
             {/* Tooltip */}
@@ -212,14 +212,14 @@ export default function Navbar() {
           {/* Profile / Menu Button */}
           <button 
             onClick={() => setIsSidebarOpen(true)} 
-            className="relative w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full overflow-hidden border border-[#FF9F0A]/40 hover:border-[#FF9F0A]/70 bg-[#FF9F0A]/12 ring-1 ring-[#FF9F0A]/25 backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2),0_2px_8px_rgba(0,0,0,0.3)] active:scale-90 transition-all duration-150 flex items-center justify-center shrink-0 touch-manipulation cursor-pointer"
+            className="relative w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full overflow-hidden border border-white/[0.15] hover:border-white/[0.35] bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_2px_8px_rgba(0,0,0,0.3)] active:scale-90 transition-all duration-150 flex items-center justify-center shrink-0 touch-manipulation cursor-pointer"
             aria-label="User Profile & Menu"
             title={session?.user?.name || "Account & Menu"}
           >
             {session?.user?.image ? (
               <Image src={session.user.image} alt="User" fill sizes="36px" className="object-cover" />
             ) : (
-              <UserIcon className="w-4 h-4 text-[#FF9F0A] stroke-[2.2]" />
+              <UserIcon className="w-4 h-4 text-white stroke-[2.2]" />
             )}
           </button>
         </div>
@@ -263,7 +263,7 @@ export default function Navbar() {
               <div className="mt-0.5">
                 {session ? (
                   session.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") ? (
-                    <span className="inline-flex items-center text-[10.5px] font-medium text-[#ff9f0a]">
+                    <span className="inline-flex items-center text-[10.5px] font-medium text-white">
                       Administrator
                     </span>
                   ) : (
@@ -314,8 +314,8 @@ export default function Navbar() {
                 }}
                 className="flex-1 flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
               >
-                <div className="w-6 h-6 rounded-full bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
-                  <Coins className="w-3 h-3 text-amber-400" />
+                <div className="w-6 h-6 rounded-full bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0">
+                  <Coins className="w-3 h-3 text-white" />
                 </div>
                 <div className="flex flex-col text-left min-w-0">
                   <span className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">XP Balance</span>
@@ -337,8 +337,8 @@ export default function Navbar() {
                 }}
                 className="flex-1 flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
               >
-                <div className="w-6 h-6 rounded-full bg-orange-500/15 border border-orange-500/25 flex items-center justify-center shrink-0">
-                  <Flame className="w-3 h-3 text-orange-400" />
+                <div className="w-6 h-6 rounded-full bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0">
+                  <Flame className="w-3 h-3 text-white" />
                 </div>
                 <div className="flex flex-col text-left min-w-0">
                   <span className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">Streak</span>
@@ -420,7 +420,7 @@ export default function Navbar() {
                 className="flex items-center justify-between px-3 py-2 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-6 h-6 rounded-md bg-[#FF9500] text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <div className="w-6 h-6 rounded-md bg-white/[0.1] border border-white/10 text-white flex items-center justify-center shrink-0 shadow-sm">
                     <ShoppingBag className="w-3.5 h-3.5 text-white" />
                   </div>
                   <div className="flex flex-col text-left min-w-0">
@@ -458,9 +458,9 @@ export default function Navbar() {
               <Link 
                 href="/admin" 
                 onClick={() => setIsSidebarOpen(false)} 
-                className="w-full py-2 px-3.5 bg-[#141416] hover:bg-[#1f1f23] active:bg-[#28282c] text-[#ff9f0a] font-semibold text-[12.5px] rounded-xl border border-white/[0.06] transition-colors flex items-center justify-center gap-2 touch-manipulation cursor-pointer"
+                className="w-full py-2 px-3.5 bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.14] text-white font-semibold text-[12.5px] rounded-xl border border-white/[0.08] transition-colors flex items-center justify-center gap-2 touch-manipulation cursor-pointer"
               >
-                <UploadCloud className="w-4 h-4 text-[#ff9f0a]" />
+                <UploadCloud className="w-4 h-4 text-white" />
                 <span>Admin Dashboard</span>
               </Link>
             )

@@ -48,7 +48,7 @@ export default function GameDescription({ description }: GameDescriptionProps) {
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-orange-400 hover:text-orange-300 transition-colors py-0.5 cursor-pointer select-none"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-400 hover:text-white transition-colors py-0.5 cursor-pointer select-none"
           aria-expanded={isExpanded}
         >
           <span>{isExpanded ? "Show less" : "Show more"}</span>

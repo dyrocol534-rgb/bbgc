@@ -12,9 +12,9 @@
   --text-muted: #a1a1aa; 
   --text-placeholder: #71717a; 
   
-  --primary: #ff6b00; 
-  --primary-hover: #ea580c; 
-  --primary-light: #fb923c; 
+  --primary: #ffffff; 
+  --primary-hover: #e4e4e7; 
+  --primary-light: #f4f4f5; 
 }
 
 @theme inline {

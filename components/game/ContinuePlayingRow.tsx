@@ -15,10 +15,10 @@ export default function ContinuePlayingRow({ games }: ContinuePlayingRowProps) {
     <section className="space-y-2.5 sm:space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2 tracking-tight">
-          <RotateCcw className="w-4 h-4 text-orange-400" />
+          <RotateCcw className="w-4 h-4 text-white" />
           Continue Playing
         </h2>
-        <Link href="/profile" className="text-orange-400 hover:text-orange-300 text-xs font-semibold transition-colors">
+        <Link href="/profile" className="text-zinc-400 hover:text-white text-xs font-semibold transition-colors">
           View more
         </Link>
       </div>
@@ -30,8 +30,8 @@ export default function ContinuePlayingRow({ games }: ContinuePlayingRowProps) {
             key={game.slug}
             className="flex flex-col items-center flex-shrink-0 group snap-start cursor-pointer select-none"
           >
-            {/* Story Gradient Ring */}
-            <div className="p-[2px] rounded-full bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-500 group-hover:scale-105 transition-transform duration-200 shadow-sm">
+            {/* Story Ring */}
+            <div className="p-[2px] rounded-full bg-white/20 group-hover:bg-white/50 transition-all duration-200 shadow-sm">
               <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-black p-[2px]">
                 <div className="w-full h-full rounded-full overflow-hidden relative bg-zinc-900">
                   <GameImage 

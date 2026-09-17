@@ -24,12 +24,12 @@ export default function HorizontalGameSection({
     <section className="space-y-2.5 sm:space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 tracking-tight">
-          <Icon className="w-5 h-5 text-orange-400 shrink-0" />
+          <Icon className="w-5 h-5 text-white shrink-0" />
           {title}
         </h2>
         <Link
           href={`/category/${categorySlug}`}
-          className="text-orange-400 hover:text-orange-300 text-xs sm:text-sm font-semibold transition-colors"
+          className="text-zinc-400 hover:text-white text-xs sm:text-sm font-semibold transition-colors"
         >
           View more
         </Link>
