@@ -113,7 +113,7 @@ export default function AdminUnlockForm() {
         }`}
       >
         {/* Compact Icon */}
-        <div className="w-10 h-10 rounded-[12px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center mx-auto mb-3 text-orange-400 shadow-xs">
+        <div className="w-10 h-10 rounded-[12px] bg-white/[0.08] border border-white/10 flex items-center justify-center mx-auto mb-3 text-white shadow-xs">
           <ShieldCheck className="w-5 h-5" />
         </div>
 
@@ -139,8 +139,8 @@ export default function AdminUnlockForm() {
               onFocus={(e) => e.target.select()}
               className={`w-9 h-11 sm:w-10 sm:h-12 text-center text-lg sm:text-xl font-mono font-bold rounded-[12px] bg-[#1c1c1e] border transition-all outline-none ${
                 char
-                  ? "border-orange-500 text-white bg-orange-500/10 ring-1 ring-orange-500/30"
-                  : "border-white/[0.08] text-zinc-200 focus:border-orange-400 focus:bg-[#242428]"
+                  ? "border-white text-white bg-white/[0.1] ring-1 ring-white/30"
+                  : "border-white/[0.08] text-zinc-200 focus:border-white/60 focus:bg-[#242428]"
               }`}
             />
           ))}
@@ -155,7 +155,7 @@ export default function AdminUnlockForm() {
           >
             {showCharacters ? (
               <>
-                <EyeOff className="w-3.5 h-3.5 text-orange-400" />
+                <EyeOff className="w-3.5 h-3.5 text-white" />
                 <span>Hide</span>
               </>
             ) : (
@@ -189,7 +189,7 @@ export default function AdminUnlockForm() {
         <button
           onClick={() => handleUnlock(pin.join(""))}
           disabled={isLoading || pin.join("").length === 0}
-          className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-1.5 text-xs shadow-md shadow-orange-500/20 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer"
+          className="w-full bg-white hover:bg-zinc-200 text-black font-bold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-1.5 text-xs shadow-md shadow-white/10 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] cursor-pointer"
         >
           {isLoading ? (
             <Loader2 className="w-3.5 h-3.5 animate-spin" />

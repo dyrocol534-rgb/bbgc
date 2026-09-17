@@ -149,7 +149,7 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                         <Image src={item.image} alt={item.name} width={40} height={40} className="w-full h-full object-cover" />
                       </div>
                     ) : (
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] bg-orange-500/15 border border-orange-500/25 flex items-center justify-center text-orange-400 font-bold shrink-0 text-xs">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] bg-white/[0.08] border border-white/10 flex items-center justify-center text-white font-bold shrink-0 text-xs">
                         {item.name?.charAt(0)?.toUpperCase() || '?'}
                       </div>
                     )
@@ -169,7 +169,7 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="font-semibold text-zinc-100 text-xs sm:text-sm truncate group-hover:text-orange-300 transition-colors leading-tight">
+                      <p className="font-semibold text-zinc-100 text-xs sm:text-sm truncate group-hover:text-white transition-colors leading-tight">
                         {isUser ? item.name : isGuest ? `Guest ${item.guestId?.slice(0, 10)}...` : item.email}
                       </p>
                       {isUser && item.profileCompleted && (
@@ -193,7 +193,7 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-300 border-amber-500/20 font-mono">
                         🪙 {item.xp || 0}
                       </span>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-orange-500/10 text-orange-300 border-orange-500/20 font-mono">
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-white/[0.06] text-white border-white/10 font-mono">
                         🔥 {item.currentStreak || 0}
                       </span>
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full border bg-violet-500/10 text-violet-300 border-violet-500/20 font-mono">
@@ -277,7 +277,7 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                       <Image src={selectedEntity.data.image} alt={selectedEntity.data.name} width={48} height={48} className="w-full h-full object-cover" />
                     </div>
                   ) : (
-                    <div className="w-12 h-12 rounded-[14px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 font-bold shrink-0 text-base shadow-md">
+                    <div className="w-12 h-12 rounded-[14px] bg-white/[0.08] border border-white/10 flex items-center justify-center text-white font-bold shrink-0 text-base shadow-md">
                       {selectedEntity.data.name?.charAt(0)?.toUpperCase() || '?'}
                     </div>
                   )
@@ -304,7 +304,7 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                         : selectedEntity.data.email}
                   </h2>
                   <div className="flex items-center gap-2 mt-1 text-[11px] text-zinc-400 truncate">
-                    <span className="text-orange-400 font-medium capitalize">
+                    <span className="text-zinc-300 font-medium capitalize">
                       {selectedEntity.type === "user" ? "Registered Player" : selectedEntity.type === "guest" ? "Anonymous Guest" : "Email Subscriber"}
                     </span>
                     <span className="text-zinc-600">•</span>
@@ -338,8 +338,8 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                       <span className="text-[10px] text-zinc-500 mt-0.5">Current XP</span>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border border-orange-500/20 bg-orange-500/[0.06]">
-                      <div className="flex items-center gap-1 text-[11px] font-bold text-orange-300">
+                    <div className="flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border border-white/10 bg-white/[0.04]">
+                      <div className="flex items-center gap-1 text-[11px] font-bold text-white">
                         <Flame className="w-3.5 h-3.5" />
                         <span>{selectedEntity.data.currentStreak || 0} days</span>
                       </div>
@@ -476,7 +476,7 @@ export default function UsersTabs({ users, subscribers, guests }: UsersTabsProps
                           <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold block mb-1.5">Recently Played</span>
                           <div className="flex flex-wrap gap-1">
                             {selectedEntity.data.recentlyPlayed.map((slug: string) => (
-                              <span key={slug} className="px-2 py-0.5 bg-orange-500/10 text-orange-300 border border-orange-500/20 rounded-full text-[10px] font-mono">
+                              <span key={slug} className="px-2 py-0.5 bg-white/[0.06] text-zinc-300 border border-white/10 rounded-full text-[10px] font-mono">
                                 🎮 {slug}
                               </span>
                             ))}

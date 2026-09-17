@@ -111,7 +111,7 @@ export default function LoginPage() {
   if (status === "loading") {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-orange-400 animate-spin" />
+        <Loader2 className="w-8 h-8 text-white animate-spin" />
       </div>
     );
   }
@@ -119,14 +119,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden">
       {/* Subtle ambient lighting */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-72 h-72 bg-orange-500/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-72 h-72 bg-white/[0.04] rounded-full blur-[100px] pointer-events-none" />
 
       {/* Login Form Container */}
       <div className="relative w-full max-w-[340px] sm:max-w-[360px] flex flex-col items-center text-center">
         {/* Brand App Icon Squircle */}
         <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-[20px] bg-gradient-to-b from-[#1f1f24] to-[#141417] border border-white/[0.12] p-2.5 flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.5)] mb-4 relative group">
           {logoError ? (
-            <div className="w-full h-full rounded-[16px] bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center font-black text-white text-2xl select-none">
+            <div className="w-full h-full rounded-[16px] bg-white text-black flex items-center justify-center font-black text-2xl select-none">
               B
             </div>
           ) : (
@@ -152,11 +152,11 @@ export default function LoginPage() {
 
         {/* Active Referral Invite Bonus Badge */}
         {ref && (
-          <div className="w-full mb-4 py-2 px-3 rounded-xl bg-orange-500/10 border border-orange-500/25 flex items-center gap-2.5 text-left">
-            <Gift className="w-4 h-4 text-orange-400 shrink-0" />
+          <div className="w-full mb-4 py-2 px-3 rounded-xl bg-white/[0.06] border border-white/10 flex items-center gap-2.5 text-left">
+            <Gift className="w-4 h-4 text-white shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-orange-200 truncate">
-                Referral: <span className="font-mono tracking-wider text-orange-400">{ref}</span>
+              <p className="text-xs font-semibold text-zinc-200 truncate">
+                Referral: <span className="font-mono tracking-wider text-white">{ref}</span>
               </p>
               <p className="text-[10px] text-zinc-400">
                 +50 bonus XP on sign in!
@@ -190,18 +190,18 @@ export default function LoginPage() {
                 autoComplete="email"
                 required
                 disabled={isSendingOtp}
-                className="w-full h-11 sm:h-12 bg-white/[0.05] border border-white/[0.1] focus:border-orange-500/80 rounded-full px-4 text-xs sm:text-sm text-white placeholder-zinc-500 outline-none transition-all"
+                className="w-full h-11 sm:h-12 bg-white/[0.05] border border-white/[0.1] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-full px-4 text-xs sm:text-sm text-white placeholder-zinc-500 outline-none transition-all"
               />
             </div>
 
             <button
               type="submit"
               disabled={isSendingOtp || !email}
-              className="w-full h-11 sm:h-12 flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.98] text-white font-semibold rounded-full shadow-md shadow-orange-500/20 transition-all text-xs sm:text-sm cursor-pointer disabled:opacity-60"
+              className="w-full h-11 sm:h-12 flex items-center justify-center gap-2 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black font-bold rounded-full shadow-md shadow-white/10 transition-all text-xs sm:text-sm cursor-pointer disabled:opacity-60"
             >
               {isSendingOtp ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin text-black" />
                   <span>Sending Code...</span>
                 </>
               ) : (
@@ -223,7 +223,7 @@ export default function LoginPage() {
                   setOtp("");
                   setErrorMessage(null);
                 }}
-                className="text-orange-400 hover:underline font-medium cursor-pointer shrink-0 ml-2"
+                className="text-zinc-300 hover:text-white hover:underline font-medium cursor-pointer shrink-0 ml-2"
               >
                 Change
               </button>
@@ -240,17 +240,17 @@ export default function LoginPage() {
               autoFocus
               required
               disabled={isVerifyingOtp}
-              className="w-full h-12 bg-white/[0.05] border border-white/[0.12] focus:border-orange-500/80 rounded-xl px-4 text-center font-mono text-xl sm:text-2xl font-bold tracking-[0.3em] text-white placeholder-zinc-600 outline-none transition-all"
+              className="w-full h-12 bg-white/[0.05] border border-white/[0.12] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-xl px-4 text-center font-mono text-xl sm:text-2xl font-bold tracking-[0.3em] text-white placeholder-zinc-600 outline-none transition-all"
             />
 
             <button
               type="submit"
               disabled={isVerifyingOtp || otp.length < 6}
-              className="w-full h-11 sm:h-12 flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.98] text-white font-semibold rounded-full shadow-md shadow-orange-500/20 transition-all text-xs sm:text-sm cursor-pointer disabled:opacity-60"
+              className="w-full h-11 sm:h-12 flex items-center justify-center gap-2 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black font-bold rounded-full shadow-md shadow-white/10 transition-all text-xs sm:text-sm cursor-pointer disabled:opacity-60"
             >
               {isVerifyingOtp ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin text-black" />
                   <span>Verifying...</span>
                 </>
               ) : (
@@ -272,7 +272,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => handleSendOtp()}
                   disabled={isSendingOtp}
-                  className="text-[11px] text-orange-400 hover:underline font-medium cursor-pointer inline-flex items-center gap-1"
+                  className="text-[11px] text-zinc-300 hover:text-white hover:underline font-medium cursor-pointer inline-flex items-center gap-1"
                 >
                   <RefreshCw className="w-3 h-3" />
                   <span>Resend Code</span>

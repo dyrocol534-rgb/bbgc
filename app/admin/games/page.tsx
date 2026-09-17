@@ -232,7 +232,7 @@ export default function AdminGamesPage() {
   if (isLoading) {
     return (
       <div className="flex flex-col justify-center items-center py-24">
-        <Loader2 className="w-6 h-6 text-orange-500 animate-spin mb-2" />
+        <Loader2 className="w-6 h-6 text-white animate-spin mb-2" />
         <p className="text-xs text-zinc-400 font-medium">Loading Games Catalog...</p>
       </div>
     );
@@ -243,7 +243,7 @@ export default function AdminGamesPage() {
       {/* Compact Frameless Header */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
+          <div className="w-6 h-6 rounded-[7px] bg-white/10 border border-white/15 flex items-center justify-center text-white shrink-0">
             <Gamepad2 className="w-3.5 h-3.5" />
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
@@ -252,16 +252,16 @@ export default function AdminGamesPage() {
           <span className="text-[10.5px] font-semibold px-2 py-0.5 rounded-full bg-white/[0.06] text-zinc-300 border border-white/[0.08] font-mono">
             {totalGames}
           </span>
-          {isFetching && !isLoading && <Loader2 className="w-3.5 h-3.5 text-orange-400 animate-spin ml-1" />}
+          {isFetching && !isLoading && <Loader2 className="w-3.5 h-3.5 text-white animate-spin ml-1" />}
 
           {/* AI SEO button right side of title */}
           <button
             onClick={batchEnhancePageGames}
             disabled={isBatchEnhancing || games.length === 0}
-            className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1 bg-orange-500/10 hover:bg-orange-500/20 text-orange-300 border border-orange-500/25 rounded-full text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0 active:scale-95 ml-1"
+            className="inline-flex items-center justify-center gap-1.5 px-2.5 py-1 bg-white/[0.06] hover:bg-white/[0.12] text-white border border-white/[0.1] rounded-full text-xs font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shrink-0 active:scale-95 ml-1"
             title="Generate AI SEO descriptions for all games on this page"
           >
-            {isBatchEnhancing ? <Loader2 className="w-3 h-3 animate-spin text-orange-400" /> : <Sparkles className="w-3 h-3 text-orange-400" />}
+            {isBatchEnhancing ? <Loader2 className="w-3 h-3 animate-spin text-white" /> : <Sparkles className="w-3 h-3 text-white" />}
             <span>{isBatchEnhancing ? "Optimizing..." : "AI SEO"}</span>
           </button>
         </div>
@@ -278,7 +278,7 @@ export default function AdminGamesPage() {
               placeholder="Search games..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-7 py-1.5 bg-[#101012] border border-white/[0.08] rounded-full text-xs text-zinc-200 placeholder-zinc-500 focus:border-orange-500/50 focus:outline-none transition-colors"
+              className="w-full pl-8 pr-7 py-1.5 bg-[#101012] border border-white/[0.08] rounded-full text-xs text-zinc-200 placeholder-zinc-500 focus:border-white/50 focus:outline-none transition-colors"
             />
             {searchQuery && (
               <button 
@@ -300,13 +300,13 @@ export default function AdminGamesPage() {
               className={clsx(
                 "relative flex items-center justify-center w-8 h-8 rounded-full text-xs font-semibold transition-all border cursor-pointer active:scale-95 shrink-0",
                 activeFilterCount > 0 || isFilterOpen
-                  ? "bg-orange-500/15 text-orange-300 border-orange-500/35 shadow-xs"
+                  ? "bg-white/15 text-white border-white/30 shadow-xs"
                   : "bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 border-white/[0.08]"
               )}
             >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-orange-400" />
+              <SlidersHorizontal className="w-3.5 h-3.5 text-white" />
               {activeFilterCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white text-[9.5px] font-bold flex items-center justify-center font-mono ring-2 ring-[#0d0d10]">
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-white text-black text-[9.5px] font-bold flex items-center justify-center font-mono ring-2 ring-[#0d0d10]">
                   {activeFilterCount}
                 </span>
               )}
@@ -317,7 +317,7 @@ export default function AdminGamesPage() {
               <div className="absolute right-0 sm:left-0 sm:right-auto mt-2 w-72 max-w-[calc(100vw-2rem)] p-3.5 bg-[#141417] border border-white/[0.12] rounded-[18px] shadow-2xl z-50 space-y-3 animate-in fade-in zoom-in-95 duration-150">
                 <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
                   <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                    <Filter className="w-3.5 h-3.5 text-orange-400" />
+                    <Filter className="w-3.5 h-3.5 text-white" />
                     Filters
                   </span>
                   {activeFilterCount > 0 && (
@@ -328,7 +328,7 @@ export default function AdminGamesPage() {
                         setVerifiedFilter("all");
                         setStatusFilter("all");
                       }}
-                      className="text-[10.5px] font-medium text-orange-400 hover:text-orange-300 transition-colors cursor-pointer"
+                      className="text-[10.5px] font-medium text-zinc-400 hover:text-white transition-colors cursor-pointer"
                     >
                       Reset All
                     </button>
@@ -421,7 +421,7 @@ export default function AdminGamesPage() {
         {activeFilterCount > 0 && (
           <div className="flex flex-wrap items-center gap-1.5">
             {sourceFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] bg-orange-500/10 text-orange-300 border border-orange-500/25">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] bg-white/[0.08] text-white border border-white/10">
                 Source: {sourceFilter === "aggregated" ? "Imported" : "Uploaded"}
                 <button type="button" onClick={() => setSourceFilter("all")} className="hover:text-white cursor-pointer ml-0.5">
                   <X className="w-2.5 h-2.5" />
@@ -429,7 +429,7 @@ export default function AdminGamesPage() {
               </span>
             )}
             {verifiedFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] bg-orange-500/10 text-orange-300 border border-orange-500/25">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] bg-white/[0.08] text-white border border-white/10">
                 Check: {verifiedFilter === "true" ? "Verified" : "Needs Check"}
                 <button type="button" onClick={() => setVerifiedFilter("all")} className="hover:text-white cursor-pointer ml-0.5">
                   <X className="w-2.5 h-2.5" />
@@ -437,7 +437,7 @@ export default function AdminGamesPage() {
               </span>
             )}
             {statusFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] bg-orange-500/10 text-orange-300 border border-orange-500/25">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10.5px] bg-white/[0.08] text-white border border-white/10">
                 Status: {statusFilter === "published" ? "Live" : "Draft"}
                 <button type="button" onClick={() => setStatusFilter("all")} className="hover:text-white cursor-pointer ml-0.5">
                   <X className="w-2.5 h-2.5" />
@@ -478,14 +478,14 @@ export default function AdminGamesPage() {
                 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
-                    <h3 className="font-semibold text-zinc-100 text-xs sm:text-sm truncate group-hover:text-orange-300 transition-colors leading-tight">
+                    <h3 className="font-semibold text-zinc-100 text-xs sm:text-sm truncate group-hover:text-white transition-colors leading-tight">
                       {game.title}
                     </h3>
                     {game.featured && (
                       <Star className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
                     )}
                     {game.source === "aggregated" && (
-                      <span className="bg-orange-500/10 text-orange-400 text-[8.5px] uppercase font-bold px-1.5 py-0.2 rounded-full shrink-0 border border-orange-500/20">
+                      <span className="bg-white/10 text-white text-[8.5px] uppercase font-bold px-1.5 py-0.2 rounded-full shrink-0 border border-white/15">
                         Import
                       </span>
                     )}
@@ -496,7 +496,7 @@ export default function AdminGamesPage() {
                     {game.category && game.category.length > 0 && (
                       <>
                         <span className="text-zinc-600">•</span>
-                        <span className="text-orange-400/90 font-medium capitalize truncate">
+                        <span className="text-zinc-400 font-medium capitalize truncate">
                           {game.category[0]}
                         </span>
                       </>
@@ -589,7 +589,7 @@ export default function AdminGamesPage() {
                   <div className="flex items-center gap-2 mt-1 text-[11px] text-zinc-400 truncate">
                     <span className="truncate">{selectedGame.developer || "Bluebuff"}</span>
                     <span className="text-zinc-600">•</span>
-                    <span className="text-orange-400/90 font-medium">
+                    <span className="text-zinc-400 font-medium">
                       {selectedGame.source === "aggregated" ? "Imported" : "Uploaded"}
                     </span>
                   </div>
@@ -707,7 +707,7 @@ export default function AdminGamesPage() {
                       selectedGame.category.map((c) => (
                         <span 
                           key={c}
-                          className="px-2 py-0.5 bg-orange-500/10 text-orange-300 border border-orange-500/20 rounded-full text-[10px] font-medium uppercase"
+                          className="px-2 py-0.5 bg-white/[0.08] text-zinc-200 border border-white/10 rounded-full text-[10px] font-medium uppercase"
                         >
                           {c}
                         </span>
@@ -737,7 +737,7 @@ export default function AdminGamesPage() {
                     href={`/admin/games/${selectedGame._id}/edit`}
                     className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/[0.08] rounded-full text-xs font-semibold transition-all active:scale-95"
                   >
-                    <Pencil className="w-3.5 h-3.5 text-orange-400" />
+                    <Pencil className="w-3.5 h-3.5 text-white" />
                     <span>Edit Details</span>
                   </Link>
                 </div>
@@ -747,12 +747,12 @@ export default function AdminGamesPage() {
                     type="button"
                     onClick={() => categorizeGameWithAI(selectedGame._id)}
                     disabled={categorizingIds.has(selectedGame._id)}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-orange-500/10 hover:bg-orange-500/15 text-orange-300 border border-orange-500/20 rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.06] hover:bg-white/[0.12] text-white border border-white/[0.1] rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:opacity-50"
                   >
                     {categorizingIds.has(selectedGame._id) ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
                     ) : (
-                      <Tag className="w-3.5 h-3.5 text-orange-400" />
+                      <Tag className="w-3.5 h-3.5 text-white" />
                     )}
                     <span>AI Categorize</span>
                   </button>
@@ -761,12 +761,12 @@ export default function AdminGamesPage() {
                     type="button"
                     onClick={() => enhanceGameWithAI(selectedGame._id)}
                     disabled={enhancingIds.has(selectedGame._id)}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-orange-500/10 hover:bg-orange-500/15 text-orange-300 border border-orange-500/20 rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.06] hover:bg-white/[0.12] text-white border border-white/[0.1] rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:opacity-50"
                   >
                     {enhancingIds.has(selectedGame._id) ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
                     ) : (
-                      <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+                      <Sparkles className="w-3.5 h-3.5 text-white" />
                     )}
                     <span>AI SEO</span>
                   </button>

@@ -38,8 +38,8 @@ export default async function LeaderboardPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl min-h-screen">
       <div className="flex flex-col items-center justify-center mb-12 text-center">
-        <div className="inline-flex items-center justify-center p-3 bg-amber-500/20 rounded-2xl mb-4">
-          <Trophy className="w-10 h-10 text-amber-500" />
+        <div className="inline-flex items-center justify-center p-3 bg-white/[0.08] border border-white/10 rounded-2xl mb-4">
+          <Trophy className="w-10 h-10 text-white" />
         </div>
         <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">Global Leaderboard</h1>
         <p className="text-zinc-400 max-w-lg mx-auto">
@@ -55,7 +55,7 @@ export default async function LeaderboardPage() {
                 <th className="p-4 font-bold text-zinc-400 w-16 text-center">Rank</th>
                 <th className="p-4 font-bold text-zinc-400">Player</th>
                 <th className="p-4 font-bold text-zinc-400 text-center">Streak</th>
-                <th className="p-4 font-bold text-amber-400 text-right">Total XP</th>
+                <th className="p-4 font-bold text-zinc-300 text-right">Total XP</th>
               </tr>
             </thead>
             <tbody>
@@ -111,18 +111,18 @@ export default async function LeaderboardPage() {
                       </td>
                       <td className="p-4 text-center">
                         {user.currentStreak > 0 ? (
-                          <div className="inline-flex items-center gap-1 bg-black/40 border border-orange-500/20 px-2 py-1 rounded-lg">
-                            <Flame className="w-4 h-4 text-orange-500" />
-                            <span className="text-orange-400 font-bold">{user.currentStreak}</span>
+                          <div className="inline-flex items-center gap-1 bg-white/[0.04] border border-white/10 px-2 py-1 rounded-lg">
+                            <Flame className="w-4 h-4 text-white" />
+                            <span className="text-white font-bold">{user.currentStreak}</span>
                           </div>
                         ) : (
                           <span className="text-zinc-600">-</span>
                         )}
                       </td>
                       <td className="p-4 text-right">
-                        <div className="inline-flex items-center gap-1 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg">
-                          <span className="text-amber-500 font-black">{(user.lifetimeXp || 0).toLocaleString()}</span>
-                          <span className="text-amber-600/50 text-xs font-bold uppercase ml-1">XP</span>
+                        <div className="inline-flex items-center gap-1 bg-white/[0.04] border border-white/10 px-3 py-1.5 rounded-lg">
+                          <span className="text-white font-black">{(user.lifetimeXp || 0).toLocaleString()}</span>
+                          <span className="text-zinc-400 text-xs font-bold uppercase ml-1">XP</span>
                         </div>
                       </td>
                     </tr>

@@ -237,7 +237,7 @@ export default function AdminPushNotificationsPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 tracking-tight">
-            <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
+            <div className="w-6 h-6 rounded-[7px] bg-white/[0.08] border border-white/10 flex items-center justify-center text-white shrink-0">
               <BellRing className="w-3.5 h-3.5" />
             </div>
             Push Notifications
@@ -292,7 +292,7 @@ export default function AdminPushNotificationsPage() {
           {/* Quick Notification Templates as Compact Horizontal Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-0.5">
             <span className="text-[10.5px] font-semibold text-zinc-500 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-orange-400" />
+              <Sparkles className="w-3 h-3 text-white" />
               Presets:
             </span>
             {TEMPLATES.map((tmpl) => {
@@ -303,7 +303,7 @@ export default function AdminPushNotificationsPage() {
                   onClick={() => applyTemplate(tmpl)}
                   className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all cursor-pointer shrink-0 border ${
                     isSelected
-                      ? "bg-orange-500/15 border-orange-500/35 text-orange-300 font-semibold shadow-xs"
+                      ? "bg-white text-black font-bold shadow-xs border-white"
                       : "bg-white/[0.03] hover:bg-white/[0.07] border-white/[0.06] text-zinc-400 hover:text-zinc-200"
                   }`}
                 >
@@ -378,7 +378,7 @@ export default function AdminPushNotificationsPage() {
                       setSelectedTemplate(null);
                     }}
                     placeholder="🔥 Don't lose your streak!"
-                    className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-[12px] px-3.5 py-2 text-xs text-white placeholder-zinc-500 transition-all outline-none"
+                    className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3.5 py-2 text-xs text-white placeholder-zinc-500 transition-all outline-none"
                   />
                 </div>
 
@@ -400,7 +400,7 @@ export default function AdminPushNotificationsPage() {
                     }}
                     rows={2}
                     placeholder="Write a catchy short hook to bring players back..."
-                    className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-[12px] px-3.5 py-2 text-xs text-white placeholder-zinc-500 transition-all resize-none outline-none leading-relaxed"
+                    className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3.5 py-2 text-xs text-white placeholder-zinc-500 transition-all resize-none outline-none leading-relaxed"
                   />
                 </div>
 
@@ -413,7 +413,7 @@ export default function AdminPushNotificationsPage() {
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
                       placeholder="/ or /games/slug"
-                      className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-[12px] px-3 py-1.5 text-xs text-white placeholder-zinc-500 transition-all outline-none"
+                      className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-1.5 text-xs text-white placeholder-zinc-500 transition-all outline-none"
                     />
 
                     {/* Quick Route Pills */}
@@ -425,7 +425,7 @@ export default function AdminPushNotificationsPage() {
                           onClick={() => setUrl(r.path)}
                           className={`text-[10px] px-2 py-0.5 rounded-full border transition-colors cursor-pointer ${
                             url === r.path
-                              ? "bg-orange-500/15 border-orange-500/30 text-orange-300 font-semibold"
+                              ? "bg-white/[0.12] border-white/20 text-white font-semibold"
                               : "bg-white/[0.02] border-white/[0.06] text-zinc-400 hover:text-zinc-200"
                           }`}
                         >
@@ -444,7 +444,7 @@ export default function AdminPushNotificationsPage() {
                       value={imageUrl}
                       onChange={(e) => setImageUrl(e.target.value)}
                       placeholder="https://..."
-                      className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-[12px] px-3 py-1.5 text-xs text-white placeholder-zinc-500 transition-all outline-none"
+                      className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-1.5 text-xs text-white placeholder-zinc-500 transition-all outline-none"
                     />
                     <p className="text-[10px] text-zinc-500 mt-1">16:9 banner image URL</p>
                   </div>
@@ -461,12 +461,12 @@ export default function AdminPushNotificationsPage() {
                 >
                   {isSendingTest ? (
                     <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-orange-400" />
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
                       <span>Sending Test...</span>
                     </>
                   ) : (
                     <>
-                      <ShieldCheck className="w-3.5 h-3.5 text-orange-400" />
+                      <ShieldCheck className="w-3.5 h-3.5 text-white" />
                       <span>Test on Device</span>
                     </>
                   )}
@@ -482,7 +482,7 @@ export default function AdminPushNotificationsPage() {
                     setShowConfirmModal(true);
                   }}
                   disabled={isSending || isSendingTest || stats?.total === 0}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-bold rounded-full transition-all disabled:opacity-50 shadow-xs active:scale-95 cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-white hover:bg-zinc-200 text-black text-xs font-bold rounded-full transition-all disabled:opacity-50 shadow-md shadow-white/10 active:scale-95 cursor-pointer"
                 >
                   {isSending ? (
                     <>
@@ -504,7 +504,7 @@ export default function AdminPushNotificationsPage() {
               {/* Preview Header & Platform Switcher */}
               <div className="flex items-center justify-between px-1">
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                  <Radio className="w-3 h-3 text-orange-400" />
+                  <Radio className="w-3 h-3 text-white" />
                   Live Preview
                 </span>
 
@@ -549,7 +549,7 @@ export default function AdminPushNotificationsPage() {
                   <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-[18px] p-3 space-y-2 shadow-2xl transition-all">
                     <div className="flex items-center justify-between text-[10px] text-zinc-400 pb-1 border-b border-white/[0.06]">
                       <div className="flex items-center gap-1.5">
-                        <div className="w-4 h-4 rounded-[4px] bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-[9px] text-white font-bold shrink-0">
+                        <div className="w-4 h-4 rounded-[4px] bg-white text-black font-bold flex items-center justify-center text-[9px] shrink-0">
                           B
                         </div>
                         <span className="font-semibold text-zinc-200 uppercase tracking-wide text-[9.5px]">Bluebuff</span>
@@ -578,9 +578,9 @@ export default function AdminPushNotificationsPage() {
                       </div>
                     )}
 
-                    <div className="pt-0.5 flex items-center justify-between text-[10px] text-orange-400 font-medium">
+                    <div className="pt-0.5 flex items-center justify-between text-[10px] text-zinc-300 font-medium">
                       <span>Opens: {url || "/"}</span>
-                      <ExternalLink className="w-3 h-3" />
+                      <ExternalLink className="w-3 h-3 text-zinc-400" />
                     </div>
                   </div>
                 </div>
@@ -590,7 +590,7 @@ export default function AdminPushNotificationsPage() {
                   <div className="bg-[#141417] border border-white/[0.08] rounded-[14px] p-3 space-y-2.5 shadow-xl transition-all">
                     <div className="flex items-center justify-between text-[10px] text-zinc-400 border-b border-white/[0.06] pb-1.5">
                       <div className="flex items-center gap-1.5">
-                        <div className="w-4 h-4 rounded-[4px] bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center text-[9px] text-white font-bold">
+                        <div className="w-4 h-4 rounded-[4px] bg-white text-black font-bold flex items-center justify-center text-[9px]">
                           B
                         </div>
                         <span className="font-semibold text-zinc-200">Bluebuff Games</span>
@@ -619,9 +619,9 @@ export default function AdminPushNotificationsPage() {
                       </div>
                     )}
 
-                    <div className="pt-1 flex items-center justify-between text-[10.5px] text-orange-400 font-medium">
+                    <div className="pt-1 flex items-center justify-between text-[10.5px] text-zinc-300 font-medium">
                       <span>Opens: {url || "/"}</span>
-                      <ExternalLink className="w-3 h-3" />
+                      <ExternalLink className="w-3 h-3 text-zinc-400" />
                     </div>
                   </div>
                 </div>
@@ -634,7 +634,7 @@ export default function AdminPushNotificationsPage() {
         <div className="p-4 sm:p-5 rounded-[20px] bg-white/[0.02] border border-white/[0.06] space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-orange-400" />
+              <Users className="w-3.5 h-3.5 text-white" />
               Subscribed Devices
             </h3>
             <span className="text-[10.5px] text-zinc-500 font-mono">
@@ -701,7 +701,7 @@ export default function AdminPushNotificationsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="bg-[#18181b] border border-white/10 rounded-[22px] p-5 max-w-sm w-full space-y-4 shadow-2xl">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[12px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
+              <div className="w-10 h-10 rounded-[12px] bg-white/[0.08] border border-white/10 flex items-center justify-center text-white shrink-0">
                 <Send className="w-5 h-5" />
               </div>
               <div>
@@ -718,7 +718,7 @@ export default function AdminPushNotificationsPage() {
                 Title: <span className="font-medium text-zinc-200">"{title}"</span>
               </div>
               <div className="text-zinc-400">
-                Route: <span className="font-mono text-orange-400">{url || "/"}</span>
+                Route: <span className="font-mono text-zinc-300">{url || "/"}</span>
               </div>
             </div>
 
@@ -733,7 +733,7 @@ export default function AdminPushNotificationsPage() {
               <button
                 type="button"
                 onClick={executeBroadcast}
-                className="flex-1 py-2 px-3 rounded-full text-xs font-bold text-white bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 transition-all shadow-xs cursor-pointer active:scale-95"
+                className="flex-1 py-2 px-3 rounded-full text-xs font-bold text-black bg-white hover:bg-zinc-200 transition-all shadow-md shadow-white/10 cursor-pointer active:scale-95"
               >
                 Broadcast Now
               </button>

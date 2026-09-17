@@ -272,7 +272,7 @@ export default function UploadGamePage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 tracking-tight">
-            <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
+            <div className="w-6 h-6 rounded-[7px] bg-white/[0.08] border border-white/10 flex items-center justify-center text-white shrink-0">
               <UploadCloud className="w-3.5 h-3.5" />
             </div>
             Upload Game
@@ -304,7 +304,7 @@ export default function UploadGamePage() {
                 : "text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            <Gamepad2 className="w-3 h-3 text-orange-400" />
+            <Gamepad2 className="w-3 h-3 text-white" />
             Live Preview
           </button>
         </div>
@@ -326,7 +326,7 @@ export default function UploadGamePage() {
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.03]"
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-orange-400" : "text-zinc-500"}`} />
+              <Icon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-white" : "text-zinc-500"}`} />
               <span className="truncate">{bt.label}</span>
             </button>
           );
@@ -344,7 +344,7 @@ export default function UploadGamePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-[10px] sm:text-[10.5px] font-semibold text-zinc-400 mb-1 uppercase tracking-wider">
-                  Game Title <span className="text-orange-400">*</span>
+                  Game Title <span className="text-zinc-400">*</span>
                 </label>
                 <input 
                   type="text" 
@@ -352,13 +352,13 @@ export default function UploadGamePage() {
                   value={formData.title}
                   onChange={e => handleTitleChange(e.target.value)}
                   placeholder="e.g. Cyber Rush 3D"
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-[10px] sm:text-[10.5px] font-semibold text-zinc-400 mb-1 uppercase tracking-wider">
-                  URL Slug <span className="text-orange-400">*</span>
+                  URL Slug <span className="text-zinc-400">*</span>
                 </label>
                 <input 
                   type="text" 
@@ -366,7 +366,7 @@ export default function UploadGamePage() {
                   value={formData.slug}
                   onChange={e => setFormData({ ...formData, slug: e.target.value })}
                   placeholder="e.g. cyber-rush-3d"
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-mono text-zinc-300 placeholder-zinc-500 transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-mono text-zinc-300 placeholder-zinc-500 transition-all outline-none"
                 />
               </div>
             </div>
@@ -374,7 +374,7 @@ export default function UploadGamePage() {
             {/* Thumbnail URL */}
             <div>
               <label className="block text-[10px] sm:text-[10.5px] font-semibold text-zinc-400 mb-1 uppercase tracking-wider">
-                Thumbnail Image URL <span className="text-orange-400">*</span>
+                Thumbnail Image URL <span className="text-zinc-400">*</span>
               </label>
               <input 
                 type="url" 
@@ -382,7 +382,7 @@ export default function UploadGamePage() {
                 value={formData.thumbnailUrl}
                 onChange={e => setFormData({ ...formData, thumbnailUrl: e.target.value })}
                 placeholder="https://images.unsplash.com/... or CDN link"
-                className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
+                className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
               />
             </div>
             
@@ -396,17 +396,17 @@ export default function UploadGamePage() {
                   type="button"
                   onClick={handleGenerateAIDescription}
                   disabled={isGeneratingAI || !formData.title.trim()}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] sm:text-[10.5px] font-semibold text-orange-400 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/25 rounded-full transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer active:scale-95"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] sm:text-[10.5px] font-semibold text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 rounded-full transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer active:scale-95"
                   title="Generate high-converting SEO description using Gemini AI"
                 >
                   {isGeneratingAI ? (
                     <>
-                      <Loader2 className="w-3 h-3 animate-spin text-orange-400 shrink-0" />
+                      <Loader2 className="w-3 h-3 animate-spin text-white shrink-0" />
                       <span>Generating...</span>
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-3 h-3 text-orange-400 shrink-0" />
+                      <Sparkles className="w-3 h-3 text-white shrink-0" />
                       <span>Generate with AI</span>
                     </>
                   )}
@@ -418,7 +418,7 @@ export default function UploadGamePage() {
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Write or generate an SEO-optimized game description..."
                 rows={2}
-                className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all resize-none outline-none leading-relaxed"
+                className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all resize-none outline-none leading-relaxed"
               />
             </div>
 
@@ -433,7 +433,7 @@ export default function UploadGamePage() {
                   required
                   value={formData.developer}
                   onChange={e => setFormData({ ...formData, developer: e.target.value })}
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
                 />
               </div>
               <div>
@@ -445,7 +445,7 @@ export default function UploadGamePage() {
                   required
                   value={formData.platforms}
                   onChange={e => setFormData({ ...formData, platforms: e.target.value })}
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
                 />
               </div>
             </div>
@@ -454,7 +454,7 @@ export default function UploadGamePage() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-[10px] sm:text-[10.5px] font-semibold text-zinc-400 uppercase tracking-wider">
-                  Categories <span className="text-orange-400">*</span>
+                  Categories <span className="text-zinc-400">*</span>
                 </label>
                 <span className="text-[10px] text-zinc-500">
                   {formData.categories.length} selected
@@ -470,7 +470,7 @@ export default function UploadGamePage() {
                       onClick={() => toggleCategory(cat)}
                       className={`px-2.5 py-1 rounded-full text-[9.5px] sm:text-[10px] font-semibold uppercase tracking-wider transition-all border cursor-pointer active:scale-95 ${
                         isSelected
-                          ? "bg-orange-500/15 text-orange-300 border-orange-500/35 shadow-xs"
+                          ? "bg-white text-black font-bold shadow-xs border-white"
                           : "bg-white/[0.02] text-zinc-400 hover:text-white border-white/[0.06] hover:border-white/[0.12]"
                       }`}
                     >
@@ -488,7 +488,7 @@ export default function UploadGamePage() {
             {formData.buildType === 'iframe-external' ? (
               <div>
                 <label className="block text-[10px] sm:text-[10.5px] font-semibold text-zinc-400 mb-1 uppercase tracking-wider">
-                  Game URL or Iframe Code <span className="text-orange-400">*</span>
+                  Game URL or Iframe Code <span className="text-zinc-400">*</span>
                 </label>
                 <input 
                   type="text" 
@@ -496,7 +496,7 @@ export default function UploadGamePage() {
                   value={formData.gameUrl}
                   onChange={e => setFormData({ ...formData, gameUrl: e.target.value })}
                   placeholder='https://... OR <iframe src="...">'
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
                 />
                 <p className="text-[10px] text-zinc-500 mt-1">
                   Paste the direct play URL or embed code from GameDistribution, Famobi, or Poki.
@@ -505,12 +505,12 @@ export default function UploadGamePage() {
             ) : (
               <div>
                 <label className="block text-[10px] sm:text-[10.5px] font-semibold text-zinc-400 mb-1 uppercase tracking-wider">
-                  Game Archive (ZIP) <span className="text-orange-400">*</span>
+                  Game Archive (ZIP) <span className="text-zinc-400">*</span>
                 </label>
                 <div className={`border rounded-[14px] p-3.5 sm:p-4 text-center transition-all relative overflow-hidden cursor-pointer ${
                   file 
                     ? 'border-emerald-500/40 bg-emerald-500/10' 
-                    : 'border-dashed border-white/[0.12] hover:border-orange-500/40 bg-white/[0.02] hover:bg-white/[0.04]'
+                    : 'border-dashed border-white/[0.12] hover:border-white/40 bg-white/[0.02] hover:bg-white/[0.04]'
                 }`}>
                   <input 
                     type="file" 
@@ -550,7 +550,7 @@ export default function UploadGamePage() {
                   ? 'bg-red-500/10 text-red-300 border-red-500/25'
                   : message.type === 'success'
                   ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25'
-                  : 'bg-orange-500/10 text-orange-300 border-orange-500/25'
+                  : 'bg-white/[0.06] text-zinc-200 border-white/10'
               }`}>
                 <Info className="w-4 h-4 shrink-0" />
                 <span className="flex-1 leading-relaxed">{message.text}</span>
@@ -562,10 +562,10 @@ export default function UploadGamePage() {
               <div className="space-y-1">
                 <div className="flex justify-between text-[10px] font-mono text-zinc-400">
                   <span>Uploading files to R2 storage...</span>
-                  <span className="text-orange-400 font-bold">{progress}%</span>
+                  <span className="text-white font-bold">{progress}%</span>
                 </div>
                 <div className="w-full bg-white/[0.06] rounded-full h-1.5 overflow-hidden">
-                  <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-full rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+                  <div className="bg-white h-full rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
                 </div>
               </div>
             )}
@@ -575,7 +575,7 @@ export default function UploadGamePage() {
               <button 
                 type="submit" 
                 disabled={isUploading || formData.categories.length === 0}
-                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-2 text-xs disabled:opacity-50 disabled:cursor-not-allowed shadow-xs active:scale-[0.98] cursor-pointer"
+                className="w-full bg-white hover:bg-zinc-200 text-black font-bold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-2 text-xs disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-white/10 active:scale-[0.98] cursor-pointer"
               >
                 {isUploading ? (
                   <>
@@ -599,7 +599,7 @@ export default function UploadGamePage() {
         }`}>
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Gamepad2 className="w-3.5 h-3.5 text-orange-400" />
+              <Gamepad2 className="w-3.5 h-3.5 text-white" />
               Live Catalog Preview
             </h3>
             <div className="flex items-center gap-2">
@@ -607,7 +607,7 @@ export default function UploadGamePage() {
               <button
                 type="button"
                 onClick={() => setActiveView("form")}
-                className="lg:hidden text-[10.5px] font-medium text-orange-400 hover:text-orange-300 underline underline-offset-2 cursor-pointer"
+                className="lg:hidden text-[10.5px] font-medium text-zinc-300 hover:text-white underline underline-offset-2 cursor-pointer"
               >
                 Back to Form
               </button>
@@ -616,7 +616,7 @@ export default function UploadGamePage() {
 
           {/* Simulated Game Card */}
           <div className="max-w-[220px] sm:max-w-[240px] mx-auto group flex flex-col transform-gpu">
-            <div className="relative w-full rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 group-hover:border-orange-500/40 transition-colors aspect-square flex items-center justify-center shadow-lg">
+            <div className="relative w-full rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 group-hover:border-white/40 transition-colors aspect-square flex items-center justify-center shadow-lg">
               {formData.thumbnailUrl ? (
                 <img 
                   src={formData.thumbnailUrl} 
@@ -648,7 +648,7 @@ export default function UploadGamePage() {
                   {formData.developer || "Bluebuff Games"}
                 </span>
                 <span className="text-zinc-600">•</span>
-                <span className="text-[10px] text-orange-400 uppercase font-semibold">
+                <span className="text-[10px] text-zinc-300 uppercase font-semibold">
                   {formData.categories[0] || "Action"}
                 </span>
               </div>
@@ -685,7 +685,7 @@ export default function UploadGamePage() {
 
             <div className="flex justify-between items-center text-[11px] gap-2">
               <span className="text-zinc-500 shrink-0">Categories:</span>
-              <span className="text-orange-400 font-medium">
+              <span className="text-white font-medium">
                 {formData.categories.length} tagged
               </span>
             </div>
@@ -697,7 +697,7 @@ export default function UploadGamePage() {
               type="button" 
               onClick={() => handleUpload()}
               disabled={isUploading || formData.categories.length === 0}
-              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-2 text-xs disabled:opacity-50 disabled:cursor-not-allowed shadow-xs active:scale-[0.98] cursor-pointer"
+              className="w-full bg-white hover:bg-zinc-200 text-black font-bold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-2 text-xs disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-white/10 active:scale-[0.98] cursor-pointer"
             >
               {isUploading ? (
                 <>

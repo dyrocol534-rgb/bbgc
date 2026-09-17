@@ -192,7 +192,7 @@ export default function ImportGamesPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 tracking-tight">
-              <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
+              <div className="w-6 h-6 rounded-[7px] bg-white/10 border border-white/15 flex items-center justify-center text-white shrink-0">
                 <DownloadCloud className="w-3.5 h-3.5" />
               </div>
               Instant Game Importer
@@ -227,7 +227,7 @@ export default function ImportGamesPage() {
               type="button"
               onClick={handleBatchImport}
               disabled={unimportedCount === 0 || isLoading}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs cursor-pointer active:scale-95"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-white hover:bg-zinc-200 text-black transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-xs cursor-pointer active:scale-95"
               title="Import all unimported games on this page"
             >
               <DownloadCloud className="w-3.5 h-3.5" />
@@ -241,15 +241,15 @@ export default function ImportGamesPage() {
             onClick={() => setAutoGenerateAI(!autoGenerateAI)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all border cursor-pointer active:scale-95 ${
               autoGenerateAI
-                ? "bg-orange-500/15 text-orange-300 border-orange-500/30 shadow-xs"
+                ? "bg-white/15 text-white border-white/30 shadow-xs"
                 : "bg-white/[0.04] text-zinc-400 border-white/[0.08] hover:text-white"
             }`}
             title="Automatically write high-ranking SEO descriptions using Gemini AI"
           >
-            <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+            <Sparkles className="w-3.5 h-3.5 text-white" />
             <span className="hidden sm:inline">Auto AI SEO</span>
             <span className="sm:hidden">AI SEO</span>
-            <span className={`w-1.5 h-1.5 rounded-full ${autoGenerateAI ? "bg-orange-400 animate-pulse" : "bg-zinc-600"}`} />
+            <span className={`w-1.5 h-1.5 rounded-full ${autoGenerateAI ? "bg-white animate-pulse" : "bg-zinc-600"}`} />
           </button>
 
           {/* View Mode Toggle */}
@@ -288,7 +288,7 @@ export default function ImportGamesPage() {
             className="p-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-400 hover:text-white rounded-full transition-all cursor-pointer active:scale-95 disabled:opacity-40"
             title="Refresh Feed"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-orange-400" : ""}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-white" : ""}`} />
           </button>
         </div>
       </div>
@@ -303,7 +303,7 @@ export default function ImportGamesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search feed games by title or keywords..."
-            className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-full pl-8 pr-8 py-1.5 text-xs text-white placeholder-zinc-500 outline-none transition-all"
+            className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 rounded-full pl-8 pr-8 py-1.5 text-xs text-white placeholder-zinc-500 outline-none transition-all"
           />
           {searchQuery && (
             <button
@@ -325,7 +325,7 @@ export default function ImportGamesPage() {
                 setCategory(e.target.value);
                 setPage(1);
               }}
-              className="px-3.5 py-1.5 bg-[#101012] border border-white/[0.08] rounded-full text-xs font-medium text-zinc-200 focus:border-orange-500/50 focus:outline-none transition-colors outline-none cursor-pointer pr-7"
+              className="px-3.5 py-1.5 bg-[#101012] border border-white/[0.08] rounded-full text-xs font-medium text-zinc-200 focus:border-white/50 focus:outline-none transition-colors outline-none cursor-pointer pr-7"
             >
               {CATEGORIES.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.label}</option>
@@ -346,7 +346,7 @@ export default function ImportGamesPage() {
       {/* Loading Skeleton / Spinner */}
       {isLoading ? (
         <div className="flex flex-col justify-center items-center py-24 space-y-2">
-          <Loader2 className="w-6 h-6 text-orange-500 animate-spin" />
+          <Loader2 className="w-6 h-6 text-white animate-spin" />
           <p className="text-xs text-zinc-400">Fetching game catalog feed...</p>
         </div>
       ) : filteredGames.length === 0 ? (
@@ -388,7 +388,7 @@ export default function ImportGamesPage() {
                   />
                   
                   {/* Category Pill */}
-                  <div className="absolute top-1.5 right-1.5 bg-black/75 backdrop-blur-md text-orange-300 border border-white/10 text-[8.5px] font-bold tracking-wider px-1.5 py-0.5 rounded-full uppercase truncate max-w-[80px]">
+                  <div className="absolute top-1.5 right-1.5 bg-black/75 backdrop-blur-md text-zinc-300 border border-white/10 text-[8.5px] font-bold tracking-wider px-1.5 py-0.5 rounded-full uppercase truncate max-w-[80px]">
                     {game.category || "Game"}
                   </div>
 
@@ -406,15 +406,15 @@ export default function ImportGamesPage() {
                     onClick={() => setPreviewGame(game)}
                     className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-[11px] font-bold backdrop-blur-[2px] cursor-pointer"
                   >
-                    <div className="w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center text-white shadow-md">
-                      <Play className="w-3.5 h-3.5 fill-white ml-0.5" />
+                    <div className="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center shadow-md">
+                      <Play className="w-3.5 h-3.5 fill-black ml-0.5" />
                     </div>
                   </button>
                 </div>
                 
                 {/* Content */}
                 <div className="p-2.5 flex flex-col flex-1">
-                  <h3 className="font-bold text-white text-[11.5px] sm:text-xs line-clamp-1 group-hover:text-orange-300 transition-colors">
+                  <h3 className="font-bold text-white text-[11.5px] sm:text-xs line-clamp-1 group-hover:text-zinc-200 transition-colors">
                     {game.title}
                   </h3>
                   <p className="text-[10px] text-zinc-400 line-clamp-2 leading-relaxed flex-1 mt-0.5 mb-2 font-normal">
@@ -448,13 +448,13 @@ export default function ImportGamesPage() {
                         isImported 
                           ? 'bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 cursor-default'
                           : isImporting
-                          ? 'bg-white/[0.06] text-orange-400'
-                          : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white active:scale-95 disabled:opacity-50'
+                          ? 'bg-white/[0.06] text-white'
+                          : 'bg-white hover:bg-zinc-200 text-black active:scale-95 disabled:opacity-50'
                       }`}
                     >
                       {isImporting ? (
                         <>
-                          <Loader2 className="w-3 h-3 animate-spin text-orange-400 shrink-0" />
+                          <Loader2 className="w-3 h-3 animate-spin text-white shrink-0" />
                           <span className="truncate">Importing...</span>
                         </>
                       ) : isImported ? (
@@ -506,7 +506,7 @@ export default function ImportGamesPage() {
                       <h4 className="text-xs sm:text-sm font-semibold text-white truncate">
                         {game.title}
                       </h4>
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/[0.04] text-orange-400 font-semibold border border-white/[0.06] uppercase shrink-0">
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/[0.04] text-zinc-300 font-semibold border border-white/[0.06] uppercase shrink-0">
                         {game.category || "Game"}
                       </span>
                     </div>
@@ -543,13 +543,13 @@ export default function ImportGamesPage() {
                       isImported 
                         ? 'bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 cursor-default'
                         : isImporting
-                        ? 'bg-white/[0.06] text-orange-400'
-                        : 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white active:scale-95 disabled:opacity-50'
+                        ? 'bg-white/[0.06] text-white'
+                        : 'bg-white hover:bg-zinc-200 text-black active:scale-95 disabled:opacity-50'
                     }`}
                   >
                     {isImporting ? (
                       <>
-                        <Loader2 className="w-3 h-3 animate-spin text-orange-400" />
+                        <Loader2 className="w-3 h-3 animate-spin text-white" />
                         <span>Importing...</span>
                       </>
                     ) : isImported ? (
@@ -571,31 +571,34 @@ export default function ImportGamesPage() {
         </div>
       )}
 
-      {/* Pagination Bar */}
-      {!isLoading && (
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-3 border-t border-white/[0.08]">
-          <span className="text-xs text-zinc-400">
-            Showing feed page <strong className="text-white font-mono">{page}</strong> • {filteredGames.length} items listed
-          </span>
+      {/* Modern Compact Pagination Bar */}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-white/[0.06]">
+          <div className="text-xs text-zinc-400">
+            Page <span className="font-semibold text-white font-mono">{page}</span> of <span className="font-semibold text-white font-mono">{totalPages}</span>
+            <span className="text-zinc-600 mx-2">•</span>
+            <span className="text-zinc-500">{feedTotal} titles available</span>
+          </div>
 
           <div className="flex items-center gap-2">
             <button 
               onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300 rounded-full disabled:opacity-40 transition-all text-xs font-semibold cursor-pointer active:scale-95"
+              disabled={page <= 1}
+              className="flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300 disabled:opacity-30 disabled:hover:bg-white/[0.04] rounded-full transition-all text-xs font-semibold cursor-pointer disabled:cursor-not-allowed active:scale-95"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
               <span>Prev</span>
             </button>
-            
-            <div className="flex items-center gap-1.5 bg-black/40 px-2.5 py-1 rounded-full border border-white/[0.08]">
-              <span className="text-zinc-500 text-[10px] uppercase font-semibold">Page</span>
+
+            {/* Jump to page form */}
+            <div className="flex items-center gap-1 px-2 py-1 bg-white/[0.02] border border-white/[0.06] rounded-full">
+              <span className="text-[11px] text-zinc-500 font-mono">Jump:</span>
               <form onSubmit={(e) => {
                 e.preventDefault();
-                const formData = new FormData(e.currentTarget);
-                const target = parseInt(formData.get("pageInput") as string);
-                if (!isNaN(target) && target > 0) {
-                  setPage(target);
+                const input = (e.currentTarget.elements.namedItem("pageInput") as HTMLInputElement).value;
+                const p = parseInt(input, 10);
+                if (!isNaN(p) && p >= 1 && p <= totalPages) {
+                  setPage(p);
                 }
               }} className="flex items-center gap-1">
                 <input 
@@ -604,12 +607,12 @@ export default function ImportGamesPage() {
                   defaultValue={page}
                   min="1"
                   key={`page-input-${page}`}
-                  className="w-10 px-1 py-0.5 bg-[#101012] border border-white/[0.08] rounded text-center text-white focus:outline-none focus:border-orange-500/50 text-xs font-mono font-bold"
+                  className="w-10 px-1 py-0.5 bg-[#101012] border border-white/[0.08] rounded text-center text-white focus:outline-none focus:border-white/50 text-xs font-mono font-bold"
                   title="Press Enter to jump to page"
                 />
                 <button 
                   type="submit" 
-                  className="px-2 py-0.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-full text-[10.5px] font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+                  className="px-2 py-0.5 bg-white hover:bg-zinc-200 text-black rounded-full text-[10.5px] font-bold transition-all shadow-xs cursor-pointer active:scale-95"
                 >
                   Go
                 </button>
@@ -618,7 +621,8 @@ export default function ImportGamesPage() {
 
             <button 
               onClick={() => setPage(p => p + 1)}
-              className="flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300 rounded-full transition-all text-xs font-semibold cursor-pointer active:scale-95"
+              disabled={page >= totalPages}
+              className="flex items-center gap-1 px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-zinc-300 disabled:opacity-30 disabled:hover:bg-white/[0.04] rounded-full transition-all text-xs font-semibold cursor-pointer disabled:cursor-not-allowed active:scale-95"
             >
               <span>Next</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -652,7 +656,7 @@ export default function ImportGamesPage() {
                 <div className="min-w-0">
                   <h3 className="text-sm font-bold text-white truncate flex items-center gap-2">
                     {previewGame.title}
-                    <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-orange-500/15 text-orange-300 border border-orange-500/25 uppercase">
+                    <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-white/10 text-white border border-white/15 uppercase">
                       {previewGame.category || "Game"}
                     </span>
                   </h3>
@@ -684,7 +688,7 @@ export default function ImportGamesPage() {
                     type="button"
                     onClick={() => handleImport(previewGame)}
                     disabled={importingUrls.has(previewGame.url)}
-                    className="px-4 py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 disabled:opacity-50"
+                    className="px-4 py-1.5 rounded-full bg-white hover:bg-zinc-200 text-black font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95 disabled:opacity-50"
                   >
                     {importingUrls.has(previewGame.url) ? (
                       <>

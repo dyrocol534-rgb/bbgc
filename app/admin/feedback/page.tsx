@@ -83,7 +83,7 @@ export default function AdminFeedbackPage() {
       {/* Compact Header & Search Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
+          <div className="w-6 h-6 rounded-[7px] bg-white/10 border border-white/15 flex items-center justify-center text-white shrink-0">
             <MessageSquareWarning className="w-3.5 h-3.5" />
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
@@ -134,7 +134,7 @@ export default function AdminFeedbackPage() {
                     className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition-all border cursor-pointer ${
                       item.status === 'resolved' 
                         ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                        : 'bg-orange-500/10 text-orange-400 border-orange-500/20'
+                        : 'bg-white/[0.08] text-white border-white/15'
                     }`}
                   >
                     {item.status === 'resolved' ? (
@@ -210,7 +210,7 @@ export default function AdminFeedbackPage() {
                         className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold transition-all border cursor-pointer active:scale-95 ${
                           item.status === 'resolved' 
                             ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' 
-                            : 'bg-orange-500/10 text-orange-400 border-orange-500/20 hover:bg-orange-500/20'
+                            : 'bg-white/[0.08] text-white border-white/15 hover:bg-white/[0.12]'
                         }`}
                       >
                         {item.status === 'resolved' ? (

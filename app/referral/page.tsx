@@ -108,7 +108,7 @@ export default async function ReferralPage() {
             <div className="col-span-2 sm:col-span-1 bg-[#141416] p-3.5 rounded-[18px] border border-white/[0.07] flex flex-col justify-between shadow-xs">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[9.5px] font-semibold text-zinc-400 uppercase tracking-wider">Pending</span>
-                <div className="w-6 h-6 rounded-[7px] bg-[#FF9500] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <div className="w-6 h-6 rounded-[7px] bg-white/[0.1] border border-white/10 text-white flex items-center justify-center shrink-0 shadow-xs">
                   <Hourglass className="w-3 h-3" />
                 </div>
               </div>

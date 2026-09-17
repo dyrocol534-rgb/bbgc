@@ -52,7 +52,7 @@ export default function Footer() {
             {/* Brand */}
             <div className="flex items-center gap-3">
               <Link href="/" title={`${siteName} Home`} className="relative group">
-                <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center p-1.5 transition-all group-hover:border-orange-500/40">
+                <div className="w-10 h-10 rounded-2xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center p-1.5 transition-all group-hover:border-white/30">
                   <Image
                     src="/logo.png"
                     alt={siteName}
@@ -65,7 +65,7 @@ export default function Footer() {
               <div className="flex flex-col text-left">
                 <Link
                   href="/"
-                  className="text-base font-bold tracking-tight text-white hover:text-orange-400 transition-colors"
+                  className="text-base font-bold tracking-tight text-white hover:text-zinc-300 transition-colors"
                 >
                   {siteName}
                 </Link>
@@ -75,7 +75,7 @@ export default function Footer() {
                     href="https://bluebuff.in"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-orange-400 hover:underline font-medium inline-flex items-center gap-0.5"
+                    className="text-zinc-300 hover:text-white hover:underline font-medium inline-flex items-center gap-0.5"
                   >
                     bluebuff.in
                     <ExternalLink className="w-2.5 h-2.5" />
@@ -118,7 +118,7 @@ export default function Footer() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter email for game updates..."
-                className="bg-white/[0.05] border border-white/[0.08] focus:border-orange-500/80 rounded-full px-4 py-2 text-xs text-white placeholder-zinc-500 flex-1 outline-none transition-all"
+                className="bg-white/[0.05] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-full px-4 py-2 text-xs text-white placeholder-zinc-500 flex-1 outline-none transition-all"
                 disabled={status === "loading"}
                 required
               />

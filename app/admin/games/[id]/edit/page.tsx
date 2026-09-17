@@ -228,7 +228,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
   if (isLoading) {
     return (
       <div className="flex flex-col justify-center items-center py-24">
-        <Loader2 className="w-6 h-6 text-orange-500 animate-spin mb-2" />
+        <Loader2 className="w-6 h-6 text-white animate-spin mb-2" />
         <p className="text-xs text-zinc-400 font-medium">Loading game details...</p>
       </div>
     );
@@ -247,7 +247,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
         </Link>
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 tracking-tight">
-            <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
+            <div className="w-6 h-6 rounded-[7px] bg-white/10 border border-white/15 flex items-center justify-center text-white shrink-0">
               <Gamepad2 className="w-3.5 h-3.5" />
             </div>
             Edit: <span className="truncate max-w-sm sm:max-w-md">{formData.title || "Game"}</span>
@@ -267,27 +267,27 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-[10.5px] font-semibold text-zinc-400 mb-1 uppercase tracking-wider">
-                  Game Title <span className="text-orange-400">*</span>
+                  Game Title <span className="text-white">*</span>
                 </label>
                 <input 
                   type="text" 
                   required
                   value={formData.title}
                   onChange={e => setFormData({ ...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-') })}
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-[10.5px] font-semibold text-zinc-400 mb-1 uppercase tracking-wider">
-                  URL Slug <span className="text-orange-400">*</span>
+                  URL Slug <span className="text-white">*</span>
                 </label>
                 <input 
                   type="text" 
                   required
                   value={formData.slug}
                   onChange={e => setFormData({ ...formData, slug: e.target.value })}
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-mono text-zinc-300 placeholder-zinc-500 transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-mono text-zinc-300 placeholder-zinc-500 transition-all outline-none"
                 />
               </div>
             </div>
@@ -296,14 +296,14 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-[10.5px] font-semibold text-zinc-400 mb-1 uppercase tracking-wider">
-                  Thumbnail Image URL <span className="text-orange-400">*</span>
+                  Thumbnail Image URL <span className="text-white">*</span>
                 </label>
                 <input 
                   type="url" 
                   required
                   value={formData.thumbnailUrl}
                   onChange={e => setFormData({ ...formData, thumbnailUrl: e.target.value })}
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all outline-none"
                 />
               </div>
 
@@ -315,7 +315,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                   type="text" 
                   value={formData.playUrl}
                   onChange={e => setFormData({ ...formData, playUrl: e.target.value })}
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-mono text-zinc-300 placeholder-zinc-500 transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-mono text-zinc-300 placeholder-zinc-500 transition-all outline-none"
                 />
               </div>
             </div>
@@ -330,16 +330,16 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                   type="button"
                   onClick={handleGenerateAIDescription}
                   disabled={isGeneratingAI || !formData.title.trim()}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10.5px] font-semibold text-orange-400 bg-orange-500/10 hover:bg-orange-500/20 border border-orange-500/25 rounded-full transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer active:scale-95"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10.5px] font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer active:scale-95"
                 >
                   {isGeneratingAI ? (
                     <>
-                      <Loader2 className="w-3 h-3 animate-spin text-orange-400" />
+                      <Loader2 className="w-3 h-3 animate-spin text-white" />
                       <span>Generating with AI...</span>
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-3 h-3 text-orange-400" />
+                      <Sparkles className="w-3 h-3 text-white" />
                       <span>Generate AI Description</span>
                     </>
                   )}
@@ -350,7 +350,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                 value={formData.description}
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                 rows={3}
-                className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all resize-none outline-none leading-relaxed"
+                className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white placeholder-zinc-500 transition-all resize-none outline-none leading-relaxed"
               />
             </div>
 
@@ -363,7 +363,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                   required
                   value={formData.developer}
                   onChange={e => setFormData({ ...formData, developer: e.target.value })}
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white transition-all outline-none"
                 />
               </div>
               <div>
@@ -373,7 +373,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                   required
                   value={formData.platforms}
                   onChange={e => setFormData({ ...formData, platforms: e.target.value })}
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white transition-all outline-none"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 focus:ring-1 focus:ring-white/20 rounded-[12px] px-3 py-2 text-xs font-medium text-white transition-all outline-none"
                 />
               </div>
             </div>
@@ -385,7 +385,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                 <select
                   value={formData.status}
                   onChange={e => setFormData({ ...formData, status: e.target.value as "draft" | "published" })}
-                  className="w-full bg-black/40 border border-white/[0.08] rounded-[10px] px-3 py-1.5 text-xs text-white focus:border-orange-500/50 outline-none cursor-pointer"
+                  className="w-full bg-black/40 border border-white/[0.08] rounded-[10px] px-3 py-1.5 text-xs text-white focus:border-white/50 outline-none cursor-pointer"
                 >
                   <option value="published">Live (Published on website)</option>
                   <option value="draft">Draft (Hidden from players)</option>
@@ -416,13 +416,13 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-[10.5px] font-semibold text-zinc-400 uppercase tracking-wider">
-                  Categories <span className="text-orange-400">*</span>
+                  Categories <span className="text-white">*</span>
                 </label>
                 <button
                   type="button"
                   onClick={handleAutoCategorizeAI}
                   disabled={isCategorizingAI || !formData.title.trim()}
-                  className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-orange-400 hover:text-orange-300 transition-colors disabled:opacity-40 cursor-pointer"
+                  className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-zinc-300 hover:text-white transition-colors disabled:opacity-40 cursor-pointer"
                 >
                   {isCategorizingAI ? (
                     <>
@@ -447,7 +447,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                       onClick={() => toggleCategory(cat)}
                       className={`px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider transition-all border cursor-pointer active:scale-95 ${
                         isSelected
-                          ? "bg-orange-500/15 text-orange-300 border-orange-500/35 shadow-xs"
+                          ? "bg-white/15 text-white border-white/30 shadow-xs"
                           : "bg-white/[0.02] text-zinc-400 hover:text-white border-white/[0.06] hover:border-white/[0.12]"
                       }`}
                     >
@@ -465,7 +465,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                 <select 
                   value={formData.buildType}
                   onChange={e => setFormData({ ...formData, buildType: e.target.value })}
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-[12px] px-3 py-2 text-xs font-medium text-white outline-none cursor-pointer"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 rounded-[12px] px-3 py-2 text-xs font-medium text-white outline-none cursor-pointer"
                 >
                   <option value="html5">HTML5 (zip with index.html)</option>
                   <option value="unity-webgl">Unity WebGL (zip)</option>
@@ -478,7 +478,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                 <select 
                   value={formData.orientation}
                   onChange={e => setFormData({ ...formData, orientation: e.target.value })}
-                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-orange-500/50 rounded-[12px] px-3 py-2 text-xs font-medium text-white outline-none cursor-pointer"
+                  className="w-full bg-[#101012] border border-white/[0.08] focus:border-white/50 rounded-[12px] px-3 py-2 text-xs font-medium text-white outline-none cursor-pointer"
                 >
                   <option value="any">Any (Fully Responsive)</option>
                   <option value="landscape">Force Landscape</option>
@@ -495,7 +495,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
               <div className={`border rounded-[14px] p-3 text-center transition-all relative overflow-hidden cursor-pointer ${
                 file 
                   ? 'border-emerald-500/40 bg-emerald-500/10' 
-                  : 'border-dashed border-white/[0.12] hover:border-orange-500/40 bg-white/[0.02] hover:bg-white/[0.04]'
+                  : 'border-dashed border-white/[0.12] hover:border-white/40 bg-white/[0.02] hover:bg-white/[0.04]'
               }`}>
                 <input 
                   type="file" 
@@ -523,7 +523,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                   ? 'bg-red-500/10 text-red-300 border-red-500/25'
                   : message.type === 'success'
                   ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25'
-                  : 'bg-orange-500/10 text-orange-300 border-orange-500/25'
+                  : 'bg-white/10 text-white border-white/20'
               }`}>
                 {message.text}
               </div>
@@ -534,10 +534,10 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
               <div className="space-y-1">
                 <div className="flex justify-between text-[10px] font-mono text-zinc-400">
                   <span>Uploading replacement build...</span>
-                  <span className="text-orange-400 font-bold">{progress}%</span>
+                  <span className="text-white font-bold">{progress}%</span>
                 </div>
                 <div className="w-full bg-white/[0.06] rounded-full h-1.5 overflow-hidden">
-                  <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-full rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+                  <div className="bg-white h-full rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
                 </div>
               </div>
             )}
@@ -547,7 +547,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
               <button 
                 type="submit" 
                 disabled={isUploading || formData.categories.length === 0}
-                className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-2 text-xs disabled:opacity-50 disabled:cursor-not-allowed shadow-xs active:scale-[0.98] cursor-pointer"
+                className="w-full bg-white hover:bg-zinc-200 text-black font-bold py-2.5 px-4 rounded-full transition-all flex items-center justify-center gap-2 text-xs disabled:opacity-50 disabled:cursor-not-allowed shadow-xs active:scale-[0.98] cursor-pointer"
               >
                 {isUploading ? (
                   <>
@@ -569,14 +569,14 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
         <div className="lg:col-span-4 border border-white/[0.08] rounded-[18px] p-4 bg-white/[0.01] space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Gamepad2 className="w-3.5 h-3.5 text-orange-400" />
+              <Gamepad2 className="w-3.5 h-3.5 text-white" />
               Live Preview
             </h3>
             <Link 
               href={`/games/${formData.slug}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[10.5px] text-orange-400 hover:text-orange-300 font-semibold flex items-center gap-1"
+              className="text-[10.5px] text-zinc-400 hover:text-white font-semibold flex items-center gap-1"
             >
               Open Page <ExternalLink className="w-3 h-3" />
             </Link>
@@ -584,7 +584,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
 
           {/* Simulated Game Card */}
           <div className="max-w-[240px] mx-auto group flex flex-col transform-gpu">
-            <div className="relative w-full rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 group-hover:border-orange-500/40 transition-colors aspect-square flex items-center justify-center shadow-lg">
+            <div className="relative w-full rounded-2xl overflow-hidden bg-zinc-900 border border-white/10 group-hover:border-white/30 transition-colors aspect-square flex items-center justify-center shadow-lg">
               {formData.thumbnailUrl ? (
                 <img 
                   src={formData.thumbnailUrl} 
@@ -615,7 +615,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
                   {formData.developer || "Bluebuff Games"}
                 </span>
                 <span className="text-zinc-600">•</span>
-                <span className="text-[10px] text-orange-400 uppercase font-semibold">
+                <span className="text-[10px] text-zinc-400 uppercase font-semibold">
                   {formData.categories[0] || "Action"}
                 </span>
               </div>
@@ -651,7 +651,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
 
             <div className="flex justify-between items-center text-[11px]">
               <span className="text-zinc-500">Categories:</span>
-              <span className="text-orange-400 font-medium">
+              <span className="text-white font-medium">
                 {formData.categories.length} tagged
               </span>
             </div>

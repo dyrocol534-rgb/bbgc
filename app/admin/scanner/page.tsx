@@ -125,7 +125,7 @@ export default function ScannerPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 tracking-tight">
-            <div className="w-6 h-6 rounded-[7px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 shrink-0">
+            <div className="w-6 h-6 rounded-[7px] bg-white/[0.08] border border-white/10 flex items-center justify-center text-white shrink-0">
               <Activity className="w-3.5 h-3.5" />
             </div>
             Broken Game Scanner
@@ -152,7 +152,7 @@ export default function ScannerPage() {
             <button 
               onClick={startScan}
               disabled={games.length === 0}
-              className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-4 py-1.5 rounded-full font-semibold text-xs transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 cursor-pointer shadow-xs active:scale-95"
+              className="w-full sm:w-auto bg-white hover:bg-zinc-200 text-black px-4 py-1.5 rounded-full font-bold text-xs transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 cursor-pointer shadow-md shadow-white/10 active:scale-95"
             >
               <Play className="w-3 h-3 fill-current" /> {scannedCount > 0 ? "Restart Scan" : "Start Scan"}
             </button>
@@ -166,11 +166,11 @@ export default function ScannerPage() {
         <div>
           <div className="flex justify-between items-center text-xs mb-1.5">
             <span className="font-semibold text-zinc-400 text-[11px] uppercase tracking-wider">Scan Progress</span>
-            <span className="font-bold text-orange-400 font-mono text-xs">{scannedCount} / {games.length} ({Math.round(progressPercentage)}%)</span>
+            <span className="font-bold text-white font-mono text-xs">{scannedCount} / {games.length} ({Math.round(progressPercentage)}%)</span>
           </div>
           <div className="w-full bg-[#101012] rounded-full h-2 overflow-hidden border border-white/[0.08]">
             <div 
-              className="bg-gradient-to-r from-orange-500 to-amber-500 h-full transition-all duration-300 ease-out"
+              className="bg-white h-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercentage}%` }}
             />
           </div>
@@ -221,7 +221,7 @@ export default function ScannerPage() {
                   </span>
                 </div>
                 
-                <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 flex items-center gap-1 text-[11px] break-all">
+                <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-zinc-300 hover:text-white flex items-center gap-1 text-[11px] break-all">
                   <ExternalLink className="w-3 h-3 shrink-0" /> {game.playUrl}
                 </a>
                 
@@ -261,7 +261,7 @@ export default function ScannerPage() {
                       </span>
                     </td>
                     <td className="py-2 px-3.5">
-                      <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300 flex items-center gap-1.5 truncate max-w-[320px] text-xs">
+                      <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="text-zinc-300 hover:text-white flex items-center gap-1.5 truncate max-w-[320px] text-xs">
                         <ExternalLink className="w-3.5 h-3.5 shrink-0" /> {game.playUrl}
                       </a>
                     </td>

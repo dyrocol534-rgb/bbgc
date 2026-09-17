@@ -51,7 +51,7 @@ export default function OfflinePage() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-8 relative overflow-hidden">
       {/* Ambient background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-orange-500/10 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-white/[0.04] rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/10 rounded-full blur-[90px] pointer-events-none" />
 
       <div className="relative max-w-sm w-full text-center bg-[#0e0e12]/90 border border-zinc-800/80 rounded-3xl p-7 sm:p-8 backdrop-blur-2xl shadow-2xl space-y-6">
@@ -66,16 +66,16 @@ export default function OfflinePage() {
             }`}
           >
             {/* Subtle radar ping ring */}
-            <span className="absolute inset-0 rounded-2xl border border-orange-500/30 animate-ping pointer-events-none opacity-40" />
+            <span className="absolute inset-0 rounded-2xl border border-white/20 animate-ping pointer-events-none opacity-40" />
             
             <div className="relative flex items-center justify-center">
-              <WifiOff className="w-8 h-8 text-orange-400 drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]" />
+              <WifiOff className="w-8 h-8 text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.4)]" />
               <Gamepad2 className="w-4 h-4 text-zinc-400 absolute -bottom-1 -right-2 opacity-80" />
             </div>
 
             {/* Tap counter bubble */}
             {tapCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black text-[10px] px-2 py-0.5 rounded-full shadow-lg border border-orange-400/40 animate-in zoom-in-50">
+              <span className="absolute -top-2 -right-2 bg-white text-black font-black text-[10px] px-2 py-0.5 rounded-full shadow-lg border border-white/20 animate-in zoom-in-50">
                 +{tapCount} XP
               </span>
             )}
@@ -100,7 +100,7 @@ export default function OfflinePage() {
           </div>
         ) : (
           <div className="flex items-center justify-center gap-1.5 text-[11px] text-zinc-500 font-medium bg-zinc-900/80 border border-zinc-800 py-1.5 px-3 rounded-full w-fit mx-auto">
-            <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-zinc-400 animate-pulse" />
             <span>Waiting for connection...</span>
           </div>
         )}
@@ -110,7 +110,7 @@ export default function OfflinePage() {
           <button
             onClick={handleRetry}
             disabled={isChecking}
-            className="w-full py-3 px-5 rounded-xl bg-gradient-to-r from-primary to-[#ff8c38] hover:from-[#ea580c] hover:to-primary active:scale-[0.98] text-white font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 disabled:opacity-60 cursor-pointer"
+            className="w-full py-3 px-5 rounded-xl bg-white hover:bg-zinc-200 active:scale-[0.98] text-black font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-md shadow-white/10 disabled:opacity-60 cursor-pointer"
           >
             <RotateCcw className={`w-4 h-4 ${isChecking ? "animate-spin" : ""}`} />
             {isChecking ? "Checking Signal..." : "Retry Connection"}
@@ -127,7 +127,7 @@ export default function OfflinePage() {
 
         {/* Gamified Footer Tip */}
         <div className="pt-3 border-t border-zinc-800/60 flex items-center justify-center gap-2 text-[11px] text-zinc-400">
-          <Flame className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+          <Flame className="w-3.5 h-3.5 text-white shrink-0" />
           <span>Your streak progress are safely preserved!</span>
         </div>
       </div>

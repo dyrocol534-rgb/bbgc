@@ -114,7 +114,7 @@ export default function PWAInstallButton({
         {/* Header */}
         <div className="flex items-center justify-between pb-2.5 border-b border-white/[0.08]">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-[8px] bg-orange-500/15 border border-orange-500/30 flex items-center justify-center p-1">
+            <div className="w-7 h-7 rounded-[8px] bg-white/[0.08] border border-white/10 flex items-center justify-center p-1">
               <Image
                 src="/logo.png"
                 alt="Bluebuff"
@@ -153,7 +153,7 @@ export default function PWAInstallButton({
           </div>
 
           <div className="flex items-center gap-2.5 p-2 rounded-[12px] bg-white/[0.04] border border-white/[0.06]">
-            <div className="w-7 h-7 rounded-[7px] bg-orange-500/20 border border-orange-500/30 flex items-center justify-center shrink-0 text-orange-400">
+            <div className="w-7 h-7 rounded-[7px] bg-white/[0.08] border border-white/10 flex items-center justify-center shrink-0 text-white">
               <PlusSquare className="w-3.5 h-3.5" />
             </div>
             <div className="text-left min-w-0 flex-1">
@@ -162,7 +162,7 @@ export default function PWAInstallButton({
               </p>
               <p className="text-[10px] text-zinc-400 leading-tight">
                 Scroll down and tap{" "}
-                <span className="text-orange-400 font-medium">Add to Home Screen</span>.
+                <span className="text-white font-medium">Add to Home Screen</span>.
               </p>
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function PWAInstallButton({
         {/* Action button */}
         <button
           onClick={() => setShowIOSModal(false)}
-          className="w-full py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 active:scale-[0.98] text-white font-semibold text-xs rounded-xl transition-all shadow-sm shadow-orange-500/20 cursor-pointer"
+          className="w-full py-2 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black font-bold text-xs rounded-xl transition-all shadow-sm shadow-white/10 cursor-pointer"
         >
           Got it
         </button>
