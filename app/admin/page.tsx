@@ -79,28 +79,28 @@ function MetricCell({
 }) {
   return (
     <div className={clsx(
-      "p-3 sm:p-3.5 flex flex-col justify-between transition-colors group relative",
-      highlight ? "bg-white/[0.03]" : "hover:bg-white/[0.02]",
+      "p-3 sm:p-3.5 flex flex-col justify-between transition-colors group relative min-w-0",
+      highlight ? "bg-[#19191e] hover:bg-[#1d1d23]" : "bg-[#141416] hover:bg-[#18181c]",
       className
     )}>
-      <div className="flex items-center gap-2 mb-2 min-w-0">
+      <div className="flex items-center gap-1.5 mb-1.5 min-w-0">
         <div className={clsx(
-          "w-6 h-6 rounded-[7px] flex items-center justify-center shrink-0 border transition-transform duration-200 group-hover:scale-105",
+          "w-5 h-5 rounded-[6px] flex items-center justify-center shrink-0 border transition-transform duration-200 group-hover:scale-105",
           iconColor
         )}>
-          <Icon className="w-3.5 h-3.5" />
+          <Icon className="w-3 h-3" />
         </div>
-        <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider truncate">
+        <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider truncate">
           {label}
         </span>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 min-w-0">
-        <span className="text-xl sm:text-2xl font-bold text-white tracking-tight font-mono leading-none">
+      <div className="flex items-baseline gap-1.5 min-w-0 flex-wrap">
+        <span className="text-xl sm:text-2xl font-bold text-white tracking-tight font-mono leading-none shrink-0">
           {value}
         </span>
         {sub && (
-          <span className="text-[10px] text-zinc-500 font-medium truncate sm:text-right">
+          <span className="text-[10px] text-zinc-400 font-medium truncate" title={sub}>
             {sub}
           </span>
         )}
@@ -222,79 +222,64 @@ export default function AdminAnalytics() {
       </div>
 
       {/* Combined Unified Metrics Panel */}
-      <div className="rounded-2xl bg-white/[0.02] border border-white/[0.08] overflow-hidden shadow-xs">
-        {/* Row 1: Player Engagement */}
-        <div className="grid grid-cols-2 lg:grid-cols-4">
-          <MetricCell
-            icon={Users}
-            label="Active Players"
-            value={totalActive.toLocaleString()}
-            sub={`${memberPct}% Mem • ${guestPct}% Guest`}
-            iconColor="bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
-            highlight={true}
-            className="border-r border-b lg:border-b-0 border-white/[0.06]"
-          />
-          <MetricCell
-            icon={PlayCircle}
-            label="Game Plays"
-            value={currentStats.totalPlays.toLocaleString()}
-            sub={`${currentStats.avgPlaysPerActive} plays/visitor`}
-            iconColor="bg-white/10 text-white border-white/15"
-            className="border-b lg:border-b-0 lg:border-r border-white/[0.06]"
-          />
-          <MetricCell
-            icon={Clock}
-            label={isLifetime ? "Total Playtime" : "Time Spent"}
-            value={currentStats.playtime || stats.lifetime.totalPlaytimeFormatted || "0m"}
-            sub={`${currentStats.memberPlaytime || '0m'} mem / ${currentStats.guestPlaytime || '0m'} guest`}
-            iconColor="bg-violet-500/10 text-violet-400 border-violet-500/20"
-            className="border-r border-white/[0.06]"
-          />
-          <MetricCell
-            icon={Heart}
-            label="Retention Rate"
-            value={`${currentStats.retentionRate ?? stats.lifetime.retentionRate ?? 0}%`}
-            sub="Returning players"
-            iconColor="bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-          />
-        </div>
-
-        <div className="border-t border-white/[0.06]" />
-
-        {/* Row 2: Audience & Catalog */}
-        <div className="grid grid-cols-2 lg:grid-cols-4">
-          <MetricCell
-            icon={Smartphone}
-            label="PWA Installs"
-            value={currentStats.pwaInstalls?.toLocaleString() || "0"}
-            sub={`${pwaConversionRate}% conversion`}
-            iconColor="bg-sky-500/10 text-sky-400 border-sky-500/20"
-            className="border-r border-b lg:border-b-0 border-white/[0.06]"
-          />
-          <MetricCell
-            icon={BellRing}
-            label="Push Audience"
-            value={currentStats.pushSubscribers?.toLocaleString() || stats.lifetime.pushSubscribers?.toLocaleString() || "0"}
-            sub="Web push subscribers"
-            iconColor="bg-teal-500/10 text-teal-400 border-teal-500/20"
-            className="border-b lg:border-b-0 lg:border-r border-white/[0.06]"
-          />
-          <MetricCell
-            icon={UserPlus}
-            label="New Accounts"
-            value={currentStats.newUsers.toLocaleString()}
-            sub={isLifetime ? "Lifetime signups" : "New accounts"}
-            iconColor="bg-pink-500/10 text-pink-400 border-pink-500/20"
-            className="border-r border-white/[0.06]"
-          />
-          <MetricCell
-            icon={Gamepad2}
-            label="Live Games"
-            value={stats.lifetime.totalGames.toLocaleString()}
-            sub="Published titles"
-            iconColor="bg-amber-500/10 text-amber-400 border-amber-500/20"
-          />
-        </div>
+      <div className="rounded-2xl bg-white/[0.07] border border-white/[0.08] overflow-hidden shadow-xs grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-px">
+        <MetricCell
+          icon={Users}
+          label="Active Players"
+          value={totalActive.toLocaleString()}
+          sub={`${memberPct}% Mem • ${guestPct}% Guest`}
+          iconColor="bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
+          highlight={true}
+        />
+        <MetricCell
+          icon={PlayCircle}
+          label="Game Plays"
+          value={currentStats.totalPlays.toLocaleString()}
+          sub={`${currentStats.avgPlaysPerActive} plays/visitor`}
+          iconColor="bg-white/10 text-white border-white/15"
+        />
+        <MetricCell
+          icon={Clock}
+          label={isLifetime ? "Total Playtime" : "Time Spent"}
+          value={currentStats.playtime || stats.lifetime.totalPlaytimeFormatted || "0m"}
+          sub={`${currentStats.memberPlaytime || '0m'} mem / ${currentStats.guestPlaytime || '0m'} guest`}
+          iconColor="bg-violet-500/10 text-violet-400 border-violet-500/20"
+        />
+        <MetricCell
+          icon={Heart}
+          label="Retention Rate"
+          value={`${currentStats.retentionRate ?? stats.lifetime.retentionRate ?? 0}%`}
+          sub="Returning players"
+          iconColor="bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+        />
+        <MetricCell
+          icon={Smartphone}
+          label="PWA Installs"
+          value={currentStats.pwaInstalls?.toLocaleString() || "0"}
+          sub={`${pwaConversionRate}% conversion`}
+          iconColor="bg-sky-500/10 text-sky-400 border-sky-500/20"
+        />
+        <MetricCell
+          icon={BellRing}
+          label="Push Audience"
+          value={currentStats.pushSubscribers?.toLocaleString() || stats.lifetime.pushSubscribers?.toLocaleString() || "0"}
+          sub="Web push subscribers"
+          iconColor="bg-teal-500/10 text-teal-400 border-teal-500/20"
+        />
+        <MetricCell
+          icon={UserPlus}
+          label="New Accounts"
+          value={currentStats.newUsers.toLocaleString()}
+          sub={isLifetime ? "Lifetime signups" : "New accounts"}
+          iconColor="bg-pink-500/10 text-pink-400 border-pink-500/20"
+        />
+        <MetricCell
+          icon={Gamepad2}
+          label="Live Games"
+          value={stats.lifetime.totalGames.toLocaleString()}
+          sub="Published titles"
+          iconColor="bg-amber-500/10 text-amber-400 border-amber-500/20"
+        />
       </div>
 
       {/* Charts Row */}

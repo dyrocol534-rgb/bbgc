@@ -29,6 +29,31 @@ interface GameData {
   category?: string[];
 }
 
+function GameThumbnail({ src, alt }: { src: string; alt: string }) {
+  const [error, setError] = useState(false);
+
+  if (error || !src) {
+    return (
+      <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-zinc-500 shrink-0">
+        <Gamepad2 className="w-5 h-5 text-zinc-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden bg-zinc-900 border border-white/[0.08] shrink-0">
+      <Image 
+        src={src} 
+        alt="" 
+        width={44} 
+        height={44} 
+        onError={() => setError(true)}
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
+      />
+    </div>
+  );
+}
+
 export default function AdminGamesPage() {
   const [games, setGames] = useState<GameData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -448,7 +473,16 @@ export default function AdminGamesPage() {
         )}
       </div>
       
-      {/* Clean iOS List View (Outside: Limited Details) */}
+      {/* Desktop Column Header Bar */}
+      <div className="hidden lg:grid grid-cols-12 gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-zinc-500 border-b border-white/[0.06] select-none">
+        <div className="col-span-4">Game &amp; Developer</div>
+        <div className="col-span-2">Category &amp; Source</div>
+        <div className="col-span-2">Engagement &amp; Plays</div>
+        <div className="col-span-2">Added Date</div>
+        <div className="col-span-2 text-right pr-6">Status &amp; Actions</div>
+      </div>
+
+      {/* Clean List View with Enhanced Row Space Utilization */}
       {games.length === 0 ? (
         <div className="py-16 text-center text-zinc-500 text-xs">
           <Gamepad2 className="w-8 h-8 text-zinc-600 mx-auto mb-2 opacity-50" />
@@ -460,71 +494,192 @@ export default function AdminGamesPage() {
             <div
               key={game._id}
               onClick={() => setSelectedGame(game)}
-              className={`py-2.5 px-2 sm:px-3 flex items-center justify-between gap-3 hover:bg-white/[0.03] rounded-[14px] transition-colors cursor-pointer group ${
-                game.status === 'draft' ? 'opacity-65' : ''
-              }`}
+              className={clsx(
+                "py-2.5 px-2 sm:px-3 hover:bg-white/[0.03] rounded-[14px] transition-colors cursor-pointer group",
+                game.status === 'draft' && 'opacity-70'
+              )}
             >
-              {/* Left: Thumbnail & Title Info */}
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-[12px] overflow-hidden bg-zinc-900 border border-white/[0.08] shrink-0">
-                  <Image 
-                    src={game.thumbnailUrl} 
-                    alt={game.title} 
-                    width={44} 
-                    height={44} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
-                  />
+              {/* Desktop 12-Column Structured Row */}
+              <div className="hidden lg:grid grid-cols-12 gap-3 items-center">
+                {/* Col 1-4: Thumbnail & Game Info */}
+                <div className="col-span-4 flex items-center gap-3 min-w-0">
+                  <GameThumbnail src={game.thumbnailUrl} alt={game.title} />
+                  
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="font-semibold text-zinc-100 text-xs sm:text-sm truncate group-hover:text-white transition-colors leading-tight">
+                        {game.title}
+                      </h3>
+                      {game.featured && (
+                        <Star className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
+                      )}
+                    </div>
+                    
+                    <p className="text-[10.5px] text-zinc-400 font-medium mt-0.5 truncate">
+                      {game.developer || "Bluebuff Games"}
+                    </p>
+                  </div>
                 </div>
-                
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <h3 className="font-semibold text-zinc-100 text-xs sm:text-sm truncate group-hover:text-white transition-colors leading-tight">
-                      {game.title}
-                    </h3>
-                    {game.featured && (
-                      <Star className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
+
+                {/* Col 5-6: Category & Source */}
+                <div className="col-span-2 min-w-0">
+                  <div className="flex items-center gap-1 flex-wrap">
+                    {game.category && game.category.length > 0 ? (
+                      game.category.slice(0, 2).map((cat) => (
+                        <span key={cat} className="px-2 py-0.5 rounded-md bg-white/[0.04] text-zinc-300 border border-white/[0.07] text-[10px] capitalize font-medium truncate">
+                          {cat}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-[10px] text-zinc-500">Uncategorized</span>
                     )}
-                    {game.source === "aggregated" && (
-                      <span className="bg-white/10 text-white text-[8.5px] uppercase font-bold px-1.5 py-0.2 rounded-full shrink-0 border border-white/15">
-                        Import
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-1 text-[9.5px]">
+                    <span className={clsx(
+                      "uppercase font-semibold px-1.5 py-0.2 rounded border text-[9px]",
+                      game.source === "aggregated" 
+                        ? "bg-white/[0.06] text-zinc-400 border-white/[0.08]" 
+                        : "bg-indigo-500/10 text-indigo-300 border-indigo-500/20"
+                    )}>
+                      {game.source === "aggregated" ? "Imported" : "Original"}
+                    </span>
+                    {game.verified ? (
+                      <span className="text-emerald-400 font-medium flex items-center gap-0.5">
+                        <ShieldCheck className="w-2.5 h-2.5" /> Verified
+                      </span>
+                    ) : (
+                      <span className="text-amber-400/80 font-medium flex items-center gap-0.5">
+                        <ShieldAlert className="w-2.5 h-2.5" /> Review
                       </span>
                     )}
                   </div>
-                  
-                  <div className="flex items-center gap-1.5 text-[10.5px] text-zinc-500 mt-0.5 truncate">
-                    <span className="text-zinc-400 font-medium truncate">{game.developer || "Bluebuff Games"}</span>
-                    {game.category && game.category.length > 0 && (
-                      <>
-                        <span className="text-zinc-600">•</span>
-                        <span className="text-zinc-400 font-medium capitalize truncate">
-                          {game.category[0]}
-                        </span>
-                      </>
-                    )}
+                </div>
+
+                {/* Col 7-8: Engagement & Plays */}
+                <div className="col-span-2 min-w-0">
+                  <div className="flex items-center gap-1.5 text-xs font-mono text-zinc-200 font-semibold">
+                    <Play className="w-3 h-3 text-zinc-500 fill-zinc-500" />
+                    <span>{game.playCount.toLocaleString()} plays</span>
                   </div>
+                  {(() => {
+                    const likesCount = game.likes?.length || 0;
+                    const dislikesCount = game.dislikes?.length || 0;
+                    const totalVotes = likesCount + dislikesCount;
+                    const rating = totalVotes > 0 ? Math.round((likesCount / totalVotes) * 100) : null;
+                    return (
+                      <div className="flex items-center gap-1 text-[10px] font-mono mt-0.5">
+                        {rating !== null ? (
+                          <span className="text-emerald-400 flex items-center gap-1">
+                            <ThumbsUp className="w-2.5 h-2.5" />
+                            <span>{rating}% ({totalVotes})</span>
+                          </span>
+                        ) : (
+                          <span className="text-zinc-600">No ratings yet</span>
+                        )}
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Col 9-10: Added Date & Slug */}
+                <div className="col-span-2 min-w-0">
+                  <div className="flex items-center gap-1.5 text-[11px] text-zinc-400 font-mono">
+                    <Calendar className="w-3 h-3 text-zinc-500 shrink-0" />
+                    <span className="truncate">
+                      {game.createdAt ? new Date(game.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Recently"}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-zinc-600 font-mono mt-0.5 truncate">
+                    /{game.slug}
+                  </p>
+                </div>
+
+                {/* Col 11-12: Status & Quick Actions */}
+                <div className="col-span-2 flex items-center justify-end gap-1.5">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleStatus(game._id, game.status);
+                    }}
+                    className={clsx(
+                      "px-2.5 py-0.8 rounded-full text-[10px] font-bold tracking-wide border uppercase transition-all cursor-pointer active:scale-95",
+                      game.status === 'published'
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
+                        : 'bg-white/[0.04] text-zinc-400 border-white/[0.08] hover:bg-white/[0.08]'
+                    )}
+                    title="Toggle Live/Draft"
+                  >
+                    {game.status === 'published' ? 'Live' : 'Draft'}
+                  </button>
+
+                  <Link
+                    href={`/admin/games/${game._id}/edit`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-7 h-7 rounded-lg bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-400 hover:text-white flex items-center justify-center transition-colors shrink-0"
+                    title="Edit Game"
+                  >
+                    <Pencil className="w-3 h-3" />
+                  </Link>
+
+                  <Link
+                    href={`/games/${game.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-7 h-7 rounded-lg bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-400 hover:text-white flex items-center justify-center transition-colors shrink-0"
+                    title="Play / View Live"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                  </Link>
+
+                  <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all shrink-0" />
                 </div>
               </div>
 
-              {/* Right: Limited quick stats & Chevron */}
-              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                {/* Play Count */}
-                <span className="hidden md:inline-block font-mono text-[11px] text-zinc-400 font-medium w-20 text-right">
-                  {game.playCount.toLocaleString()} plays
-                </span>
+              {/* Mobile Fallback (< lg) */}
+              <div className="flex lg:hidden items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <GameThumbnail src={game.thumbnailUrl} alt={game.title} />
+                  
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="font-semibold text-zinc-100 text-xs truncate group-hover:text-white transition-colors leading-tight">
+                        {game.title}
+                      </h3>
+                      {game.featured && (
+                        <Star className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-1.5 text-[10.5px] text-zinc-500 mt-0.5 truncate">
+                      <span className="text-zinc-400 font-medium truncate">{game.developer || "Bluebuff Games"}</span>
+                      {game.category && game.category.length > 0 && (
+                        <>
+                          <span className="text-zinc-600">•</span>
+                          <span className="text-zinc-400 font-medium capitalize truncate">
+                            {game.category[0]}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
-                {/* Status Pill - fixed width for perfect vertical alignment */}
-                <div className="w-14 flex justify-center">
-                  <span className={`w-full py-0.5 text-center rounded-full text-[10px] font-semibold tracking-wide border uppercase ${
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="font-mono text-[11px] text-zinc-400 font-medium">
+                    {game.playCount.toLocaleString()}
+                  </span>
+
+                  <span className={clsx(
+                    "px-2 py-0.5 text-center rounded-full text-[9.5px] font-semibold tracking-wide border uppercase",
                     game.status === 'published'
                       ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                       : 'bg-white/[0.04] text-zinc-400 border-white/[0.08]'
-                  }`}>
+                  )}>
                     {game.status === 'published' ? 'Live' : 'Draft'}
                   </span>
-                </div>
 
-                {/* Open details chevron */}
-                <div className="w-4 flex items-center justify-center">
                   <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
                 </div>
               </div>

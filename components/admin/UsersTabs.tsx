@@ -303,6 +303,14 @@ export default function UsersTabs({ users, guests }: UsersTabsProps) {
         </div>
       </div>
 
+      {/* Desktop Column Header Bar */}
+      <div className="hidden lg:grid grid-cols-12 gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-zinc-500 border-b border-white/[0.06] select-none">
+        <div className="col-span-4">Player / Visitor</div>
+        <div className="col-span-3">Contact &amp; ID</div>
+        <div className="col-span-2">Activity &amp; Status</div>
+        <div className="col-span-3 text-right pr-6">Engagement &amp; Stats</div>
+      </div>
+
       {/* Interactive List (Unified or Tabbed) */}
       <div className="divide-y divide-white/[0.04]">
         {paginatedData.length === 0 ? (
@@ -313,128 +321,213 @@ export default function UsersTabs({ users, guests }: UsersTabsProps) {
           paginatedData.map((item: any) => {
             const isUser = item._entityType === "user";
             const isGuest = item._entityType === "guest";
+            const activeTime = isUser ? item.lastActiveAt : (item.lastActiveAt || item.updatedAt);
+            const online = isOnlineNow(activeTime);
 
             return (
               <div
                 key={item._id}
                 onClick={() => setSelectedEntity({ type: isUser ? "user" : "guest", data: item })}
-                className="py-2.5 px-2 sm:px-3 flex items-center justify-between gap-3 hover:bg-white/[0.03] rounded-[14px] transition-colors cursor-pointer group"
+                className="py-2.5 px-2 sm:px-3 hover:bg-white/[0.03] rounded-[14px] transition-colors cursor-pointer group"
               >
-                {/* Left: Avatar & Identity */}
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  {isUser && (
-                    item.image ? (
-                      <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] overflow-hidden bg-zinc-900 border border-white/[0.08] shrink-0">
-                        <Image src={item.image} alt={item.name} width={40} height={40} className="w-full h-full object-cover" />
-                      </div>
-                    ) : (
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] bg-white/[0.08] border border-white/10 flex items-center justify-center text-white font-bold shrink-0 text-xs">
-                        {item.name?.charAt(0)?.toUpperCase() || '?'}
-                      </div>
-                    )
-                  )}
-
-                  {isGuest && (
-                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
-                      <Gamepad2 className="w-4 h-4" />
-                    </div>
-                  )}
-
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-zinc-100 text-xs sm:text-sm truncate group-hover:text-white transition-colors leading-tight">
-                        {isUser ? item.name : `Guest ${item.guestId?.slice(0, 10)}...`}
-                      </p>
+                {/* Desktop 12-Column Structured Row */}
+                <div className="hidden lg:grid grid-cols-12 gap-3 items-center">
+                  {/* Col 1-4: Avatar, Name, Role Badge */}
+                  <div className="col-span-4 flex items-center gap-3 min-w-0">
+                    <div className="relative shrink-0">
                       {isUser && (
-                        <span className="px-1.5 py-0.2 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[9.5px] font-medium shrink-0">
-                          Player
-                        </span>
+                        item.image ? (
+                          <div className="w-9 h-9 rounded-xl overflow-hidden bg-zinc-900 border border-white/[0.08]">
+                            <Image src={item.image} alt={item.name} width={36} height={36} className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-9 h-9 rounded-xl bg-white/[0.08] border border-white/10 flex items-center justify-center text-white font-bold text-xs">
+                            {item.name?.charAt(0)?.toUpperCase() || '?'}
+                          </div>
+                        )
                       )}
                       {isGuest && (
-                        <span className="px-1.5 py-0.2 rounded-md bg-white/[0.05] text-zinc-400 border border-white/[0.08] text-[9.5px] font-medium shrink-0">
-                          Guest
-                        </span>
-                      )}
-                      {isUser && item.profileCompleted && (
-                        <span 
-                          className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 shrink-0" 
-                          title="Profile completed"
-                        >
-                          <Check className="w-2.5 h-2.5 stroke-[3]" />
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-1.5 text-[10.5px] text-zinc-500 mt-0.5 truncate">
-                      {isUser && (
-                        <div className="flex items-center gap-1.5 truncate">
-                          <span className="truncate text-zinc-400">{item.email}</span>
-                          <span className="text-zinc-600 shrink-0">•</span>
-                          <span className="shrink-0 flex items-center gap-1">
-                            <span
-                              className={clsx(
-                                "w-1.5 h-1.5 rounded-full shrink-0",
-                                isOnlineNow(item.lastActiveAt)
-                                  ? "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse"
-                                  : "bg-zinc-600"
-                              )}
-                            />
-                            <span className={isOnlineNow(item.lastActiveAt) ? "text-emerald-400 font-medium" : "text-zinc-400"}>
-                              {isOnlineNow(item.lastActiveAt) ? `Online (${formatLastOnline(item.lastActiveAt)})` : `Last online: ${formatLastOnline(item.lastActiveAt)}`}
-                            </span>
-                          </span>
+                        <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                          <Gamepad2 className="w-4 h-4" />
                         </div>
                       )}
+                      {/* Active Status Ring */}
+                      <span
+                        className={clsx(
+                          "absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-[#101013]",
+                          online ? "bg-emerald-400" : "bg-zinc-600"
+                        )}
+                      />
+                    </div>
 
-                      {isGuest && (
-                        <span className="truncate flex items-center gap-1.5">
-                          <span
-                            className={clsx(
-                              "w-1.5 h-1.5 rounded-full shrink-0",
-                              isOnlineNow(item.lastActiveAt || item.updatedAt)
-                                ? "bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)] animate-pulse"
-                                : "bg-zinc-600"
-                            )}
-                          />
-                          <span className={isOnlineNow(item.lastActiveAt || item.updatedAt) ? "text-emerald-400 font-medium" : "text-zinc-400"}>
-                            {isOnlineNow(item.lastActiveAt || item.updatedAt)
-                              ? `Online (${formatLastOnline(item.lastActiveAt || item.updatedAt)})`
-                              : `Last online: ${formatLastOnline(item.lastActiveAt || item.updatedAt)}`}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <p className="font-semibold text-zinc-100 text-xs sm:text-sm truncate group-hover:text-white transition-colors leading-tight">
+                          {isUser ? item.name : `Guest ${item.guestId?.slice(0, 10)}...`}
+                        </p>
+                        {isUser && (
+                          <span className="px-1.5 py-0.2 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[9.5px] font-medium shrink-0">
+                            Player
                           </span>
-                        </span>
+                        )}
+                        {isGuest && (
+                          <span className="px-1.5 py-0.2 rounded-md bg-white/[0.05] text-zinc-400 border border-white/[0.08] text-[9.5px] font-medium shrink-0">
+                            Guest
+                          </span>
+                        )}
+                        {isUser && item.profileCompleted && (
+                          <span 
+                            className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 shrink-0" 
+                            title="Profile completed"
+                          >
+                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          </span>
+                        )}
+                      </div>
+                      {isUser && (
+                        <p className="text-[10px] text-zinc-500 mt-0.5 truncate">
+                          {item.createdAt ? `Joined ${new Date(item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}` : "Registered"}
+                        </p>
                       )}
+                      {isGuest && (
+                        <p className="text-[10px] text-zinc-500 mt-0.5 truncate">
+                          {item.createdAt ? `First seen ${new Date(item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}` : "Guest visitor"}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Col 5-7: Contact / Identifier */}
+                  <div className="col-span-3 min-w-0">
+                    {isUser ? (
+                      <div className="flex flex-col gap-0.5 min-w-0">
+                        <div className="flex items-center gap-1.5 text-xs text-zinc-300 font-mono truncate">
+                          <Mail className="w-3 h-3 text-zinc-500 shrink-0" />
+                          <span className="truncate">{item.email}</span>
+                        </div>
+                        {item.phone && (
+                          <span className="text-[10.5px] text-zinc-500 font-mono truncate pl-4.5">
+                            {item.phone}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-mono truncate">
+                        <span className="text-[10px] uppercase font-bold text-zinc-600 shrink-0">ID:</span>
+                        <span className="truncate text-zinc-400">{item.guestId}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Col 8-9: Activity & Status */}
+                  <div className="col-span-2 min-w-0">
+                    {online ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.8 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10.5px] font-medium font-mono">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        Online now
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-zinc-400 flex items-center gap-1.5 font-mono">
+                        <Clock className="w-3 h-3 text-zinc-500 shrink-0" />
+                        <span>Last online: {formatLastOnline(activeTime)}</span>
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Col 10-12: Engagement & Stats + Chevron */}
+                  <div className="col-span-3 flex items-center justify-end gap-2 shrink-0 font-mono text-[10.5px]">
+                    {isUser && (
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-300 border-amber-500/20" title="XP">
+                          🪙 {item.xp || 0}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full border bg-white/[0.06] text-white border-white/10" title="Streak">
+                          🔥 {item.currentStreak || 0}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full border bg-violet-500/10 text-violet-300 border-violet-500/20" title="Playtime">
+                          ⏱️ {Math.floor((item.playtimeSeconds || 0) / 60)}m
+                        </span>
+                        {(item.gamesPlayedCount ?? 0) > 0 && (
+                          <span className="px-2 py-0.5 rounded-full border bg-sky-500/10 text-sky-300 border-sky-500/20" title="Games Played">
+                            🎮 {item.gamesPlayedCount}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    {isGuest && (
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2 py-0.5 rounded-full border bg-violet-500/10 text-violet-300 border-violet-500/20" title="Playtime">
+                          ⏱️ {Math.floor((item.playtimeSeconds || 0) / 60)}m
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full border bg-sky-500/10 text-sky-300 border-sky-500/20" title="Plays">
+                          🎮 {item.gamesPlayedCount || 0} plays
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="w-4 flex items-center justify-center shrink-0 ml-1">
+                      <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all" />
                     </div>
                   </div>
                 </div>
 
-                {/* Right: Quick Micro Stats & Chevron */}
-                <div className="flex items-center gap-2.5 sm:gap-4 shrink-0">
-                  {isUser && (
-                    <div className="hidden sm:flex items-center gap-1.5 font-mono text-[10px]">
-                      <span className="px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-300 border-amber-500/20">
-                        🪙 {item.xp || 0}
-                      </span>
-                      <span className="px-2 py-0.5 rounded-full border bg-white/[0.06] text-white border-white/10">
-                        🔥 {item.currentStreak || 0}
-                      </span>
+                {/* Mobile / Tablet Compact Row (< lg) */}
+                <div className="flex lg:hidden items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    {isUser && (
+                      item.image ? (
+                        <div className="relative w-9 h-9 rounded-[12px] overflow-hidden bg-zinc-900 border border-white/[0.08] shrink-0">
+                          <Image src={item.image} alt={item.name} width={36} height={36} className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-9 h-9 rounded-[12px] bg-white/[0.08] border border-white/10 flex items-center justify-center text-white font-bold shrink-0 text-xs">
+                          {item.name?.charAt(0)?.toUpperCase() || '?'}
+                        </div>
+                      )
+                    )}
+
+                    {isGuest && (
+                      <div className="w-9 h-9 rounded-[12px] bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
+                        <Gamepad2 className="w-4 h-4" />
+                      </div>
+                    )}
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-zinc-100 text-xs truncate group-hover:text-white transition-colors leading-tight">
+                          {isUser ? item.name : `Guest ${item.guestId?.slice(0, 10)}...`}
+                        </p>
+                        <span className={clsx(
+                          "px-1.5 py-0.2 rounded-md text-[9.5px] font-medium shrink-0",
+                          isUser ? "bg-amber-500/10 text-amber-300 border border-amber-500/20" : "bg-white/[0.05] text-zinc-400 border border-white/[0.08]"
+                        )}>
+                          {isUser ? "Player" : "Guest"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 text-[10.5px] text-zinc-500 mt-0.5 truncate">
+                        {isUser && (
+                          <span className="truncate text-zinc-400">{item.email}</span>
+                        )}
+                        {isGuest && (
+                          <span className="truncate font-mono">{formatLastOnline(activeTime)}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1 font-mono text-[10px]">
+                      {isUser && (
+                        <span className="px-2 py-0.5 rounded-full border bg-amber-500/10 text-amber-300 border-amber-500/20">
+                          🪙 {item.xp || 0}
+                        </span>
+                      )}
                       <span className="px-2 py-0.5 rounded-full border bg-violet-500/10 text-violet-300 border-violet-500/20">
                         ⏱️ {Math.floor((item.playtimeSeconds || 0) / 60)}m
                       </span>
                     </div>
-                  )}
-
-                  {isGuest && (
-                    <div className="hidden sm:flex items-center gap-1.5 font-mono text-[10px]">
-                      <span className="px-2 py-0.5 rounded-full border bg-violet-500/10 text-violet-300 border-violet-500/20">
-                        ⏱️ {Math.floor((item.playtimeSeconds || 0) / 60)}m
-                      </span>
-                      <span className="px-2 py-0.5 rounded-full border bg-sky-500/10 text-sky-300 border-sky-500/20">
-                        🎮 {item.gamesPlayedCount || 0} plays
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="w-4 flex items-center justify-center">
                     <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors" />
                   </div>
                 </div>
