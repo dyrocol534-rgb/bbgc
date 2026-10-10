@@ -132,38 +132,39 @@ export default function SettingsClient({ user }: SettingsClientProps) {
 
   return (
     <div className="space-y-5">
-      {/* ── 1. Top Profile / Apple ID Card ── */}
+      {/* ── 1. Top Profile Card ── */}
       {user ? (
         <Link
           href="/profile"
-          className="flex items-center justify-between p-3.5 rounded-[18px] bg-[#141416] hover:bg-[#18181c] border border-white/[0.07] transition-all group shadow-xs"
+          className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-950 border border-zinc-900 hover:border-zinc-800 transition-colors group"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-white/[0.12] bg-zinc-800 shrink-0">
+            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-zinc-800 bg-zinc-900 shrink-0">
               {user.image ? (
                 <Image
                   src={user.image}
                   alt={user.name || "User Avatar"}
                   fill
+                  sizes="40px"
                   className="object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm bg-zinc-800">
+                <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm bg-zinc-900">
                   {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U"}
                 </div>
               )}
             </div>
             <div className="flex flex-col min-w-0">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[14px] font-semibold text-white truncate group-hover:text-zinc-200 transition-colors">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-white truncate group-hover:text-zinc-200 transition-colors">
                   {user.name || "Gamer"}
                 </span>
-                <span className="inline-flex items-center gap-1 text-[9.5px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-full shrink-0">
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded shrink-0">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   Synced
                 </span>
               </div>
-              <span className="text-[11px] text-zinc-400 truncate">
+              <span className="text-xs text-zinc-500 truncate">
                 {user.email}
               </span>
             </div>
@@ -171,50 +172,50 @@ export default function SettingsClient({ user }: SettingsClientProps) {
           <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
         </Link>
       ) : (
-        <div className="flex items-center justify-between p-3.5 rounded-[18px] bg-[#141416] border border-white/[0.07] shadow-xs">
+        <div className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-950 border border-zinc-900">
           <div className="flex flex-col pr-3">
-            <span className="text-[13px] font-semibold text-white">Guest Player</span>
-            <span className="text-[11px] text-zinc-400">Sign in to sync streaks, XP, and settings across devices</span>
+            <span className="text-sm font-semibold text-white">Guest Player</span>
+            <span className="text-xs text-zinc-500">Sign in to sync streaks, XP, and settings across devices</span>
           </div>
           <Link
             href="/login"
-            className="px-3.5 py-1.5 rounded-full bg-white hover:bg-zinc-100 text-black text-xs font-semibold shrink-0 transition-all shadow-xs active:scale-[0.98]"
+            className="px-3.5 py-1.5 rounded-lg bg-white hover:bg-zinc-200 text-black text-xs font-bold shrink-0 transition-colors"
           >
             Sign In
           </Link>
         </div>
       )}
 
-      {/* ── 2. Notifications Section (iOS Inset Group) ── */}
-      <div>
-        <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-1.5">
+      {/* ── 2. Notifications Section ── */}
+      <div className="space-y-1.5">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
           Notifications &amp; Alerts
         </div>
 
-        <div className="bg-[#141416] rounded-[20px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-xs">
+        <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden">
           {/* Push Notifications Row */}
           <div 
             onClick={isSupported ? handleToggleNotifications : undefined}
-            className={`flex items-center justify-between p-3 sm:p-3.5 transition-colors ${
-              isSupported ? "hover:bg-white/[0.03] cursor-pointer" : ""
+            className={`flex items-center justify-between p-3.5 transition-colors ${
+              isSupported ? "hover:bg-zinc-950 cursor-pointer" : ""
             }`}
           >
-            <div className="flex items-center gap-2.5 min-w-0 pr-3">
-              <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 shadow-xs transition-colors ${
+            <div className="flex items-center gap-3 min-w-0 pr-3">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                 isSubscribed 
-                  ? "bg-[#FF3B30] text-white" 
-                  : "bg-zinc-800 text-zinc-400"
+                  ? "bg-red-500/10 border border-red-500/20 text-red-400" 
+                  : "bg-zinc-900 border border-zinc-800 text-zinc-400"
               }`}>
-                {isSubscribed ? <BellRing className="w-3.5 h-3.5" /> : <Bell className="w-3.5 h-3.5" />}
+                {isSubscribed ? <BellRing className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
               </div>
               <div className="flex flex-col text-left min-w-0">
-                <span className="text-[13px] font-medium text-white tracking-tight flex items-center gap-1.5">
+                <span className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
                   Push Notifications
                   {isSubscribed && (
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                   )}
                 </span>
-                <span className="text-[10.5px] text-zinc-400 leading-tight">
+                <span className="text-xs text-zinc-500 leading-tight">
                   {isSupported ? "Streak reminders & new game drops" : "Not supported in this browser"}
                 </span>
               </div>
@@ -232,7 +233,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                 }}
                 disabled={loadingNotif}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 touch-manipulation ${
-                  isSubscribed ? "bg-[#34C759]" : "bg-[#39393D]"
+                  isSubscribed ? "bg-emerald-500" : "bg-zinc-800"
                 }`}
                 title={isSubscribed ? "Disable notifications" : "Enable notifications"}
               >
@@ -249,19 +250,19 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                 )}
               </button>
             ) : (
-              <span className="text-[10.5px] text-zinc-500 font-medium">Unavailable</span>
+              <span className="text-xs text-zinc-500 font-medium">Unavailable</span>
             )}
           </div>
         </div>
 
         {/* Feedback Alert if present */}
         {notifFeedback && (
-          <div className={`mt-2 p-2.5 rounded-xl border text-xs flex items-center gap-2 animate-in fade-in duration-200 ${
+          <div className={`p-2.5 rounded-xl border text-xs flex items-center gap-2 animate-in fade-in duration-200 ${
             notifFeedback.type === "success" 
               ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-300"
               : notifFeedback.type === "error"
               ? "bg-red-500/10 border-red-500/25 text-red-300"
-              : "bg-white/[0.04] border-white/[0.08] text-zinc-300"
+              : "bg-zinc-900 border-zinc-800 text-zinc-300"
           }`}>
             {notifFeedback.type === "success" ? (
               <Check className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
@@ -276,7 +277,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
 
         {/* Browser Permission Blocked Alert */}
         {permission === "denied" && (
-          <div className="mt-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300 space-y-1">
+          <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300 space-y-1">
             <div className="font-semibold flex items-center gap-1.5 text-[11.5px]">
               <AlertTriangle className="w-3 h-3 text-amber-400" />
               Notifications Blocked by Browser
@@ -288,31 +289,31 @@ export default function SettingsClient({ user }: SettingsClientProps) {
         )}
       </div>
 
-      {/* ── 3. Gameplay Preferences (iOS Inset Group) ── */}
-      <div>
-        <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-1.5">
+      {/* ── 3. Gameplay Preferences ── */}
+      <div className="space-y-1.5">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
           Audio &amp; Gameplay
         </div>
 
-        <div className="bg-[#141416] rounded-[20px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-xs">
+        <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden">
           {/* Sound FX Row */}
           <div 
             onClick={handleToggleSound}
-            className="flex items-center justify-between p-3 sm:p-3.5 hover:bg-white/[0.03] transition-colors cursor-pointer"
+            className="flex items-center justify-between p-3.5 hover:bg-zinc-950 transition-colors cursor-pointer"
           >
-            <div className="flex items-center gap-2.5 min-w-0 pr-3">
-              <div className={`w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 shadow-xs transition-colors ${
-                soundEnabled ? "bg-white text-black" : "bg-zinc-800 text-zinc-400"
+            <div className="flex items-center gap-3 min-w-0 pr-3">
+              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                soundEnabled ? "bg-white text-black" : "bg-zinc-900 border border-zinc-800 text-zinc-400"
               }`}>
-                {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+                {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
               </div>
               <div className="flex flex-col text-left min-w-0">
-                <span className="text-[13px] font-medium text-white tracking-tight">Game Sound &amp; Effects</span>
-                <span className="text-[10.5px] text-zinc-400 leading-tight">In-game sound effects &amp; audio</span>
+                <span className="text-sm font-semibold text-white tracking-tight">Game Sound &amp; Effects</span>
+                <span className="text-xs text-zinc-500 leading-tight">In-game sound effects &amp; audio</span>
               </div>
             </div>
 
-            {/* iOS Switch */}
+            {/* Switch */}
             <button
               type="button"
               role="switch"
@@ -322,7 +323,7 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                 handleToggleSound();
               }}
               className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none touch-manipulation ${
-                soundEnabled ? "bg-[#34C759]" : "bg-[#39393D]"
+                soundEnabled ? "bg-emerald-500" : "bg-zinc-800"
               }`}
               title={soundEnabled ? "Mute audio" : "Enable audio"}
             >
@@ -336,28 +337,28 @@ export default function SettingsClient({ user }: SettingsClientProps) {
         </div>
       </div>
 
-      {/* ── 4. Account Actions (iOS Inset Group) ── */}
+      {/* ── 4. Account Actions ── */}
       {user && (
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-1.5">
-            Account
+        <div className="space-y-1.5">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
+            Account Actions
           </div>
 
-          <div className="bg-[#141416] rounded-[20px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-xs">
+          <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden">
             {/* Sign Out Row */}
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full flex items-center justify-between p-3 sm:p-3.5 hover:bg-white/[0.03] transition-colors text-left group cursor-pointer"
+              className="w-full flex items-center justify-between p-3.5 hover:bg-zinc-950 transition-colors text-left group cursor-pointer"
             >
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-[8px] bg-zinc-800 text-zinc-300 border border-white/[0.08] flex items-center justify-center shrink-0 shadow-xs group-hover:text-white transition-colors">
-                  <LogOut className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-800 flex items-center justify-center shrink-0 group-hover:text-white transition-colors">
+                  <LogOut className="w-4 h-4" />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-[13px] font-medium text-zinc-200 group-hover:text-white transition-colors">
+                  <span className="text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors">
                     Sign Out
                   </span>
-                  <span className="text-[10.5px] text-zinc-400">{user.email}</span>
+                  <span className="text-xs text-zinc-500">{user.email}</span>
                 </div>
               </div>
               <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
@@ -370,28 +371,28 @@ export default function SettingsClient({ user }: SettingsClientProps) {
                 setDeleteConfirmationText("");
                 setDeleteError("");
               }}
-              className="w-full flex items-center justify-between p-3 sm:p-3.5 hover:bg-red-500/[0.05] transition-colors text-left group cursor-pointer"
+              className="w-full flex items-center justify-between p-3.5 hover:bg-red-500/[0.05] transition-colors text-left group cursor-pointer"
             >
-              <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-[8px] bg-[#FF453A]/15 text-[#FF453A] border border-[#FF453A]/30 flex items-center justify-center shrink-0 shadow-xs">
-                  <Trash2 className="w-3.5 h-3.5" />
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+                  <Trash2 className="w-4 h-4" />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-[13px] font-medium text-[#FF453A]">
+                  <span className="text-sm font-semibold text-red-400">
                     Delete Account &amp; Data
                   </span>
-                  <span className="text-[10.5px] text-zinc-500">
+                  <span className="text-xs text-zinc-500">
                     Permanently wipe XP balance, streak records, and profile
                   </span>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#FF453A]/50 group-hover:text-[#FF453A] transition-colors" />
+              <ChevronRight className="w-4 h-4 text-red-400/50 group-hover:text-red-400 transition-colors" />
             </button>
           </div>
 
-          <div className="text-[10px] text-zinc-500 px-1 mt-1.5">
+          <p className="text-xs text-zinc-600 px-1 pt-1">
             Deleting your account is permanent. All accumulated rewards, leaderboard scores, and streak data will be lost.
-          </div>
+          </p>
         </div>
       )}
 

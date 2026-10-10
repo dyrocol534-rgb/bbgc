@@ -25,215 +25,288 @@ export default async function ReferralPage() {
   const pendingInvites = totalInvited - rewardsUnlocked;
   const totalXpEarned = rewardsUnlocked * XP_CONFIG.REFERRAL_REWARD;
 
-  return (
-    <div className="min-h-screen pb-12">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 sm:py-5 space-y-5">
+  // Conversion rate and additional metrics
+  const conversionRate = totalInvited > 0 ? Math.round((rewardsUnlocked / totalInvited) * 100) : 0;
+  const potentialXp = pendingInvites * XP_CONFIG.REFERRAL_REWARD;
 
-        {/* ── iOS Top Navigation Bar ── */}
+  return (
+    <div className="min-h-screen bg-black pb-12">
+      <div className="w-full px-3 sm:px-6 lg:px-8 xl:px-10 py-3 sm:py-4 space-y-4">
+
+        {/* ── Top Navigation Bar ── */}
         <div className="flex items-center justify-between">
           <Link
             href="/profile"
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.09] active:bg-white/[0.12] border border-white/[0.08] text-zinc-300 hover:text-white text-xs font-medium transition-all group touch-manipulation"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             <span>Profile</span>
           </Link>
 
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
-            Referrals
-          </span>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/rewards"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-400 hover:text-amber-300 text-xs font-medium transition-colors"
+            >
+              <Coins className="w-3.5 h-3.5" />
+              <span>Rewards</span>
+            </Link>
+
+            <Link
+              href="/leaderboard"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+            >
+              <span>Leaderboard</span>
+            </Link>
+          </div>
         </div>
 
         {/* ── Header ── */}
-        <div className="space-y-0.5">
-          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-            Refer &amp; Earn
-          </h1>
-          <p className="text-xs text-zinc-400">
-            Invite friends to play on Bluebuff — you both unlock{" "}
-            <span className="font-semibold text-amber-400">+{XP_CONFIG.REFERRAL_REWARD} XP</span> when they try {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games.
-          </p>
-        </div>
-
-        {/* ── Referral Link & Code Card ── */}
-        <ReferralClient referralCode={referralCode} />
-
-        {/* ── Responsive Stats Grid ── */}
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-1.5">
-            Referral Activity
+        <div className="rounded-xl bg-zinc-950 border border-zinc-900 p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-0.5">
+            <div className="flex items-center gap-2">
+              <h1 className="text-base sm:text-lg font-black text-white tracking-tight">
+                Referral Program
+              </h1>
+              <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">
+                +{XP_CONFIG.REFERRAL_REWARD} XP Each
+              </span>
+            </div>
+            <p className="text-xs text-zinc-400">
+              Invite friends to play on Bluebuff — both of you earn {XP_CONFIG.REFERRAL_REWARD} bonus XP as soon as they try {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games.
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-2.5">
-            {/* Total Invited */}
-            <div className="bg-[#141416] p-3.5 rounded-[18px] border border-white/[0.07] flex flex-col justify-between shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[9.5px] font-semibold text-zinc-400 uppercase tracking-wider">Total Invited</span>
-                <div className="w-6 h-6 rounded-[7px] bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Users className="w-3 h-3" />
-                </div>
-              </div>
-              <div>
-                <p className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-none">
-                  {totalInvited}
-                </p>
-                <p className="text-[10.5px] text-zinc-500 mt-0.5">Friends joined</p>
-              </div>
-            </div>
-
-            {/* Unlocked */}
-            <div className="bg-[#141416] p-3.5 rounded-[18px] border border-white/[0.07] flex flex-col justify-between shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[9.5px] font-semibold text-zinc-400 uppercase tracking-wider">Completed</span>
-                <div className="w-6 h-6 rounded-[7px] bg-[#34C759] text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Coins className="w-3 h-3" />
-                </div>
-              </div>
-              <div>
-                <div className="flex items-baseline gap-1.5">
-                  <p className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-none">
-                    {rewardsUnlocked}
-                  </p>
-                  {totalXpEarned > 0 && (
-                    <span className="text-[9.5px] font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
-                      +{totalXpEarned} XP
-                    </span>
-                  )}
-                </div>
-                <p className="text-[10.5px] text-zinc-500 mt-0.5">Rewards granted</p>
-              </div>
-            </div>
-
-            {/* Pending */}
-            <div className="col-span-2 sm:col-span-1 bg-[#141416] p-3.5 rounded-[18px] border border-white/[0.07] flex flex-col justify-between shadow-xs">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[9.5px] font-semibold text-zinc-400 uppercase tracking-wider">Pending</span>
-                <div className="w-6 h-6 rounded-[7px] bg-white/[0.1] border border-white/10 text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Hourglass className="w-3 h-3" />
-                </div>
-              </div>
-              <div>
-                <p className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-none">
-                  {pendingInvites}
-                </p>
-                <p className="text-[10.5px] text-zinc-500 mt-0.5">Requires {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games</p>
-              </div>
-            </div>
+          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+            <span className="text-[11px] font-mono text-zinc-400 bg-black border border-zinc-900 px-2.5 py-1 rounded-lg">
+              Code: <strong className="text-white font-bold">{referralCode}</strong>
+            </span>
           </div>
         </div>
 
-        {/* ── Friends List (iOS Inset Group) ── */}
-        {referredUsers.length > 0 && (
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-1.5 flex items-center justify-between">
-              <span>Invited Friends</span>
-              <span className="text-[10px] text-zinc-500 normal-case font-normal">
-                {referredUsers.length} total
+        {/* ── Full-Width 6-Metric Player Referral Stats ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
+          {/* 1. Total Friends Invited */}
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-[#007AFF]/10 border border-[#007AFF]/20 flex items-center justify-center shrink-0">
+              <Users className="w-3.5 h-3.5 text-[#007AFF]" />
+            </div>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Invited</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                {totalInvited} Friends
+              </span>
+            </div>
+          </div>
+
+          {/* 2. Completed / Rewards Unlocked */}
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+            </div>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Completed</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                {rewardsUnlocked} Qualified
+              </span>
+            </div>
+          </div>
+
+          {/* 3. Total XP Earned */}
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+              <Coins className="w-3.5 h-3.5 text-amber-400" />
+            </div>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Earned XP</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                +{totalXpEarned} XP
+              </span>
+            </div>
+          </div>
+
+          {/* 4. Pending Friends */}
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0">
+              <Hourglass className="w-3.5 h-3.5 text-orange-400" />
+            </div>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">In Progress</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                {pendingInvites} Pending
+              </span>
+            </div>
+          </div>
+
+          {/* 5. Potential XP Pending */}
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-3.5 h-3.5 text-purple-400" />
+            </div>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Pending XP</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                +{potentialXp} XP
+              </span>
+            </div>
+          </div>
+
+          {/* 6. Success Conversion Rate */}
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
+              <HeartHandshake className="w-3.5 h-3.5 text-rose-400" />
+            </div>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Success Rate</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                {conversionRate}%
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Main Responsive Content Grid (Left: Invite Controls, Right: Invited Friends Table) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] xl:grid-cols-[420px_1fr] gap-4 items-start">
+
+          {/* ── Left Column: Invite Card & Quick Instructions ── */}
+          <div className="space-y-4">
+            {/* Referral Link & Code Card */}
+            <ReferralClient referralCode={referralCode} />
+
+            {/* How it works */}
+            <div className="space-y-1.5">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
+                How Referrals Work
+              </div>
+
+              <div className="bg-zinc-950 rounded-xl border border-zinc-900 p-3.5 sm:p-4 space-y-3">
+                {[
+                  { 
+                    step: "1", 
+                    title: "Share your code or direct link", 
+                    desc: "Send your unique code or invite link to gaming buddies via WhatsApp, X, or direct message.",
+                  },
+                  { 
+                    step: "2", 
+                    title: `Friend plays ${XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games`, 
+                    desc: "When they sign up and play their first 10 instant browser games, their progress updates in real-time.",
+                  },
+                  { 
+                    step: "3", 
+                    title: `Both unlock +${XP_CONFIG.REFERRAL_REWARD} XP instantly`, 
+                    desc: "Bonus XP is credited directly to your player profiles to unlock leaderboards and rewards.",
+                  },
+                ].map(({ step, title, desc }) => (
+                  <div key={step} className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                      {step}
+                    </div>
+                    <div className="space-y-0.5 min-w-0">
+                      <p className="text-xs font-semibold text-white leading-tight">
+                        {title}
+                      </p>
+                      <p className="text-[11px] text-zinc-400 leading-relaxed">{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Right Column: Friends List & Live Progress ── */}
+          <div className="space-y-1.5 min-w-0">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1 flex items-center justify-between">
+              <span>Invited Friends &amp; Progress</span>
+              <span className="text-[11px] text-zinc-500 normal-case font-mono">
+                {referredUsers.length} total invite{referredUsers.length !== 1 ? "s" : ""}
               </span>
             </div>
 
-            <div className="bg-[#141416] rounded-[20px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-xs">
-              {referredUsers.map((user) => {
-                const gamesPlayed = user.gamesPlayedCount || 0;
-                const isCompleted = user.referralRewardPaid;
-                const progress = Math.min(100, Math.round((gamesPlayed / XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL) * 100));
+            {referredUsers.length > 0 ? (
+              <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden">
+                {referredUsers.map((user) => {
+                  const gamesPlayed = user.gamesPlayedCount || 0;
+                  const isCompleted = user.referralRewardPaid;
+                  const progress = Math.min(100, Math.round((gamesPlayed / XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL) * 100));
+                  const joinedDate = (user as any).createdAt 
+                    ? new Date((user as any).createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+                    : "Recently";
 
-                return (
-                  <div
-                    key={user._id.toString()}
-                    className="flex items-center gap-2.5 p-3 sm:p-3.5 hover:bg-white/[0.02] transition-colors"
-                  >
-                    {/* Avatar */}
-                    {user.image ? (
-                      <Image 
-                        src={user.image} 
-                        alt={user.name || "User"} 
-                        width={32} 
-                        height={32} 
-                        className="w-8 h-8 rounded-full border border-white/[0.12] object-cover shrink-0 bg-zinc-800" 
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-xs">
-                        {(user.name || "U").charAt(0).toUpperCase()}
+                  return (
+                    <div
+                      key={user._id.toString()}
+                      className="flex items-center gap-3 p-3 sm:p-3.5 hover:bg-zinc-950 transition-colors"
+                    >
+                      {/* Avatar */}
+                      <div className="relative shrink-0">
+                        {user.image ? (
+                          <Image 
+                            src={user.image} 
+                            alt={user.name || "User"} 
+                            width={36} 
+                            height={36} 
+                            className="w-9 h-9 rounded-full border border-zinc-800 object-cover bg-zinc-900" 
+                          />
+                        ) : (
+                          <div className="w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center font-bold text-xs text-white">
+                            {(user.name || "U").charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <span className={`absolute bottom-0 right-0 w-2 h-2 rounded-full border border-black ${
+                          isCompleted ? "bg-emerald-400" : "bg-amber-400"
+                        }`} />
                       </div>
-                    )}
 
-                    {/* Name + progress */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-semibold text-zinc-200 truncate">{user.name}</p>
-                        <span className="text-[9.5px] text-zinc-400 shrink-0 font-medium">
-                          {gamesPlayed}/{XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games
+                      {/* Name + progress */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <p className="text-xs sm:text-sm font-semibold text-white truncate">{user.name || "Player"}</p>
+                            <span className="text-[10px] text-zinc-500 font-mono hidden sm:inline">
+                              Joined {joinedDate}
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-zinc-400 shrink-0 font-medium font-mono">
+                            {gamesPlayed}/{XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games
+                          </span>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="mt-1.5 bg-zinc-900 h-1.5 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-500 ${
+                              isCompleted ? "bg-emerald-400" : "bg-amber-400"
+                            }`}
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Status badge */}
+                      {isCompleted ? (
+                        <span className="shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                          <Check className="w-3 h-3" /> +{XP_CONFIG.REFERRAL_REWARD} XP
                         </span>
-                      </div>
-                      <div className="mt-1 bg-[#1f1f23] h-1.5 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            isCompleted ? "bg-[#34C759]" : "bg-white"
-                          }`}
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
+                      ) : (
+                        <span className="shrink-0 inline-flex items-center gap-1 text-[11px] font-medium bg-zinc-900 text-zinc-400 px-2.5 py-1 rounded-lg border border-zinc-800">
+                          <Hourglass className="w-3 h-3 text-amber-400" /> {progress}%
+                        </span>
+                      )}
                     </div>
-
-                    {/* Status badge */}
-                    {isCompleted ? (
-                      <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                        <Check className="w-2.5 h-2.5" /> +{XP_CONFIG.REFERRAL_REWARD} XP
-                      </span>
-                    ) : (
-                      <span className="shrink-0 inline-flex items-center gap-1 text-[9.5px] font-medium bg-white/[0.05] text-zinc-400 px-2 py-0.5 rounded-full border border-white/[0.06]">
-                        <Hourglass className="w-2.5 h-2.5 text-amber-400" /> Pending
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ── How it works (iOS Inset Group) ── */}
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-1.5">
-            How It Works
-          </div>
-
-          <div className="bg-[#141416] rounded-[20px] border border-white/[0.07] p-4 sm:p-5 shadow-xs space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-              {[
-                { 
-                  step: "1", 
-                  title: "Share Invite Link", 
-                  desc: "Send your invite code or direct link to gaming friends.",
-                  icon: "✉️"
-                },
-                { 
-                  step: "2", 
-                  title: "They Play Games", 
-                  desc: `Your friend signs in and plays ${XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} instant web games.`,
-                  icon: "🎮"
-                },
-                { 
-                  step: "3", 
-                  title: `Instant +${XP_CONFIG.REFERRAL_REWARD} XP`, 
-                  desc: "Both players receive bonus XP automatically credited to their accounts.",
-                  icon: "🪙"
-                },
-              ].map(({ step, title, desc }) => (
-                <div key={step} className="flex sm:flex-col items-start gap-2.5 sm:gap-2">
-                  <div className="w-6 h-6 rounded-[7px] bg-white/[0.08] border border-white/[0.08] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
-                    {step}
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-white">
-                      {title}
-                    </p>
-                    <p className="text-[10.5px] text-zinc-400 mt-0.5 leading-relaxed">{desc}</p>
-                  </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="rounded-xl border border-zinc-900 bg-zinc-950 p-8 flex flex-col items-center text-center gap-2.5">
+                <div className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                  <Users className="w-5 h-5 text-zinc-500" />
                 </div>
-              ))}
-            </div>
+                <p className="text-sm font-semibold text-zinc-200">No invited friends yet</p>
+                <p className="text-xs text-zinc-500 max-w-sm">
+                  Share your referral link above with friends. Once they join and try 10 games, both of you will receive bonus XP here!
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
