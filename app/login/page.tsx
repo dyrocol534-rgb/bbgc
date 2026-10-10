@@ -7,6 +7,7 @@ import { Loader2, ShieldCheck, Gift, Mail, ArrowRight, KeyRound, Check, RefreshC
 import Image from "next/image";
 import Link from "next/link";
 import { XP_CONFIG } from "@/lib/xp-config";
+import { BoxSkeleton } from "@/components/ui/ShimmerLoader";
 
 export default function LoginPage() {
   const { status } = useSession();
@@ -110,11 +111,7 @@ export default function LoginPage() {
   };
 
   if (status === "loading") {
-    return (
-      <div className="min-h-[80vh] flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-white animate-spin" />
-      </div>
-    );
+    return <BoxSkeleton />;
   }
 
   return (

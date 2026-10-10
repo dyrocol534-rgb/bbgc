@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 const CATEGORIES = [
   "action", "adventure", "arcade", "board", "card", "clicker", 
@@ -227,9 +228,21 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
 
   if (isLoading) {
     return (
-      <div className="flex flex-col justify-center items-center py-24">
-        <Loader2 className="w-6 h-6 text-white animate-spin mb-2" />
-        <p className="text-xs text-zinc-400 font-medium">Loading game details...</p>
+      <div className="space-y-6 max-w-[1400px] mx-auto py-2">
+        <div className="flex items-center gap-3">
+          <Skeleton className="w-9 h-9 rounded-full" />
+          <div className="space-y-1.5">
+            <Skeleton className="h-6 w-52 rounded-lg" />
+            <Skeleton className="h-3 w-36 rounded-md" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-4">
+            <div className="h-48 rounded-2xl skeleton-shimmer border border-white/5" />
+            <div className="h-32 rounded-2xl skeleton-shimmer border border-white/5" />
+          </div>
+          <div className="h-80 rounded-2xl skeleton-shimmer border border-white/5" />
+        </div>
       </div>
     );
   }

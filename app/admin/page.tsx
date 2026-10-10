@@ -11,6 +11,8 @@ import {
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import clsx from 'clsx';
+import { Skeleton } from "@/components/ui/Skeleton";
+import { MetricsSkeleton } from "@/components/ui/ShimmerLoader";
 
 const AcquisitionChart = dynamic(() => import("@/components/admin/AcquisitionChart"), { ssr: false });
 const DeviceChart = dynamic(() => import("@/components/admin/DeviceChart"), { ssr: false });
@@ -136,9 +138,16 @@ export default function AdminAnalytics() {
 
   if (isLoading && !stats) {
     return (
-      <div className="flex flex-col justify-center items-center py-24">
-        <Loader2 className="w-5 h-5 text-white animate-spin mb-2" />
-        <p className="text-xs text-zinc-400 font-medium tracking-wide">Loading metrics...</p>
+      <div className="space-y-4 py-2">
+        <div className="flex justify-between items-center pb-2">
+          <Skeleton className="h-6 w-48 rounded-lg" />
+          <Skeleton className="h-6 w-32 rounded-full" />
+        </div>
+        <MetricsSkeleton />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2.5">
+          <div className="lg:col-span-2 h-[220px] rounded-2xl skeleton-shimmer border border-white/5" />
+          <div className="h-[220px] rounded-2xl skeleton-shimmer border border-white/5" />
+        </div>
       </div>
     );
   }

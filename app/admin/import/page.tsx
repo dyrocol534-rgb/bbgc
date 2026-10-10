@@ -21,6 +21,7 @@ import {
   SlidersHorizontal
 } from "lucide-react";
 import Image from "next/image";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 interface GMGame {
   id: string;
@@ -343,11 +344,15 @@ export default function ImportGamesPage() {
         </div>
       )}
 
-      {/* Loading Skeleton / Spinner */}
+      {/* Loading Skeleton / Shimmer Grid */}
       {isLoading ? (
-        <div className="flex flex-col justify-center items-center py-24 space-y-2">
-          <Loader2 className="w-6 h-6 text-white animate-spin" />
-          <p className="text-xs text-zinc-400">Fetching game catalog feed...</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3 animate-in fade-in duration-200">
+          {Array.from({ length: 18 }).map((_, i) => (
+            <div key={i} className="space-y-2">
+              <div className="aspect-square w-full rounded-2xl skeleton-shimmer border border-white/5" />
+              <Skeleton className="h-3.5 w-3/4 mx-auto rounded-md" />
+            </div>
+          ))}
         </div>
       ) : filteredGames.length === 0 ? (
         <div className="py-20 text-center space-y-2">

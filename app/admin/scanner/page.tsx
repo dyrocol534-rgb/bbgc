@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Activity, Play, Square, AlertTriangle, CheckCircle2, ArrowRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { TableSkeleton } from "@/components/ui/ShimmerLoader";
 
 interface GameData {
   _id: string;
@@ -113,8 +115,12 @@ export default function ScannerPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Activity className="w-8 h-8 text-primary animate-pulse" />
+      <div className="space-y-4 max-w-[1400px] mx-auto py-2">
+        <div className="flex justify-between items-center pb-2">
+          <Skeleton className="h-6 w-44 rounded-lg" />
+          <Skeleton className="h-6 w-24 rounded-full" />
+        </div>
+        <TableSkeleton rows={6} />
       </div>
     );
   }

@@ -11,6 +11,8 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import clsx from "clsx";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { TableSkeleton } from "@/components/ui/ShimmerLoader";
 
 interface GameData {
   _id: string;
@@ -256,9 +258,12 @@ export default function AdminGamesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col justify-center items-center py-24">
-        <Loader2 className="w-6 h-6 text-white animate-spin mb-2" />
-        <p className="text-xs text-zinc-400 font-medium">Loading Games Catalog...</p>
+      <div className="space-y-4 max-w-[1400px] mx-auto py-2">
+        <div className="flex justify-between items-center pb-2">
+          <Skeleton className="h-6 w-48 rounded-lg" />
+          <Skeleton className="h-6 w-28 rounded-full" />
+        </div>
+        <TableSkeleton rows={8} />
       </div>
     );
   }

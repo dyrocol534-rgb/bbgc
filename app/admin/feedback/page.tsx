@@ -4,6 +4,8 @@ import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { Loader2, CheckCircle2, Circle, MessageSquareWarning, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import clsx from "clsx";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { TableSkeleton } from "@/components/ui/ShimmerLoader";
 
 interface FeedbackData {
   _id: string;
@@ -72,8 +74,12 @@ export default function AdminFeedbackPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-16">
-        <Loader2 className="w-6 h-6 text-indigo-400 animate-spin" />
+      <div className="space-y-4 max-w-[1400px] mx-auto py-2">
+        <div className="flex justify-between items-center pb-2">
+          <Skeleton className="h-6 w-44 rounded-lg" />
+          <Skeleton className="h-6 w-24 rounded-full" />
+        </div>
+        <TableSkeleton rows={7} />
       </div>
     );
   }
