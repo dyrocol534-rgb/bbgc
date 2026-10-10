@@ -14,12 +14,12 @@ export default async function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-black pb-12">
-      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6">
+      <div className="w-full px-3 sm:px-6 lg:px-8 xl:px-10 py-3 sm:py-4 space-y-4">
         {/* Navigation Bar */}
         <div className="flex items-center justify-between">
           <Link
             href={session ? "/profile" : "/"}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             <span>{session ? "Profile" : "Home"}</span>
@@ -31,12 +31,12 @@ export default async function SettingsPage() {
         </div>
 
         {/* Header */}
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Settings
+        <div className="rounded-xl bg-zinc-950 border border-zinc-900 p-3.5 sm:p-4">
+          <h1 className="text-base sm:text-lg font-black text-white tracking-tight">
+            Settings &amp; Preferences
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-400">
-            Personalize your alerts, audio, cloud sync, and application settings.
+          <p className="text-xs text-zinc-400 mt-0.5">
+            Personalize audio, push notifications, cloud sync, and account security.
           </p>
         </div>
 

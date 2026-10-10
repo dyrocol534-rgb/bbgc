@@ -131,32 +131,29 @@ export default function SettingsClient({ user }: SettingsClientProps) {
   };
 
   return (
-    <div className="space-y-5">
-      {/* ── 1. Top Profile Card ── */}
+    <div className="space-y-4">
+      {/* ── 1. Top User Profile & Sync Status Bar ── */}
       {user ? (
-        <Link
-          href="/profile"
-          className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-950 border border-zinc-900 hover:border-zinc-800 transition-colors group"
-        >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl bg-zinc-950 border border-zinc-900 gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden border border-zinc-800 bg-zinc-900 shrink-0">
+            <div className="relative w-11 h-11 rounded-full overflow-hidden border border-zinc-800 bg-zinc-900 shrink-0">
               {user.image ? (
                 <Image
                   src={user.image}
                   alt={user.name || "User Avatar"}
                   fill
-                  sizes="40px"
+                  sizes="44px"
                   className="object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-white font-bold text-sm bg-zinc-900">
+                <div className="w-full h-full flex items-center justify-center text-white font-bold text-base bg-zinc-900">
                   {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "U"}
                 </div>
               )}
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-white truncate group-hover:text-zinc-200 transition-colors">
+                <span className="text-sm sm:text-base font-bold text-white truncate">
                   {user.name || "Gamer"}
                 </span>
                 <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded shrink-0">
@@ -169,8 +166,17 @@ export default function SettingsClient({ user }: SettingsClientProps) {
               </span>
             </div>
           </div>
-          <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
-        </Link>
+
+          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+            <Link
+              href="/profile"
+              className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors inline-flex items-center gap-1"
+            >
+              <span>View Profile</span>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />
+            </Link>
+          </div>
+        </div>
       ) : (
         <div className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-950 border border-zinc-900">
           <div className="flex flex-col pr-3">
@@ -186,215 +192,278 @@ export default function SettingsClient({ user }: SettingsClientProps) {
         </div>
       )}
 
-      {/* ── 2. Notifications Section ── */}
-      <div className="space-y-1.5">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
-          Notifications &amp; Alerts
-        </div>
+      {/* ── 2. Two-Column Settings Grid on Desktop (Full Width Utilization) ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
 
-        <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden">
-          {/* Push Notifications Row */}
-          <div 
-            onClick={isSupported ? handleToggleNotifications : undefined}
-            className={`flex items-center justify-between p-3.5 transition-colors ${
-              isSupported ? "hover:bg-zinc-950 cursor-pointer" : ""
-            }`}
-          >
-            <div className="flex items-center gap-3 min-w-0 pr-3">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                isSubscribed 
-                  ? "bg-red-500/10 border border-red-500/20 text-red-400" 
-                  : "bg-zinc-900 border border-zinc-800 text-zinc-400"
-              }`}>
-                {isSubscribed ? <BellRing className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
-              </div>
-              <div className="flex flex-col text-left min-w-0">
-                <span className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
-                  Push Notifications
-                  {isSubscribed && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  )}
-                </span>
-                <span className="text-xs text-zinc-500 leading-tight">
-                  {isSupported ? "Streak reminders & new game drops" : "Not supported in this browser"}
-                </span>
+        {/* ── Left Column: Alerts, Audio & Gameplay Preferences ── */}
+        <div className="space-y-4">
+          {/* Notifications Section */}
+          <div className="space-y-1.5">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
+              Notifications &amp; Alerts
+            </div>
+
+            <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden">
+              {/* Push Notifications Row */}
+              <div 
+                onClick={isSupported ? handleToggleNotifications : undefined}
+                className={`flex items-center justify-between p-3.5 transition-colors ${
+                  isSupported ? "hover:bg-zinc-950 cursor-pointer" : ""
+                }`}
+              >
+                <div className="flex items-center gap-3 min-w-0 pr-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                    isSubscribed 
+                      ? "bg-red-500/10 border border-red-500/20 text-red-400" 
+                      : "bg-zinc-900 border border-zinc-800 text-zinc-400"
+                  }`}>
+                    {isSubscribed ? <BellRing className="w-4 h-4" /> : <Bell className="w-4 h-4" />}
+                  </div>
+                  <div className="flex flex-col text-left min-w-0">
+                    <span className="text-sm font-semibold text-white tracking-tight flex items-center gap-2">
+                      Push Notifications
+                      {isSubscribed && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      )}
+                    </span>
+                    <span className="text-xs text-zinc-500 leading-tight">
+                      {isSupported ? "Streak reminders & new game drops" : "Not supported in this browser"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* iOS Switch */}
+                {isSupported ? (
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={isSubscribed}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleNotifications();
+                    }}
+                    disabled={loadingNotif}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 touch-manipulation ${
+                      isSubscribed ? "bg-emerald-500" : "bg-zinc-800"
+                    }`}
+                    title={isSubscribed ? "Disable notifications" : "Enable notifications"}
+                  >
+                    {loadingNotif ? (
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <Loader2 className="w-3 h-3 animate-spin text-white" />
+                      </span>
+                    ) : (
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+                          isSubscribed ? "translate-x-5" : "translate-x-0"
+                        }`}
+                      />
+                    )}
+                  </button>
+                ) : (
+                  <span className="text-xs text-zinc-500 font-medium">Unavailable</span>
+                )}
               </div>
             </div>
 
-            {/* iOS Switch */}
-            {isSupported ? (
-              <button
-                type="button"
-                role="switch"
-                aria-checked={isSubscribed}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleToggleNotifications();
-                }}
-                disabled={loadingNotif}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 touch-manipulation ${
-                  isSubscribed ? "bg-emerald-500" : "bg-zinc-800"
-                }`}
-                title={isSubscribed ? "Disable notifications" : "Enable notifications"}
-              >
-                {loadingNotif ? (
-                  <span className="absolute inset-0 flex items-center justify-center">
-                    <Loader2 className="w-3 h-3 animate-spin text-white" />
-                  </span>
+            {/* Feedback Alert if present */}
+            {notifFeedback && (
+              <div className={`p-2.5 rounded-xl border text-xs flex items-center gap-2 animate-in fade-in duration-200 ${
+                notifFeedback.type === "success" 
+                  ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-300"
+                  : notifFeedback.type === "error"
+                  ? "bg-red-500/10 border-red-500/25 text-red-300"
+                  : "bg-zinc-900 border-zinc-800 text-zinc-300"
+              }`}>
+                {notifFeedback.type === "success" ? (
+                  <Check className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
+                ) : notifFeedback.type === "error" ? (
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-red-400" />
                 ) : (
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0 text-zinc-400" />
+                )}
+                <span className="text-[11px]">{notifFeedback.message}</span>
+              </div>
+            )}
+
+            {/* Browser Permission Blocked Alert */}
+            {permission === "denied" && (
+              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300 space-y-1">
+                <div className="font-semibold flex items-center gap-1.5 text-[11.5px]">
+                  <AlertTriangle className="w-3 h-3 text-amber-400" />
+                  Notifications Blocked by Browser
+                </div>
+                <p className="text-amber-200/80 text-[10.5px] leading-relaxed">
+                  Push permissions are currently blocked in your browser address bar. Tap the site settings or padlock icon next to the URL to allow notifications.
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Gameplay Preferences */}
+          <div className="space-y-1.5">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
+              Audio &amp; Gameplay
+            </div>
+
+            <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden">
+              {/* Sound FX Row */}
+              <div 
+                onClick={handleToggleSound}
+                className="flex items-center justify-between p-3.5 hover:bg-zinc-950 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-3 min-w-0 pr-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                    soundEnabled ? "bg-white text-black" : "bg-zinc-900 border border-zinc-800 text-zinc-400"
+                  }`}>
+                    {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                  </div>
+                  <div className="flex flex-col text-left min-w-0">
+                    <span className="text-sm font-semibold text-white tracking-tight">Game Sound &amp; Effects</span>
+                    <span className="text-xs text-zinc-500 leading-tight">In-game sound effects &amp; audio</span>
+                  </div>
+                </div>
+
+                {/* Switch */}
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={soundEnabled}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleSound();
+                  }}
+                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none touch-manipulation ${
+                    soundEnabled ? "bg-emerald-500" : "bg-zinc-800"
+                  }`}
+                  title={soundEnabled ? "Mute audio" : "Enable audio"}
+                >
                   <span
                     className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
-                      isSubscribed ? "translate-x-5" : "translate-x-0"
+                      soundEnabled ? "translate-x-5" : "translate-x-0"
                     }`}
                   />
-                )}
-              </button>
-            ) : (
-              <span className="text-xs text-zinc-500 font-medium">Unavailable</span>
-            )}
-          </div>
-        </div>
-
-        {/* Feedback Alert if present */}
-        {notifFeedback && (
-          <div className={`p-2.5 rounded-xl border text-xs flex items-center gap-2 animate-in fade-in duration-200 ${
-            notifFeedback.type === "success" 
-              ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-300"
-              : notifFeedback.type === "error"
-              ? "bg-red-500/10 border-red-500/25 text-red-300"
-              : "bg-zinc-900 border-zinc-800 text-zinc-300"
-          }`}>
-            {notifFeedback.type === "success" ? (
-              <Check className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
-            ) : notifFeedback.type === "error" ? (
-              <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-red-400" />
-            ) : (
-              <AlertCircle className="w-3.5 h-3.5 shrink-0 text-zinc-400" />
-            )}
-            <span className="text-[11px]">{notifFeedback.message}</span>
-          </div>
-        )}
-
-        {/* Browser Permission Blocked Alert */}
-        {permission === "denied" && (
-          <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300 space-y-1">
-            <div className="font-semibold flex items-center gap-1.5 text-[11.5px]">
-              <AlertTriangle className="w-3 h-3 text-amber-400" />
-              Notifications Blocked by Browser
-            </div>
-            <p className="text-amber-200/80 text-[10.5px] leading-relaxed">
-              Push permissions are currently blocked in your browser address bar. Tap the site settings or padlock icon next to the URL to allow notifications.
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* ── 3. Gameplay Preferences ── */}
-      <div className="space-y-1.5">
-        <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
-          Audio &amp; Gameplay
-        </div>
-
-        <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden">
-          {/* Sound FX Row */}
-          <div 
-            onClick={handleToggleSound}
-            className="flex items-center justify-between p-3.5 hover:bg-zinc-950 transition-colors cursor-pointer"
-          >
-            <div className="flex items-center gap-3 min-w-0 pr-3">
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                soundEnabled ? "bg-white text-black" : "bg-zinc-900 border border-zinc-800 text-zinc-400"
-              }`}>
-                {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              </div>
-              <div className="flex flex-col text-left min-w-0">
-                <span className="text-sm font-semibold text-white tracking-tight">Game Sound &amp; Effects</span>
-                <span className="text-xs text-zinc-500 leading-tight">In-game sound effects &amp; audio</span>
+                </button>
               </div>
             </div>
+          </div>
 
-            {/* Switch */}
-            <button
-              type="button"
-              role="switch"
-              aria-checked={soundEnabled}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleToggleSound();
-              }}
-              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none touch-manipulation ${
-                soundEnabled ? "bg-emerald-500" : "bg-zinc-800"
-              }`}
-              title={soundEnabled ? "Mute audio" : "Enable audio"}
-            >
-              <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
-                  soundEnabled ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
-            </button>
+          {/* Quick Platform Info */}
+          <div className="space-y-1.5">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
+              Platform &amp; Cache
+            </div>
+
+            <div className="bg-zinc-950 rounded-xl border border-zinc-900 p-3.5 text-xs text-zinc-400 space-y-2">
+              <div className="flex items-center justify-between">
+                <span>Game Engine Version</span>
+                <span className="font-mono text-zinc-300">v1.0.4</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Cloud Save Status</span>
+                <span className="text-emerald-400 font-medium">Active &amp; Synced</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Sound Driver</span>
+                <span className="font-mono text-zinc-300">HTML5 Audio / WebAudio</span>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* ── Right Column: Account Actions & Security ── */}
+        <div className="space-y-4">
+          {user && (
+            <div className="space-y-1.5">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
+                Account Actions
+              </div>
+
+              <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden">
+                {/* Sign Out Row */}
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="w-full flex items-center justify-between p-3.5 hover:bg-zinc-950 transition-colors text-left group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-800 flex items-center justify-center shrink-0 group-hover:text-white transition-colors">
+                      <LogOut className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col text-left">
+                      <span className="text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors">
+                        Sign Out
+                      </span>
+                      <span className="text-xs text-zinc-500">{user.email}</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
+                </button>
+
+                {/* Delete Account Danger Row */}
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(true);
+                    setDeleteConfirmationText("");
+                    setDeleteError("");
+                  }}
+                  className="w-full flex items-center justify-between p-3.5 hover:bg-red-500/[0.05] transition-colors text-left group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
+                      <Trash2 className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col text-left">
+                      <span className="text-sm font-semibold text-red-400">
+                        Delete Account &amp; Data
+                      </span>
+                      <span className="text-xs text-zinc-500">
+                        Permanently wipe XP balance, streak records, and profile
+                      </span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-red-400/50 group-hover:text-red-400 transition-colors" />
+                </button>
+              </div>
+
+              <p className="text-xs text-zinc-600 px-1 pt-1">
+                Deleting your account is permanent. All accumulated rewards, leaderboard scores, and streak data will be lost.
+              </p>
+            </div>
+          )}
+
+          {/* Quick Links Section */}
+          <div className="space-y-1.5">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
+              Resources &amp; Support
+            </div>
+
+            <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden text-xs">
+              <Link 
+                href="/faq" 
+                className="flex items-center justify-between p-3 hover:bg-zinc-950 text-zinc-300 hover:text-white transition-colors"
+              >
+                <span>Frequently Asked Questions</span>
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
+              </Link>
+              <Link 
+                href="/privacy" 
+                className="flex items-center justify-between p-3 hover:bg-zinc-950 text-zinc-300 hover:text-white transition-colors"
+              >
+                <span>Privacy Policy</span>
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
+              </Link>
+              <Link 
+                href="/terms" 
+                className="flex items-center justify-between p-3 hover:bg-zinc-950 text-zinc-300 hover:text-white transition-colors"
+              >
+                <span>Terms of Service</span>
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
       </div>
-
-      {/* ── 4. Account Actions ── */}
-      {user && (
-        <div className="space-y-1.5">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
-            Account Actions
-          </div>
-
-          <div className="bg-black rounded-xl border border-zinc-900 divide-y divide-zinc-900 overflow-hidden">
-            {/* Sign Out Row */}
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full flex items-center justify-between p-3.5 hover:bg-zinc-950 transition-colors text-left group cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-800 flex items-center justify-center shrink-0 group-hover:text-white transition-colors">
-                  <LogOut className="w-4 h-4" />
-                </div>
-                <div className="flex flex-col text-left">
-                  <span className="text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors">
-                    Sign Out
-                  </span>
-                  <span className="text-xs text-zinc-500">{user.email}</span>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors" />
-            </button>
-
-            {/* Delete Account Danger Row */}
-            <button
-              onClick={() => {
-                setShowDeleteModal(true);
-                setDeleteConfirmationText("");
-                setDeleteError("");
-              }}
-              className="w-full flex items-center justify-between p-3.5 hover:bg-red-500/[0.05] transition-colors text-left group cursor-pointer"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center shrink-0">
-                  <Trash2 className="w-4 h-4" />
-                </div>
-                <div className="flex flex-col text-left">
-                  <span className="text-sm font-semibold text-red-400">
-                    Delete Account &amp; Data
-                  </span>
-                  <span className="text-xs text-zinc-500">
-                    Permanently wipe XP balance, streak records, and profile
-                  </span>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-red-400/50 group-hover:text-red-400 transition-colors" />
-            </button>
-          </div>
-
-          <p className="text-xs text-zinc-600 px-1 pt-1">
-            Deleting your account is permanent. All accumulated rewards, leaderboard scores, and streak data will be lost.
-          </p>
-        </div>
-      )}
 
 
       {/* ── Delete Confirmation Dialog ── */}

@@ -85,16 +85,67 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   }, [isPlaying, game.slug]);
 
-  // Playtime Tracker: Ping server every 60 seconds while playing
+  // Anti-AFK & Playtime Tracker:
+  // 1. Pauses immediately if browser tab is hidden / minimized (document.hidden)
+  // 2. Pauses if no user activity for 5 minutes (300 seconds)
+  const [isIdle, setIsIdle] = useState(false);
+  const lastActivityRef = useRef<number>(Date.now());
+
+  const resetActivity = useCallback(() => {
+    lastActivityRef.current = Date.now();
+    if (isIdle) {
+      setIsIdle(false);
+    }
+  }, [isIdle]);
+
+  // Track global user interactions across window & frame focus
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const activityEvents = ['pointerdown', 'touchstart', 'keydown', 'wheel', 'mousemove'];
+    const handleActivity = () => resetActivity();
+
+    activityEvents.forEach(evt => {
+      window.addEventListener(evt, handleActivity, { passive: true });
+    });
+
+    // Window focus/blur tracking
+    const handleFocus = () => resetActivity();
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      activityEvents.forEach(evt => {
+        window.removeEventListener(evt, handleActivity);
+      });
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [isPlaying, resetActivity]);
+
+  // Periodic heartbeat: Ping server every 2 minutes (120s) ONLY IF:
+  // - Game is active (isPlaying)
+  // - Tab is visible (!document.hidden)
+  // - User was active within the last 5 minutes (300s)
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isPlaying) {
       interval = setInterval(() => {
-        // Send elapsedSeconds = 60 to the server
-        axios.post('/api/user/playtime', { elapsedSeconds: 60 }).catch(() => {
-          // Ignore errors (user might not be logged in)
+        // Check tab visibility
+        if (typeof document !== 'undefined' && document.hidden) {
+          return;
+        }
+
+        // Check idle status (300s = 5 minutes)
+        const secondsSinceActivity = (Date.now() - lastActivityRef.current) / 1000;
+        if (secondsSinceActivity >= 300) {
+          setIsIdle(true);
+          return;
+        }
+
+        // Active and verified: Send elapsedSeconds = 120 to the server
+        axios.post('/api/user/playtime', { elapsedSeconds: 120 }).catch(() => {
+          // Ignore errors
         });
-      }, 60000); // 60 seconds
+      }, 120000); // 120 seconds (2 minutes)
     }
     return () => {
       if (interval) clearInterval(interval);
@@ -502,6 +553,57 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
               />
             </div>
+
+            {/* Anti-AFK Idle Banner (Mobile Fullscreen) */}
+            {isIdle && (
+              <div 
+                onClick={resetActivity}
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 20,
+                  background: 'rgba(0, 0, 0, 0.7)',
+                  backdropFilter: 'blur(3px)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 16,
+                  cursor: 'pointer',
+                }}
+              >
+                <div style={{
+                  background: '#09090b',
+                  border: '1px solid #27272a',
+                  borderRadius: 16,
+                  padding: 16,
+                  maxWidth: 260,
+                  textAlign: 'center',
+                }}>
+                  <div style={{ color: '#fff', fontSize: 13, fontWeight: 800, marginBottom: 4 }}>
+                    Playtime Paused
+                  </div>
+                  <p style={{ color: '#a1a1aa', fontSize: 11, margin: '0 0 12px 0', lineHeight: 1.4 }}>
+                    No touch detected for 5 minutes.
+                  </p>
+                  <button
+                    onClick={resetActivity}
+                    style={{
+                      background: '#fff',
+                      color: '#000',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      padding: '8px 14px',
+                      borderRadius: 8,
+                      border: 'none',
+                      width: '100%',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Resume XP
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>,
         document.body
@@ -602,6 +704,28 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
                 onLoad={() => setIsLoading(false)}
               />
+
+              {/* Anti-AFK Idle Banner (Desktop) */}
+              {isIdle && (
+                <div 
+                  onClick={resetActivity}
+                  className="absolute inset-0 z-40 bg-black/60 backdrop-blur-xs flex flex-col items-center justify-center p-4 cursor-pointer animate-in fade-in duration-200"
+                >
+                  <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 max-w-xs text-center shadow-2xl space-y-2 pointer-events-auto">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block animate-ping" />
+                    <h4 className="text-sm font-bold text-white tracking-tight">Playtime Paused</h4>
+                    <p className="text-xs text-zinc-400">
+                      We paused tracking because no activity was detected for 5 minutes.
+                    </p>
+                    <button
+                      onClick={resetActivity}
+                      className="px-4 py-1.5 rounded-lg bg-white text-black text-xs font-bold hover:bg-zinc-200 transition-colors w-full cursor-pointer"
+                    >
+                      Resume Earning XP
+                    </button>
+                  </div>
+                </div>
+              )}
               {isFullscreen && (
                 <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-50">
                   <button 

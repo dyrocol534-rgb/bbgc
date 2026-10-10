@@ -1,56 +1,79 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ChevronLeft, ArrowUpRight, Gamepad2, Globe } from "lucide-react";
+import { ChevronLeft, ArrowUpRight, Gamepad2, Globe, Server, Laptop } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Our Products | Bluebuff Games",
-  description: "Checkout our other projects and gaming products.",
+  description: "Checkout our other projects and gaming products across Bluebuff ecosystem.",
 };
 
 const PRODUCTS = [
   {
     title: "mlbbtopup.in",
-    subtitle: "BGMI, MLBB, HoK, Genshin Impact & more top-up",
+    subtitle: "BGMI, MLBB, HoK, Genshin Impact & instant gaming top-up",
     url: "https://mlbbtopup.in",
     icon: Gamepad2,
-    action: "Visit",
+    badge: "Store",
   },
   {
     title: "bluebuff.in",
-    subtitle: "Checkout our other project products here",
+    subtitle: "Explore our main hub and product suite",
     url: "https://bluebuff.in",
     icon: Globe,
-    action: "Visit",
+    badge: "Ecosystem",
+  },
+  {
+    title: "web.bluebuff.in",
+    subtitle: "Web applications, cloud portals, and developer suites",
+    url: "https://web.bluebuff.in",
+    icon: Laptop,
+    badge: "Web App",
+  },
+  {
+    title: "api.bluebuff.in",
+    subtitle: "High-performance developer APIs, game services & docs",
+    url: "https://api.bluebuff.in",
+    icon: Server,
+    badge: "API / Dev",
   },
 ];
 
 export default function ProductsPage() {
   return (
-    <div className="min-h-[75vh] py-5 sm:py-8 w-full max-w-md mx-auto px-3.5 sm:px-4 box-border overflow-hidden">
-      {/* Back button */}
-      <div className="mb-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-white transition-colors"
-        >
-          <ChevronLeft className="w-3.5 h-3.5" />
-          <span>Back</span>
-        </Link>
-      </div>
+    <div className="min-h-screen bg-black pb-12">
+      <div className="w-full px-3 sm:px-6 lg:px-8 xl:px-10 py-3 sm:py-4 space-y-4">
+        {/* Navigation Bar */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+          >
+            <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
+            <span>Home</span>
+          </Link>
 
-      <div className="space-y-3 w-full max-w-full">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
+            Bluebuff Ecosystem
+          </span>
+        </div>
+
         {/* Header */}
-        <div>
-          <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-            Our Products
-          </h1>
+        <div className="rounded-xl bg-zinc-950 border border-zinc-900 p-3.5 sm:p-4">
+          <div className="flex items-center gap-2">
+            <h1 className="text-base sm:text-lg font-black text-white tracking-tight">
+              Our Products &amp; Ecosystem
+            </h1>
+            <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded">
+              {PRODUCTS.length} Projects
+            </span>
+          </div>
           <p className="text-xs text-zinc-400 mt-0.5">
-            Products &amp; projects you may like
+            Explore our gaming platforms, web tools, developer APIs, and digital services.
           </p>
         </div>
 
-        {/* 1-Row List of Products */}
-        <div className="flex flex-col gap-2 pt-1 w-full">
+        {/* Products Grid (Responsive Full Width) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
           {PRODUCTS.map((prod) => {
             const Icon = prod.icon;
             return (
@@ -59,26 +82,33 @@ export default function ProductsPage() {
                 href={prod.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full max-w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl bg-[#141416] hover:bg-[#19191d] border border-white/[0.08] hover:border-white/[0.16] transition-all group text-left cursor-pointer active:scale-[0.98] shadow-xs overflow-hidden"
+                className="flex items-center justify-between p-3.5 rounded-xl bg-zinc-950 hover:bg-zinc-900/80 border border-zinc-900 hover:border-zinc-800 transition-colors group cursor-pointer"
               >
-                <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0 mr-2.5">
-                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] bg-white/[0.06] border border-white/10 flex items-center justify-center shrink-0">
-                    <Icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-white" />
+                <div className="flex items-center gap-3 min-w-0 pr-2">
+                  <div className="w-9 h-9 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0 text-white group-hover:border-zinc-700 transition-colors">
+                    <Icon className="w-4 h-4 text-zinc-300 group-hover:text-white transition-colors" />
                   </div>
-                  <div className="flex flex-col min-w-0 flex-1">
-                    <span className="text-xs sm:text-[13px] font-semibold text-white truncate leading-tight group-hover:text-zinc-200 transition-colors">
-                      {prod.title}
-                    </span>
-                    <span className="text-[10px] sm:text-[11px] text-zinc-400 truncate leading-tight mt-1">
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-white truncate group-hover:text-zinc-200 transition-colors">
+                        {prod.title}
+                      </span>
+                      {prod.badge && (
+                        <span className="text-[10px] font-medium text-zinc-400 bg-black border border-zinc-900 px-1.5 py-0.5 rounded shrink-0">
+                          {prod.badge}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-zinc-500 truncate mt-0.5">
                       {prod.subtitle}
                     </span>
                   </div>
                 </div>
 
-                <span className="text-[11px] font-semibold text-black bg-white group-hover:bg-zinc-200 px-2.5 sm:px-3 py-1 rounded-full shrink-0 flex items-center gap-1 transition-all shadow-xs">
-                  <span>{prod.action}</span>
-                  <ArrowUpRight className="w-3 h-3" />
-                </span>
+                <div className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-white hover:bg-zinc-200 text-black flex items-center gap-1 shrink-0 transition-colors">
+                  <span>Visit</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </div>
               </a>
             );
           })}

@@ -8,11 +8,11 @@ import { awardXP, XP_CONFIG } from "@/lib/xp";
 
 export async function POST(req: NextRequest) {
   try {
-    // We expect a ping every 60 seconds
+    // We expect a ping every 120 seconds (2 minutes)
     const body = await req.json();
-    const { elapsedSeconds } = body; // should be roughly 60
+    const { elapsedSeconds } = body; // 120 seconds
     
-    if (typeof elapsedSeconds !== 'number' || elapsedSeconds > 120 || elapsedSeconds < 0) {
+    if (typeof elapsedSeconds !== 'number' || elapsedSeconds > 240 || elapsedSeconds < 0) {
       return NextResponse.json({ error: "Invalid playtime ping" }, { status: 400 });
     }
 
@@ -25,6 +25,15 @@ export async function POST(req: NextRequest) {
       const user = await User.findOne({ email: session.user.email });
       if (!user) {
         return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+
+      const now = new Date();
+      // Rate Limit / Frequency throttling: reject pings if user pinged too recently (< 90s ago for 2-min interval)
+      if (user.lastActiveAt) {
+        const secondsSinceLastPing = (now.getTime() - new Date(user.lastActiveAt).getTime()) / 1000;
+        if (secondsSinceLastPing < 90) {
+          return NextResponse.json({ error: "Ping throttled", success: true }, { status: 429 });
+        }
       }
 
       const newPlaytime = (user.playtimeSeconds || 0) + elapsedSeconds;
@@ -40,12 +49,12 @@ export async function POST(req: NextRequest) {
         xpAwarded = hoursCrossed * XP_CONFIG.PLAYTIME_PER_HOUR;
         
         await User.findByIdAndUpdate(user._id, {
-          $set: { playtimeSeconds: newPlaytime, lastActiveAt: new Date(), lastIp: ip },
+          $set: { playtimeSeconds: newPlaytime, lastActiveAt: now, lastIp: ip },
           $inc: { xp: xpAwarded, lifetimeXp: xpAwarded }
         });
       } else {
         await User.findByIdAndUpdate(user._id, {
-          $set: { playtimeSeconds: newPlaytime, lastActiveAt: new Date(), lastIp: ip }
+          $set: { playtimeSeconds: newPlaytime, lastActiveAt: now, lastIp: ip }
         });
       }
 
