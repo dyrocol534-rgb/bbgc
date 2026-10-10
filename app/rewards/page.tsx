@@ -1,7 +1,10 @@
 import { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/config";
-import { Gift, ChevronLeft, Sparkles, ArrowRight, Coins, ShieldCheck, Gamepad2, Zap } from "lucide-react";
+import { Gift, ChevronLeft, Sparkles, ArrowRight, Coins, ShieldCheck, CheckCircle2, XCircle, Clock } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import dbConnect from "@/lib/mongodb";
+import Reward, { IReward } from "@/models/Reward";
 
 export const metadata: Metadata = {
   title: `Rewards Store | ${SITE_CONFIG.name}`,
@@ -18,32 +21,47 @@ export const metadata: Metadata = {
   },
 };
 
-const REWARD_ITEMS = [
-  {
-    id: "bgmi-60-uc",
-    title: "60 BGMI UC",
-    game: "Battlegrounds Mobile India",
-    requiredXp: 50,
-    badge: "Hot Demand",
-    badgeColor: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-    description: "Instant 60 Unknown Cash voucher delivered directly via Character ID.",
-    accent: "from-amber-500/20 to-orange-500/10 border-amber-500/30",
-    iconColor: "text-amber-400 bg-amber-500/15 border-amber-500/25",
-  },
-  {
-    id: "mlbb-weekly-pass",
-    title: "MLBB Weekly Diamond Pass",
-    game: "Mobile Legends: Bang Bang (Indian Server)",
-    requiredXp: 111,
-    badge: "Best Value",
-    badgeColor: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20",
-    description: "7-day diamond delivery with daily pass bonus claimed via User ID + Zone ID.",
-    accent: "from-cyan-500/20 to-blue-500/10 border-cyan-500/30",
-    iconColor: "text-cyan-400 bg-cyan-500/15 border-cyan-500/25",
-  },
-];
+export const dynamic = "force-dynamic";
 
-export default function RewardsPage() {
+export default async function RewardsPage() {
+  await dbConnect();
+
+  // If no rewards seeded, seed default BGMI & MLBB rewards
+  const count = await Reward.countDocuments();
+  if (count === 0) {
+    await Reward.insertMany([
+      {
+        title: "60 BGMI UC",
+        game: "Battlegrounds Mobile India",
+        requiredXp: 50,
+        badge: "Hot Demand",
+        description: "Instant 60 Unknown Cash voucher delivered directly via Character ID.",
+        stockStatus: "in_stock",
+        isComingSoon: true,
+        iconUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=200&auto=format&fit=crop&q=80",
+        active: true,
+        sortOrder: 1,
+      },
+      {
+        title: "MLBB Weekly Diamond Pass",
+        game: "Mobile Legends: Bang Bang (Indian Server)",
+        requiredXp: 111,
+        badge: "Best Value",
+        description: "7-day diamond delivery with daily pass bonus claimed via User ID + Zone ID.",
+        stockStatus: "in_stock",
+        isComingSoon: true,
+        iconUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop&q=80",
+        active: true,
+        sortOrder: 2,
+      },
+    ]);
+  }
+
+  const rawRewards = await Reward.find({ active: true })
+    .sort({ sortOrder: 1, requiredXp: 1 })
+    .lean();
+  const rewards = JSON.parse(JSON.stringify(rawRewards));
+
   return (
     <div className="min-h-screen bg-black pb-12">
       <div className="w-full px-3 sm:px-6 lg:px-8 xl:px-10 py-3 sm:py-4 space-y-5">
@@ -79,13 +97,13 @@ export default function RewardsPage() {
           <div className="space-y-1 max-w-xl">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-400 text-[11px] font-semibold">
               <Sparkles className="w-3 h-3" />
-              <span>Catalog In Preparation</span>
+              <span>Official Gamer Rewards</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               Player Rewards &amp; Game Top-Up Store
             </h1>
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              Earn XP for every hour you play HTML5 games and log in daily. Redeem your XP for real in-game currency vouchers and passes!
+              Earn XP for every minute you play HTML5 games and log in daily. Redeem your XP for real in-game currency vouchers and passes!
             </p>
           </div>
 
@@ -101,78 +119,135 @@ export default function RewardsPage() {
         </div>
 
         {/* ── Featured Rewards Showcase ── */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
             <h2 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-              Upcoming Game Redemptions
+              Available Game Redemptions
             </h2>
             <span className="text-[11px] text-zinc-500 font-mono">
-              2 Items Arriving Soon
+              {rewards.length} {rewards.length === 1 ? "Reward Item" : "Reward Items"}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-            {REWARD_ITEMS.map((item) => (
-              <div
-                key={item.id}
-                className="relative overflow-hidden rounded-xl bg-zinc-950 border border-zinc-900 p-4 sm:p-5 flex flex-col justify-between gap-4 hover:border-zinc-800 transition-colors"
-              >
-                {/* Header row of card */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center border shrink-0 ${item.iconColor}`}>
-                      <Gift className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-sm sm:text-base font-black text-white tracking-tight">
-                          {item.title}
-                        </h3>
-                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${item.badgeColor}`}>
-                          {item.badge}
-                        </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+            {rewards.map((item: any) => {
+              const isOutOfStock = item.stockStatus === "out_of_stock";
+              const isComingSoon = item.isComingSoon;
+
+              return (
+                <div
+                  key={item._id}
+                  className="relative overflow-hidden rounded-xl bg-zinc-950 border border-zinc-900 p-4 sm:p-5 flex flex-col justify-between gap-4 hover:border-zinc-800 transition-colors"
+                >
+                  {/* Header row of card */}
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      {/* Game Logo Image */}
+                      <div className="relative w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-800 overflow-hidden flex items-center justify-center shrink-0">
+                        {item.iconUrl ? (
+                          <Image
+                            src={item.iconUrl}
+                            alt={item.title}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        ) : (
+                          <Gift className="w-6 h-6 text-zinc-500" />
+                        )}
                       </div>
-                      <p className="text-xs text-zinc-400 font-medium mt-0.5">
-                        {item.game}
-                      </p>
+
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm sm:text-base font-black text-white tracking-tight">
+                            {item.title}
+                          </h3>
+                          {item.badge && (
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded border border-amber-500/20 bg-amber-500/10 text-amber-400">
+                              {item.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-zinc-400 font-medium mt-0.5">
+                          {item.game}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Cost Capsule */}
+                    <div className="text-right shrink-0">
+                      <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-black border border-zinc-800 text-amber-400 font-mono font-black text-xs sm:text-sm">
+                        <Coins className="w-3.5 h-3.5" />
+                        <span>{item.requiredXp} XP</span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Cost Capsule */}
-                  <div className="text-right shrink-0">
-                    <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-black border border-zinc-800 text-amber-400 font-mono font-black text-xs sm:text-sm">
-                      <Coins className="w-3.5 h-3.5" />
-                      <span>{item.requiredXp} XP</span>
+                  {/* Description */}
+                  {item.description && (
+                    <p className="text-xs text-zinc-400 leading-relaxed">
+                      {item.description}
+                    </p>
+                  )}
+
+                  {/* Footer Action Card with Stock and Coming Soon indicator */}
+                  <div className="pt-3 border-t border-zinc-900 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 text-[11px] text-zinc-500">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Direct UID Delivery</span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      {/* Stock badge */}
+                      {isOutOfStock ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 font-semibold text-[11px]">
+                          <XCircle className="w-3 h-3" />
+                          <span>Out of Stock</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-medium text-[10px]">
+                          <CheckCircle2 className="w-3 h-3" />
+                          <span>In Stock</span>
+                        </span>
+                      )}
+
+                      {/* Coming soon or Redeem button */}
+                      {isComingSoon ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 font-semibold text-xs cursor-not-allowed select-none">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                          <span>Coming Soon</span>
+                        </span>
+                      ) : isOutOfStock ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-zinc-900/60 border border-zinc-900 text-zinc-500 font-medium text-xs cursor-not-allowed select-none">
+                          Unavailable
+                        </span>
+                      ) : (
+                        <button
+                          disabled
+                          title="Connect player UID to redeem"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition-colors"
+                        >
+                          <span>Claim Voucher</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
-
-                {/* Description */}
-                <p className="text-xs text-zinc-400 leading-relaxed">
-                  {item.description}
-                </p>
-
-                {/* Footer Action Card */}
-                <div className="pt-3 border-t border-zinc-900 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5 text-[11px] text-zinc-500">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Direct Account UID Delivery</span>
-                  </div>
-
-                  <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 font-semibold text-xs cursor-not-allowed select-none">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                    <span>Coming Soon</span>
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
+
+          {rewards.length === 0 && (
+            <div className="p-12 text-center rounded-xl bg-zinc-950 border border-zinc-900 text-zinc-400 text-xs">
+              No rewards available currently. Check back soon!
+            </div>
+          )}
         </div>
 
         {/* ── Catalog FAQ & Redemption Instructions ── */}
         <div className="rounded-xl border border-zinc-900 bg-black p-4 sm:p-5 space-y-3">
           <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-            How Redemption Will Work
+            How Redemption Works
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-zinc-400">
             <div className="flex items-start gap-2.5">
@@ -181,7 +256,7 @@ export default function RewardsPage() {
               </span>
               <div>
                 <p className="font-semibold text-white">Stack Your Play XP</p>
-                <p className="text-[11px] text-zinc-500 mt-0.5">Accumulate 50 XP (BGMI 60 UC) or 111 XP (MLBB Weekly Pass) by playing games and daily logins.</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Accumulate XP by playing games, keeping streaks, and daily logins.</p>
               </div>
             </div>
 
@@ -191,7 +266,7 @@ export default function RewardsPage() {
               </span>
               <div>
                 <p className="font-semibold text-white">Enter Player UID</p>
-                <p className="text-[11px] text-zinc-500 mt-0.5">Simply provide your in-game Character ID / Zone ID when claiming your reward voucher.</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Provide your in-game Character ID / Zone ID when claiming your reward voucher.</p>
               </div>
             </div>
 
@@ -200,8 +275,8 @@ export default function RewardsPage() {
                 3
               </span>
               <div>
-                <p className="font-semibold text-white">Instant Credit</p>
-                <p className="text-[11px] text-zinc-500 mt-0.5">UC or Weekly Pass is sent directly to your in-game mailbox without leaving Bluebuff Games.</p>
+                <p className="font-semibold text-white">Instant Voucher Delivery</p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">Voucher code or pass is credited to your character mailbox directly.</p>
               </div>
             </div>
           </div>
