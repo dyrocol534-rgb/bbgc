@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { X, Sparkles, UserPlus, Loader2 } from "lucide-react";
+import { XP_CONFIG } from "@/lib/xp-config";
 
 export default function WelcomeModal() {
   const { data: session, update } = useSession();
@@ -158,7 +159,7 @@ export default function WelcomeModal() {
             />
             <p className="text-xs text-zinc-500 leading-relaxed">
               Got invited? Enter their code to both get{" "}
-              <span className="text-amber-400 font-bold">50 XP</span> when you play 10 games!
+              <span className="text-amber-400 font-bold">{XP_CONFIG.REFERRAL_REWARD} XP</span> when you play {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games!
             </p>
           </div>
 

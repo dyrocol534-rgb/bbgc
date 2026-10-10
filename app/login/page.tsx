@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Loader2, ShieldCheck, Gift, Mail, ArrowRight, KeyRound, Check, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { XP_CONFIG } from "@/lib/xp-config";
 
 export default function LoginPage() {
   const { status } = useSession();
@@ -159,7 +160,7 @@ export default function LoginPage() {
                 Referral: <span className="font-mono tracking-wider text-white">{ref}</span>
               </p>
               <p className="text-[10px] text-zinc-400">
-                +50 bonus XP on sign in!
+                +{XP_CONFIG.REFERRAL_REWARD} bonus XP after {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games!
               </p>
             </div>
           </div>

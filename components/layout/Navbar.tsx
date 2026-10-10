@@ -10,6 +10,8 @@ import clsx from "clsx";
 import PWAInstallButton from "./PWAInstallButton";
 import SearchBar from "./SearchBar";
 import NotificationBell from "../notifications/NotificationBell";
+import ShareModal from "../game/ShareModal";
+import { XP_CONFIG } from "@/lib/xp-config";
 
 
 function MovingOuterRing({ className }: { className?: string }) {
@@ -31,9 +33,72 @@ export default function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
   const [logoError, setLogoError] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareData, setShareData] = useState<{
+    title?: string;
+    thumbnailUrl?: string;
+    category?: string;
+  } | undefined>(undefined);
+  const [userStats, setUserStats] = useState<{ xp: number; streak: number } | null>(null);
 
   const isGameSlugPage = Boolean(pathname?.startsWith("/games/") && pathname !== "/games");
+  const gameSlug = isGameSlugPage ? pathname?.replace("/games/", "").split("/")[0].split("?")[0] : undefined;
+
+  useEffect(() => {
+    const handleOpenShare = (e: Event) => {
+      const customEvent = e as CustomEvent<{ title?: string; thumbnailUrl?: string; category?: string }>;
+      if (customEvent.detail) {
+        setShareData(customEvent.detail);
+      }
+      setIsShareModalOpen(true);
+    };
+    window.addEventListener("open-share-modal", handleOpenShare);
+    return () => window.removeEventListener("open-share-modal", handleOpenShare);
+  }, []);
+
+  const handleOpenShareFromNavbar = () => {
+    if (typeof document !== "undefined") {
+      const h1 = document.querySelector("h1");
+      const title = h1?.textContent?.trim() || document.title.split("–")[0].replace(/^Play\s+/i, "").trim();
+      const ogImage = document.querySelector('meta[property="og:image"]')?.getAttribute("content") || "";
+      const breadcrumbLinks = document.querySelectorAll('nav[aria-label="Breadcrumb"] a');
+      const category = breadcrumbLinks.length > 1 ? (breadcrumbLinks[1].textContent?.trim() || "") : "";
+      
+      setShareData({
+        title,
+        thumbnailUrl: ogImage,
+        category,
+      });
+    }
+    setIsShareModalOpen(true);
+  };
+
+  // Keep local stats synced with session whenever session loads
+  useEffect(() => {
+    if (session?.user) {
+      setUserStats({
+        xp: (session.user as any).xp ?? 0,
+        streak: (session.user as any).currentStreak ?? 0,
+      });
+    }
+  }, [session]);
+
+  // Fetch fresh profile stats when drawer opens
+  useEffect(() => {
+    if (isSidebarOpen && session?.user?.email) {
+      fetch("/api/user/profile")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            setUserStats({
+              xp: data.xp ?? 0,
+              streak: data.currentStreak ?? 0,
+            });
+          }
+        })
+        .catch(console.error);
+    }
+  }, [isSidebarOpen, session]);
 
   useEffect(() => {
     if (session?.user?.email) {
@@ -41,7 +106,16 @@ export default function Navbar() {
       const hasCheckedStreak = sessionStorage.getItem("hasCheckedStreak");
       if (!hasCheckedStreak) {
         fetch("/api/user/streak", { method: "POST" })
-          .then(() => sessionStorage.setItem("hasCheckedStreak", "true"))
+          .then((res) => res.json())
+          .then((data) => {
+            sessionStorage.setItem("hasCheckedStreak", "true");
+            if (data?.success) {
+              setUserStats((prev) => ({
+                xp: (prev?.xp ?? (session.user as any).xp ?? 0) + (data.xpAwarded || 0),
+                streak: data.currentStreak ?? prev?.streak ?? (session.user as any).currentStreak ?? 0,
+              }));
+            }
+          })
           .catch(console.error);
       }
     }
@@ -63,89 +137,72 @@ export default function Navbar() {
     }
   };
 
-  const handleShare = async () => {
-    const url = typeof window !== "undefined" ? window.location.href : "";
-    const title = typeof document !== "undefined" ? document.title : "Play free game on Bluebuff";
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, url });
-        return;
-      } catch (err) {
-        // Fallback to clipboard if user dismissed or unsupported
-      }
-    }
-
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
+  const displayXp = session ? (userStats ? userStats.xp : ((session.user as any)?.xp ?? 0)) : 0;
+  const displayStreak = session ? (userStats ? userStats.streak : ((session.user as any)?.currentStreak ?? 0)) : 0;
 
   if (isGameSlugPage) {
     return (
-      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-[#0d0d10]/85 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
-        {/* Left: Back Button (Icon only) */}
-        <button
-          onClick={() => {
-            if (window.history.length > 1) {
-              router.back();
-            } else {
-              router.push("/");
-            }
-          }}
-          className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/[0.08] hover:border-white/[0.15] transition-all shrink-0 active:scale-95 cursor-pointer shadow-sm"
-          aria-label="Go Back"
-          title="Back"
-        >
-          <ArrowLeft className="w-4 h-4" />
-        </button>
-
-        {/* Center: Website Logo / Home Link */}
-        <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
-          {logoError ? (
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center font-black text-white text-base shadow-sm border border-white/20 select-none">
-              B
-            </div>
-          ) : (
-            <div className="relative w-7 h-7 sm:w-8 sm:h-8">
-              <Image 
-                src="/logo.png" 
-                alt="Logo" 
-                fill 
-                sizes="32px" 
-                priority 
-                className="object-contain" 
-                onError={() => setLogoError(true)}
-              />
-            </div>
-          )}
-        </Link>
-
-        {/* Right: Share Button (Icon only) */}
-        <div className="relative flex items-center">
+      <>
+        <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-[#0d0d10]/85 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
+          {/* Left: Back Button (Icon only) */}
           <button
-            onClick={handleShare}
-            className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/[0.08] hover:border-white/40 transition-all shrink-0 active:scale-95 cursor-pointer shadow-sm"
-            aria-label="Share Game"
-            title="Share"
+            onClick={() => {
+              if (window.history.length > 1) {
+                router.back();
+              } else {
+                router.push("/");
+              }
+            }}
+            className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/[0.08] hover:border-white/[0.15] transition-all shrink-0 active:scale-95 cursor-pointer shadow-sm"
+            aria-label="Go Back"
+            title="Back"
           >
-            {copied ? (
-              <Check className="w-4 h-4 text-emerald-400" />
-            ) : (
-              <Share2 className="w-4 h-4 text-zinc-300 hover:text-white" />
-            )}
+            <ArrowLeft className="w-4 h-4" />
           </button>
 
-          {/* Copied confirmation tooltip */}
-          {copied && (
-            <span className="absolute -bottom-8 right-0 text-[10px] font-semibold bg-[#18181b] border border-white/[0.12] text-emerald-400 px-2 py-0.5 rounded shadow-lg whitespace-nowrap">
-              Link copied!
-            </span>
-          )}
-        </div>
-      </nav>
+          {/* Center: Website Logo / Home Link */}
+          <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
+            {logoError ? (
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center font-black text-white text-base shadow-sm border border-white/20 select-none">
+                B
+              </div>
+            ) : (
+              <div className="relative w-7 h-7 sm:w-8 sm:h-8">
+                <Image 
+                  src="/logo.png" 
+                  alt="Logo" 
+                  fill 
+                  sizes="32px" 
+                  priority 
+                  className="object-contain" 
+                  onError={() => setLogoError(true)}
+                />
+              </div>
+            )}
+          </Link>
+
+          {/* Right: Share Button (Icon only) */}
+          <div className="relative flex items-center">
+            <button
+              onClick={handleOpenShareFromNavbar}
+              className="w-[34px] h-[34px] sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/[0.08] hover:border-white/40 transition-all shrink-0 active:scale-95 cursor-pointer shadow-sm"
+              aria-label="Share Game"
+              title="Share"
+            >
+              <Share2 className="w-4 h-4 text-zinc-300 hover:text-white" />
+            </button>
+          </div>
+        </nav>
+
+        <ShareModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          slug={gameSlug}
+          title={shareData?.title}
+          thumbnailUrl={shareData?.thumbnailUrl}
+          category={shareData?.category}
+        />
+      </>
     );
   }
 
@@ -332,7 +389,7 @@ export default function Navbar() {
                 </div>
                 <div className="flex flex-col text-left min-w-0">
                   <span className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">XP Balance</span>
-                  <span className="text-[12.5px] font-bold text-white tracking-tight leading-tight">0 XP</span>
+                  <span className="text-[12.5px] font-bold text-white tracking-tight leading-tight">{displayXp} XP</span>
                 </div>
               </Link>
 
@@ -355,7 +412,7 @@ export default function Navbar() {
                 </div>
                 <div className="flex flex-col text-left min-w-0">
                   <span className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">Streak</span>
-                  <span className="text-[12.5px] font-bold text-white tracking-tight leading-tight">0 Days</span>
+                  <span className="text-[12.5px] font-bold text-white tracking-tight leading-tight">{displayStreak} Days</span>
                 </div>
               </Link>
             </div>
@@ -403,7 +460,7 @@ export default function Navbar() {
                 </div>
                 <div className="flex items-center gap-1 shrink-0 ml-2">
                   <span className="text-[9.5px] font-semibold text-[#34c759] bg-[#34c759]/15 px-1.5 py-0.5 rounded-full whitespace-nowrap shrink-0">
-                    +50 XP
+                    +{XP_CONFIG.REFERRAL_REWARD} XP
                   </span>
                   <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0" />
                 </div>
@@ -518,6 +575,15 @@ export default function Navbar() {
           )}
         </div>
       </div>
+
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        slug={gameSlug}
+        title={shareData?.title}
+        thumbnailUrl={shareData?.thumbnailUrl}
+        category={shareData?.category}
+      />
     </>
   );
 }

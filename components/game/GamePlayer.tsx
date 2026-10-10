@@ -3,7 +3,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal, preconnect, prefetchDNS } from 'react-dom';
 import { 
   Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, 
-  MessageSquareWarning, X, Play, RotateCcw, Gamepad2, Share2, Star, Sparkles 
+  MessageSquareWarning, X, Play, RotateCcw, Gamepad2, Star, Sparkles, Share2 
 } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -377,27 +377,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
   };
 
-  const handleShare = async () => {
-    if (typeof window !== 'undefined' && navigator.share) {
-      try {
-        await navigator.share({
-          title: game.title,
-          text: `Play ${game.title} free online on Bluebuff!`,
-          url: window.location.href,
-        });
-      } catch (e) {
-        // User cancelled or share dismissed
-      }
-    } else if (typeof window !== 'undefined') {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        alert('Game link copied to clipboard! 📋');
-      } catch (e) {
-        // fallback
-      }
-    }
-  };
-
   const aspectRatio = game.width && game.height ? `${game.width}/${game.height}` : '16/9';
   const cleanThumb = (game.thumbnailUrl || '').trim().replace(/^http:\/\//, 'https://').replace(/^\/\//, 'https://');
   const initialLetter = (game.title || 'G').charAt(0).toUpperCase();
@@ -721,9 +700,19 @@ export default function GamePlayer({ game }: GamePlayerProps) {
               <Heart className={clsx("w-3.5 h-3.5", isFavorited ? "fill-current text-pink-500" : "")} />
             </button>
 
-            {/* Native Share Button */}
+            {/* Share Button */}
             <button 
-              onClick={handleShare} 
+              onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new CustomEvent('open-share-modal', {
+                    detail: {
+                      title: game.title,
+                      thumbnailUrl: game.thumbnailUrl,
+                      category: game.category?.[0] || 'Online Game',
+                    }
+                  }));
+                }
+              }} 
               className="w-8 h-8 flex items-center justify-center bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 rounded-full border border-white/[0.08] text-zinc-300 hover:text-white transition-all shrink-0 cursor-pointer shadow-sm" 
               title="Share Game"
             >

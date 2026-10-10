@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { XP_CONFIG } from "@/lib/xp";
-import { Coins, Flame, Clock, Gamepad2, Users, ShoppingBag, Gift, ArrowRight, ChevronLeft } from "lucide-react";
+import { Coins, Flame, Clock, Users, ShoppingBag, Gift, ArrowRight, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
@@ -137,27 +137,7 @@ export default async function RewardsPage() {
             Ways to Earn XP
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {/* Play Games */}
-            <div className="bg-[#141416] p-3.5 rounded-[18px] border border-white/[0.07] flex flex-col justify-between space-y-2.5 shadow-xs hover:border-white/[0.12] transition-colors">
-              <div className="flex items-start gap-2.5">
-                <div className="w-7 h-7 rounded-[8px] bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Gamepad2 className="w-3.5 h-3.5" />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm font-semibold text-white">Play New Games</p>
-                  <p className="text-[11px] text-zinc-400 mt-0.5 leading-normal">
-                    Earn XP bonus whenever you discover and launch games from the library.
-                  </p>
-                </div>
-              </div>
-              <div>
-                <span className="inline-flex text-[10.5px] font-bold text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2.5 py-0.5 rounded-full">
-                  +{XP_CONFIG.PLAY_GAME} XP / Game
-                </span>
-              </div>
-            </div>
-
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {/* Daily Streak */}
             <div className="bg-[#141416] p-3.5 rounded-[18px] border border-white/[0.07] flex flex-col justify-between space-y-2.5 shadow-xs hover:border-white/[0.12] transition-colors">
               <div className="flex items-start gap-2.5">

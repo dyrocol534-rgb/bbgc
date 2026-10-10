@@ -1,15 +1,8 @@
 import User from "@/models/User";
 import mongoose from "mongoose";
 
-export const XP_CONFIG = {
-  PLAY_GAME: 1, // XP awarded once per game session
-  PLAYTIME_PER_HOUR: 5, // XP awarded for 3600 seconds of playtime
-  REFERRAL_REWARD: 50, // XP to both users when referred user plays 10 games
-  DAILY_LOGIN: 5, // Base XP for logging in
-  STREAK_BONUS_PER_DAY: 10, // Additional XP per consecutive day
-  MAX_STREAK_BONUS: 100, // Cap on streak bonus (e.g., max +100 XP extra)
-  GAMES_REQUIRED_FOR_REFERRAL: 10, // Milestone for referral payout
-};
+import { XP_CONFIG } from "./xp-config";
+export * from "./xp-config";
 
 /**
  * Awards XP to a user and updates their lifetime XP.

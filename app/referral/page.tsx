@@ -216,7 +216,7 @@ export default async function ReferralPage() {
                 },
                 { 
                   step: "3", 
-                  title: "Instant +50 XP", 
+                  title: `Instant +${XP_CONFIG.REFERRAL_REWARD} XP`, 
                   desc: "Both players receive bonus XP automatically credited to their accounts.",
                   icon: "🪙"
                 },

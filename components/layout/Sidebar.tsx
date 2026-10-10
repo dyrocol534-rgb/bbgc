@@ -12,6 +12,7 @@ import {
   Smile, Heart, PersonStanding, BrainCircuit
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { XP_CONFIG } from "@/lib/xp-config";
 
 const PRIMARY_LINKS = [
   { name: "Home", href: "/", icon: Home, color: "text-blue-400", bg: "bg-blue-500/15 border-blue-500/25" },
@@ -280,7 +281,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                   </div>
                   <div className="flex flex-col items-start">
                     <span className="text-white text-xs font-medium">Refer & Earn</span>
-                    <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+50 XP</span>
+                    <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+{XP_CONFIG.REFERRAL_REWARD} XP</span>
                   </div>
                 </div>
               </Link>
@@ -450,7 +451,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                     ? "w-full justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.07]" 
                     : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
                 )}
-                title={!isExpanded ? "Refer & Earn (+50 XP)" : undefined}
+                title={!isExpanded ? `Refer & Earn (+${XP_CONFIG.REFERRAL_REWARD} XP)` : undefined}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/25 transition-all">
@@ -459,7 +460,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                   {isExpanded && (
                     <div className="flex flex-col items-start whitespace-nowrap min-w-0">
                       <span className="text-white text-xs font-medium group-hover:text-emerald-300 transition-colors truncate">Refer & Earn</span>
-                      <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+50 XP</span>
+                      <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+{XP_CONFIG.REFERRAL_REWARD} XP</span>
                     </div>
                   )}
                 </div>

@@ -55,7 +55,13 @@ export async function POST(
       
       const { XP_CONFIG, awardXP } = await import("@/lib/xp");
       
-      // Push it to front, update activity, add 1 XP, increment games played
+      // Push it to front, update activity, increment games played (and award XP if enabled)
+      const incFields: Record<string, number> = { gamesPlayedCount: 1 };
+      if (XP_CONFIG.PLAY_GAME > 0) {
+        incFields.xp = XP_CONFIG.PLAY_GAME;
+        incFields.lifetimeXp = XP_CONFIG.PLAY_GAME;
+      }
+
       const updatedUser = await User.findOneAndUpdate(
         { email: session.user.email },
         { 
@@ -67,11 +73,7 @@ export async function POST(
             } 
           },
           $set: { lastActiveAt: new Date(), lastIp: ip },
-          $inc: { 
-            xp: XP_CONFIG.PLAY_GAME, 
-            lifetimeXp: XP_CONFIG.PLAY_GAME,
-            gamesPlayedCount: 1 
-          }
+          $inc: incFields
         },
         { new: true }
       );
@@ -85,9 +87,9 @@ export async function POST(
         updatedUser.referredBy &&
         !updatedUser.referralRewardPaid
       ) {
-        // Award the referrer 50 XP
+        // Award the referrer XP
         await awardXP(updatedUser.referredBy.toString(), XP_CONFIG.REFERRAL_REWARD);
-        // Award the current user an extra 50 XP
+        // Award the current user extra XP
         await User.findByIdAndUpdate(updatedUser._id, {
           $inc: { xp: XP_CONFIG.REFERRAL_REWARD, lifetimeXp: XP_CONFIG.REFERRAL_REWARD },
           $set: { referralRewardPaid: true }
