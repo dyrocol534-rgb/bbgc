@@ -7,7 +7,7 @@ import {
   BarChart3, Gamepad2, DownloadCloud, UploadCloud, 
   BellRing, Activity, MessageSquareWarning, Users, 
   ChevronLeft, ChevronRight, LayoutDashboard,
-  Menu, X, Mail, Gift
+  Menu, X, Mail, Gift, Coins
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -47,6 +47,7 @@ const NAV_SECTIONS: NavSection[] = [
     title: "Management",
     items: [
       { name: "Rewards Store", href: "/admin/rewards", icon: Gift, exact: false },
+      { name: "XP Ledger & Balances", href: "/admin/xp", icon: Coins, exact: false },
       { name: "Push Notifications", href: "/admin/notifications", icon: BellRing, exact: false },
       { name: "Feedback", href: "/admin/feedback", icon: MessageSquareWarning, exact: false },
       { name: "Users", href: "/admin/users", icon: Users, exact: false },
