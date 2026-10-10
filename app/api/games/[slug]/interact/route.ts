@@ -59,49 +59,52 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
 
       if (action === "like") {
         if (isLiked) {
-          game.likes = game.likes.filter((e: string) => e !== email);
+          await Game.updateOne({ slug }, { $pull: { likes: email } });
+          isLiked = false;
         } else {
-          game.likes.push(email);
-          game.dislikes = game.dislikes.filter((e: string) => e !== email);
+          await Game.updateOne({ slug }, { $addToSet: { likes: email }, $pull: { dislikes: email } });
+          isLiked = true;
+          isDisliked = false;
         }
-        await game.save();
-        isLiked = !isLiked;
-        isDisliked = false;
       } else if (action === "dislike") {
         if (isDisliked) {
-          game.dislikes = game.dislikes.filter((e: string) => e !== email);
+          await Game.updateOne({ slug }, { $pull: { dislikes: email } });
+          isDisliked = false;
         } else {
-          game.dislikes.push(email);
-          game.likes = game.likes.filter((e: string) => e !== email);
+          await Game.updateOne({ slug }, { $addToSet: { dislikes: email }, $pull: { likes: email } });
+          isDisliked = true;
+          isLiked = false;
         }
-        await game.save();
-        isDisliked = !isDisliked;
-        isLiked = false;
       }
     } else if (action === "favorite") {
       if (isFavorited) {
-        user.favorites = user.favorites.filter((s: string) => s !== slug);
+        await User.updateOne({ email }, { $pull: { favorites: slug } });
+        isFavorited = false;
       } else {
-        if (user.favorites.length >= 6) {
+        if ((user.favorites?.length || 0) >= 6) {
           return NextResponse.json({ error: "You can only have up to 6 favorite games." }, { status: 400 });
         }
-        user.favorites.push(slug);
+        await User.updateOne({ email }, { $addToSet: { favorites: slug } });
+        isFavorited = true;
       }
-      await user.save();
-      isFavorited = !isFavorited;
     } else if (action === "status") {
       // Just fetch the current status
     } else {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
 
+    // Fetch refreshed vote counts directly and efficiently
+    const updatedGame = await Game.findOne({ slug }, "likes dislikes").lean();
+    const likeCount = (updatedGame as any)?.likes?.length || 0;
+    const dislikeCount = (updatedGame as any)?.dislikes?.length || 0;
+
     return NextResponse.json({
       success: true,
       isLiked,
       isDisliked,
       isFavorited,
-      likeCount: game.likes?.length || 0,
-      dislikeCount: game.dislikes?.length || 0
+      likeCount,
+      dislikeCount
     });
   } catch (error) {
     console.error("Interaction API Error:", error);

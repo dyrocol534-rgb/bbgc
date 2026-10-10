@@ -192,12 +192,12 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
       {/* ── Mobile Off-Canvas Navigation Drawer ─────────────────── */}
       <div 
         className={clsx(
-          "fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-[#0d0d10] border-r border-white/[0.08] flex flex-col shadow-2xl transition-transform duration-300 ease-out md:hidden",
+          "fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-black border-r border-white/[0.08] flex flex-col shadow-2xl transition-transform duration-300 ease-out md:hidden",
           isExpanded ? "translate-x-0" : "-translate-x-full pointer-events-none"
         )}
       >
         {/* Drawer Header */}
-        <div className="p-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#0d0d10]">
+        <div className="p-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-black">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center font-black text-white text-base shadow-sm border border-white/20 select-none">
               B
@@ -353,7 +353,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
       {/* ── Desktop Sticky Sidebar ──────────────────────────────── */}
       <aside 
         className={clsx(
-          "hidden md:flex flex-col bg-[#0d0d10]/95 backdrop-blur-xl border-r border-white/[0.08] sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] transition-[width] duration-300 ease-in-out z-30 shrink-0 select-none relative",
+          "hidden md:flex flex-col bg-black/95 backdrop-blur-xl border-r border-white/[0.08] sticky top-14 sm:top-16 h-[calc(100vh-3.5rem)] sm:h-[calc(100vh-4rem)] transition-[width] duration-300 ease-in-out z-30 shrink-0 select-none relative",
           isExpanded ? "w-64" : "w-[68px]"
         )}
       >

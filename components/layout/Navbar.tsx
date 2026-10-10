@@ -143,7 +143,7 @@ export default function Navbar() {
   if (isGameSlugPage) {
     return (
       <>
-        <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-[#0d0d10]/85 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
+        <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-black/95 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
           {/* Left: Back Button (Icon only) */}
           <button
             onClick={() => {
@@ -208,7 +208,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-[#0d0d10]/85 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
+      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-black/95 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
         <div className="flex items-center gap-2">
           {/* Mobile Navigation Drawer Toggle */}
           <button
@@ -311,11 +311,11 @@ export default function Navbar() {
       )}
 
       <div className={clsx(
-        "fixed top-0 right-0 h-full w-[310px] max-w-[86vw] bg-[#0d0d10] border-l border-white/[0.08] z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl",
+        "fixed top-0 right-0 h-full w-[310px] max-w-[86vw] bg-black border-l border-white/[0.08] z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl",
         isSidebarOpen ? "translate-x-0" : "translate-x-full"
       )}>
         {/* iOS Sheet Header */}
-        <div className="p-3 sm:p-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-[#0d0d10]">
+        <div className="p-3 sm:p-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-black">
           <div className="flex items-center gap-2.5 min-w-0">
             {session?.user?.image ? (
               <div className="relative w-9 h-9 rounded-full overflow-hidden shrink-0 border border-white/10 ring-1 ring-white/5">
@@ -549,7 +549,7 @@ export default function Navbar() {
         </div>
 
         {/* Footer Action */}
-        <div className="p-3 border-t border-white/[0.06] bg-[#0d0d10] shrink-0">
+        <div className="p-3 border-t border-white/[0.06] bg-black shrink-0">
           {!session ? (
             <button
               onClick={() => {

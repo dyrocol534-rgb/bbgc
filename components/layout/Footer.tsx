@@ -43,7 +43,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#0c0c0e] border-t border-white/[0.08] mt-auto">
+    <footer className="bg-black border-t border-white/[0.08] mt-auto">
       <div className="container mx-auto px-4 py-8 sm:py-10">
         <div className="flex flex-col items-start gap-6 pb-6 border-b border-white/[0.06]">
 

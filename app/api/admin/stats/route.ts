@@ -261,26 +261,42 @@ export async function GET(req: NextRequest) {
         count,
       }));
 
-    // Recharts Data (30 days trend)
-    const recentUsersDocs = await User.find({ createdAt: { $gte: ago30d } }, "createdAt").lean();
-    const recentGuestsDocs = await GuestSession.find({ createdAt: { $gte: ago30d } }, "createdAt").lean();
+    // Recharts Data (30 days trend) - Aggregated directly in MongoDB
+    const [userTrendDocs, guestTrendDocs] = await Promise.all([
+      User.aggregate([
+        { $match: { createdAt: { $gte: ago30d } } },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            count: { $sum: 1 }
+          }
+        }
+      ]),
+      GuestSession.aggregate([
+        { $match: { createdAt: { $gte: ago30d } } },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            count: { $sum: 1 }
+          }
+        }
+      ])
+    ]);
+
+    const userCountMap = new Map(userTrendDocs.map((d: any) => [d._id, d.count]));
+    const guestCountMap = new Map(guestTrendDocs.map((d: any) => [d._id, d.count]));
     
     const signupsTrend = [];
     for (let i = 29; i >= 0; i--) {
       const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+      const isoKey = d.toISOString().split("T")[0];
       const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
       
-      const uCount = recentUsersDocs.filter((u: any) => {
-        const ud = new Date(u.createdAt);
-        return ud.getDate() === d.getDate() && ud.getMonth() === d.getMonth();
-      }).length;
-
-      const gCount = recentGuestsDocs.filter((g: any) => {
-        const gd = new Date(g.createdAt);
-        return gd.getDate() === d.getDate() && gd.getMonth() === d.getMonth();
-      }).length;
-
-      signupsTrend.push({ date: dateStr, users: uCount, guests: gCount });
+      signupsTrend.push({
+        date: dateStr,
+        users: userCountMap.get(isoKey) || 0,
+        guests: guestCountMap.get(isoKey) || 0
+      });
     }
 
     const newStats = {
