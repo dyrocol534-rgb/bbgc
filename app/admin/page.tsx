@@ -79,8 +79,8 @@ function MetricCell({
 }) {
   return (
     <div className={clsx(
-      "p-3 sm:p-3.5 flex flex-col justify-between transition-colors group relative min-w-0",
-      highlight ? "bg-[#19191e] hover:bg-[#1d1d23]" : "bg-[#141416] hover:bg-[#18181c]",
+      "p-3 sm:p-3.5 flex flex-col justify-between transition-colors group relative min-w-0 bg-black/60 hover:bg-white/[0.03]",
+      highlight && "bg-indigo-500/[0.04]",
       className
     )}>
       <div className="flex items-center gap-1.5 mb-1.5 min-w-0">

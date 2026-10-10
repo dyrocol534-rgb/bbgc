@@ -113,7 +113,7 @@ export default async function Home() {
                       game={game} 
                       className="h-full w-full"
                       imageContainerClassName={imageContainerClass}
-                      priority={index < 12}
+                      priority={index < 4}
                     />
                   </div>
                 );

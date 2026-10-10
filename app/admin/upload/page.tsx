@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import JSZip from "jszip";
 import axios from "axios";
 import { 
   UploadCloud, 
@@ -169,6 +168,7 @@ export default function UploadGamePage() {
       setIsUploading(true);
       setMessage({ type: "info", text: "Reading ZIP archive..." });
       
+      const JSZip = (await import("jszip")).default;
       const zip = new JSZip();
       const zipData = await zip.loadAsync(file);
       const files = Object.values(zipData.files).filter(f => !f.dir);

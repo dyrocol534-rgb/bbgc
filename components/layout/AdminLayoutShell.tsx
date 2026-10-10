@@ -327,9 +327,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
 
         {/* Main Content Area */}
         <main className="flex-1 min-w-0 w-full transition-all duration-300">
-          <div className="bg-[#141416] border border-white/[0.08] rounded-[20px] p-3.5 sm:p-5 lg:p-6 shadow-xs">
-            {children}
-          </div>
+          {children}
         </main>
 
       </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, use } from "react";
-import JSZip from "jszip";
 import axios from "axios";
 import { 
   UploadCloud, Loader2, CheckCircle, Save, ArrowLeft, 
@@ -151,6 +150,7 @@ export default function EditGamePage({ params }: { params: Promise<{ id: string 
       // If user uploaded a new ZIP file to replace existing build
       if (file) {
         setMessage({ type: "info", text: "Processing replacement ZIP..." });
+        const JSZip = (await import("jszip")).default;
         const zip = new JSZip();
         const zipData = await zip.loadAsync(file);
         const files = Object.values(zipData.files).filter(f => !f.dir);
