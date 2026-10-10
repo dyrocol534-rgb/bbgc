@@ -292,8 +292,36 @@ export default function LoginPage() {
 
         {/* Premium Google Button - iOS Pill */}
         <button
-          onClick={() => {
+          onClick={async () => {
             setIsLoggingInGoogle(true);
+            try {
+              const { Capacitor } = await import("@capacitor/core");
+              if (Capacitor.isNativePlatform()) {
+                const { Browser } = await import("@capacitor/browser");
+                const { App } = await import("@capacitor/app");
+                
+                // Listen for appUrlOpen event when Chrome Custom Tab redirects back
+                const urlListener = await App.addListener("appUrlOpen", async (event) => {
+                  try {
+                    await Browser.close();
+                  } catch (e) {}
+                  urlListener.remove();
+                  router.push(callbackUrl);
+                });
+
+                // Generate full sign-in URL with callback to app
+                const siteBase = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
+                const authUrl = `${siteBase}/api/auth/signin/google?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+                
+                await Browser.open({ 
+                  url: authUrl,
+                  windowName: "_self"
+                });
+                return;
+              }
+            } catch (err) {
+              console.warn("Capacitor Browser fallback:", err);
+            }
             signIn("google", { callbackUrl });
           }}
           disabled={isLoggingInGoogle}
