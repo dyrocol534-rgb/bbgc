@@ -19,6 +19,11 @@ import {
   Flame,
   Clock,
   ShieldAlert,
+  Activity,
+  Gift,
+  UserPlus,
+  Zap,
+  Filter,
 } from "lucide-react";
 
 interface IUserXp {
@@ -47,17 +52,33 @@ interface ITransaction {
   createdAt: string;
 }
 
+interface IActivityLog {
+  _id: string;
+  type: "xp_transaction" | "reward_claim" | "user_signup";
+  category: string;
+  title: string;
+  description: string;
+  userEmail: string;
+  userName: string;
+  meta: any;
+  createdAt: string;
+}
+
 export default function AdminXpClient({
   initialUsers,
   initialTransactions,
+  initialActivities,
 }: {
   initialUsers: IUserXp[];
   initialTransactions: ITransaction[];
+  initialActivities: IActivityLog[];
 }) {
-  const [activeTab, setActiveTab] = useState<"balances" | "transactions">("balances");
+  const [activeTab, setActiveTab] = useState<"balances" | "transactions" | "activity">("balances");
   const [users, setUsers] = useState<IUserXp[]>(initialUsers);
   const [transactions, setTransactions] = useState<ITransaction[]>(initialTransactions);
+  const [activities, setActivities] = useState<IActivityLog[]>(initialActivities);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activityFilter, setActivityFilter] = useState<string>("all");
 
   // Adjustment Modal State
   const [selectedUser, setSelectedUser] = useState<IUserXp | null>(null);
@@ -84,6 +105,24 @@ export default function AdminXpClient({
       (t.userEmail && t.userEmail.toLowerCase().includes(term)) ||
       (t.description && t.description.toLowerCase().includes(term))
     );
+  });
+
+  // Filtered Activities
+  const filteredActivities = activities.filter((act) => {
+    const term = searchTerm.toLowerCase();
+    const matchesSearch =
+      !term ||
+      (act.userName && act.userName.toLowerCase().includes(term)) ||
+      (act.userEmail && act.userEmail.toLowerCase().includes(term)) ||
+      (act.title && act.title.toLowerCase().includes(term)) ||
+      (act.description && act.description.toLowerCase().includes(term));
+
+    const matchesFilter =
+      activityFilter === "all" ||
+      act.type === activityFilter ||
+      act.category === activityFilter;
+
+    return matchesSearch && matchesFilter;
   });
 
   // Open modal
@@ -136,6 +175,26 @@ export default function AdminXpClient({
       // Prepend new transaction
       if (data.transaction) {
         setTransactions((prev) => [data.transaction, ...prev]);
+
+        // Prepend to activity log
+        setActivities((prev) => [
+          {
+            _id: `tx-${data.transaction._id}`,
+            type: "xp_transaction",
+            category: "admin_adjustment",
+            title: `Admin XP Adjustment • ${data.transaction.userName}`,
+            description: data.transaction.description,
+            userEmail: data.transaction.userEmail,
+            userName: data.transaction.userName,
+            meta: {
+              amount: data.transaction.amount,
+              balanceAfter: data.transaction.balanceAfter,
+              adminEmail: data.transaction.adminEmail,
+            },
+            createdAt: data.transaction.createdAt,
+          },
+          ...prev,
+        ]);
       }
 
       setSelectedUser(null);
@@ -163,16 +222,16 @@ export default function AdminXpClient({
             </span>
           </div>
           <h1 className="text-lg sm:text-xl font-black text-white tracking-tight">
-            XP Ledger &amp; Player Balances
+            XP Ledger &amp; Activity Log
           </h1>
           <p className="text-[11px] sm:text-xs text-zinc-400">
-            Audit player XP balances, view recent ledger transactions, and manually credit or deduct XP.
+            Audit player balances, view real-time platform activities, and manually adjust XP.
           </p>
         </div>
 
         {/* Tab switchers */}
         <div className="flex items-center gap-2">
-          <div className="inline-flex p-1 rounded-lg bg-black border border-zinc-900">
+          <div className="inline-flex p-1 rounded-lg bg-black border border-zinc-900 overflow-x-auto">
             <button
               onClick={() => setActiveTab("balances")}
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${
@@ -193,22 +252,58 @@ export default function AdminXpClient({
               }`}
             >
               <History className="w-3.5 h-3.5" />
-              <span>Ledger ({transactions.length})</span>
+              <span>XP Ledger ({transactions.length})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("activity")}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-colors ${
+                activeTab === "activity"
+                  ? "bg-zinc-800 text-white shadow-sm"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Activity Log ({activities.length})</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* ── Search Bar ── */}
-      <div className="relative">
-        <input
-          type="text"
-          placeholder="Search by player name, email, or transaction note..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-9 pr-4 py-2 bg-zinc-950 border border-zinc-900 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
-        />
-        <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-2.5" />
+      {/* ── Search Bar & Activity Filter ── */}
+      <div className="flex flex-col sm:flex-row items-center gap-2">
+        <div className="relative flex-1 w-full">
+          <input
+            type="text"
+            placeholder="Search by player name, email, or activity description..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 bg-zinc-950 border border-zinc-900 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
+          />
+          <Search className="w-4 h-4 text-zinc-500 absolute left-3 top-2.5" />
+        </div>
+
+        {activeTab === "activity" && (
+          <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+            {[
+              { id: "all", label: "All Activity" },
+              { id: "xp_transaction", label: "XP Changes" },
+              { id: "reward_claim", label: "Redemptions" },
+              { id: "user_signup", label: "Signups" },
+            ].map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setActivityFilter(f.id)}
+                className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors shrink-0 ${
+                  activityFilter === f.id
+                    ? "bg-white text-black border-white"
+                    : "bg-zinc-950 text-zinc-400 border-zinc-900 hover:text-white"
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* ── TAB 1: USER XP BALANCES ── */}
@@ -406,6 +501,93 @@ export default function AdminXpClient({
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+
+      {/* ── TAB 3: UNIFIED ACTIVITY LOG ── */}
+      {activeTab === "activity" && (
+        <div className="space-y-2">
+          {filteredActivities.map((act) => {
+            const isXp = act.type === "xp_transaction";
+            const isClaim = act.type === "reward_claim";
+            const isSignup = act.type === "user_signup";
+
+            return (
+              <div
+                key={act._id}
+                className="flex items-start justify-between gap-3 p-3 rounded-xl bg-zinc-950 border border-zinc-900 hover:border-zinc-800 transition-colors"
+              >
+                <div className="flex items-start gap-2.5 min-w-0">
+                  {/* Category icon */}
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border mt-0.5 ${
+                      isXp
+                        ? "bg-amber-500/10 border-amber-500/20 text-amber-400"
+                        : isClaim
+                        ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400"
+                        : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                    }`}
+                  >
+                    {isXp ? (
+                      <Coins className="w-4 h-4" />
+                    ) : isClaim ? (
+                      <Gift className="w-4 h-4" />
+                    ) : (
+                      <UserPlus className="w-4 h-4" />
+                    )}
+                  </div>
+
+                  {/* Body */}
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="text-xs font-bold text-white truncate">
+                        {act.title}
+                      </h4>
+                      <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 uppercase">
+                        {act.category.replace("_", " ")}
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-zinc-400 mt-0.5 truncate">
+                      {act.description}
+                    </p>
+
+                    <div className="flex items-center gap-2 text-[10px] text-zinc-500 font-mono mt-1">
+                      <span>{act.userName}</span>
+                      <span>•</span>
+                      <span>{act.userEmail}</span>
+                      {act.meta?.adminEmail && (
+                        <>
+                          <span>•</span>
+                          <span className="text-amber-400">Admin: {act.meta.adminEmail}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Timestamp */}
+                <div className="text-right shrink-0">
+                  <span className="text-[10px] text-zinc-500 font-mono block">
+                    {new Date(act.createdAt).toLocaleDateString()}
+                  </span>
+                  <span className="text-[10px] text-zinc-600 font-mono">
+                    {new Date(act.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+
+          {filteredActivities.length === 0 && (
+            <div className="p-12 text-center rounded-xl bg-zinc-950 border border-zinc-900 text-zinc-500 text-xs">
+              <Activity className="w-8 h-8 text-zinc-600 mx-auto mb-2" />
+              No activities found matching your criteria.
+            </div>
+          )}
         </div>
       )}
 

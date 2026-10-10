@@ -48,10 +48,25 @@ export async function POST(req: NextRequest) {
         const hoursCrossed = newHours - oldHours;
         xpAwarded = hoursCrossed * XP_CONFIG.PLAYTIME_PER_HOUR;
         
-        await User.findByIdAndUpdate(user._id, {
+        const updated = await User.findByIdAndUpdate(user._id, {
           $set: { playtimeSeconds: newPlaytime, lastActiveAt: now, lastIp: ip },
           $inc: { xp: xpAwarded, lifetimeXp: xpAwarded }
-        });
+        }, { new: true });
+
+        try {
+          const XpTransaction = (await import("@/models/XpTransaction")).default;
+          await XpTransaction.create({
+            userId: user._id,
+            userEmail: user.email,
+            userName: user.name || "Player",
+            amount: xpAwarded,
+            type: "gameplay",
+            description: `Earned ${xpAwarded} XP for playing games (${hoursCrossed} hour milestone)`,
+            balanceAfter: updated?.xp ?? ((user.xp || 0) + xpAwarded),
+          });
+        } catch (e) {
+          console.error("Failed to log gameplay XP:", e);
+        }
       } else {
         await User.findByIdAndUpdate(user._id, {
           $set: { playtimeSeconds: newPlaytime, lastActiveAt: now, lastIp: ip }
