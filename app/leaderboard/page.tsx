@@ -39,8 +39,9 @@ function maskName(name: string): string {
 export default async function LeaderboardPage() {
   await dbConnect();
   
-  // Fetch top 100 users by lifetimeXp
+  // Fetch top 100 users by lifetimeXp with lean field projection
   const users = await User.find({ lifetimeXp: { $gt: 0 } })
+    .select('name lifetimeXp currentStreak')
     .sort({ lifetimeXp: -1 })
     .limit(100)
     .lean();

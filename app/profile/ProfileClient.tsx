@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
-import { Edit2, Check, X, Loader2, Phone, AlignLeft, Trash2, AlertTriangle, ShieldAlert } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { Edit2, Check, X, Loader2, Phone, AlignLeft } from "lucide-react";
 
 interface ProfileClientProps {
   initialBio: string;
@@ -97,12 +96,6 @@ export default function ProfileClient({ initialBio, initialPhone }: ProfileClien
   const [tempPhone, setTempPhone] = useState(initialPhone);
   const [isPhoneLoading, setIsPhoneLoading] = useState(false);
 
-  // Delete Account State
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteConfirmationText, setDeleteConfirmationText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState("");
-
   const handleSaveBio = async () => {
     setIsBioLoading(true);
     try {
@@ -126,30 +119,6 @@ export default function ProfileClient({ initialBio, initialPhone }: ProfileClien
       alert("Failed to update phone");
     } finally {
       setIsPhoneLoading(false);
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    if (deleteConfirmationText.trim().toUpperCase() !== "DELETE") {
-      setDeleteError("Please type DELETE to confirm");
-      return;
-    }
-
-    setIsDeleting(true);
-    setDeleteError("");
-
-    try {
-      const res = await axios.delete("/api/user/account");
-      if (res.data.success) {
-        setShowDeleteModal(false);
-        await signOut({ callbackUrl: "/" });
-      } else {
-        setDeleteError(res.data.error || "Failed to delete account");
-      }
-    } catch (err: any) {
-      setDeleteError(err.response?.data?.error || "An error occurred while deleting your account");
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -202,108 +171,6 @@ export default function ProfileClient({ initialBio, initialPhone }: ProfileClien
           }
         />
       </div>
-
-      {/* Quick Action to Settings */}
-      <div className="pt-1">
-        <button
-          onClick={() => {
-            setShowDeleteModal(true);
-            setDeleteConfirmationText("");
-            setDeleteError("");
-          }}
-          className="w-full flex items-center justify-between p-3.5 rounded-[18px] bg-red-500/[0.04] hover:bg-red-500/[0.08] border border-red-500/20 hover:border-red-500/30 transition-colors text-left group cursor-pointer"
-        >
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-[8px] bg-red-500/15 border border-red-500/25 flex items-center justify-center text-red-400 shrink-0">
-              <Trash2 className="w-3.5 h-3.5" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-medium text-red-400 group-hover:text-red-300 transition-colors">
-                Delete Account &amp; Data
-              </span>
-              <span className="text-[10px] text-zinc-500">Permanently erase progress</span>
-            </div>
-          </div>
-          <span className="text-[11px] font-semibold text-red-400/80 group-hover:text-red-400">
-            Action ↗
-          </span>
-        </button>
-      </div>
-
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-[#18181b] border border-red-500/30 rounded-[24px] p-6 shadow-2xl space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[12px] bg-red-500/15 border border-red-500/25 flex items-center justify-center text-red-400 shrink-0">
-                <AlertTriangle className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-white tracking-tight">Delete Account</h3>
-                <p className="text-xs text-zinc-400">This action is permanent and cannot be undone.</p>
-              </div>
-            </div>
-
-            <div className="bg-red-500/10 border border-red-500/20 rounded-[16px] p-3.5 text-xs text-zinc-300 space-y-1.5">
-              <p className="font-semibold text-red-300">The following data will be permanently wiped:</p>
-              <ul className="list-disc pl-4 space-y-0.5 text-zinc-400 text-[11px]">
-                <li>Your profile details, phone, and bio</li>
-                <li>Earned XP, leaderboards, and streak progress</li>
-                <li>Favorites and gameplay history</li>
-              </ul>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-xs font-medium text-zinc-300">
-                Type <span className="font-bold text-red-400 font-mono">DELETE</span> to confirm:
-              </label>
-              <input
-                type="text"
-                value={deleteConfirmationText}
-                onChange={(e) => {
-                  setDeleteConfirmationText(e.target.value);
-                  if (deleteError) setDeleteError("");
-                }}
-                placeholder="DELETE"
-                className="w-full bg-[#121214] border border-white/[0.12] focus:border-red-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-zinc-700 outline-none font-mono"
-                autoFocus
-              />
-              {deleteError && (
-                <p className="text-xs text-red-400 font-medium">{deleteError}</p>
-              )}
-            </div>
-
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/[0.08]">
-              <button
-                type="button"
-                onClick={() => setShowDeleteModal(false)}
-                disabled={isDeleting}
-                className="px-4 py-2 text-xs font-medium text-zinc-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.1] rounded-full transition-colors disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteAccount}
-                disabled={isDeleting || deleteConfirmationText.trim().toUpperCase() !== "DELETE"}
-                className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-500 disabled:bg-red-950 disabled:text-zinc-600 rounded-full transition-all shadow-sm"
-              >
-                {isDeleting ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    Deleting...
-                  </>
-                ) : (
-                  <>
-                    <Trash2 className="w-3.5 h-3.5" />
-                    Permanently Delete
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

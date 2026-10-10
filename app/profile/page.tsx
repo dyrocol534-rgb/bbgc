@@ -2,10 +2,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import dbConnect from "@/lib/mongodb";
+import User from "@/models/User";
 import Game from "@/models/Game";
 import GameCard from "@/components/game/GameCard";
 import ProfileClient from "./ProfileClient";
-import { Clock, Heart, Gamepad2, Settings, ChevronLeft, Coins, Flame, Gift } from "lucide-react";
+import { Clock, Heart, Gamepad2, Settings, ChevronLeft, Coins, Flame, Gift, Trophy, Calendar, Activity, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { getHorizontalBentoSpanClass, getImageContainerClass } from "@/lib/bento";
@@ -19,6 +20,11 @@ export default async function ProfilePage() {
 
   await dbConnect();
 
+  // Load fresh user data for accurate play time, streak, games played count, createdAt, and lastActiveAt
+  const currentUser = await User.findById((session.user as any).id)
+    .select("xp currentStreak referralCode playtimeSeconds gamesPlayedCount createdAt lastActiveAt lastStreakDate")
+    .lean();
+
   const userFavorites = ((session.user as any).favorites || []).slice(0, 9);
   const userRecent = ((session.user as any).recentlyPlayed || []).slice(0, 9);
 
@@ -31,141 +37,201 @@ export default async function ProfilePage() {
   const orderedFavorites = userFavorites.map((slug: string) => favoriteMap.get(slug)).filter(Boolean).slice(0, 9);
   const orderedRecent = userRecent.map((slug: string) => recentMap.get(slug)).filter(Boolean).slice(0, 9);
 
-  const xp = (session.user as any).xp || 0;
-  const streak = (session.user as any).currentStreak || 0;
-  const referralCode = (session.user as any).referralCode || "—";
+  const xp = currentUser?.xp ?? ((session.user as any).xp || 0);
+  const streak = currentUser?.currentStreak ?? ((session.user as any).currentStreak || 0);
+  const referralCode = currentUser?.referralCode || (session.user as any).referralCode || "—";
+  const playtimeSeconds = currentUser?.playtimeSeconds || 0;
+  const playtimeHours = Math.floor(playtimeSeconds / 3600);
+  const playtimeMinutes = Math.floor((playtimeSeconds % 3600) / 60);
+  const gamesPlayedCount = currentUser?.gamesPlayedCount ?? (orderedRecent.length || 0);
+
+  // 1. Member Since
+  const createdAtDate = currentUser?.createdAt ? new Date(currentUser.createdAt) : null;
+  const memberSince = createdAtDate 
+    ? createdAtDate.toLocaleDateString("en-US", { month: "short", year: "numeric" })
+    : "Recently";
+
+  // 2. Average games per day
+  const daysSinceJoining = createdAtDate
+    ? Math.max(1, Math.floor((Date.now() - createdAtDate.getTime()) / (1000 * 60 * 60 * 24)))
+    : 1;
+  const avgGamesPerDay = (gamesPlayedCount / daysSinceJoining).toFixed(1);
+
+  // 3. Last played time
+  const lastActiveDate = currentUser?.lastActiveAt || currentUser?.lastStreakDate;
+  const lastPlayedTime = lastActiveDate
+    ? new Date(lastActiveDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : "Today";
 
   return (
-    <div className="min-h-screen pb-16">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-7">
+    <div className="min-h-screen bg-black pb-12">
+      <div className="w-full px-3 sm:px-6 lg:px-8 xl:px-10 py-3 sm:py-4 space-y-4">
 
-        {/* ── iOS Top Navigation Bar ── */}
+        {/* ── Top Navigation Bar ── */}
         <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.05] hover:bg-white/[0.09] active:bg-white/[0.12] border border-white/[0.08] text-zinc-300 hover:text-white text-xs font-medium transition-all group touch-manipulation"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             <span>Home</span>
           </Link>
 
-          <Link
-            href="/profile/settings"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/[0.05] hover:bg-white/[0.09] active:bg-white/[0.12] border border-white/[0.08] text-zinc-300 hover:text-white text-xs font-medium transition-all group"
-          >
-            <Settings className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
-            <span>Settings</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/rewards"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-400 hover:text-amber-300 text-xs font-medium transition-colors"
+            >
+              <Trophy className="w-3.5 h-3.5" />
+              <span>Rewards</span>
+            </Link>
+
+            <Link
+              href="/referral"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+            >
+              <Gift className="w-3.5 h-3.5 text-zinc-400" />
+              <span>Invite</span>
+            </Link>
+
+            <Link
+              href="/profile/settings"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+            >
+              <Settings className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
+              <span>Settings</span>
+            </Link>
+          </div>
         </div>
 
-        {/* ── Apple ID / Profile Card ── */}
-        <div className="relative overflow-hidden rounded-[20px] bg-[#141416] border border-white/[0.08] p-3.5 sm:p-4 shadow-lg">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 sm:gap-3.5">
-              {/* Avatar with status indicator */}
-              <div className="relative shrink-0">
-                {session.user.image ? (
-                  <Image
-                    src={session.user.image}
-                    alt={session.user.name || "User"}
-                    width={56}
-                    height={56}
-                    className="w-13 h-13 sm:w-14 sm:h-14 rounded-full border border-white/[0.12] shadow-md object-cover bg-zinc-800"
-                  />
-                ) : (
-                  <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-zinc-800 flex items-center justify-center text-xl font-black text-white border border-white/[0.12] shadow-md">
-                    {(session.user.name || "U").charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-[#141416]" />
-              </div>
-
-              {/* Name & Email */}
-              <div className="flex-1 min-w-0">
-                <h1 className="text-base sm:text-lg font-bold text-white tracking-tight leading-tight truncate">
-                  {session.user.name}
-                </h1>
-                <p className="text-xs text-zinc-400 font-normal mt-0.5 truncate">
-                  {session.user.email}
-                </p>
-              </div>
+        {/* ── Compact User Profile Bar ── */}
+        <div className="rounded-xl bg-zinc-950 border border-zinc-900 p-3 sm:p-3.5">
+          <div className="flex items-center gap-3">
+            {/* Avatar with status indicator */}
+            <div className="relative shrink-0">
+              {session.user.image ? (
+                <Image
+                  src={session.user.image}
+                  alt={session.user.name || "User"}
+                  width={40}
+                  height={40}
+                  className="w-10 h-10 rounded-full border border-zinc-800 object-cover bg-zinc-900"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-sm font-bold text-white border border-zinc-800">
+                  {(session.user.name || "U").charAt(0).toUpperCase()}
+                </div>
+              )}
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-black" />
             </div>
 
-            {/* Quick Actions */}
-            <div className="flex items-center gap-2 shrink-0">
-              <Link
-                href="/referral"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.08] text-xs font-semibold text-zinc-200 hover:text-white transition-all"
-              >
-                <Gift className="w-3.5 h-3.5 text-white" />
-                <span>Invite Friends</span>
-              </Link>
-              <Link
-                href="/profile/settings"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-zinc-200 text-xs font-bold text-black transition-all shadow-sm"
-              >
-                <span>Preferences</span>
-              </Link>
+            {/* Name, Email & Member Since badge */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <h1 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug truncate">
+                  {session.user.name}
+                </h1>
+                <span className="inline-flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-900 border border-zinc-800 px-1.5 py-0.5 rounded">
+                  <Calendar className="w-2.5 h-2.5 text-zinc-500" />
+                  <span>Member since {memberSince}</span>
+                </span>
+              </div>
+              <p className="text-[11px] text-zinc-500 truncate mt-0.5">
+                {session.user.email}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* ── Dynamic Responsive Capsules (XP, Streak, Invite Code) ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-          {/* XP Segment */}
+        {/* ── Key Player Stats (Compact 6-Metric Grid) ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
+          {/* Total XP */}
           <Link 
             href="/rewards" 
-            className="bg-[#141416] p-3 rounded-[20px] border border-white/[0.07] flex items-center gap-2.5 hover:bg-white/[0.04] active:scale-[0.98] transition-all group shadow-sm"
+            className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5 hover:border-zinc-800 transition-colors group"
           >
-            <div className="w-8 h-8 rounded-full bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0">
-              <Coins className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+              <Coins className="w-3.5 h-3.5 text-amber-400" />
             </div>
             <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-1">XP Balance</span>
-              <span className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight truncate">{xp} XP</span>
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Total XP</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">{xp.toLocaleString()} XP</span>
             </div>
           </Link>
 
-          {/* Streak Segment */}
+          {/* Daily Streak */}
           <Link 
             href="/rewards" 
-            className="bg-[#141416] p-3 rounded-[20px] border border-white/[0.07] flex items-center gap-2.5 hover:bg-white/[0.04] active:scale-[0.98] transition-all group shadow-sm"
+            className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5 hover:border-zinc-800 transition-colors group"
           >
-            <div className="w-8 h-8 rounded-full bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0">
-              <Flame className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0">
+              <Flame className="w-3.5 h-3.5 text-orange-400" />
             </div>
             <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-1">Streak</span>
-              <span className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight truncate">{streak} Days</span>
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Streak</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate">{streak} Days</span>
             </div>
           </Link>
 
-          {/* Referral Segment */}
-          <Link 
-            href="/referral" 
-            className="col-span-2 sm:col-span-1 bg-[#141416] p-3 rounded-[20px] border border-white/[0.07] flex items-center justify-between sm:justify-start gap-2.5 hover:bg-white/[0.04] active:scale-[0.98] transition-all group shadow-sm"
-          >
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center shrink-0">
-                <Gift className="w-4 h-4 text-indigo-400" />
-              </div>
-              <div className="flex flex-col text-left min-w-0">
-                <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-1">Invite Code</span>
-                <span className="text-xs sm:text-sm font-bold font-mono text-indigo-400 tracking-wider leading-tight truncate">{referralCode}</span>
-              </div>
+          {/* Total Play Time */}
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
+              <Clock className="w-3.5 h-3.5 text-sky-400" />
             </div>
-            <span className="sm:hidden text-[11px] font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-full shrink-0">
-              Invite ↗
-            </span>
-          </Link>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Play Time</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                {playtimeHours}h {playtimeMinutes}m
+              </span>
+            </div>
+          </div>
+
+          {/* Games Played */}
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+              <Gamepad2 className="w-3.5 h-3.5 text-emerald-400" />
+            </div>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Games Played</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                {gamesPlayedCount}
+              </span>
+            </div>
+          </div>
+
+          {/* Average Games / Day */}
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
+              <Activity className="w-3.5 h-3.5 text-purple-400" />
+            </div>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Avg Games/Day</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                {avgGamesPerDay}
+              </span>
+            </div>
+          </div>
+
+          {/* Last Played */}
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
+              <Zap className="w-3.5 h-3.5 text-rose-400" />
+            </div>
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Last Played</span>
+              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                {lastPlayedTime}
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* ── Main Content Grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-7 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] xl:grid-cols-[280px_1fr] gap-5 items-start">
 
           {/* ── Left: Profile Inset Group ── */}
-          <div className="lg:sticky lg:top-24 space-y-2">
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-3.5 mb-1.5 flex items-center justify-between">
+          <div className="lg:sticky lg:top-20 space-y-1.5">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1 mb-1 flex items-center justify-between">
               <span>Profile Info</span>
               <Link href="/profile/settings" className="text-[11px] text-zinc-500 hover:text-zinc-300 normal-case font-normal transition-colors">
                 Settings →
@@ -178,28 +244,28 @@ export default async function ProfilePage() {
             />
           </div>
 
-          {/* ── Right: Games History & Favorites ── */}
-          <div className="space-y-5">
+          {/* ── Right: Games History & Favorites (Compact Bento Size) ── */}
+          <div className="space-y-5 min-w-0">
             {/* Recently Played Section */}
             <section className="space-y-2">
               <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-[6px] bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <Clock className="w-3 h-3" />
+                  <div className="w-4 h-4 rounded bg-[#007AFF] text-white flex items-center justify-center shrink-0">
+                    <Clock className="w-2.5 h-2.5" />
                   </div>
-                  <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                  <h2 className="text-xs sm:text-sm font-bold text-white tracking-tight">
                     Recently Played
                   </h2>
                 </div>
                 {orderedRecent.length > 0 && (
-                  <span className="text-zinc-500 text-xs font-normal">
+                  <span className="text-zinc-500 text-[11px] font-normal">
                     {orderedRecent.length} game{orderedRecent.length !== 1 ? "s" : ""}
                   </span>
                 )}
               </div>
 
               {orderedRecent.length > 0 ? (
-                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[74px] sm:auto-cols-[84px] md:auto-cols-[92px] auto-rows-[78px] sm:auto-rows-[88px] md:auto-rows-[96px] gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[74px] sm:auto-cols-[82px] md:auto-cols-[88px] auto-rows-[78px] sm:auto-rows-[86px] md:auto-rows-[92px] gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
                   {orderedRecent.map((game: any, index: number) => {
                     const spanClass = getHorizontalBentoSpanClass(index);
                     const imageContainerClass = getImageContainerClass(spanClass);
@@ -230,22 +296,22 @@ export default async function ProfilePage() {
             <section className="space-y-2">
               <div className="flex items-center justify-between px-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-[6px] bg-[#FF2D55] text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <Heart className="w-3 h-3" />
+                  <div className="w-4 h-4 rounded bg-[#FF2D55] text-white flex items-center justify-center shrink-0">
+                    <Heart className="w-2.5 h-2.5" />
                   </div>
-                  <h2 className="text-sm sm:text-base font-bold text-white tracking-tight">
+                  <h2 className="text-xs sm:text-sm font-bold text-white tracking-tight">
                     Favorite Games
                   </h2>
                 </div>
                 {orderedFavorites.length > 0 && (
-                  <span className="text-zinc-500 text-xs font-normal">
+                  <span className="text-zinc-500 text-[11px] font-normal">
                     {orderedFavorites.length} game{orderedFavorites.length !== 1 ? "s" : ""}
                   </span>
                 )}
               </div>
 
               {orderedFavorites.length > 0 ? (
-                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[74px] sm:auto-cols-[84px] md:auto-cols-[92px] auto-rows-[78px] sm:auto-rows-[88px] md:auto-rows-[96px] gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[74px] sm:auto-cols-[82px] md:auto-cols-[88px] auto-rows-[78px] sm:auto-rows-[86px] md:auto-rows-[92px] gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
                   {orderedFavorites.map((game: any, index: number) => {
                     const spanClass = getHorizontalBentoSpanClass(index);
                     const imageContainerClass = getImageContainerClass(spanClass);
