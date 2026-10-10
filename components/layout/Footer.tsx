@@ -4,11 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { Mail, CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/config";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
-  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "crew.bluebuffofficial@gmail.com";
+  const siteName = SITE_CONFIG.name;
+  const supportEmail = SITE_CONFIG.supportEmail;
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");

@@ -1,12 +1,10 @@
-﻿import { Metadata } from 'next';
+import { Metadata } from 'next';
 import Link from 'next/link';
-
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Bluebuff Games';
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://games.bluebuff.in';
+import { SITE_CONFIG } from '@/lib/config';
 
 export const metadata: Metadata = {
-  title: `FAQ - Free Online Games, No Download | ${siteName}`,
-  description: `Frequently asked questions about ${siteName}. Learn how to play free browser games with no download, no login, and no registration required.`,
+  title: `FAQ - Free Online Games, No Download | ${SITE_CONFIG.name}`,
+  description: `Frequently asked questions about ${SITE_CONFIG.name}. Learn how to play free browser games with no download, no login, and no registration required.`,
   keywords: [
     'free online games faq',
     'can i play games without downloading',
@@ -16,16 +14,18 @@ export const metadata: Metadata = {
     'browser games no registration',
   ],
   alternates: {
-    canonical: `${siteUrl}/faq`,
+    canonical: `${SITE_CONFIG.url}/faq`,
   },
   openGraph: {
-    title: `FAQ - Free Online Games | ${siteName}`,
-    description: `Everything you need to know about playing free browser games on ${siteName}.`,
-    url: `${siteUrl}/faq`,
-    siteName,
+    title: `FAQ - Free Online Games | ${SITE_CONFIG.name}`,
+    description: `Everything you need to know about playing free browser games on ${SITE_CONFIG.name}.`,
+    url: `${SITE_CONFIG.url}/faq`,
+    siteName: SITE_CONFIG.name,
     type: 'website',
   },
 };
+const siteName = SITE_CONFIG.name;
+const siteUrl = SITE_CONFIG.url;
 
 const faqs = [
   {

@@ -1,27 +1,24 @@
 import { Metadata } from "next";
 import Link from "next/link";
-
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
-const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
-const siteUrl = rawSiteUrl.replace(/\/+$/, "");
-const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "crew.bluebuffofficial@gmail.com";
+import { SITE_CONFIG } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: `Privacy Policy | ${siteName}`,
-  description: `Learn how ${siteName} protects and respects your privacy when playing free browser games on our platform.`,
+  title: `Privacy Policy | ${SITE_CONFIG.name}`,
+  description: `Learn how ${SITE_CONFIG.name} protects and respects your privacy when playing free browser games on our platform.`,
   alternates: {
-    canonical: `${siteUrl}/privacy`,
+    canonical: `${SITE_CONFIG.url}/privacy`,
   },
   openGraph: {
-    title: `Privacy Policy | ${siteName}`,
-    description: `Learn how ${siteName} protects your privacy.`,
-    url: `${siteUrl}/privacy`,
-    siteName,
+    title: `Privacy Policy | ${SITE_CONFIG.name}`,
+    description: `Learn how ${SITE_CONFIG.name} protects your privacy.`,
+    url: `${SITE_CONFIG.url}/privacy`,
+    siteName: SITE_CONFIG.name,
     type: "website",
   },
 };
 
 export default function PrivacyPolicyPage() {
+  const supportEmail = SITE_CONFIG.supportEmail;
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-4xl font-bold text-white mb-8">Privacy Policy</h1>
@@ -32,7 +29,7 @@ export default function PrivacyPolicyPage() {
         </p>
         
         <p>
-          Welcome to {siteName} (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We are committed to protecting your personal information and your right to privacy.
+          Welcome to {SITE_CONFIG.name} (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). We are committed to protecting your personal information and your right to privacy.
           This Privacy Policy explains how we collect, use, store, and safeguard your data when you visit our website or use our mobile applications.
         </p>
 

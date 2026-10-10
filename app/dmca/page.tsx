@@ -1,20 +1,17 @@
 import { Metadata } from "next";
-
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
-const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
-const siteUrl = rawSiteUrl.replace(/\/+$/, "");
+import { SITE_CONFIG } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: `DMCA & Copyright Policy | ${siteName}`,
-  description: `DMCA takedown requests, intellectual property inquiries, and copyright notice guidelines for ${siteName}.`,
+  title: `DMCA & Copyright Policy | ${SITE_CONFIG.name}`,
+  description: `DMCA takedown requests, intellectual property inquiries, and copyright notice guidelines for ${SITE_CONFIG.name}.`,
   alternates: {
-    canonical: `${siteUrl}/dmca`,
+    canonical: `${SITE_CONFIG.url}/dmca`,
   },
   openGraph: {
-    title: `DMCA & Copyright Policy | ${siteName}`,
-    description: `DMCA takedown and copyright policy for ${siteName}.`,
-    url: `${siteUrl}/dmca`,
-    siteName,
+    title: `DMCA & Copyright Policy | ${SITE_CONFIG.name}`,
+    description: `DMCA takedown and copyright policy for ${SITE_CONFIG.name}.`,
+    url: `${SITE_CONFIG.url}/dmca`,
+    siteName: SITE_CONFIG.name,
     type: "website",
   },
 };

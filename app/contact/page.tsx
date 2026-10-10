@@ -1,21 +1,18 @@
 import { Metadata } from "next";
 import { Mail, MessageSquare, MapPin } from "lucide-react";
-
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
-const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
-const siteUrl = rawSiteUrl.replace(/\/+$/, "");
+import { SITE_CONFIG } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: `Contact Us | ${siteName}`,
-  description: `Get in touch with the ${siteName} team. Reach out for game developer submissions, feedback, bug reports, and support.`,
+  title: `Contact Us | ${SITE_CONFIG.name}`,
+  description: `Get in touch with the ${SITE_CONFIG.name} team. Reach out for game developer submissions, feedback, bug reports, and support.`,
   alternates: {
-    canonical: `${siteUrl}/contact`,
+    canonical: `${SITE_CONFIG.url}/contact`,
   },
   openGraph: {
-    title: `Contact Us | ${siteName}`,
-    description: `Get in touch with the ${siteName} team.`,
-    url: `${siteUrl}/contact`,
-    siteName,
+    title: `Contact Us | ${SITE_CONFIG.name}`,
+    description: `Get in touch with the ${SITE_CONFIG.name} team.`,
+    url: `${SITE_CONFIG.url}/contact`,
+    siteName: SITE_CONFIG.name,
     type: "website",
   },
 };

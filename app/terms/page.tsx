@@ -1,26 +1,24 @@
 import { Metadata } from "next";
-
-const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
-const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in";
-const siteUrl = rawSiteUrl.replace(/\/+$/, "");
-const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "crew.bluebuffofficial@gmail.com";
+import { SITE_CONFIG } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: `Terms of Service | ${siteName}`,
-  description: `Review the terms of service and usage guidelines for playing free online browser games on ${siteName}.`,
+  title: `Terms of Service | ${SITE_CONFIG.name}`,
+  description: `Review the terms of service and usage guidelines for playing free online browser games on ${SITE_CONFIG.name}.`,
   alternates: {
-    canonical: `${siteUrl}/terms`,
+    canonical: `${SITE_CONFIG.url}/terms`,
   },
   openGraph: {
-    title: `Terms of Service | ${siteName}`,
-    description: `Terms of service and usage guidelines for ${siteName}.`,
-    url: `${siteUrl}/terms`,
-    siteName,
+    title: `Terms of Service | ${SITE_CONFIG.name}`,
+    description: `Terms of service and usage guidelines for ${SITE_CONFIG.name}.`,
+    url: `${SITE_CONFIG.url}/terms`,
+    siteName: SITE_CONFIG.name,
     type: "website",
   },
 };
 
 export default function TermsOfServicePage() {
+  const siteName = SITE_CONFIG.name;
+  const supportEmail = SITE_CONFIG.supportEmail;
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-4xl font-bold text-white mb-8">Terms of Service</h1>
@@ -31,7 +29,7 @@ export default function TermsOfServicePage() {
         </p>
         
         <p>
-          These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity (&quot;you&quot;) and {siteName} (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), concerning your access to and use of the {siteName} website and mobile applications.
+          These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity (&quot;you&quot;) and {SITE_CONFIG.name} (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), concerning your access to and use of the {SITE_CONFIG.name} website and mobile applications.
         </p>
 
         <h2 className="text-2xl font-semibold text-white mt-8 mb-4">1. Acceptance of Terms</h2>
