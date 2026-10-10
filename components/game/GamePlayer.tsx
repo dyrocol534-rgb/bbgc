@@ -10,6 +10,7 @@ import axios from 'axios';
 import { ConsoleLoader } from '@/components/ui/ConsoleLoader';
 import Image from 'next/image';
 import GameImage from '@/components/game/GameImage';
+import { triggerHaptic } from '@/lib/utils';
 
 interface GamePlayerProps {
   game: {
@@ -350,6 +351,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   }, []);
 
   const handleInteract = async (action: 'like' | 'dislike' | 'favorite') => {
+    triggerHaptic(action === 'favorite' ? 'medium' : 'light');
     try {
       const res = await axios.post(`/api/games/${game.slug}/interact`, { action });
       setIsLiked(res.data.isLiked);
@@ -357,7 +359,11 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       setIsFavorited(res.data.isFavorited);
       setLikeCount(res.data.likeCount);
       setDislikeCount(res.data.dislikeCount);
+      if (res.data.isLiked || res.data.isFavorited) {
+        triggerHaptic('success');
+      }
     } catch (error: any) {
+      triggerHaptic('warning');
       if (error.response?.status === 401) alert("Please log in to perform this action.");
     }
   };

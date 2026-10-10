@@ -81,30 +81,29 @@ function MetricCell({
 }) {
   return (
     <div className={clsx(
-      "p-3 sm:p-3.5 flex flex-col justify-between transition-colors group relative min-w-0 bg-black/60 hover:bg-white/[0.03]",
-      highlight && "bg-indigo-500/[0.04]",
+      "p-3.5 sm:p-4 flex flex-col justify-between transition-all group relative min-w-0 bg-transparent hover:bg-white/[0.02]",
       className
     )}>
-      <div className="flex items-center gap-1.5 mb-1.5 min-w-0">
-        <div className={clsx(
-          "w-5 h-5 rounded-[6px] flex items-center justify-center shrink-0 border transition-transform duration-200 group-hover:scale-105",
-          iconColor
-        )}>
-          <Icon className="w-3 h-3" />
-        </div>
-        <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider truncate">
+      <div className="flex items-center justify-between mb-2 min-w-0">
+        <span className="text-[11px] font-medium text-zinc-400 truncate">
           {label}
         </span>
+        <div className={clsx(
+          "w-6 h-6 rounded-lg flex items-center justify-center shrink-0 border transition-transform duration-200 group-hover:scale-105",
+          iconColor
+        )}>
+          <Icon className="w-3.5 h-3.5" />
+        </div>
       </div>
 
-      <div className="flex items-baseline gap-1.5 min-w-0 flex-wrap">
-        <span className="text-xl sm:text-2xl font-bold text-white tracking-tight font-mono leading-none shrink-0">
+      <div className="space-y-0.5">
+        <div className="text-xl sm:text-2xl font-bold text-white tracking-tight font-mono">
           {value}
-        </span>
+        </div>
         {sub && (
-          <span className="text-[10px] text-zinc-400 font-medium truncate" title={sub}>
+          <div className="text-[10px] text-zinc-500 font-medium truncate" title={sub}>
             {sub}
-          </span>
+          </div>
         )}
       </div>
     </div>
@@ -230,8 +229,8 @@ export default function AdminAnalytics() {
         </div>
       </div>
 
-      {/* Combined Unified Metrics Panel */}
-      <div className="rounded-2xl bg-white/[0.07] border border-white/[0.08] overflow-hidden shadow-xs grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-px">
+      {/* Minimalist Metrics Strip */}
+      <div className="rounded-2xl border border-white/[0.08] bg-black/40 grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 divide-x divide-y sm:divide-y-0 divide-white/[0.06] overflow-hidden">
         <MetricCell
           icon={Users}
           label="Active Players"

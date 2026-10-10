@@ -767,114 +767,71 @@ export default function AdminGamesPage() {
 
             {/* Modal Body (Scrollable) */}
             <div className="p-4 sm:p-5 overflow-y-auto space-y-4 custom-scrollbar">
-              {/* Quick Interactive Toggles Row */}
-              <div className="grid grid-cols-3 gap-2">
+              {/* Sleek Status Bar */}
+              <div className="flex items-center justify-between p-2.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] text-xs">
                 {/* Visibility Toggle */}
                 <button
                   type="button"
                   onClick={() => toggleStatus(selectedGame._id, selectedGame.status)}
-                  className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border transition-all cursor-pointer active:scale-95 ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-medium transition-all active:scale-95 cursor-pointer ${
                     selectedGame.status === 'published'
-                      ? 'bg-emerald-500/[0.08] border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/[0.12]'
-                      : 'bg-white/[0.02] border-white/[0.06] text-zinc-400 hover:bg-white/[0.04]'
+                      ? 'bg-emerald-500/15 text-emerald-400'
+                      : 'bg-white/[0.04] text-zinc-400 hover:text-white'
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide">
-                    {selectedGame.status === 'published' ? <Eye className="w-3.5 h-3.5 text-emerald-400" /> : <EyeOff className="w-3.5 h-3.5 text-zinc-500" />}
-                    <span>{selectedGame.status === 'published' ? 'Live' : 'Draft'}</span>
-                  </div>
-                  <span className="text-[10px] text-zinc-500 mt-0.5">Visibility</span>
+                  {selectedGame.status === 'published' ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                  <span>{selectedGame.status === 'published' ? 'Live' : 'Draft'}</span>
                 </button>
 
                 {/* Admin Verification Toggle */}
                 <button
                   type="button"
                   onClick={() => toggleVerified(selectedGame._id, selectedGame.verified)}
-                  className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border transition-all cursor-pointer active:scale-95 ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-medium transition-all active:scale-95 cursor-pointer ${
                     selectedGame.verified
-                      ? 'bg-emerald-500/[0.08] border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/[0.12]'
-                      : 'bg-amber-500/[0.08] border-amber-500/25 text-amber-400 hover:bg-amber-500/[0.12]'
+                      ? 'bg-emerald-500/15 text-emerald-400'
+                      : 'bg-amber-500/15 text-amber-400'
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide">
-                    {selectedGame.verified ? <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> : <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />}
-                    <span>{selectedGame.verified ? 'Verified' : 'Check'}</span>
-                  </div>
-                  <span className="text-[10px] text-zinc-500 mt-0.5">Quality</span>
+                  {selectedGame.verified ? <ShieldCheck className="w-3.5 h-3.5" /> : <ShieldAlert className="w-3.5 h-3.5" />}
+                  <span>{selectedGame.verified ? 'Verified' : 'Unchecked'}</span>
                 </button>
 
                 {/* Featured Toggle */}
                 <button
                   type="button"
                   onClick={() => toggleFeatured(selectedGame._id, selectedGame.featured)}
-                  className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] border transition-all cursor-pointer active:scale-95 ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-medium transition-all active:scale-95 cursor-pointer ${
                     selectedGame.featured
-                      ? 'bg-amber-500/[0.08] border-amber-500/25 text-amber-400 hover:bg-amber-500/[0.12]'
-                      : 'bg-white/[0.02] border-white/[0.06] text-zinc-400 hover:bg-white/[0.04]'
+                      ? 'bg-amber-500/15 text-amber-400'
+                      : 'bg-white/[0.04] text-zinc-400 hover:text-white'
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wide">
-                    <Star className={`w-3.5 h-3.5 ${selectedGame.featured ? 'fill-amber-400 text-amber-400' : 'text-zinc-500'}`} />
-                    <span>{selectedGame.featured ? 'Featured' : 'Standard'}</span>
-                  </div>
-                  <span className="text-[10px] text-zinc-500 mt-0.5">Feature</span>
+                  <Star className={`w-3.5 h-3.5 ${selectedGame.featured ? 'fill-amber-400' : ''}`} />
+                  <span>{selectedGame.featured ? 'Featured' : 'Standard'}</span>
                 </button>
               </div>
 
-              {/* Stats & Metadata Section */}
-              <div className="p-3.5 rounded-[16px] bg-white/[0.02] border border-white/[0.06] space-y-3">
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="space-y-1">
-                    <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Total Plays</span>
-                    <p className="text-white font-mono font-bold text-base">
-                      {selectedGame.playCount.toLocaleString()}
-                    </p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Rating</span>
-                    <div className="flex items-center gap-2 font-mono text-xs pt-0.5">
-                      <span className="text-emerald-400 font-medium flex items-center gap-1">
-                        <ThumbsUp className="w-3 h-3" /> {selectedGame.likes?.length || 0}
-                      </span>
-                      <span className="text-zinc-600">/</span>
-                      <span className="text-rose-400 font-medium flex items-center gap-1">
-                        <ThumbsDown className="w-3 h-3" /> {selectedGame.dislikes?.length || 0}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Added</span>
-                    <p className="text-zinc-300 font-medium text-[11px]">
-                      {selectedGame.createdAt ? new Date(selectedGame.createdAt).toLocaleDateString() : "Recently"}
-                    </p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold">Route</span>
-                    <p className="text-zinc-400 font-mono text-[10.5px] truncate">
-                      /games/{selectedGame.slug}
-                    </p>
+              {/* Simplified Clean Stats Strip */}
+              <div className="grid grid-cols-3 gap-2 py-3 border-y border-white/[0.06] text-center">
+                <div>
+                  <div className="text-[10.5px] text-zinc-500">Plays</div>
+                  <div className="text-sm font-bold text-white font-mono mt-0.5">
+                    {selectedGame.playCount.toLocaleString()}
                   </div>
                 </div>
-
-                {/* Categories */}
-                <div className="pt-2 border-t border-white/[0.04]">
-                  <span className="text-zinc-500 text-[10.5px] uppercase tracking-wider font-semibold block mb-1.5">Categories</span>
-                  <div className="flex flex-wrap gap-1">
-                    {selectedGame.category && selectedGame.category.length > 0 ? (
-                      selectedGame.category.map((c) => (
-                        <span 
-                          key={c}
-                          className="px-2 py-0.5 bg-white/[0.08] text-zinc-200 border border-white/10 rounded-full text-[10px] font-medium uppercase"
-                        >
-                          {c}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-zinc-500 text-xs">None</span>
-                    )}
+                <div>
+                  <div className="text-[10.5px] text-zinc-500">Votes</div>
+                  <div className="text-xs font-semibold text-zinc-200 mt-1 flex items-center justify-center gap-1.5">
+                    <span className="text-emerald-400 font-mono">+{selectedGame.likes?.length || 0}</span>
+                    <span className="text-zinc-600">/</span>
+                    <span className="text-rose-400 font-mono">-{selectedGame.dislikes?.length || 0}</span>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10.5px] text-zinc-500">Category</div>
+                  <div className="text-xs font-semibold text-zinc-200 mt-0.5 uppercase truncate">
+                    {selectedGame.category?.[0] || "General"}
                   </div>
                 </div>
               </div>
@@ -886,19 +843,19 @@ export default function AdminGamesPage() {
                     href={`/games/${selectedGame.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/[0.08] rounded-full text-xs font-semibold transition-all active:scale-95"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-white hover:bg-zinc-200 text-black rounded-xl text-xs font-semibold transition-all active:scale-95"
                   >
-                    <Play className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Play Game</span>
-                    <ExternalLink className="w-3 h-3 text-zinc-500" />
+                    <Play className="w-3.5 h-3.5 fill-black" />
+                    <span>Play</span>
+                    <ExternalLink className="w-3 h-3 text-zinc-600" />
                   </Link>
 
                   <Link
                     href={`/admin/games/${selectedGame._id}/edit`}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-white border border-white/[0.08] rounded-full text-xs font-semibold transition-all active:scale-95"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-white/[0.06] hover:bg-white/[0.1] text-white border border-white/[0.08] rounded-xl text-xs font-semibold transition-all active:scale-95"
                   >
-                    <Pencil className="w-3.5 h-3.5 text-white" />
-                    <span>Edit Details</span>
+                    <Pencil className="w-3.5 h-3.5 text-zinc-400" />
+                    <span>Edit</span>
                   </Link>
                 </div>
 
@@ -907,26 +864,26 @@ export default function AdminGamesPage() {
                     type="button"
                     onClick={() => categorizeGameWithAI(selectedGame._id)}
                     disabled={categorizingIds.has(selectedGame._id)}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.06] hover:bg-white/[0.12] text-white border border-white/[0.1] rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.06] rounded-xl text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:opacity-50"
                   >
                     {categorizingIds.has(selectedGame._id) ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
                     ) : (
-                      <Tag className="w-3.5 h-3.5 text-white" />
+                      <Tag className="w-3.5 h-3.5 text-zinc-400" />
                     )}
-                    <span>AI Categorize</span>
+                    <span>AI Tags</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => enhanceGameWithAI(selectedGame._id)}
                     disabled={enhancingIds.has(selectedGame._id)}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.06] hover:bg-white/[0.12] text-white border border-white/[0.1] rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.06] rounded-xl text-xs font-medium transition-all active:scale-95 cursor-pointer disabled:opacity-50"
                   >
                     {enhancingIds.has(selectedGame._id) ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
                     ) : (
-                      <Sparkles className="w-3.5 h-3.5 text-white" />
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
                     )}
                     <span>AI SEO</span>
                   </button>
@@ -935,7 +892,7 @@ export default function AdminGamesPage() {
                 <button
                   type="button"
                   onClick={() => deleteGame(selectedGame._id)}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 bg-rose-500/[0.06] hover:bg-rose-500/[0.12] text-rose-400 border border-rose-500/15 rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer mt-1"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 text-rose-400/80 hover:text-rose-400 hover:bg-rose-500/[0.08] rounded-xl text-xs font-medium transition-all active:scale-95 cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Delete Game</span>

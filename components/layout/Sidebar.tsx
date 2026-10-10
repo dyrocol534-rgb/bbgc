@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { XP_CONFIG } from "@/lib/xp-config";
+import { triggerHaptic } from "@/lib/utils";
 
 const PRIMARY_LINKS = [
   { name: "Home", href: "/", icon: Home, color: "text-blue-400", bg: "bg-blue-500/15 border-blue-500/25" },
@@ -128,15 +129,18 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
 
   const handleSurpriseMe = async () => {
     if (isRolling) return;
+    triggerHaptic("medium");
     try {
       setIsRolling(true);
       const res = await fetch("/api/games/random");
       const data = await res.json();
       if (data.slug) {
+        triggerHaptic("success");
         setIsExpanded(false);
         router.push(`/games/${data.slug}`);
       }
     } catch (err) {
+      triggerHaptic("warning");
       console.error("Failed to fetch random game");
     } finally {
       setIsRolling(false);
