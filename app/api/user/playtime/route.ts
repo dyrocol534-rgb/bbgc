@@ -36,9 +36,15 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      const newPlaytime = (user.playtimeSeconds || 0) + elapsedSeconds;
-      const oldHours = Math.floor((user.playtimeSeconds || 0) / 3600);
+      const oldPlaytime = user.playtimeSeconds || 0;
+      const newPlaytime = oldPlaytime + elapsedSeconds;
+      const oldHours = Math.floor(oldPlaytime / 3600);
       const newHours = Math.floor(newPlaytime / 3600);
+
+      // Check 5-minute milestone crossed (e.g. 5 min, 10 min, 15 min, 20 min, 30 min, 45 min, 60 min...)
+      const oldFiveMinBucket = Math.floor(oldPlaytime / 300);
+      const newFiveMinBucket = Math.floor(newPlaytime / 300);
+      const crossedMilestoneMinutes = newFiveMinBucket > oldFiveMinBucket ? newFiveMinBucket * 5 : 0;
       
       const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || req.headers.get("cf-connecting-ip") || "Unknown";
       
@@ -71,6 +77,34 @@ export async function POST(req: NextRequest) {
         await User.findByIdAndUpdate(user._id, {
           $set: { playtimeSeconds: newPlaytime, lastActiveAt: now, lastIp: ip }
         });
+      }
+
+      // Log milestone to live feed ActivityLog if 5m / 10m / 15m... milestone was crossed
+      if (crossedMilestoneMinutes > 0) {
+        try {
+          const ActivityLog = (await import("@/models/ActivityLog")).default;
+          const displayTime =
+            crossedMilestoneMinutes >= 60
+              ? `${Math.floor(crossedMilestoneMinutes / 60)}h ${crossedMilestoneMinutes % 60 ? `${crossedMilestoneMinutes % 60}m` : ""}`.trim()
+              : `${crossedMilestoneMinutes} mins`;
+
+          await ActivityLog.create({
+            type: "playtime_milestone",
+            userId: user._id,
+            userEmail: user.email,
+            userName: user.name || "Player",
+            userImage: user.image || "",
+            title: `Played for ${displayTime} 🎮`,
+            description: `${user.name || "Player"} completed ${displayTime} of active gameplay.`,
+            meta: {
+              minutes: crossedMilestoneMinutes,
+              totalPlaytimeSeconds: newPlaytime,
+              ip,
+            },
+          });
+        } catch (actErr) {
+          console.error("Failed to record playtime ActivityLog:", actErr);
+        }
       }
 
       return NextResponse.json({ success: true, newPlaytime, xpAwarded });

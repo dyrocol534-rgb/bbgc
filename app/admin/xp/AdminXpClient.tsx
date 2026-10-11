@@ -24,6 +24,8 @@ import {
   UserPlus,
   Zap,
   Filter,
+  Gamepad2,
+  LogIn,
 } from "lucide-react";
 
 interface IUserXp {
@@ -54,7 +56,7 @@ interface ITransaction {
 
 interface IActivityLog {
   _id: string;
-  type: "xp_transaction" | "reward_claim" | "user_signup";
+  type: string;
   category: string;
   title: string;
   description: string;
@@ -286,16 +288,18 @@ export default function AdminXpClient({
           <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
             {[
               { id: "all", label: "All Activity" },
-              { id: "xp_transaction", label: "XP Changes" },
-              { id: "reward_claim", label: "Redemptions" },
-              { id: "user_signup", label: "Signups" },
+              { id: "playtime_milestone", label: "🎮 Playtime (5m/10m+)" },
+              { id: "login", label: "🔑 Logins" },
+              { id: "signup", label: "🎉 Signups" },
+              { id: "reward_claim", label: "🎁 Redemptions" },
+              { id: "xp_transaction", label: "⚡ XP Adjustments" },
             ].map((f) => (
               <button
                 key={f.id}
                 onClick={() => setActivityFilter(f.id)}
                 className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors shrink-0 ${
                   activityFilter === f.id
-                    ? "bg-white text-black border-white"
+                    ? "bg-white text-black border-white shadow-sm"
                     : "bg-zinc-950 text-zinc-400 border-zinc-900 hover:text-white"
                 }`}
               >
@@ -510,7 +514,9 @@ export default function AdminXpClient({
           {filteredActivities.map((act) => {
             const isXp = act.type === "xp_transaction";
             const isClaim = act.type === "reward_claim";
-            const isSignup = act.type === "user_signup";
+            const isSignup = act.type === "signup" || act.type === "user_signup";
+            const isLogin = act.type === "login";
+            const isMilestone = act.type === "playtime_milestone";
 
             return (
               <div
@@ -521,19 +527,27 @@ export default function AdminXpClient({
                   {/* Category icon */}
                   <div
                     className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border mt-0.5 ${
-                      isXp
-                        ? "bg-amber-500/10 border-amber-500/20 text-amber-400"
+                      isMilestone
+                        ? "bg-purple-500/10 border-purple-500/25 text-purple-400"
+                        : isLogin
+                        ? "bg-blue-500/10 border-blue-500/25 text-blue-400"
+                        : isSignup
+                        ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400"
                         : isClaim
-                        ? "bg-cyan-500/10 border-cyan-500/20 text-cyan-400"
-                        : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                        ? "bg-cyan-500/10 border-cyan-500/25 text-cyan-400"
+                        : "bg-amber-500/10 border-amber-500/25 text-amber-400"
                     }`}
                   >
-                    {isXp ? (
-                      <Coins className="w-4 h-4" />
+                    {isMilestone ? (
+                      <Gamepad2 className="w-4 h-4" />
+                    ) : isLogin ? (
+                      <LogIn className="w-4 h-4" />
+                    ) : isSignup ? (
+                      <UserPlus className="w-4 h-4" />
                     ) : isClaim ? (
                       <Gift className="w-4 h-4" />
                     ) : (
-                      <UserPlus className="w-4 h-4" />
+                      <Coins className="w-4 h-4" />
                     )}
                   </div>
 

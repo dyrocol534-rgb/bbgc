@@ -87,12 +87,44 @@ export const authOptions: NextAuthOptions = {
             createdAt: new Date(),
             lastActiveAt: new Date(),
           });
+
+          // Log signup event
+          try {
+            const ActivityLog = (await import("@/models/ActivityLog")).default;
+            await ActivityLog.create({
+              type: "signup",
+              userId: user._id,
+              userEmail: user.email,
+              userName: user.name,
+              title: `New Player Registered 🎉`,
+              description: `${user.name} signed up via Email OTP verification.`,
+              meta: { provider: "email-otp" },
+            });
+          } catch (e) {
+            console.error("Failed to log signup activity:", e);
+          }
         } else {
           user.lastActiveAt = new Date();
           if (!user.referralCode) {
             user.referralCode = generateReferralCode(normalizedEmail);
           }
           await user.save();
+
+          // Log login event
+          try {
+            const ActivityLog = (await import("@/models/ActivityLog")).default;
+            await ActivityLog.create({
+              type: "login",
+              userId: user._id,
+              userEmail: user.email,
+              userName: user.name,
+              title: `Player Logged In 🔑`,
+              description: `${user.name} signed in successfully via Email OTP.`,
+              meta: { provider: "email-otp" },
+            });
+          } catch (e) {
+            console.error("Failed to log login activity:", e);
+          }
         }
 
         return {
@@ -133,6 +165,22 @@ export const authOptions: NextAuthOptions = {
               referralCode: generateReferralCode(user.email || ""),
             });
             user.id = created._id.toString();
+
+            try {
+              const ActivityLog = (await import("@/models/ActivityLog")).default;
+              await ActivityLog.create({
+                type: "signup",
+                userId: created._id,
+                userEmail: created.email,
+                userName: created.name,
+                userImage: created.image || "",
+                title: `New Player Registered 🎉`,
+                description: `${created.name} signed up with Google Account.`,
+                meta: { provider: "google" },
+              });
+            } catch (e) {
+              console.error("Failed to log Google signup:", e);
+            }
           } else {
             existingUser.lastActiveAt = new Date();
             if (!existingUser.referralCode) {
@@ -140,6 +188,22 @@ export const authOptions: NextAuthOptions = {
             }
             await existingUser.save();
             user.id = existingUser._id.toString();
+
+            try {
+              const ActivityLog = (await import("@/models/ActivityLog")).default;
+              await ActivityLog.create({
+                type: "login",
+                userId: existingUser._id,
+                userEmail: existingUser.email,
+                userName: existingUser.name,
+                userImage: existingUser.image || "",
+                title: `Player Logged In 🔑`,
+                description: `${existingUser.name} signed in with Google Account.`,
+                meta: { provider: "google" },
+              });
+            } catch (e) {
+              console.error("Failed to log Google login:", e);
+            }
           }
           return true;
         } catch (error) {

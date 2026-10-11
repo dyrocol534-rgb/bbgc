@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/config";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Sparkles, Coins } from "lucide-react";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -31,37 +31,6 @@ const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
 export default async function RewardsPage() {
   await dbConnect();
-
-  // If no rewards seeded, seed default BGMI & MLBB rewards
-  const count = await Reward.countDocuments();
-  if (count === 0) {
-    await Reward.insertMany([
-      {
-        title: "60 BGMI UC",
-        game: "Battlegrounds Mobile India",
-        requiredXp: 50,
-        badge: "Hot Demand",
-        description: "Instant 60 Unknown Cash voucher delivered directly via Character ID.",
-        stockStatus: "in_stock",
-        isComingSoon: false,
-        iconUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=200&auto=format&fit=crop&q=80",
-        active: true,
-        sortOrder: 1,
-      },
-      {
-        title: "MLBB Weekly Diamond Pass",
-        game: "Mobile Legends: Bang Bang (Indian Server)",
-        requiredXp: 111,
-        badge: "Best Value",
-        description: "7-day diamond delivery with daily pass bonus claimed via User ID + Zone ID.",
-        stockStatus: "in_stock",
-        isComingSoon: false,
-        iconUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop&q=80",
-        active: true,
-        sortOrder: 2,
-      },
-    ]);
-  }
 
   // Fetch active store rewards
   const rawRewards = await Reward.find({ active: true })
@@ -107,35 +76,42 @@ export default async function RewardsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black pb-12">
-      <div className="w-full px-3 sm:px-6 lg:px-8 xl:px-10 py-3 sm:py-4 space-y-4">
-        {/* Navigation Bar */}
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-black text-white pb-16 selection:bg-amber-500/30">
+      {/* ── Full Width iOS Glass Navbar ── */}
+      <header className="sticky top-0 z-40 bg-black/85 backdrop-blur-xl border-b border-zinc-900/80 px-3 sm:px-6 lg:px-8 xl:px-10">
+        <div className="w-full h-12 flex items-center justify-between">
           <Link
             href="/profile"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+            className="inline-flex items-center gap-1 px-2.5 py-1 -ml-1.5 rounded-full text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-medium"
           >
-            <ChevronLeft className="w-3.5 h-3.5 text-zinc-400" />
+            <ChevronLeft className="w-4 h-4 text-zinc-400" />
             <span>Profile</span>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="font-bold text-xs sm:text-sm tracking-tight text-white flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span>Rewards Store</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 -mr-1.5">
             <Link
               href="/rewards-dashboard"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+              className="px-2.5 py-1 rounded-full text-zinc-400 hover:text-white active:scale-95 transition-all text-[11px] sm:text-xs font-medium"
             >
-              <span>Bonus Stats</span>
+              Stats
             </Link>
             <Link
               href="/leaderboard"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+              className="px-2.5 py-1 rounded-full text-zinc-400 hover:text-white active:scale-95 transition-all text-[11px] sm:text-xs font-medium"
             >
-              <span>Leaderboard</span>
+              Ranks
             </Link>
           </div>
         </div>
+      </header>
 
-        {/* Dynamic Rewards Client Component */}
+      {/* ── Full Width Responsive Main Container ── */}
+      <main className="w-full px-3 sm:px-6 lg:px-8 xl:px-10 pt-3 sm:pt-4 space-y-3.5">
         <RewardsStoreClient
           rewards={rewards}
           initialClaims={initialClaims}
@@ -143,7 +119,7 @@ export default async function RewardsPage() {
           userXp={userXp}
           isAuthenticated={Boolean(session?.user?.email)}
         />
-      </div>
+      </main>
     </div>
   );
 }
