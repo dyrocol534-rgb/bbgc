@@ -15,7 +15,12 @@ import {
   AlertCircle,
   History,
   ChevronRight,
+  Sparkles,
+  Zap,
+  Lock,
+  Flame,
 } from "lucide-react";
+import InfoTooltip from "@/components/ui/InfoTooltip";
 
 interface IRewardItem {
   _id: string;
@@ -172,16 +177,23 @@ export default function RewardsStoreClient({
 
       {/* ── Section Header ── */}
       <div className="flex items-center justify-between px-0.5">
-        <h2 className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-          Available Redemptions
-        </h2>
+        <div className="flex items-center gap-1.5">
+          <h2 className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+            Available Redemptions
+          </h2>
+          <InfoTooltip
+            size="xs"
+            title="7-Day Redemption Rule"
+            content="To maintain fair supply, each player can redeem any specific reward item (like BGMI UC or MLBB Weekly Pass) once every 7 days. Your XP is immediately deducted upon placing an order."
+          />
+        </div>
         <span className="text-[10px] text-zinc-500 font-mono">
           1 Claim / 7 Days
         </span>
       </div>
 
-      {/* ── Full Width Responsive Grid (Compact iOS Cards) ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-3">
+      {/* ── Full Width Responsive Grid (Premium iOS Glass Cards) ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
         {rewards.map((item) => {
           const isOutOfStock = item.stockStatus === "out_of_stock";
           const isComingSoon = item.isComingSoon;
@@ -191,13 +203,14 @@ export default function RewardsStoreClient({
           return (
             <div
               key={item._id}
-              className="rounded-xl bg-zinc-950 border border-zinc-900 hover:border-zinc-800 p-3 flex flex-col justify-between gap-2.5 transition-all"
+              className="group relative rounded-2xl bg-gradient-to-b from-zinc-900/60 to-zinc-950/80 border border-white/[0.08] hover:border-amber-500/30 p-3.5 flex flex-col justify-between gap-3 transition-all duration-200 shadow-lg shadow-black/40 hover:shadow-amber-500/5 backdrop-blur-xl"
             >
-              <div>
-                {/* Header: Game Icon + Title + Cost */}
-                <div className="flex items-start justify-between gap-2.5">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="relative w-10 h-10 rounded-lg bg-zinc-900 border border-zinc-800 overflow-hidden flex items-center justify-center shrink-0">
+              <div className="space-y-2.5">
+                {/* Header: Bigger Game Icon (w-14 h-14) + Title + Cost */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    {/* Premium Squircle Icon with border & subtle glow */}
+                    <div className="relative w-14 h-14 rounded-2xl bg-zinc-900 border border-white/[0.12] overflow-hidden flex items-center justify-center shrink-0 shadow-md shadow-black/60 group-hover:border-amber-500/40 transition-colors">
                       {item.iconUrl ? (
                         <Image
                           src={item.iconUrl}
@@ -207,97 +220,105 @@ export default function RewardsStoreClient({
                           unoptimized
                         />
                       ) : (
-                        <Gift className="w-5 h-5 text-zinc-500" />
+                        <Gift className="w-7 h-7 text-zinc-500" />
                       )}
                     </div>
 
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <h3 className="text-xs sm:text-sm font-bold text-white tracking-tight truncate">
-                          {item.title}
-                        </h3>
-                        {item.badge && (
-                          <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400">
-                            {item.badge}
-                          </span>
-                        )}
+                    {/* Title, Badge & Game Name */}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-start gap-1.5 flex-wrap">
+                          <h3 className="text-xs sm:text-sm font-black text-white tracking-tight leading-snug break-words">
+                            {item.title}
+                          </h3>
+                          {item.badge && (
+                            <span className="inline-flex items-center gap-1 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-rose-500/20 border border-orange-500/40 text-amber-300 shadow-sm shadow-orange-500/10 shrink-0">
+                              <Flame className="w-2.5 h-2.5 text-orange-400 fill-orange-400/30 animate-pulse" />
+                              <span className="bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent">{item.badge}</span>
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11px] sm:text-xs text-zinc-400 font-medium truncate">
+                          {item.game}
+                        </p>
                       </div>
-                      <p className="text-[11px] text-zinc-400 font-medium truncate mt-0.5">
-                        {item.game}
-                      </p>
                     </div>
                   </div>
 
-                  {/* Cost Capsule */}
+                  {/* Premium Cost Pill */}
                   <div className="shrink-0 text-right">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-black border border-zinc-800 text-amber-400 font-mono font-bold text-xs">
-                      <Coins className="w-3 h-3" />
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 font-mono font-black text-xs shadow-sm">
+                      <Coins className="w-3.5 h-3.5 text-amber-400" />
                       <span>{item.requiredXp} XP</span>
                     </span>
                   </div>
                 </div>
 
-                {/* Description */}
+                {/* Subtle Description if present */}
                 {item.description && (
-                  <p className="mt-1.5 text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">
+                  <p className="text-[11px] text-zinc-400/90 leading-relaxed line-clamp-1">
                     {item.description}
                   </p>
                 )}
               </div>
 
-              {/* Action Bar (Clean Minimal iOS Bar) */}
-              <div className="pt-2 border-t border-zinc-900 flex items-center justify-between gap-2">
-                {/* Stock indicator */}
-                <div className="flex items-center gap-1 text-[11px]">
+              {/* Clean Bottom Bar: Status on Left, Direct CTA on Right */}
+              <div className="pt-2.5 border-t border-white/[0.06] flex items-center justify-between gap-2">
+                {/* Left: Minimal Status Pill */}
+                <div className="flex items-center gap-1.5 text-xs">
                   {isOutOfStock ? (
-                    <span className="text-red-400 flex items-center gap-1 font-medium text-[10px]">
-                      <XCircle className="w-3 h-3" /> Out of Stock
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-400">
+                      <XCircle className="w-3.5 h-3.5" />
+                      <span>Out of Stock</span>
                     </span>
                   ) : (
-                    <span className="text-emerald-400 flex items-center gap-1 font-medium text-[10px]">
-                      <CheckCircle2 className="w-3 h-3" /> In Stock
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>In Stock</span>
                     </span>
                   )}
-                  <span className="text-zinc-600 text-[10px]">•</span>
-                  <span className="text-zinc-500 text-[10px]">30-60m</span>
+                  <span className="text-zinc-600 text-xs">•</span>
+                  <span className="text-[11px] text-zinc-500 font-mono">30-60m</span>
                 </div>
 
-                {/* CTA Action */}
+                {/* Right: Premium iOS Rounded Pill Button */}
                 <div>
                   {isComingSoon ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400 text-[11px] font-semibold select-none">
+                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-800/80 border border-zinc-700/50 text-zinc-400 text-xs font-semibold select-none">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
                       <span>Coming Soon</span>
                     </span>
                   ) : isOutOfStock ? (
-                    <span className="px-2.5 py-1 rounded-md bg-zinc-900/60 border border-zinc-900 text-zinc-500 text-[11px] font-medium select-none">
+                    <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-zinc-900 border border-white/[0.06] text-zinc-500 text-xs font-medium select-none">
                       Sold Out
                     </span>
                   ) : cooldown ? (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-amber-400 text-[11px] font-medium">
-                      <Clock className="w-3 h-3" />
+                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs font-semibold">
+                      <Clock className="w-3.5 h-3.5" />
                       <span>Wait {cooldown.daysLeft}d</span>
                     </span>
                   ) : !isAuthenticated ? (
                     <Link
                       href="/login"
-                      className="inline-flex items-center px-3 py-1 rounded-md bg-white hover:bg-zinc-200 active:scale-95 text-black font-bold text-xs transition-all"
+                      className="inline-flex items-center px-4 py-1.5 rounded-full bg-white hover:bg-zinc-200 active:scale-95 text-black font-bold text-xs transition-all shadow-md shadow-white/10"
                     >
                       Sign In
                     </Link>
                   ) : !hasEnoughXp ? (
                     <button
                       disabled
-                      className="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-500 text-[11px] font-medium cursor-not-allowed"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-800/60 border border-white/[0.04] text-zinc-500 text-xs font-medium cursor-not-allowed"
                     >
-                      Need {item.requiredXp - currentXp} XP
+                      <Lock className="w-3 h-3" />
+                      <span>Need {item.requiredXp - currentXp} XP</span>
                     </button>
                   ) : (
                     <button
                       onClick={() => openClaimModal(item)}
-                      className="px-3 py-1 rounded-md bg-amber-400 hover:bg-amber-300 active:scale-95 text-black font-bold text-xs transition-all shadow-sm"
+                      className="inline-flex items-center gap-1 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:scale-95 text-black font-bold text-xs transition-all shadow-md shadow-amber-500/20"
                     >
-                      Redeem
+                      <Zap className="w-3.5 h-3.5 fill-black" />
+                      <span>Redeem</span>
                     </button>
                   )}
                 </div>

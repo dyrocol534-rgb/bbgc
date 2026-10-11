@@ -6,6 +6,7 @@ import User from "@/models/User";
 import { XP_CONFIG } from "@/lib/xp";
 import ReferralClient from "./ReferralClient";
 import { Users, Coins, Hourglass, Check, ChevronLeft, ShieldCheck, HeartHandshake } from "lucide-react";
+import InfoTooltip from "@/components/ui/InfoTooltip";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -100,16 +101,23 @@ export default async function ReferralPage() {
           </div>
 
           {/* 2. Completed / Rewards Unlocked */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+              </div>
+              <div className="flex flex-col text-left min-w-0">
+                <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Completed</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                  {rewardsUnlocked} Qualified
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Completed</span>
-              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                {rewardsUnlocked} Qualified
-              </span>
-            </div>
+            <InfoTooltip
+              size="xs"
+              title="Qualified Friends"
+              content={`Friends who joined with your referral code and played at least ${XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games. Both of you received +${XP_CONFIG.REFERRAL_REWARD} XP.`}
+            />
           </div>
 
           {/* 3. Total XP Earned */}
@@ -126,16 +134,23 @@ export default async function ReferralPage() {
           </div>
 
           {/* 4. Pending Friends */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0">
-              <Hourglass className="w-3.5 h-3.5 text-orange-400" />
+          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0">
+                <Hourglass className="w-3.5 h-3.5 text-orange-400" />
+              </div>
+              <div className="flex flex-col text-left min-w-0">
+                <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">In Progress</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                  {pendingInvites} Pending
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">In Progress</span>
-              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                {pendingInvites} Pending
-              </span>
-            </div>
+            <InfoTooltip
+              size="xs"
+              title="Pending Friends"
+              content={`Friends who signed up with your link but haven't finished playing ${XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games yet.`}
+            />
           </div>
 
           {/* 5. Potential XP Pending */}

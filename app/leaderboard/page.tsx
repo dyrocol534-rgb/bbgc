@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { Trophy, Flame, Medal } from "lucide-react";
+import InfoTooltip from "@/components/ui/InfoTooltip";
 import { SITE_CONFIG } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -52,7 +53,14 @@ export default async function LeaderboardPage() {
         <div className="inline-flex items-center justify-center p-2.5 bg-white/[0.05] border border-white/10 rounded-xl mb-3">
           <Trophy className="w-7 h-7 text-white" />
         </div>
-        <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">Global Leaderboard</h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">Global Leaderboard</h1>
+          <InfoTooltip
+            size="sm"
+            title="Leaderboard Ranking"
+            content="Ranks are calculated based on Lifetime XP earned from daily login streaks, active playtime milestones, and referral bonuses. Updates every 60 seconds."
+          />
+        </div>
         <p className="text-zinc-500 text-xs mt-1">
           Top active players on {SITE_CONFIG.name}
         </p>
