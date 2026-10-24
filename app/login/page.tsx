@@ -2,14 +2,14 @@
 
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Loader2, ShieldCheck, Gift, Mail, ArrowRight, KeyRound, Check, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { XP_CONFIG } from "@/lib/xp-config";
 import { BoxSkeleton } from "@/components/ui/ShimmerLoader";
 
-export default function LoginPage() {
+function LoginContent() {
   const { status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -375,5 +375,19 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[85vh] flex items-center justify-center p-4">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }

@@ -16,11 +16,11 @@ import { XP_CONFIG } from "@/lib/xp-config";
 import { triggerHaptic } from "@/lib/utils";
 
 const PRIMARY_LINKS = [
-  { name: "Home", href: "/", icon: Home, color: "text-blue-400", bg: "bg-blue-500/15 border-blue-500/25" },
-  { name: "New", href: "/category/new", icon: Rocket, color: "text-white", bg: "bg-white/[0.08] border-white/[0.12]" },
-  { name: "Popular Games", href: "/category/popular", icon: TrendingUp, color: "text-pink-400", bg: "bg-pink-500/15 border-pink-500/25" },
-  // { name: "Global Leaderboard", href: "/leaderboard", icon: Trophy, color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/25" },
-  { name: "Featured", href: "/category/featured", icon: Crown, color: "text-white", bg: "bg-white/[0.08] border-white/[0.12]" },
+  { name: "Home", href: "/", icon: Home, color: "text-blue-400", bg: "bg-blue-500/15" },
+  { name: "New", href: "/category/new", icon: Rocket, color: "text-white", bg: "bg-white/[0.08]" },
+  { name: "Popular Games", href: "/category/popular", icon: TrendingUp, color: "text-pink-400", bg: "bg-pink-500/15" },
+  // { name: "Global Leaderboard", href: "/leaderboard", icon: Trophy, color: "text-amber-400", bg: "bg-amber-500/15" },
+  { name: "Featured", href: "/category/featured", icon: Crown, color: "text-white", bg: "bg-white/[0.08]" },
 ];
 
 const getCategoryIcon = (category: string) => {
@@ -229,7 +229,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 disabled={isRolling}
                 className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.08] shadow-xs cursor-pointer active:scale-95"
               >
-                <div className="w-7 h-7 rounded-[8px] bg-white/[0.1] border border-white/15 flex items-center justify-center shrink-0 shadow-sm text-white">
+                <div className="w-7 h-7 rounded-[8px] bg-white/[0.1] flex items-center justify-center shrink-0 shadow-sm text-white">
                   {isRolling ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Dices className="w-3.5 h-3.5 text-white" />}
                 </div>
                 <span className="font-semibold text-xs text-zinc-200">Surprise Me!</span>
@@ -254,8 +254,8 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                     )}
                   >
                     <div className={clsx(
-                      "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 border",
-                      isActive ? link.bg : "bg-white/[0.04] border-white/[0.06] text-zinc-400"
+                      "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0",
+                      isActive ? link.bg : "bg-white/[0.04] text-zinc-400"
                     )}>
                       <Icon className={clsx("w-3.5 h-3.5", isActive ? link.color : "text-zinc-400")} />
                     </div>
@@ -280,7 +280,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 className="w-full flex items-center justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:bg-white/[0.07] rounded-xl transition-all"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 flex items-center justify-center shrink-0">
                     <Handshake className="w-3.5 h-3.5 text-emerald-400" />
                   </div>
                   <div className="flex flex-col items-start">
@@ -301,7 +301,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 className="w-full flex items-center justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:bg-white/[0.07] rounded-xl transition-all"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-[8px] bg-amber-500/15 border border-amber-500/25 flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-[8px] bg-amber-500/15 flex items-center justify-center shrink-0">
                     <Flame className="w-3.5 h-3.5 text-amber-400" />
                   </div>
                   <div className="flex flex-col items-start">
@@ -335,8 +335,8 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                     )}
                   >
                     <div className={clsx(
-                      "w-7 h-7 rounded-[7px] flex items-center justify-center shrink-0 border",
-                      isActive ? "bg-white/[0.12] border-white/20 text-white" : "bg-white/[0.03] border-white/[0.05] text-zinc-500"
+                      "w-7 h-7 rounded-[7px] flex items-center justify-center shrink-0",
+                      isActive ? "bg-white/[0.12] text-white" : "bg-white/[0.03] text-zinc-500"
                     )}>
                       <Icon className="w-3.5 h-3.5" />
                     </div>
@@ -392,7 +392,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 )}
                 title={!isExpanded ? "Surprise Me (Random Game)" : undefined}
               >
-                <div className="w-7 h-7 rounded-[8px] bg-white/[0.1] border border-white/15 flex items-center justify-center shrink-0 shadow-sm text-white group-hover:bg-white/[0.15] transition-all">
+                <div className="w-7 h-7 rounded-[8px] bg-white/[0.1] flex items-center justify-center shrink-0 shadow-sm text-white group-hover:bg-white/[0.15] transition-all">
                   {isRolling ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Dices className="w-3.5 h-3.5 text-white" />}
                 </div>
                 {isExpanded && (
@@ -420,8 +420,8 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                     title={!isExpanded ? link.name : undefined}
                   >
                     <div className={clsx(
-                      "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 border transition-all",
-                      isActive ? link.bg : "bg-white/[0.04] border-white/[0.06] text-zinc-400 group-hover:text-white group-hover:bg-white/[0.08]"
+                      "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 transition-all",
+                      isActive ? link.bg : "bg-white/[0.04] text-zinc-400 group-hover:text-white group-hover:bg-white/[0.08]"
                     )}>
                       <Icon className={clsx("w-3.5 h-3.5", isActive ? link.color : "text-zinc-400 group-hover:text-white")} />
                     </div>
@@ -458,7 +458,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 title={!isExpanded ? `Refer & Earn (+${XP_CONFIG.REFERRAL_REWARD} XP)` : undefined}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/25 transition-all">
+                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/25 transition-all">
                     <Handshake className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   </div>
                   {isExpanded && (
@@ -488,7 +488,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 title={!isExpanded ? "Daily Streak & XP" : undefined}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-[8px] bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0 group-hover:bg-white/[0.12] transition-all">
+                  <div className="w-7 h-7 rounded-[8px] bg-white/[0.08] flex items-center justify-center shrink-0 group-hover:bg-white/[0.12] transition-all">
                     <Flame className="w-3.5 h-3.5 text-white shrink-0" />
                   </div>
                   {isExpanded && (
@@ -541,10 +541,10 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                     title={!isExpanded ? link.name : undefined}
                   >
                     <div className={clsx(
-                      "w-7 h-7 rounded-[7px] flex items-center justify-center shrink-0 border transition-all",
+                      "w-7 h-7 rounded-[7px] flex items-center justify-center shrink-0 transition-all",
                       isActive 
-                        ? "bg-white/[0.12] border-white/20 text-white" 
-                        : "bg-white/[0.03] border-white/[0.05] text-zinc-500 group-hover:text-zinc-300 group-hover:bg-white/[0.06]"
+                        ? "bg-white/[0.12] text-white" 
+                        : "bg-white/[0.03] text-zinc-500 group-hover:text-zinc-300 group-hover:bg-white/[0.06]"
                     )}>
                       <Icon className="w-3.5 h-3.5" />
                     </div>
