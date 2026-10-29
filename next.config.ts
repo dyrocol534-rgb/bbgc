@@ -19,8 +19,17 @@ const nextConfig: NextConfig = {
   },
   poweredByHeader: false,
   devIndicators: false,
+  compress: true,
   experimental: {
     optimizeCss: true,
+    staleTimes: {
+      dynamic: 30,
+      static: 300,
+    },
+    optimizePackageImports: [
+      "lucide-react",
+      "recharts",
+    ],
   },
   async headers() {
     return [
@@ -47,6 +56,15 @@ const nextConfig: NextConfig = {
           {
             key: 'Access-Control-Allow-Origin',
             value: '*',
+          },
+        ],
+      },
+      {
+        source: '/(logo.png|favicon.ico|manifest.webmanifest|icons/:path*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
           },
         ],
       },

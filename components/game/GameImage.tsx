@@ -35,10 +35,6 @@ export default function GameImage({
     return s;
   }, [src]);
 
-  // Bypass Next.js image proxy for external gaming CDNs to save serverless transformation costs and latency
-  const isExternalCdn = useMemo(() => {
-    return /gamemonetize|gamedistribution|gamepix|cdn\.jsdelivr|unsplash|googleusercontent/i.test(cleanSrc);
-  }, [cleanSrc]);
 
   if (imgError || !cleanSrc) {
     return (
@@ -78,7 +74,6 @@ export default function GameImage({
           src={cleanSrc}
           alt={alt}
           fill
-          unoptimized={isExternalCdn}
           quality={75}
           preload={priority}
           sizes={sizes}

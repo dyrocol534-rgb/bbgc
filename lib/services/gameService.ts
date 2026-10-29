@@ -241,18 +241,19 @@ export const getPublishedGamesByCategory = (category: string) =>
           query.featured = true;
           limitAmount = 18;
         } else if (cat === "io" || cat === ".io") {
-          query.category = { $regex: /^\.?io$/i };
+          query.category = { $in: ["io", ".io", "IO", ".IO", "Io", ".Io"] };
+          limitAmount = 60;
         } else {
-          query.category = { $regex: new RegExp(`^${category}$`, "i") };
+          query.category = {
+            $in: [category, cat, cat.charAt(0).toUpperCase() + cat.slice(1), cat.toUpperCase()]
+          };
+          limitAmount = 60;
         }
 
         const queryBuilder = Game.find(query)
           .sort(sort)
-          .select("_id slug title thumbnailUrl category playCount");
-
-        if (limitAmount > 0) {
-          queryBuilder.limit(limitAmount);
-        }
+          .select("_id slug title thumbnailUrl category playCount")
+          .limit(limitAmount);
 
         const games = await queryBuilder.lean();
         return games.map(serializeGameCard);

@@ -41,12 +41,11 @@ export async function GET(request: Request) {
     const isAutocomplete = Boolean(query && limit <= 10);
     
     let total = 0;
-    if (sort === 'random' || !isAutocomplete) {
-      total = await Game.countDocuments(dbQuery);
-    }
-    let games;
+    let hasMore = false;
+    let games: any[] = [];
     
     if (sort === 'random') {
+      total = await Game.countDocuments(dbQuery);
       const maxSkip = Math.max(0, total - limit);
       const randomSkip = maxSkip > 0 ? Math.floor(Math.random() * (maxSkip + 1)) : 0;
       games = await Game.find(dbQuery)
@@ -54,35 +53,48 @@ export async function GET(request: Request) {
         .skip(randomSkip)
         .limit(limit)
         .lean();
+      hasMore = games.length === limit;
     } else if (isTextSearch) {
+      total = await Game.countDocuments(dbQuery);
       games = await Game.find(dbQuery, { score: { $meta: "textScore" } })
         .select('_id slug title thumbnailUrl category playCount')
         .sort({ score: { $meta: "textScore" }, playCount: -1 })
         .skip(skip)
         .limit(limit)
         .lean();
+      hasMore = skip + games.length < total;
     } else {
-      games = await Game.find(dbQuery)
+      // High-performance pagination: fetch limit + 1 to determine hasMore without expensive full collection scans
+      const fetched = await Game.find(dbQuery)
         .select('_id slug title thumbnailUrl category playCount')
         .sort({ playCount: -1, createdAt: -1 })
         .skip(skip)
-        .limit(limit)
+        .limit(limit + 1)
         .lean();
-    }
-      
-    const hasMore = sort === 'random'
-      ? games.length === limit
-      : isAutocomplete
-        ? games.length === limit
-        : skip + games.length < total;
 
-    return NextResponse.json({
-      games,
-      total: isAutocomplete ? games.length : total,
-      page,
-      limit,
-      hasMore,
-    });
+      hasMore = fetched.length > limit;
+      games = hasMore ? fetched.slice(0, limit) : fetched;
+      total = isAutocomplete ? games.length : (hasMore ? skip + limit + 1 : skip + games.length);
+    }
+
+    const cacheHeader = (sort === 'random' || isAutocomplete)
+      ? "no-store"
+      : "public, s-maxage=60, stale-while-revalidate=300";
+
+    return NextResponse.json(
+      {
+        games,
+        total,
+        page,
+        limit,
+        hasMore,
+      },
+      {
+        headers: {
+          "Cache-Control": cacheHeader,
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching games:", error);
     return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });

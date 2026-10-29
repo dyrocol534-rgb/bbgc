@@ -6,8 +6,6 @@ import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 import Footer from "@/components/layout/Footer";
 import Script from "next/script";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { getCachedPublishedCategories } from "@/lib/services/gameService";
 import DisableInspect from "@/components/layout/DisableInspect";
 import LazyWelcomeModal from "@/components/auth/LazyWelcomeModal";
@@ -122,12 +120,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [session, categories] = await Promise.all([
-    getServerSession(authOptions),
-    getCachedPublishedCategories(),
-  ]);
-  const isAdmin = session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com");
-  const isProd = process.env.NODE_ENV === "production";
+  const categories = await getCachedPublishedCategories();
   const websiteSchema = {
     "@context": "https://schema.org",
     "@graph": [
