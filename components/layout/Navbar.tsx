@@ -7,11 +7,13 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
 import PWAInstallButton from "./PWAInstallButton";
 import SearchBar from "./SearchBar";
 import NotificationBell from "../notifications/NotificationBell";
-import ShareModal from "../game/ShareModal";
 import { XP_CONFIG } from "@/lib/xp-config";
+
+const ShareModal = dynamic(() => import("../game/ShareModal"), { ssr: false });
 
 
 function MovingOuterRing({ className }: { className?: string }) {

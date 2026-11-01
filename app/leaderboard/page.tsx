@@ -38,14 +38,19 @@ function maskName(name: string): string {
 }
 
 export default async function LeaderboardPage() {
-  await dbConnect();
-  
-  // Fetch top 100 users by lifetimeXp with lean field projection
-  const users = await User.find({ lifetimeXp: { $gt: 0 } })
-    .select('name lifetimeXp currentStreak')
-    .sort({ lifetimeXp: -1 })
-    .limit(100)
-    .lean();
+  let users: any[] = [];
+  try {
+    await dbConnect();
+    // Fetch top 100 users by lifetimeXp with lean field projection
+    users = await User.find({ lifetimeXp: { $gt: 0 } })
+      .select('name lifetimeXp currentStreak')
+      .sort({ lifetimeXp: -1 })
+      .limit(100)
+      .lean();
+  } catch (error) {
+    console.error("Error fetching leaderboard users:", error);
+    users = [];
+  }
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-2xl min-h-screen">

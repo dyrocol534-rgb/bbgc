@@ -31,18 +31,39 @@ export async function generateMetadata(
 async function searchGames(query: string) {
   try {
     await dbConnect();
-    const games = await Game.find({ 
-      status: "published",
-      $or: [
-        { title: { $regex: new RegExp(query, 'i') } },
-        { slug: { $regex: new RegExp(query, 'i') } },
-        { category: { $regex: new RegExp(query, 'i') } }
-      ]
-    })
-      .sort({ playCount: -1 })
-      .limit(50)
+    const trimmed = query.trim();
+    if (!trimmed) return [];
+
+    // Use full-text index when query length >= 2
+    let filter: any = { status: "published" };
+    if (trimmed.length === 1) {
+      filter.title = { $regex: `^${trimmed}`, $options: "i" };
+    } else {
+      filter.$text = { $search: trimmed };
+    }
+
+    let games = await Game.find(filter)
+      .select("_id slug title thumbnailUrl category playCount")
+      .sort(trimmed.length > 1 ? { score: { $meta: "textScore" }, playCount: -1 } : { playCount: -1 })
+      .limit(48)
       .lean();
-    return JSON.parse(JSON.stringify(games));
+
+    // Fallback if full-text index returned 0 matches
+    if (games.length === 0 && trimmed.length > 1) {
+      games = await Game.find({
+        status: "published",
+        title: { $regex: trimmed, $options: "i" },
+      })
+        .select("_id slug title thumbnailUrl category playCount")
+        .sort({ playCount: -1 })
+        .limit(48)
+        .lean();
+    }
+
+    return games.map((g: any) => ({
+      ...g,
+      _id: g._id?.toString() || "",
+    }));
   } catch (error) {
     console.error("Error searching games:", error);
     return [];
