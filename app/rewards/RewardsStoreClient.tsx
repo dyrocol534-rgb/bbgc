@@ -17,7 +17,6 @@ import {
   Sparkles,
   Zap,
   Lock,
-  Flame,
 } from "lucide-react";
 import InfoTooltip from "@/components/ui/InfoTooltip";
 
@@ -255,22 +254,14 @@ export default function RewardsStoreClient({
                       )}
                     </div>
 
-                    {/* Game Name + Reward Title + Clean Badge */}
+                    {/* Game Name + Reward Title */}
                     <div className="min-w-0 flex-1">
                       <p className="text-[11px] text-zinc-400 font-medium truncate leading-tight">
                         {item.game}
                       </p>
-                      <h3 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug truncate mt-0.5 group-hover:text-amber-300 transition-colors">
+                      <h3 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug line-clamp-2 mt-0.5 group-hover:text-amber-300 transition-colors">
                         {item.title}
                       </h3>
-                      {item.badge && (
-                        <div className="mt-1">
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 shadow-sm">
-                            <Flame className="w-2.5 h-2.5 text-orange-400 fill-orange-400" />
-                            <span>{item.badge}</span>
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </div>
 
@@ -282,13 +273,6 @@ export default function RewardsStoreClient({
                     </span>
                   </div>
                 </div>
-
-                {/* Subtle Description if present */}
-                {item.description && (
-                  <p className="text-[11px] text-zinc-400/85 leading-relaxed line-clamp-1">
-                    {item.description}
-                  </p>
-                )}
               </div>
 
               {/* Clean Bottom Bar: Minimal Status on Left, Action CTA on Right */}
