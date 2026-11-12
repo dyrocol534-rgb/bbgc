@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { X, Loader2 } from "lucide-react";
 import { isPushSupported, getExistingSubscription, subscribeUserToPush } from "@/lib/push-client";
+import { SITE_CONFIG } from "@/lib/config";
 
 export default function NotificationPrompt() {
   const pathname = usePathname();
@@ -12,6 +13,7 @@ export default function NotificationPrompt() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!SITE_CONFIG.showNotificationPrompt) return;
     if (pathname === "/login" || pathname?.startsWith("/login")) {
       setIsVisible(false);
       return;
@@ -54,7 +56,7 @@ export default function NotificationPrompt() {
   };
 
   if (pathname === "/login" || pathname?.startsWith("/login")) return null;
-  if (!isVisible) return null;
+  if (!SITE_CONFIG.showNotificationPrompt || !isVisible) return null;
 
   return (
     <div className="fixed bottom-4 right-3 sm:bottom-5 sm:right-5 z-40 w-auto max-w-[calc(100vw-1.5rem)] sm:max-w-[295px] bg-[#161619]/95 backdrop-blur-xl border border-white/[0.12] rounded-full py-1.5 px-2.5 sm:px-3 shadow-[0_10px_30px_rgba(0,0,0,0.7)] animate-in fade-in slide-in-from-bottom-3 duration-200">

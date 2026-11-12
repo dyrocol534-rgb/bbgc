@@ -8,7 +8,6 @@ import {
   Coins,
   ShieldCheck,
   CheckCircle2,
-  XCircle,
   Clock,
   ArrowRight,
   Loader2,
@@ -192,7 +191,7 @@ export default function RewardsStoreClient({
         </span>
       </div>
 
-      {/* ── Full Width Responsive Grid (Premium iOS Glass Cards) ── */}
+      {/* ── Full Width Responsive Grid (Dynamic Image Gradient Cards) ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
         {rewards.map((item) => {
           const isOutOfStock = item.stockStatus === "out_of_stock";
@@ -203,20 +202,52 @@ export default function RewardsStoreClient({
           return (
             <div
               key={item._id}
-              className="group relative rounded-2xl bg-gradient-to-b from-zinc-900/60 to-zinc-950/80 border border-white/[0.08] hover:border-amber-500/30 p-3.5 flex flex-col justify-between gap-3 transition-all duration-200 shadow-lg shadow-black/40 hover:shadow-amber-500/5 backdrop-blur-xl"
+              className="group relative rounded-2xl bg-zinc-950/80 border border-white/[0.08] hover:border-white/20 p-3.5 sm:p-4 flex flex-col justify-between gap-3 transition-all duration-300 shadow-xl shadow-black/50 hover:shadow-2xl overflow-hidden backdrop-blur-xl"
             >
-              <div className="space-y-2.5">
-                {/* Header: Bigger Game Icon (w-14 h-14) + Title + Cost */}
+              {/* Dynamic Game/Image Background Gradient Bloom */}
+              {item.iconUrl ? (
+                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-0">
+                  {/* Primary bloom radiating from the image (top-left) */}
+                  <div
+                    className="absolute -top-12 -left-12 w-64 h-64 opacity-35 sm:opacity-40 blur-3xl scale-125 transition-all duration-700 group-hover:scale-150 group-hover:opacity-55"
+                    style={{
+                      backgroundImage: `url(${item.iconUrl})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  />
+                  {/* Subtle ambient counter-bloom at bottom-right */}
+                  <div
+                    className="absolute -bottom-10 -right-10 w-44 h-44 opacity-20 blur-3xl scale-125 transition-all duration-700 group-hover:opacity-30"
+                    style={{
+                      backgroundImage: `url(${item.iconUrl})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  />
+                  {/* Smooth dark vignette ensuring crisp text contrast */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-zinc-950/80 to-zinc-950/95" />
+                </div>
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/40 to-zinc-950/90 rounded-2xl z-0" />
+              )}
+
+              {/* Top hairline highlight sheen */}
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-10 pointer-events-none" />
+
+              {/* Main Card Content */}
+              <div className="relative z-10 space-y-2.5">
+                {/* Header: Game Icon + Title/Category + Cost Pill */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    {/* Premium Squircle Icon with border & subtle glow */}
-                    <div className="relative w-14 h-14 rounded-2xl bg-zinc-900 border border-white/[0.12] overflow-hidden flex items-center justify-center shrink-0 shadow-md shadow-black/60 group-hover:border-amber-500/40 transition-colors">
+                    {/* Game Icon with squircle frame and hover zoom */}
+                    <div className="relative w-14 h-14 rounded-2xl bg-zinc-900 border border-white/[0.12] overflow-hidden flex items-center justify-center shrink-0 shadow-md shadow-black/60 group-hover:border-white/30 transition-all">
                       {item.iconUrl ? (
                         <Image
                           src={item.iconUrl}
                           alt={item.title}
                           fill
-                          className="object-cover"
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
                           unoptimized
                         />
                       ) : (
@@ -224,30 +255,28 @@ export default function RewardsStoreClient({
                       )}
                     </div>
 
-                    {/* Title, Badge & Game Name */}
+                    {/* Game Name + Reward Title + Clean Badge */}
                     <div className="min-w-0 flex-1">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-start gap-1.5 flex-wrap">
-                          <h3 className="text-xs sm:text-sm font-black text-white tracking-tight leading-snug break-words">
-                            {item.title}
-                          </h3>
-                          {item.badge && (
-                            <span className="inline-flex items-center gap-1 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-rose-500/20 border border-orange-500/40 text-amber-300 shadow-sm shadow-orange-500/10 shrink-0">
-                              <Flame className="w-2.5 h-2.5 text-orange-400 fill-orange-400/30 animate-pulse" />
-                              <span className="bg-gradient-to-r from-amber-200 to-orange-300 bg-clip-text text-transparent">{item.badge}</span>
-                            </span>
-                          )}
+                      <p className="text-[11px] text-zinc-400 font-medium truncate leading-tight">
+                        {item.game}
+                      </p>
+                      <h3 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug truncate mt-0.5 group-hover:text-amber-300 transition-colors">
+                        {item.title}
+                      </h3>
+                      {item.badge && (
+                        <div className="mt-1">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 shadow-sm">
+                            <Flame className="w-2.5 h-2.5 text-orange-400 fill-orange-400" />
+                            <span>{item.badge}</span>
+                          </span>
                         </div>
-                        <p className="text-[11px] sm:text-xs text-zinc-400 font-medium truncate">
-                          {item.game}
-                        </p>
-                      </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* Premium Cost Pill */}
+                  {/* Clean Cost Pill */}
                   <div className="shrink-0 text-right">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 font-mono font-black text-xs shadow-sm">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-300 font-mono font-bold text-xs shadow-sm">
                       <Coins className="w-3.5 h-3.5 text-amber-400" />
                       <span>{item.requiredXp} XP</span>
                     </span>
@@ -256,40 +285,40 @@ export default function RewardsStoreClient({
 
                 {/* Subtle Description if present */}
                 {item.description && (
-                  <p className="text-[11px] text-zinc-400/90 leading-relaxed line-clamp-1">
+                  <p className="text-[11px] text-zinc-400/85 leading-relaxed line-clamp-1">
                     {item.description}
                   </p>
                 )}
               </div>
 
-              {/* Clean Bottom Bar: Status on Left, Direct CTA on Right */}
-              <div className="pt-2.5 border-t border-white/[0.06] flex items-center justify-between gap-2">
-                {/* Left: Minimal Status Pill */}
+              {/* Clean Bottom Bar: Minimal Status on Left, Action CTA on Right */}
+              <div className="relative z-10 pt-2.5 border-t border-white/[0.06] flex items-center justify-between gap-2">
+                {/* Left: Minimal Status Indicator */}
                 <div className="flex items-center gap-1.5 text-xs">
                   {isOutOfStock ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-rose-400">
-                      <XCircle className="w-3.5 h-3.5" />
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-rose-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                       <span>Out of Stock</span>
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-emerald-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50" />
                       <span>In Stock</span>
                     </span>
                   )}
                   <span className="text-zinc-600 text-xs">•</span>
-                  <span className="text-[11px] text-zinc-500 font-mono">30-60m</span>
+                  <span className="text-[11px] text-zinc-400 font-mono">30-60m</span>
                 </div>
 
-                {/* Right: Premium iOS Rounded Pill Button */}
+                {/* Right: Rounded Action Button */}
                 <div>
                   {isComingSoon ? (
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-800/80 border border-zinc-700/50 text-zinc-400 text-xs font-semibold select-none">
+                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-400 text-xs font-semibold select-none">
                       <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
                       <span>Coming Soon</span>
                     </span>
                   ) : isOutOfStock ? (
-                    <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-zinc-900 border border-white/[0.06] text-zinc-500 text-xs font-medium select-none">
+                    <span className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-zinc-900/80 border border-white/[0.08] text-zinc-500 text-xs font-semibold select-none">
                       Sold Out
                     </span>
                   ) : cooldown ? (
@@ -307,9 +336,9 @@ export default function RewardsStoreClient({
                   ) : !hasEnoughXp ? (
                     <button
                       disabled
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-800/60 border border-white/[0.04] text-zinc-500 text-xs font-medium cursor-not-allowed"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-white/[0.06] text-zinc-500 text-xs font-medium cursor-not-allowed"
                     >
-                      <Lock className="w-3 h-3" />
+                      <Lock className="w-3 h-3 text-zinc-500" />
                       <span>Need {item.requiredXp - currentXp} XP</span>
                     </button>
                   ) : (

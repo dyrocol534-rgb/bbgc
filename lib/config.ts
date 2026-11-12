@@ -9,6 +9,10 @@ export const SITE_CONFIG = {
   url: (process.env.NEXT_PUBLIC_SITE_URL || "https://games.bluebuff.in").replace(/\/+$/, ""),
   supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "crew.bluebuffofficial@gmail.com",
   adminEmail: process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com",
+
+  // Feature Flags
+  // Controls visibility of the "Daily Rewards & Drops" notification prompt pill
+  showNotificationPrompt: process.env.NEXT_PUBLIC_SHOW_NOTIFICATION_PROMPT === "true" || false,
 } as const;
 
 export default SITE_CONFIG;

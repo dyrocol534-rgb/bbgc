@@ -10,6 +10,7 @@ import { getCachedPublishedCategories } from "@/lib/services/gameService";
 import DisableInspect from "@/components/layout/DisableInspect";
 import LazyWelcomeModal from "@/components/auth/LazyWelcomeModal";
 import NotificationPrompt from "@/components/notifications/NotificationPrompt";
+import { SITE_CONFIG } from "@/lib/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -216,7 +217,7 @@ export default async function RootLayout({
         <Providers>
           <Navbar />
           <LazyWelcomeModal />
-          <NotificationPrompt />
+          {SITE_CONFIG.showNotificationPrompt && <NotificationPrompt />}
           <div className="flex flex-1 pt-14 sm:pt-16 w-full">
             <Sidebar initialCategories={categories} />
             <main className="flex-1 min-w-0 flex flex-col">
