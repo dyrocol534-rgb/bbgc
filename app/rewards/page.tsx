@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/config";
-import { ChevronLeft, Sparkles, Coins } from "lucide-react";
+import { ChevronLeft, Gift, Coins } from "lucide-react";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -79,30 +79,30 @@ export default async function RewardsPage() {
     <div className="min-h-screen bg-black text-white pb-16 selection:bg-amber-500/30">
       {/* ── Full Width iOS Glass Navbar ── */}
       <header className="sticky top-0 z-40 bg-black/85 backdrop-blur-xl border-b border-zinc-900/80 px-3 sm:px-6 lg:px-8 xl:px-10">
-        <div className="w-full h-12 flex items-center justify-between">
+        <div className="w-full h-13 sm:h-14 flex items-center justify-between">
           <Link
             href="/profile"
-            className="inline-flex items-center gap-1 px-2.5 py-1 -ml-1.5 rounded-full text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-medium"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-semibold shadow-xs"
           >
-            <ChevronLeft className="w-4 h-4 text-zinc-400" />
+            <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white" />
             <span>Profile</span>
           </Link>
 
-          <div className="font-bold text-xs sm:text-sm tracking-tight text-white flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <div className="font-extrabold text-sm sm:text-base tracking-tight text-white flex items-center gap-2">
+            <Gift className="w-4 h-4 text-amber-400 shrink-0" />
             <span>Rewards Store</span>
           </div>
 
-          <div className="flex items-center gap-1.5 -mr-1.5">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <Link
               href="/rewards-dashboard"
-              className="px-2.5 py-1 rounded-full text-zinc-400 hover:text-white active:scale-95 transition-all text-[11px] sm:text-xs font-medium"
+              className="px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-medium shadow-xs"
             >
               Stats
             </Link>
             <Link
               href="/leaderboard"
-              className="px-2.5 py-1 rounded-full text-zinc-400 hover:text-white active:scale-95 transition-all text-[11px] sm:text-xs font-medium"
+              className="px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-medium shadow-xs"
             >
               Ranks
             </Link>
