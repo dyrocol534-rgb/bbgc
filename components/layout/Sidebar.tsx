@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import clsx from "clsx";
@@ -203,8 +204,14 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
         {/* Drawer Header */}
         <div className="p-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-black">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center font-black text-white text-base shadow-sm border border-white/20 select-none">
-              B
+            <div className="relative w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center shrink-0">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="w-full h-full object-contain"
+              />
             </div>
             <span className="text-sm font-bold text-white tracking-tight">Navigation</span>
           </div>
@@ -227,12 +234,12 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 type="button"
                 onClick={handleSurpriseMe}
                 disabled={isRolling}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.08] shadow-xs cursor-pointer active:scale-95"
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-gradient-to-r from-purple-500/15 via-indigo-500/10 to-transparent hover:from-purple-500/25 hover:via-indigo-500/15 border border-purple-500/20 hover:border-purple-500/40 shadow-xs cursor-pointer active:scale-95 group"
               >
-                <div className="w-7 h-7 rounded-[8px] bg-white/[0.1] flex items-center justify-center shrink-0 shadow-sm text-white">
-                  {isRolling ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Dices className="w-3.5 h-3.5 text-white" />}
+                <div className="w-7 h-7 rounded-[8px] bg-purple-500/20 border border-purple-400/30 flex items-center justify-center shrink-0 shadow-sm text-purple-300 group-hover:bg-purple-500/30 transition-all">
+                  {isRolling ? <Loader2 className="w-3.5 h-3.5 text-purple-200 animate-spin" /> : <Dices className="w-3.5 h-3.5 text-purple-300" />}
                 </div>
-                <span className="font-semibold text-xs text-zinc-200">Surprise Me!</span>
+                <span className="font-semibold text-xs text-zinc-200 group-hover:text-white transition-colors">Surprise Me!</span>
               </button>
             </div>
 
@@ -277,14 +284,14 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                   }
                   setIsExpanded(false);
                 }}
-                className="w-full flex items-center justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:bg-white/[0.07] rounded-xl transition-all"
+                className="w-full flex items-center justify-between px-3 py-2 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent hover:from-emerald-500/25 hover:via-teal-500/15 border border-emerald-500/20 hover:border-emerald-500/40 rounded-xl transition-all group"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/30 transition-all">
                     <Handshake className="w-3.5 h-3.5 text-emerald-400" />
                   </div>
                   <div className="flex flex-col items-start">
-                    <span className="text-white text-xs font-medium">Refer & Earn</span>
+                    <span className="text-white text-xs font-medium group-hover:text-emerald-300 transition-colors">Refer & Earn</span>
                     <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+{XP_CONFIG.REFERRAL_REWARD} XP</span>
                   </div>
                 </div>
@@ -298,14 +305,14 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                   }
                   setIsExpanded(false);
                 }}
-                className="w-full flex items-center justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:bg-white/[0.07] rounded-xl transition-all"
+                className="w-full flex items-center justify-between px-3 py-2 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-transparent hover:from-amber-500/25 hover:via-orange-500/15 border border-amber-500/20 hover:border-amber-500/40 rounded-xl transition-all group"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-[8px] bg-amber-500/15 flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-[8px] bg-amber-500/20 border border-amber-400/30 flex items-center justify-center shrink-0 group-hover:bg-amber-500/30 transition-all">
                     <Flame className="w-3.5 h-3.5 text-amber-400" />
                   </div>
                   <div className="flex flex-col items-start">
-                    <span className="text-white text-xs font-medium">Daily Streak</span>
+                    <span className="text-white text-xs font-medium group-hover:text-amber-300 transition-colors">Daily Streak</span>
                     <span className="text-zinc-400 text-[9.5px] uppercase tracking-wider font-semibold">
                       {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
                     </span>
@@ -387,16 +394,16 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 className={clsx(
                   "flex items-center rounded-xl transition-all whitespace-nowrap cursor-pointer active:scale-95 group",
                   isExpanded 
-                    ? "w-full gap-3 px-3 py-2 bg-white/[0.05] hover:bg-white/[0.09] border border-white/[0.08] hover:border-white/20 shadow-xs" 
+                    ? "w-full gap-3 px-3 py-2 bg-gradient-to-r from-purple-500/15 via-indigo-500/10 to-transparent hover:from-purple-500/25 hover:via-indigo-500/15 border border-purple-500/20 hover:border-purple-500/40 shadow-xs" 
                     : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
                 )}
                 title={!isExpanded ? "Surprise Me (Random Game)" : undefined}
               >
-                <div className="w-7 h-7 rounded-[8px] bg-white/[0.1] flex items-center justify-center shrink-0 shadow-sm text-white group-hover:bg-white/[0.15] transition-all">
-                  {isRolling ? <Loader2 className="w-3.5 h-3.5 text-white animate-spin" /> : <Dices className="w-3.5 h-3.5 text-white" />}
+                <div className="w-7 h-7 rounded-[8px] bg-purple-500/20 border border-purple-400/30 flex items-center justify-center shrink-0 shadow-sm text-purple-300 group-hover:bg-purple-500/30 transition-all">
+                  {isRolling ? <Loader2 className="w-3.5 h-3.5 text-purple-200 animate-spin" /> : <Dices className="w-3.5 h-3.5 text-purple-300" />}
                 </div>
                 {isExpanded && (
-                  <span className="font-semibold text-xs text-zinc-200 truncate">Surprise Me!</span>
+                  <span className="font-semibold text-xs text-zinc-200 group-hover:text-white transition-colors truncate">Surprise Me!</span>
                 )}
               </button>
             </div>
@@ -452,13 +459,13 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 className={clsx(
                   "flex items-center transition-all rounded-xl group overflow-hidden",
                   isExpanded 
-                    ? "w-full justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.07]" 
+                    ? "w-full justify-between px-3 py-2 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent hover:from-emerald-500/25 hover:via-teal-500/15 border border-emerald-500/20 hover:border-emerald-500/40" 
                     : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
                 )}
                 title={!isExpanded ? `Refer & Earn (+${XP_CONFIG.REFERRAL_REWARD} XP)` : undefined}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/25 transition-all">
+                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/30 transition-all">
                     <Handshake className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                   </div>
                   {isExpanded && (
@@ -482,18 +489,18 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 className={clsx(
                   "flex items-center transition-all rounded-xl group overflow-hidden",
                   isExpanded 
-                    ? "w-full justify-between px-3 py-2 bg-white/[0.04] border border-white/[0.07] hover:border-white/[0.15] hover:bg-white/[0.07]" 
+                    ? "w-full justify-between px-3 py-2 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-transparent hover:from-amber-500/25 hover:via-orange-500/15 border border-amber-500/20 hover:border-amber-500/40" 
                     : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
                 )}
                 title={!isExpanded ? "Daily Streak & XP" : undefined}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-[8px] bg-white/[0.08] flex items-center justify-center shrink-0 group-hover:bg-white/[0.12] transition-all">
-                    <Flame className="w-3.5 h-3.5 text-white shrink-0" />
+                  <div className="w-7 h-7 rounded-[8px] bg-amber-500/20 border border-amber-400/30 flex items-center justify-center shrink-0 group-hover:bg-amber-500/30 transition-all">
+                    <Flame className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                   </div>
                   {isExpanded && (
                     <div className="flex flex-col items-start whitespace-nowrap min-w-0">
-                      <span className="text-white text-xs font-medium group-hover:text-zinc-200 transition-colors truncate">Daily Streak</span>
+                      <span className="text-white text-xs font-medium group-hover:text-amber-300 transition-colors truncate">Daily Streak</span>
                       <span className="text-zinc-400 text-[9.5px] uppercase tracking-wider font-semibold">
                         {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
                       </span>
