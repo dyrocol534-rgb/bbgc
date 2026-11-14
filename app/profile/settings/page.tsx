@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import InfoTooltip from "@/components/ui/InfoTooltip";
 import SettingsClient from "./SettingsClient";
 
 export const metadata = {
@@ -24,20 +25,20 @@ export default async function SettingsPage() {
             <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             <span>{session ? "Profile" : "Home"}</span>
           </Link>
-
-          <span className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">
-            Preferences &amp; Settings
-          </span>
         </div>
 
-        {/* Header */}
-        <div className="rounded-xl bg-zinc-950 border border-zinc-900 p-3.5 sm:p-4">
-          <h1 className="text-base sm:text-lg font-black text-white tracking-tight">
-            Settings &amp; Preferences
-          </h1>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            Personalize audio, push notifications, cloud sync, and account security.
-          </p>
+        {/* Header with InfoTooltip */}
+        <div className="flex items-center justify-between px-0.5">
+          <div className="flex items-center gap-2">
+            <h1 className="text-base sm:text-lg font-black text-white tracking-tight">
+              Settings &amp; Preferences
+            </h1>
+            <InfoTooltip
+              size="xs"
+              title="Settings & Preferences"
+              content="Personalize audio, push notifications, cloud sync, and account security."
+            />
+          </div>
         </div>
 
         {/* Main Settings Client */}

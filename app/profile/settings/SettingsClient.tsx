@@ -134,9 +134,9 @@ export default function SettingsClient({ user }: SettingsClientProps) {
     <div className="space-y-4">
       {/* ── 1. Top User Profile & Sync Status Bar ── */}
       {user ? (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl bg-zinc-950 border border-zinc-900 gap-3">
+        <div className="flex items-center justify-between p-3 sm:p-3.5 rounded-xl bg-zinc-950 border border-zinc-900 gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="relative w-11 h-11 rounded-full overflow-hidden border border-zinc-800 bg-zinc-900 shrink-0">
+            <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden border border-zinc-800 bg-zinc-900 shrink-0">
               {user.image ? (
                 <Image
                   src={user.image}
@@ -167,13 +167,13 @@ export default function SettingsClient({ user }: SettingsClientProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <Link
               href="/profile"
-              className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors inline-flex items-center gap-1"
+              className="px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-800 transition-colors inline-flex items-center gap-1"
             >
               <span>View Profile</span>
-              <ChevronRight className="w-3.5 h-3.5 text-zinc-500" />
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
             </Link>
           </div>
         </div>
@@ -351,21 +351,21 @@ export default function SettingsClient({ user }: SettingsClientProps) {
           {/* Quick Platform Info */}
           <div className="space-y-1.5">
             <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 px-1">
-              Platform &amp; Cache
+              App Info
             </div>
 
             <div className="bg-zinc-950 rounded-xl border border-zinc-900 p-3.5 text-xs text-zinc-400 space-y-2">
               <div className="flex items-center justify-between">
-                <span>Game Engine Version</span>
+                <span>App Version</span>
                 <span className="font-mono text-zinc-300">v1.0.4</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Cloud Save Status</span>
-                <span className="text-emerald-400 font-medium">Active &amp; Synced</span>
+                <span>Cloud Save</span>
+                <span className="text-emerald-400 font-medium">Synced</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Sound Driver</span>
-                <span className="font-mono text-zinc-300">HTML5 Audio / WebAudio</span>
+                <span>Game Audio</span>
+                <span className="text-zinc-300 font-medium">Active</span>
               </div>
             </div>
           </div>
