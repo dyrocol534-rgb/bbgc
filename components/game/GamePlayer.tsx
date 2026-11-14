@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import { ConsoleLoader } from '@/components/ui/ConsoleLoader';
 import Image from 'next/image';
 import GameImage from '@/components/game/GameImage';
@@ -34,6 +35,7 @@ interface GamePlayerProps {
 }
 
 export default function GamePlayer({ game }: GamePlayerProps) {
+  const { data: session, status: authStatus } = useSession();
   const openShareModal = useUIStore((state) => state.openShareModal);
 
   // Persistent Player Preferences
@@ -176,6 +178,9 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   };
 
   useEffect(() => {
+    // Only query interaction state if user is logged in; guests cannot vote or favorite
+    if (authStatus !== 'authenticated' || !session?.user) return;
+
     axios.post(`/api/games/${game.slug}/interact`, { action: 'status' })
       .then(res => {
         setIsLiked(res.data.isLiked);
@@ -184,7 +189,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         setLikeCount(res.data.likeCount);
         setDislikeCount(res.data.dislikeCount);
       }).catch(console.error);
-  }, [game.slug]);
+  }, [game.slug, authStatus, session?.user]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -535,6 +540,11 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   }, []);
 
   const handleInteract = async (action: 'like' | 'dislike' | 'favorite') => {
+    if (authStatus !== 'authenticated' || !session?.user) {
+      triggerHaptic('warning');
+      alert("Please log in to perform this action.");
+      return;
+    }
     triggerHaptic(action === 'favorite' ? 'medium' : 'light');
     try {
       const res = await axios.post(`/api/games/${game.slug}/interact`, { action });
