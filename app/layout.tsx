@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/layout/Providers";
 import Navbar from "@/components/layout/Navbar";
@@ -11,18 +10,6 @@ import DisableInspect from "@/components/layout/DisableInspect";
 import LazyWelcomeModal from "@/components/auth/LazyWelcomeModal";
 import NotificationPrompt from "@/components/notifications/NotificationPrompt";
 import { SITE_CONFIG } from "@/lib/config";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";
 const siteDescription = `Play 1000+ free online games instantly – no download, no login! Action, puzzle, racing, sports, shooting & io games on ${siteName}. Works seamlessly on PC, mobile & tablet. New games added daily!`;
@@ -181,7 +168,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://html5.gamedistribution.com" />
         <link rel="dns-prefetch" href="https://html5.gamemonetize.com" />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen flex flex-col bg-background text-text-main`}>
+      <body className={`min-h-screen flex flex-col bg-background text-text-main`}>
         {/* Google Analytics */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-XL79QHW97L" strategy="lazyOnload" />
         <Script id="google-analytics" strategy="lazyOnload">
