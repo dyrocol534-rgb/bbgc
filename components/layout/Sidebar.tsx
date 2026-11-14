@@ -15,6 +15,7 @@ import {
 import { Skeleton } from "@/components/ui/Skeleton";
 import { XP_CONFIG } from "@/lib/xp-config";
 import { triggerHaptic } from "@/lib/utils";
+import { useUIStore } from "@/lib/stores/uiStore";
 
 const PRIMARY_LINKS = [
   { name: "Home", href: "/", icon: Home, color: "text-blue-400", bg: "bg-blue-500/15" },
@@ -82,7 +83,16 @@ interface SidebarProps {
 
 export default function Sidebar({ initialCategories = [] }: SidebarProps) {
   const { data: session } = useSession();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const isExpanded = useUIStore((state) => state.isNavSidebarOpen);
+  const setNavSidebarOpen = useUIStore((state) => state.setNavSidebarOpen);
+  const closeNavSidebar = useUIStore((state) => state.closeNavSidebar);
+  const setIsExpanded = (val: boolean | ((prev: boolean) => boolean)) => {
+    if (typeof val === "function") {
+      setNavSidebarOpen(val(isExpanded));
+    } else {
+      setNavSidebarOpen(val);
+    }
+  };
   const pathname = usePathname();
   const router = useRouter();
   const [isRolling, setIsRolling] = useState(false);
@@ -111,20 +121,8 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
 
   // Auto-close on route navigation
   useEffect(() => {
-    setIsExpanded(false);
-  }, [pathname]);
-
-  // Listen for mobile header hamburger toggle
-  useEffect(() => {
-    const handleToggle = () => setIsExpanded(prev => !prev);
-    const handleClose = () => setIsExpanded(false);
-    window.addEventListener("toggle-navigation-sidebar", handleToggle);
-    window.addEventListener("close-navigation-sidebar", handleClose);
-    return () => {
-      window.removeEventListener("toggle-navigation-sidebar", handleToggle);
-      window.removeEventListener("close-navigation-sidebar", handleClose);
-    };
-  }, []);
+    closeNavSidebar();
+  }, [pathname, closeNavSidebar]);
 
   if (isAdminPage) return null;
 

@@ -12,6 +12,7 @@ import { ConsoleLoader } from '@/components/ui/ConsoleLoader';
 import Image from 'next/image';
 import GameImage from '@/components/game/GameImage';
 import { triggerHaptic } from '@/lib/utils';
+import { useUIStore } from '@/lib/stores/uiStore';
 
 interface GamePlayerProps {
   game: {
@@ -29,6 +30,7 @@ interface GamePlayerProps {
 }
 
 export default function GamePlayer({ game }: GamePlayerProps) {
+  const openShareModal = useUIStore((state) => state.openShareModal);
   try {
     const origin = new URL(game.playUrl).origin;
     preconnect(origin, { crossOrigin: 'anonymous' });
@@ -956,15 +958,12 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             {/* Share Button */}
             <button 
               onClick={() => {
-                if (typeof window !== 'undefined') {
-                  window.dispatchEvent(new CustomEvent('open-share-modal', {
-                    detail: {
-                      title: game.title,
-                      thumbnailUrl: game.thumbnailUrl,
-                      category: game.category?.[0] || 'Online Game',
-                    }
-                  }));
-                }
+                openShareModal({
+                  slug: game.slug,
+                  title: game.title,
+                  thumbnailUrl: game.thumbnailUrl,
+                  category: game.category?.[0] || 'Online Game',
+                });
               }} 
               className="w-8 h-8 flex items-center justify-center bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 rounded-full border border-white/[0.08] text-zinc-300 hover:text-white transition-all shrink-0 cursor-pointer shadow-sm" 
               title="Share Game"

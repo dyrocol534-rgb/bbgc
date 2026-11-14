@@ -12,6 +12,7 @@ import PWAInstallButton from "./PWAInstallButton";
 import SearchBar from "./SearchBar";
 import NotificationBell from "../notifications/NotificationBell";
 import { XP_CONFIG } from "@/lib/xp-config";
+import { useUIStore } from "@/lib/stores/uiStore";
 
 const ShareModal = dynamic(() => import("../game/ShareModal"), { ssr: false });
 
@@ -118,28 +119,15 @@ export default function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
   const [logoError, setLogoError] = useState(false);
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [shareData, setShareData] = useState<{
-    title?: string;
-    thumbnailUrl?: string;
-    category?: string;
-  } | undefined>(undefined);
+  const isShareModalOpen = useUIStore((state) => state.isShareModalOpen);
+  const shareData = useUIStore((state) => state.shareData);
+  const openShareModal = useUIStore((state) => state.openShareModal);
+  const closeShareModal = useUIStore((state) => state.closeShareModal);
+  const toggleNavSidebar = useUIStore((state) => state.toggleNavSidebar);
   const [userStats, setUserStats] = useState<{ xp: number; streak: number } | null>(null);
 
   const isGameSlugPage = Boolean(pathname?.startsWith("/games/") && pathname !== "/games");
   const gameSlug = isGameSlugPage ? pathname?.replace("/games/", "").split("/")[0].split("?")[0] : undefined;
-
-  useEffect(() => {
-    const handleOpenShare = (e: Event) => {
-      const customEvent = e as CustomEvent<{ title?: string; thumbnailUrl?: string; category?: string }>;
-      if (customEvent.detail) {
-        setShareData(customEvent.detail);
-      }
-      setIsShareModalOpen(true);
-    };
-    window.addEventListener("open-share-modal", handleOpenShare);
-    return () => window.removeEventListener("open-share-modal", handleOpenShare);
-  }, []);
 
   const handleOpenShareFromNavbar = () => {
     if (typeof document !== "undefined") {
@@ -149,13 +137,15 @@ export default function Navbar() {
       const breadcrumbLinks = document.querySelectorAll('nav[aria-label="Breadcrumb"] a');
       const category = breadcrumbLinks.length > 1 ? (breadcrumbLinks[1].textContent?.trim() || "") : "";
       
-      setShareData({
+      openShareModal({
         title,
         thumbnailUrl: ogImage,
         category,
+        slug: gameSlug,
       });
+    } else {
+      openShareModal({ slug: gameSlug });
     }
-    setIsShareModalOpen(true);
   };
 
   // Keep local stats synced with session whenever session loads
@@ -281,8 +271,8 @@ export default function Navbar() {
 
         <ShareModal
           isOpen={isShareModalOpen}
-          onClose={() => setIsShareModalOpen(false)}
-          slug={gameSlug}
+          onClose={closeShareModal}
+          slug={shareData?.slug || gameSlug}
           title={shareData?.title}
           thumbnailUrl={shareData?.thumbnailUrl}
           category={shareData?.category}
@@ -298,7 +288,7 @@ export default function Navbar() {
           {/* Mobile Navigation Drawer Toggle */}
           <button
             type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent("toggle-navigation-sidebar"))}
+            onClick={toggleNavSidebar}
             className="md:hidden w-[34px] h-[34px] flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.15] text-zinc-300 hover:text-white border border-white/[0.08] transition-all cursor-pointer shadow-xs active:scale-90"
             aria-label="Toggle navigation menu"
             title="Menu"
@@ -666,8 +656,8 @@ export default function Navbar() {
 
       <ShareModal
         isOpen={isShareModalOpen}
-        onClose={() => setIsShareModalOpen(false)}
-        slug={gameSlug}
+        onClose={closeShareModal}
+        slug={shareData?.slug || gameSlug}
         title={shareData?.title}
         thumbnailUrl={shareData?.thumbnailUrl}
         category={shareData?.category}
