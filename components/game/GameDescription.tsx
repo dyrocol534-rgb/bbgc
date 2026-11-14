@@ -45,19 +45,21 @@ export default function GameDescription({ description }: GameDescriptionProps) {
       </p>
 
       {canExpand && (
-        <button
-          type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-400 hover:text-white transition-colors py-0.5 cursor-pointer select-none"
-          aria-expanded={isExpanded}
-        >
-          <span>{isExpanded ? "Show less" : "Show more"}</span>
-          {isExpanded ? (
-            <ChevronUp className="w-3.5 h-3.5" />
-          ) : (
-            <ChevronDown className="w-3.5 h-3.5" />
-          )}
-        </button>
+        <div className="flex justify-end pt-0.5">
+          <button
+            type="button"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-red-400 hover:text-red-300 transition-colors py-0.5 cursor-pointer select-none active:scale-95"
+            aria-expanded={isExpanded}
+          >
+            <span>{isExpanded ? "Show less" : "Show more"}</span>
+            {isExpanded ? (
+              <ChevronUp className="w-3.5 h-3.5" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5" />
+            )}
+          </button>
+        </div>
       )}
     </div>
   );
