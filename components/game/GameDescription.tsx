@@ -27,7 +27,7 @@ export default function GameDescription({ description }: GameDescriptionProps) {
     <div className="space-y-1.5">
       <p
         ref={textRef}
-        className={`text-xs sm:text-[13px] text-zinc-400 leading-relaxed whitespace-pre-line transition-all duration-200 ${
+        className={`text-xs sm:text-[13px] text-zinc-200 leading-relaxed whitespace-pre-line transition-all duration-200 ${
           !isExpanded ? "line-clamp-3 overflow-hidden" : ""
         }`}
         style={

@@ -269,10 +269,10 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
               <GamePlayer game={game} />
             </div>
 
-            {/* iOS Inset Grouped Details Card */}
-            <div className="rounded-[20px] bg-[#141416] border border-white/[0.08] p-4 sm:p-5 shadow-xs space-y-4">
+            {/* iOS Inset Grouped Details Card - AMOLED Deep Dark */}
+            <div className="rounded-[20px] bg-[#09090b] border border-white/[0.08] p-4 sm:p-5 shadow-xs space-y-4">
               {/* Header Info */}
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 <div className="flex flex-col gap-1.5 w-full">
                   <h1 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug">
                     {game.title}
@@ -286,7 +286,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                     <Link
                       key={`cat-${cat}-${idx}`}
                       href={`/category/${cat.toLowerCase().replace(/^\./, "")}`}
-                      className="px-2 py-0.5 rounded-full text-[10px] font-semibold capitalize transition-all bg-white/[0.08] hover:bg-white/[0.14] text-white border border-white/[0.12] shrink-0 whitespace-nowrap cursor-pointer active:scale-95"
+                      className="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold capitalize transition-all bg-white/10 hover:bg-white/[0.18] text-white border border-white/15 shrink-0 whitespace-nowrap cursor-pointer active:scale-95 shadow-xs"
                     >
                       {cat}
                     </Link>
@@ -294,7 +294,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                   {Array.from(new Set(game.tags || [])).map((tag: string, idx: number) => (
                     <span
                       key={`tag-${tag}-${idx}`}
-                      className="px-2 py-0.5 rounded-full text-[9.5px] text-zinc-400 bg-white/[0.04] border border-white/[0.07] shrink-0 whitespace-nowrap"
+                      className="px-2 py-0.5 rounded-full text-[10px] font-medium text-zinc-300 bg-white/[0.06] border border-white/10 shrink-0 whitespace-nowrap"
                     >
                       #{tag}
                     </span>
@@ -306,19 +306,19 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
               <div className="flex items-center justify-between py-1 border-t border-white/[0.06] gap-2">
                 <div className="flex items-center gap-2 min-w-0">
                   <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span className="text-xs font-medium text-zinc-400 shrink-0">Devices:</span>
+                  <span className="text-xs font-medium text-zinc-300 shrink-0">Devices:</span>
                   <span className="text-xs font-semibold text-white truncate">
                     Mobile, iOS, Tablet &amp; PC
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0 text-xs text-zinc-300">
-                  <span className="flex items-center gap-1 text-[11px] text-zinc-300">
+                <div className="flex items-center gap-2 shrink-0 text-xs text-white">
+                  <span className="flex items-center gap-1 text-[11px] text-zinc-200">
                     <Smartphone className="w-3.5 h-3.5 text-sky-400" />
                     <span>Mobile</span>
                   </span>
                   <span className="text-zinc-600">•</span>
-                  <span className="flex items-center gap-1 text-[11px] text-zinc-300">
+                  <span className="flex items-center gap-1 text-[11px] text-zinc-200">
                     <Monitor className="w-3.5 h-3.5 text-emerald-400" />
                     <span>PC</span>
                   </span>
@@ -327,7 +327,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
 
               {/* About This Game Description */}
               <div className="space-y-1.5 pt-2 border-t border-white/[0.06]">
-                <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-200 flex items-center gap-1.5">
                   <Info className="w-3.5 h-3.5 text-white" />
                   About This Game
                 </h3>
@@ -336,29 +336,29 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
 
               {/* Controls Section - Clean, seamless layout */}
               <div className="space-y-2 pt-2 border-t border-white/[0.06]">
-                <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-200 flex items-center gap-1.5">
                   <Gamepad2 className="w-3.5 h-3.5 text-white" />
                   Controls &amp; How to Play
                 </h3>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs py-0.5">
                   <div className="flex items-center justify-between sm:justify-start gap-2.5">
-                    <span className="text-zinc-400 flex items-center gap-1.5 text-xs">
-                      <Monitor className="w-3.5 h-3.5 text-zinc-300 shrink-0" />
+                    <span className="text-zinc-300 flex items-center gap-1.5 text-xs font-medium">
+                      <Monitor className="w-3.5 h-3.5 text-zinc-200 shrink-0" />
                       Desktop Keyboard:
                     </span>
                     <div className="flex items-center gap-1">
-                      <kbd className="px-1.5 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[9.5px] font-semibold rounded">WASD</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[9.5px] font-semibold rounded">Space</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[9.5px] font-semibold rounded">Mouse</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 text-white font-mono text-[9.5px] font-semibold rounded shadow-xs">WASD</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 text-white font-mono text-[9.5px] font-semibold rounded shadow-xs">Space</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-white/10 border border-white/20 text-white font-mono text-[9.5px] font-semibold rounded shadow-xs">Mouse</kbd>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between sm:justify-start gap-2.5">
-                    <span className="text-zinc-400 flex items-center gap-1.5 text-xs">
+                    <span className="text-zinc-300 flex items-center gap-1.5 text-xs font-medium">
                       <Smartphone className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                       Mobile &amp; Tablet:
                     </span>
-                    <span className="text-zinc-300 text-xs font-medium">Touch Screen</span>
+                    <span className="text-white text-xs font-semibold">Touch Screen</span>
                   </div>
                 </div>
               </div>
