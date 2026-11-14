@@ -71,7 +71,7 @@ export default async function ProfilePage() {
         <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 active:scale-95 transition-all shadow-xs"
+            className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-white/[0.08] active:scale-95 transition-all shadow-xs"
           >
             <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             <span>Home</span>
@@ -80,42 +80,44 @@ export default async function ProfilePage() {
           <div className="flex items-center gap-2">
             <Link
               href="/referral"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 active:scale-95 transition-all shadow-xs"
+              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-white/[0.08] active:scale-95 transition-all shadow-xs"
             >
-              <Gift className="w-3.5 h-3.5 text-zinc-400" />
+              <Gift className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
               <span>Invite</span>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
             </Link>
 
             <Link
               href="/profile/settings"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 active:scale-95 transition-all shadow-xs"
+              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-white/[0.08] active:scale-95 transition-all shadow-xs"
             >
               <Settings className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
               <span>Settings</span>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-500 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
             </Link>
           </div>
         </div>
 
         {/* ── Compact User Profile Bar ── */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-zinc-950 via-zinc-900/80 to-zinc-950 border border-white/[0.08] p-3 sm:p-3.5 shadow-xl shadow-black/40 backdrop-blur-xl">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-zinc-950 via-zinc-900/80 to-zinc-950 border border-white/[0.08] py-2.5 px-3 sm:py-2.5 sm:px-3.5 shadow-xl shadow-black/40 backdrop-blur-xl">
           {/* Ambient subtle glow */}
           <div className="absolute -top-10 -left-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
 
-          <div className="relative z-10 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
+          <div className="relative z-10 flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5 min-w-0">
               {/* Avatar with status indicator */}
               <div className="relative shrink-0">
                 {session.user.image ? (
                   <Image
                     src={session.user.image}
                     alt={session.user.name || "User"}
-                    width={40}
-                    height={40}
-                    className="w-10 h-10 rounded-full border border-zinc-800 object-cover bg-zinc-900 shadow-md"
+                    width={36}
+                    height={36}
+                    className="w-9 h-9 rounded-full border border-zinc-800 object-cover bg-zinc-900 shadow-md"
                   />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-sm font-bold text-white border border-zinc-800 shadow-md">
+                  <div className="w-9 h-9 rounded-full bg-zinc-900 flex items-center justify-center text-xs font-bold text-white border border-zinc-800 shadow-md">
                     {(session.user.name || "U").charAt(0).toUpperCase()}
                   </div>
                 )}
@@ -124,16 +126,16 @@ export default async function ProfilePage() {
 
               {/* Name, Email & Member Since badge */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug truncate">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <h1 className="text-xs sm:text-sm font-bold text-white tracking-tight leading-none truncate">
                     {session.user.name}
                   </h1>
-                  <span className="inline-flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-900/90 border border-zinc-800 px-1.5 py-0.5 rounded-full">
+                  <span className="shrink-0 inline-flex items-center gap-0.5 text-[9px] text-zinc-400 bg-white/[0.04] border border-white/[0.07] px-1.5 py-0.5 rounded-full leading-none">
                     <Calendar className="w-2.5 h-2.5 text-zinc-500" />
-                    <span>Member since {memberSince}</span>
+                    <span>{memberSince}</span>
                   </span>
                 </div>
-                <p className="text-[11px] text-zinc-500 truncate mt-0.5">
+                <p className="text-[10.5px] sm:text-[11px] text-zinc-500 truncate leading-tight mt-1">
                   {session.user.email}
                 </p>
               </div>
@@ -142,7 +144,7 @@ export default async function ProfilePage() {
             {/* Quick Rewards XP Badge */}
             <Link
               href="/rewards"
-              className="shrink-0 inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/25 text-amber-300 font-mono text-xs font-bold transition-all active:scale-95 shadow-xs group"
+              className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/25 text-amber-300 font-mono text-[11px] sm:text-xs font-bold transition-all active:scale-95 shadow-xs group"
             >
               <Coins className="w-3.5 h-3.5 text-amber-400 group-hover:rotate-12 transition-transform" />
               <span>{xp.toLocaleString()} XP</span>

@@ -65,12 +65,12 @@ export default async function ReferralPage() {
         </div>
 
         {/* ── Header with InfoTooltip ── */}
-        <div className="flex items-center justify-between px-0.5">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between px-0.5 pt-2 sm:pt-3 pb-1.5 sm:pb-2">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             <h1 className="text-base sm:text-lg font-black text-white tracking-tight">
               Referral Program
             </h1>
-            <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">
               +{XP_CONFIG.REFERRAL_REWARD} XP Each
             </span>
             <InfoTooltip
@@ -82,37 +82,37 @@ export default async function ReferralPage() {
         </div>
 
         {/* ── 2-Row Clean Metrics (No Card, No Border Outside Icons) ── */}
-        <div className="space-y-3 py-1">
+        <div className="space-y-4 sm:space-y-4.5 py-2.5 sm:py-3.5 px-1">
           {/* Row 1: Friends activity (Invited, Joined, Playing) */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3 sm:gap-5">
             {/* 1. Invited */}
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 py-1">
               <Users className="w-4 h-4 text-[#007AFF] shrink-0" />
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Invited</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 leading-none truncate">Invited</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-1">
                   {totalInvited}
                 </span>
               </div>
             </div>
 
             {/* 2. Joined */}
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 py-1">
               <Check className="w-4 h-4 text-emerald-400 shrink-0" />
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Joined</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 leading-none truncate">Joined</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-1">
                   {rewardsUnlocked}
                 </span>
               </div>
             </div>
 
             {/* 3. Playing */}
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 py-1">
               <Hourglass className="w-4 h-4 text-orange-400 shrink-0" />
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Playing</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 leading-none truncate">Playing</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-1">
                   {pendingInvites}
                 </span>
               </div>
@@ -120,35 +120,35 @@ export default async function ReferralPage() {
           </div>
 
           {/* Row 2: Rewards & Success (Earned XP, Pending XP, Success Rate) */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-3 sm:gap-5">
             {/* 4. Earned XP */}
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 py-1">
               <Coins className="w-4 h-4 text-amber-400 shrink-0" />
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Earned</span>
-                <span className="text-xs sm:text-sm font-bold text-amber-400 tracking-tight leading-tight truncate font-mono mt-0.5">
+                <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 leading-none truncate">Earned</span>
+                <span className="text-xs sm:text-sm font-bold text-amber-400 tracking-tight leading-tight truncate font-mono mt-1">
                   +{totalXpEarned} XP
                 </span>
               </div>
             </div>
 
             {/* 5. Pending XP */}
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 py-1">
               <ShieldCheck className="w-4 h-4 text-purple-400 shrink-0" />
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Pending</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 leading-none truncate">Pending</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-1">
                   +{potentialXp} XP
                 </span>
               </div>
             </div>
 
             {/* 6. Success Rate */}
-            <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 py-1">
               <HeartHandshake className="w-4 h-4 text-rose-400 shrink-0" />
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Success</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 leading-none truncate">Success</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-1">
                   {conversionRate}%
                 </span>
               </div>

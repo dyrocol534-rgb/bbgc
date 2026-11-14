@@ -6,7 +6,7 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { XP_CONFIG } from "@/lib/xp";
 import { SITE_CONFIG } from "@/lib/config";
-import { Coins, Flame, Clock, Users, ArrowRight, ChevronLeft, Gift } from "lucide-react";
+import { Coins, Flame, Clock, Users, ArrowRight, ChevronLeft, ChevronRight, Gift } from "lucide-react";
 import InfoTooltip from "@/components/ui/InfoTooltip";
 import Link from "next/link";
 
@@ -55,7 +55,7 @@ export default async function RewardsPage() {
         <div className="flex items-center justify-between">
           <Link
             href="/profile"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+            className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-white/[0.08] active:scale-95 transition-all shadow-xs"
           >
             <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             <span>Profile</span>
@@ -63,55 +63,48 @@ export default async function RewardsPage() {
 
           <div className="flex items-center gap-2">
             <Link
-              href="/rewards"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-400 hover:text-amber-300 text-xs font-medium transition-colors"
-            >
-              <Gift className="w-3.5 h-3.5" />
-              <span>Rewards Store</span>
-            </Link>
-
-            <Link
               href="/leaderboard"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-white/[0.08] active:scale-95 transition-all shadow-xs"
             >
               <span>Leaderboard</span>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white group-hover:translate-x-0.5 transition-all" />
             </Link>
           </div>
         </div>
 
         {/* ── Header Card ── */}
-        <div className="rounded-xl bg-zinc-950 border border-zinc-900 p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-0.5">
-            <h1 className="text-base sm:text-lg font-black text-white tracking-tight">
+        <div className="rounded-xl bg-zinc-950 border border-zinc-900 px-3.5 py-3 sm:px-4 sm:py-3.5 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <h1 className="text-sm sm:text-base font-black text-white tracking-tight truncate">
               Rewards &amp; XP Bonuses
             </h1>
-            <p className="text-xs text-zinc-400">
-              Track your daily login streaks, hourly play drops, and accumulated bonus points.
-            </p>
+            <InfoTooltip
+              size="xs"
+              title="Rewards &amp; XP Bonuses"
+              content="Track your daily login streaks, hourly play drops, and accumulated bonus points."
+            />
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-            <Link
-              href="/rewards"
-              className="px-3 py-1.5 rounded-lg bg-white hover:bg-zinc-200 text-black text-xs font-bold transition-colors inline-flex items-center gap-1"
-            >
-              <span>Redeem Rewards</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
+          <Link
+            href="/rewards"
+            className="px-3 py-1.5 rounded-lg bg-white hover:bg-zinc-200 text-black text-xs font-bold transition-colors inline-flex items-center gap-1 shrink-0 active:scale-95 shadow-sm"
+          >
+            <span>Redeem Rewards</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
-        {/* ── 6-Metric Player Overview Row ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
+        {/* ── 2-Metric XP Overview Row ── */}
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
           {/* 1. Spendable XP Balance */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-2">
+          <div className="bg-zinc-950 p-3 sm:p-3.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-2 shadow-xs">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-                <Coins className="w-3.5 h-3.5 text-amber-400" />
+              <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
+                <Coins className="w-4 h-4 text-amber-400" />
               </div>
               <div className="flex flex-col text-left min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">XP Balance</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 leading-none mb-1">XP Balance</span>
+                <span className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight truncate font-mono">
                   {xp.toLocaleString()} XP
                 </span>
               </div>
@@ -124,14 +117,14 @@ export default async function RewardsPage() {
           </div>
 
           {/* 2. Lifetime Earned XP */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-2">
+          <div className="bg-zinc-950 p-3 sm:p-3.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-2 shadow-xs">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center shrink-0">
-                <Coins className="w-3.5 h-3.5 text-yellow-400" />
+              <div className="w-8 h-8 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center shrink-0">
+                <Coins className="w-4 h-4 text-yellow-400" />
               </div>
               <div className="flex flex-col text-left min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Lifetime XP</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
+                <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 leading-none mb-1">Lifetime XP</span>
+                <span className="text-sm sm:text-base font-bold text-white tracking-tight leading-tight truncate font-mono">
                   {lifetimeXp.toLocaleString()} XP
                 </span>
               </div>
@@ -140,79 +133,6 @@ export default async function RewardsPage() {
               size="xs"
               title="Lifetime XP"
               content="Total accumulated XP earned across all daily logins, playtime drops, and referral rewards. Used for your Global Leaderboard rank."
-            />
-          </div>
-
-          {/* 3. Daily Streak */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0">
-                <Flame className="w-3.5 h-3.5 text-orange-400" />
-              </div>
-              <div className="flex flex-col text-left min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Streak</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate">
-                  {streak} Days
-                </span>
-              </div>
-            </div>
-            <InfoTooltip
-              size="xs"
-              title="Login Streak"
-              content="Consecutive days logged into Bluebuff Games. Higher streaks multiply your daily coin drops up to +50 XP per day!"
-            />
-          </div>
-
-          {/* 4. Total Playtime */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
-                <Clock className="w-3.5 h-3.5 text-indigo-400" />
-              </div>
-              <div className="flex flex-col text-left min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Playtime</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                  {playtimeHours}h {playtimeMinutes}m
-                </span>
-              </div>
-            </div>
-            <InfoTooltip
-              size="xs"
-              title="Game Playtime"
-              content="Total time spent actively playing games. Earn +10 XP for every completed hour of active gameplay (up to 8 hours/day)."
-            />
-          </div>
-
-          {/* 5. Games Played */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-              <Users className="w-3.5 h-3.5 text-emerald-400" />
-            </div>
-            <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Games Played</span>
-              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                {gamesPlayedCount}
-              </span>
-            </div>
-          </div>
-
-          {/* 6. Current Daily Reward */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
-                <Flame className="w-3.5 h-3.5 text-rose-400" />
-              </div>
-              <div className="flex flex-col text-left min-w-0">
-                <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Daily Drop</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                  +{XP_CONFIG.DAILY_LOGIN + nextStreakBonus} XP
-                </span>
-              </div>
-            </div>
-            <InfoTooltip
-              size="xs"
-              title="Daily Drop Bonus"
-              content={`Base ${XP_CONFIG.DAILY_LOGIN} XP daily bonus + ${nextStreakBonus} XP streak multiplier based on your active streak.`}
             />
           </div>
         </div>

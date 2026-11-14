@@ -294,39 +294,45 @@ export function ProfileSkeleton({ className }: { className?: string }) {
         <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 text-zinc-300 text-xs font-medium border border-zinc-800"
+            className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 text-zinc-300 text-xs font-medium border border-white/[0.08]"
           >
             <ChevronLeft className="w-3.5 h-3.5 text-zinc-400" />
             <span>Home</span>
           </Link>
 
           <div className="flex items-center gap-2">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 text-zinc-400 text-xs font-medium border border-zinc-800">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 text-zinc-400 text-xs font-medium border border-white/[0.08]">
               <Gift className="w-3.5 h-3.5" />
               <span>Invite</span>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
             </div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 text-zinc-400 text-xs font-medium border border-zinc-800">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 text-zinc-400 text-xs font-medium border border-white/[0.08]">
               <Settings className="w-3.5 h-3.5" />
               <span>Settings</span>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-600" />
             </div>
           </div>
         </div>
 
         {/* ── Compact User Profile Bar Skeleton ── */}
-        <div className="rounded-xl bg-zinc-950 border border-zinc-900 p-3 sm:p-3.5">
-          <div className="flex items-center gap-3">
-            <div className="relative shrink-0">
-              <Skeleton className="w-10 h-10 rounded-full" />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500/60 border border-black" />
+        <div className="relative overflow-hidden rounded-2xl bg-zinc-950 border border-white/[0.08] py-2.5 px-3 sm:py-2.5 sm:px-3.5">
+          <div className="flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="relative shrink-0">
+                <Skeleton className="w-9 h-9 rounded-full" />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500/60 border border-black" />
+              </div>
+
+              <div className="flex-1 min-w-0 space-y-1">
+                <div className="flex items-center gap-1.5">
+                  <Skeleton className="h-3.5 w-24 sm:w-32 rounded-md" />
+                  <Skeleton className="h-3 w-16 rounded-full" />
+                </div>
+                <Skeleton className="h-2.5 w-36 sm:w-48 rounded" />
+              </div>
             </div>
 
-            <div className="flex-1 min-w-0 space-y-1.5">
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-4 w-28 sm:w-36 rounded-md" />
-                <Skeleton className="h-3.5 w-24 rounded" />
-              </div>
-              <Skeleton className="h-3 w-40 sm:w-52 rounded-md" />
-            </div>
+            <Skeleton className="h-6 w-16 rounded-full shrink-0" />
           </div>
         </div>
 
