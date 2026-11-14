@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/Skeleton";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Gift, History, Trophy, Settings } from "lucide-react";
+import { ChevronLeft, ChevronRight, Gift, History, Settings } from "lucide-react";
 
 /**
  * Universal Page Skeleton Loader (Header + Grid or Content)
@@ -274,6 +274,159 @@ export function RewardsStoreSkeleton({
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+/**
+ * Full Page Skeleton Loader for User Profile (/profile)
+ */
+export function ProfileSkeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "min-h-screen bg-black pb-12 animate-in fade-in duration-200 text-white",
+        className
+      )}
+    >
+      <div className="w-full px-3 sm:px-6 lg:px-8 xl:px-10 py-3 sm:py-4 space-y-4">
+        {/* ── Top Navigation Bar Skeleton ── */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 text-zinc-300 text-xs font-medium border border-zinc-800"
+          >
+            <ChevronLeft className="w-3.5 h-3.5 text-zinc-400" />
+            <span>Home</span>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 text-zinc-400 text-xs font-medium border border-zinc-800">
+              <Gift className="w-3.5 h-3.5" />
+              <span>Invite</span>
+            </div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 text-zinc-400 text-xs font-medium border border-zinc-800">
+              <Settings className="w-3.5 h-3.5" />
+              <span>Settings</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Compact User Profile Bar Skeleton ── */}
+        <div className="rounded-xl bg-zinc-950 border border-zinc-900 p-3 sm:p-3.5">
+          <div className="flex items-center gap-3">
+            <div className="relative shrink-0">
+              <Skeleton className="w-10 h-10 rounded-full" />
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500/60 border border-black" />
+            </div>
+
+            <div className="flex-1 min-w-0 space-y-1.5">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-4 w-28 sm:w-36 rounded-md" />
+                <Skeleton className="h-3.5 w-24 rounded" />
+              </div>
+              <Skeleton className="h-3 w-40 sm:w-52 rounded-md" />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Key Player Stats Skeleton (2 rows x 3 cols tiles) ── */}
+        <div className="space-y-2 py-1">
+          <div className="grid grid-cols-3 gap-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="p-2 sm:p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-900/80 flex items-center gap-2 min-w-0"
+              >
+                <Skeleton className="w-4 h-4 rounded shrink-0" />
+                <div className="flex flex-col min-w-0 space-y-1">
+                  <Skeleton className="h-2.5 w-12 rounded" />
+                  <Skeleton className="h-3.5 w-14 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="p-2 sm:p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-900/80 flex items-center gap-2 min-w-0"
+              >
+                <Skeleton className="w-4 h-4 rounded shrink-0" />
+                <div className="flex flex-col min-w-0 space-y-1">
+                  <Skeleton className="h-2.5 w-12 rounded" />
+                  <Skeleton className="h-3.5 w-14 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Main Content Grid Skeleton ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] xl:grid-cols-[280px_1fr] gap-5 items-start">
+          {/* Profile Info Inset Group */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between px-1 mb-1">
+              <Skeleton className="h-3 w-20 rounded" />
+              <Skeleton className="h-3 w-14 rounded" />
+            </div>
+
+            <div className="bg-[#141416] rounded-[22px] border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-sm">
+              {/* Phone row skeleton */}
+              <div className="p-3.5 sm:p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-[8px] bg-emerald-500/20 flex items-center justify-center">
+                      <div className="w-3.5 h-3.5 rounded bg-emerald-400/40" />
+                    </div>
+                    <Skeleton className="h-3 w-24 rounded" />
+                  </div>
+                  <Skeleton className="h-5 w-12 rounded-full" />
+                </div>
+                <div className="pl-9">
+                  <Skeleton className="h-3 w-36 rounded" />
+                </div>
+              </div>
+
+              {/* Bio row skeleton */}
+              <div className="p-3.5 sm:p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-[8px] bg-sky-500/20 flex items-center justify-center">
+                      <div className="w-3.5 h-3.5 rounded bg-sky-400/40" />
+                    </div>
+                    <Skeleton className="h-3 w-20 rounded" />
+                  </div>
+                  <Skeleton className="h-5 w-12 rounded-full" />
+                </div>
+                <div className="pl-9">
+                  <Skeleton className="h-3 w-48 rounded" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Recently Played Section Skeleton */}
+          <div className="space-y-5 min-w-0">
+            <section className="space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-[#007AFF]/30 shrink-0" />
+                  <Skeleton className="h-3.5 w-28 rounded" />
+                </div>
+              </div>
+
+              {/* Empty state skeleton */}
+              <div className="rounded-[22px] border border-white/[0.06] bg-[#141416] p-8 flex flex-col items-center text-center gap-2.5">
+                <Skeleton className="w-10 h-10 rounded-full" />
+                <Skeleton className="h-4 w-36 rounded-md" />
+                <Skeleton className="h-3 w-56 rounded-md" />
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

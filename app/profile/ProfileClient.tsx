@@ -46,7 +46,7 @@ function FieldRow({
         {!isEditing && (
           <button
             onClick={onEdit}
-            className="px-2.5 py-1 rounded-full text-[11px] font-medium text-sky-400 hover:text-sky-300 bg-sky-500/10 hover:bg-sky-500/15 border border-sky-500/20 transition-all flex items-center gap-1 cursor-pointer"
+            className="px-2.5 py-1 rounded-full text-[11px] font-semibold text-sky-400 hover:text-sky-300 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/25 active:scale-95 transition-all flex items-center gap-1 cursor-pointer shadow-xs"
           >
             <Edit2 className="w-2.5 h-2.5" />
             <span>Edit</span>
@@ -61,14 +61,14 @@ function FieldRow({
             <button
               onClick={onCancel}
               disabled={isLoading}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs text-zinc-400 hover:text-white bg-white/[0.06] hover:bg-white/[0.1] rounded-full transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs text-zinc-400 hover:text-white bg-white/[0.06] hover:bg-white/[0.1] active:scale-95 rounded-full transition-all cursor-pointer"
             >
               <X className="w-3 h-3" /> Cancel
             </button>
             <button
               onClick={onSave}
               disabled={isLoading}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-black bg-white hover:bg-zinc-200 rounded-full transition-colors disabled:opacity-60 shadow-sm"
+              className="flex items-center gap-1 px-3.5 py-1.5 text-xs font-bold text-black bg-white hover:bg-zinc-200 active:scale-95 rounded-full transition-all disabled:opacity-60 shadow-sm cursor-pointer"
             >
               {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
               Save

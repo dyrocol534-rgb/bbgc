@@ -6,7 +6,7 @@ import User from "@/models/User";
 import Game from "@/models/Game";
 import GameCard from "@/components/game/GameCard";
 import ProfileClient from "./ProfileClient";
-import { Clock, Heart, Gamepad2, Settings, ChevronLeft, Coins, Flame, Gift, Trophy, Calendar, Activity, Zap } from "lucide-react";
+import { Clock, Heart, Gamepad2, Settings, ChevronLeft, ChevronRight, Coins, Flame, Gift, Calendar, Activity, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { getHorizontalBentoSpanClass, getImageContainerClass } from "@/lib/bento";
@@ -71,7 +71,7 @@ export default async function ProfilePage() {
         <div className="flex items-center justify-between">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 active:scale-95 transition-all shadow-xs"
           >
             <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             <span>Home</span>
@@ -79,16 +79,8 @@ export default async function ProfilePage() {
 
           <div className="flex items-center gap-2">
             <Link
-              href="/rewards"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-400 hover:text-amber-300 text-xs font-medium transition-colors"
-            >
-              <Trophy className="w-3.5 h-3.5" />
-              <span>Rewards</span>
-            </Link>
-
-            <Link
               href="/referral"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 active:scale-95 transition-all shadow-xs"
             >
               <Gift className="w-3.5 h-3.5 text-zinc-400" />
               <span>Invite</span>
@@ -96,7 +88,7 @@ export default async function ProfilePage() {
 
             <Link
               href="/profile/settings"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 active:scale-95 transition-all shadow-xs"
             >
               <Settings className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
               <span>Settings</span>
@@ -105,57 +97,74 @@ export default async function ProfilePage() {
         </div>
 
         {/* ── Compact User Profile Bar ── */}
-        <div className="rounded-xl bg-zinc-950 border border-zinc-900 p-3 sm:p-3.5">
-          <div className="flex items-center gap-3">
-            {/* Avatar with status indicator */}
-            <div className="relative shrink-0">
-              {session.user.image ? (
-                <Image
-                  src={session.user.image}
-                  alt={session.user.name || "User"}
-                  width={40}
-                  height={40}
-                  className="w-10 h-10 rounded-full border border-zinc-800 object-cover bg-zinc-900"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-sm font-bold text-white border border-zinc-800">
-                  {(session.user.name || "U").charAt(0).toUpperCase()}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-zinc-950 via-zinc-900/80 to-zinc-950 border border-white/[0.08] p-3 sm:p-3.5 shadow-xl shadow-black/40 backdrop-blur-xl">
+          {/* Ambient subtle glow */}
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+
+          <div className="relative z-10 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              {/* Avatar with status indicator */}
+              <div className="relative shrink-0">
+                {session.user.image ? (
+                  <Image
+                    src={session.user.image}
+                    alt={session.user.name || "User"}
+                    width={40}
+                    height={40}
+                    className="w-10 h-10 rounded-full border border-zinc-800 object-cover bg-zinc-900 shadow-md"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-zinc-900 flex items-center justify-center text-sm font-bold text-white border border-zinc-800 shadow-md">
+                    {(session.user.name || "U").charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-black shadow-xs shadow-emerald-500/50" />
+              </div>
+
+              {/* Name, Email & Member Since badge */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug truncate">
+                    {session.user.name}
+                  </h1>
+                  <span className="inline-flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-900/90 border border-zinc-800 px-1.5 py-0.5 rounded-full">
+                    <Calendar className="w-2.5 h-2.5 text-zinc-500" />
+                    <span>Member since {memberSince}</span>
+                  </span>
                 </div>
-              )}
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-black" />
+                <p className="text-[11px] text-zinc-500 truncate mt-0.5">
+                  {session.user.email}
+                </p>
+              </div>
             </div>
 
-            {/* Name, Email & Member Since badge */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h1 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug truncate">
-                  {session.user.name}
-                </h1>
-                <span className="inline-flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-900 border border-zinc-800 px-1.5 py-0.5 rounded">
-                  <Calendar className="w-2.5 h-2.5 text-zinc-500" />
-                  <span>Member since {memberSince}</span>
-                </span>
-              </div>
-              <p className="text-[11px] text-zinc-500 truncate mt-0.5">
-                {session.user.email}
-              </p>
-            </div>
+            {/* Quick Rewards XP Badge */}
+            <Link
+              href="/rewards"
+              className="shrink-0 inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/25 text-amber-300 font-mono text-xs font-bold transition-all active:scale-95 shadow-xs group"
+            >
+              <Coins className="w-3.5 h-3.5 text-amber-400 group-hover:rotate-12 transition-transform" />
+              <span>{xp.toLocaleString()} XP</span>
+            </Link>
           </div>
         </div>
 
-        {/* ── Key Player Stats (Clean 2-Row Grid, No Card, No Icon Border) ── */}
-        <div className="space-y-3 py-1">
+        {/* ── Key Player Stats (Tactile 2-Row Tiles) ── */}
+        <div className="space-y-2 py-1">
           {/* Row 1: XP, Streak, Play Time */}
           <div className="grid grid-cols-3 gap-2">
             {/* Total XP */}
             <Link 
               href="/rewards" 
-              className="flex items-center gap-2 min-w-0 hover:opacity-85 transition-opacity group"
+              className="group p-2 sm:p-2.5 rounded-xl bg-zinc-950/70 hover:bg-zinc-900/80 border border-zinc-900/90 hover:border-amber-500/30 flex items-center gap-2 sm:gap-2.5 min-w-0 transition-all active:scale-[0.98] shadow-xs"
             >
-              <Coins className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Coins className="w-3.5 h-3.5 text-amber-400" />
+              </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Total XP</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5 group-hover:text-amber-300 transition-colors">
                   {xp.toLocaleString()} XP
                 </span>
               </div>
@@ -164,20 +173,24 @@ export default async function ProfilePage() {
             {/* Daily Streak */}
             <Link 
               href="/rewards" 
-              className="flex items-center gap-2 min-w-0 hover:opacity-85 transition-opacity group"
+              className="group p-2 sm:p-2.5 rounded-xl bg-zinc-950/70 hover:bg-zinc-900/80 border border-zinc-900/90 hover:border-orange-500/30 flex items-center gap-2 sm:gap-2.5 min-w-0 transition-all active:scale-[0.98] shadow-xs"
             >
-              <Flame className="w-4 h-4 text-orange-400 shrink-0" />
+              <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Flame className="w-3.5 h-3.5 text-orange-400" />
+              </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Streak</span>
-                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate mt-0.5">
-                  {streak} Days
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate mt-0.5 group-hover:text-orange-300 transition-colors">
+                  {streak} {streak === 1 ? "Day" : "Days"}
                 </span>
               </div>
             </Link>
 
             {/* Total Play Time */}
-            <div className="flex items-center gap-2 min-w-0">
-              <Clock className="w-4 h-4 text-sky-400 shrink-0" />
+            <div className="p-2 sm:p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-900/90 flex items-center gap-2 sm:gap-2.5 min-w-0 shadow-xs">
+              <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
+                <Clock className="w-3.5 h-3.5 text-sky-400" />
+              </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Play Time</span>
                 <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
@@ -190,8 +203,10 @@ export default async function ProfilePage() {
           {/* Row 2: Games Played, Avg Games/Day, Last Played */}
           <div className="grid grid-cols-3 gap-2">
             {/* Games Played */}
-            <div className="flex items-center gap-2 min-w-0">
-              <Gamepad2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <div className="p-2 sm:p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-900/90 flex items-center gap-2 sm:gap-2.5 min-w-0 shadow-xs">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                <Gamepad2 className="w-3.5 h-3.5 text-emerald-400" />
+              </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Games</span>
                 <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
@@ -201,8 +216,10 @@ export default async function ProfilePage() {
             </div>
 
             {/* Average Games / Day */}
-            <div className="flex items-center gap-2 min-w-0">
-              <Activity className="w-4 h-4 text-purple-400 shrink-0" />
+            <div className="p-2 sm:p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-900/90 flex items-center gap-2 sm:gap-2.5 min-w-0 shadow-xs">
+              <div className="w-7 h-7 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
+                <Activity className="w-3.5 h-3.5 text-purple-400" />
+              </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Avg/Day</span>
                 <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
@@ -212,8 +229,10 @@ export default async function ProfilePage() {
             </div>
 
             {/* Last Played */}
-            <div className="flex items-center gap-2 min-w-0">
-              <Zap className="w-4 h-4 text-rose-400 shrink-0" />
+            <div className="p-2 sm:p-2.5 rounded-xl bg-zinc-950/70 border border-zinc-900/90 flex items-center gap-2 sm:gap-2.5 min-w-0 shadow-xs">
+              <div className="w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
+                <Zap className="w-3.5 h-3.5 text-rose-400" />
+              </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Last Played</span>
                 <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
@@ -283,9 +302,11 @@ export default async function ProfilePage() {
                 </div>
               ) : (
                 <EmptyState 
-                  icon={<Gamepad2 className="w-5 h-5 text-zinc-500" />} 
+                  icon={<Gamepad2 className="w-5 h-5 text-zinc-400" />} 
                   label="No games played yet" 
                   sub="Browse trending titles to build your gameplay record." 
+                  ctaHref="/"
+                  ctaLabel="Browse Games"
                 />
               )}
             </section>
@@ -329,9 +350,11 @@ export default async function ProfilePage() {
                 </div>
               ) : (
                 <EmptyState 
-                  icon={<Heart className="w-5 h-5 text-zinc-500" />} 
+                  icon={<Heart className="w-5 h-5 text-zinc-400" />} 
                   label="No favorites added yet" 
                   sub="Tap the heart icon on any game card to bookmark it here." 
+                  ctaHref="/"
+                  ctaLabel="Explore Titles"
                 />
               )}
             </section>
@@ -342,7 +365,19 @@ export default async function ProfilePage() {
   );
 }
 
-function EmptyState({ icon, label, sub }: { icon: React.ReactNode; label: string; sub: string }) {
+function EmptyState({
+  icon,
+  label,
+  sub,
+  ctaHref,
+  ctaLabel,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  sub: string;
+  ctaHref?: string;
+  ctaLabel?: string;
+}) {
   return (
     <div className="rounded-[22px] border border-white/[0.06] bg-[#141416] p-8 flex flex-col items-center text-center gap-2.5 shadow-sm">
       <div className="w-10 h-10 rounded-full bg-white/[0.05] border border-white/[0.08] flex items-center justify-center">
@@ -350,6 +385,15 @@ function EmptyState({ icon, label, sub }: { icon: React.ReactNode; label: string
       </div>
       <p className="text-sm font-medium text-zinc-200">{label}</p>
       <p className="text-xs text-zinc-500 max-w-xs">{sub}</p>
+      {ctaHref && ctaLabel && (
+        <Link
+          href={ctaHref}
+          className="mt-1.5 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-zinc-200 active:scale-95 text-black text-xs font-bold transition-all shadow-sm shadow-white/10"
+        >
+          <span>{ctaLabel}</span>
+          <ChevronRight className="w-3.5 h-3.5" />
+        </Link>
+      )}
     </div>
   );
 }
