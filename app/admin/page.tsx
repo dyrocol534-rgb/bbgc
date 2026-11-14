@@ -6,7 +6,7 @@ import {
   Gamepad2, Loader2, Activity, UserPlus, Mail, Ghost, 
   TrendingUp, RefreshCw, Smartphone, Star, MessageSquare, 
   Users, MousePointerClick, Heart, PlayCircle, BellRing, 
-  ArrowRight, Laptop, Tablet, Clock, Timer
+  ArrowRight, Laptop, Tablet, Clock, Timer, Download
 } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -31,6 +31,7 @@ interface TimeframeStats {
   activeGuests: number;
   newSubscribers: number;
   pwaInstalls: number;
+  gameSaves?: number;
   pushSubscribers?: number;
   playtime?: string;
   memberPlaytime?: string;
@@ -40,6 +41,7 @@ interface TimeframeStats {
   totalPlays: number;
   topGames: { slug: string; title: string; playCount: number }[];
   topGuestGames: { slug: string; title: string; count: number }[];
+  topSavedGames?: { slug: string; title: string; count: number }[];
   deviceSplit: DeviceSplit;
   avgPlaysPerActive: string | number;
 }
@@ -56,6 +58,7 @@ interface Stats {
     guestPlaytimeFormatted?: string;
     pwaDevices?: { Mobile: number; Desktop: number; Tablet: number };
     recentPwaInstalls?: { deviceType: string; installedAt: string }[];
+    recentGameSaves?: { gameSlug: string; gameTitle: string; deviceType: string; installedAt: string }[];
     topRatedGames: { slug: string; title: string; ratio: number; totalVotes: number }[];
     recentFeedback: { gameSlug: string; userEmail: string; message: string; status: string; date: string }[];
   };
@@ -264,7 +267,7 @@ export default function AdminAnalytics() {
           icon={Smartphone}
           label="PWA Installs"
           value={currentStats.pwaInstalls?.toLocaleString() || "0"}
-          sub={`${pwaConversionRate}% conversion`}
+          sub={`${currentStats.gameSaves || 0} game saves • ${pwaConversionRate}% conv`}
           iconColor="bg-sky-500/10 text-sky-400 border-sky-500/20"
         />
         <MetricCell
@@ -393,9 +396,14 @@ export default function AdminAnalytics() {
                 <Smartphone className="w-3.5 h-3.5 text-sky-400" />
                 PWA Device Mix
               </h2>
-              <span className="text-[9.5px] text-sky-400 font-bold bg-sky-500/10 px-2 py-0.2 rounded-full border border-sky-500/20 font-mono">
-                {stats.lifetime.pwaInstalls} Installs
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9.5px] text-sky-400 font-bold bg-sky-500/10 px-2 py-0.2 rounded-full border border-sky-500/20 font-mono">
+                  {stats.lifetime.pwaInstalls} Installs
+                </span>
+                <span className="text-[9.5px] text-cyan-400 font-bold bg-cyan-500/10 px-2 py-0.2 rounded-full border border-cyan-500/20 font-mono">
+                  {stats.lifetime.gameSaves || 0} Saved
+                </span>
+              </div>
             </div>
 
             <div className="space-y-2 mt-2">
@@ -442,6 +450,83 @@ export default function AdminAnalytics() {
             <Link href="/admin/notifications" className="text-zinc-400 hover:text-white font-semibold flex items-center gap-1 transition-colors">
               Broadcast <ArrowRight className="w-2.5 h-2.5" />
             </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Saved Games / PWA Installs Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2.5">
+        {/* Top Saved Games (col-span-2) */}
+        <div className="lg:col-span-2 p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06]">
+          <div className="flex items-center justify-between mb-2.5">
+            <div>
+              <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Download className="w-3.5 h-3.5 text-cyan-400" />
+                Games Saved to Device ({timeframes.find(t => t.id === timeframe)?.label})
+              </h2>
+              <p className="text-[10px] text-zinc-500">Games installed directly to home screen / desktop as standalone apps</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <Smartphone className="w-2.5 h-2.5" />
+                {currentStats.gameSaves || 0} Game Saves
+              </span>
+            </div>
+          </div>
+
+          {!currentStats.topSavedGames || currentStats.topSavedGames.length === 0 ? (
+            <div className="p-6 bg-white/[0.01] rounded-[12px] border border-white/[0.04] border-dashed text-center">
+              <p className="text-xs text-zinc-500">No games saved to devices yet for this timeframe.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              {currentStats.topSavedGames.slice(0, 6).map((game, i) => (
+                <div key={game.slug} className="flex items-center justify-between p-2 bg-white/[0.02] hover:bg-white/[0.04] rounded-[12px] transition-colors border border-white/[0.03]">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-zinc-500 text-[11px] font-mono font-bold w-3.5">{i + 1}.</span>
+                    <p className="text-zinc-200 text-xs font-semibold truncate">{game.title}</p>
+                  </div>
+                  <div className="text-cyan-400 font-semibold bg-cyan-500/10 px-2 py-0.5 rounded-full text-[10px] shrink-0 font-mono border border-cyan-500/20 flex items-center gap-1">
+                    {game.count.toLocaleString()} {game.count === 1 ? 'save' : 'saves'}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Recent Game Saves Feed (col-span-1) */}
+        <div className="p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06] flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                Recent Game Saves
+              </h2>
+              <span className="text-[9.5px] text-cyan-400 font-mono bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">
+                Live Saves
+              </span>
+            </div>
+
+            <div className="space-y-1.5 mt-2">
+              {!stats.lifetime.recentGameSaves || stats.lifetime.recentGameSaves.length === 0 ? (
+                <div className="p-4 bg-white/[0.01] rounded-[12px] border border-white/[0.04] border-dashed text-center">
+                  <p className="text-xs text-zinc-500">No game device saves logged yet.</p>
+                </div>
+              ) : (
+                stats.lifetime.recentGameSaves.slice(0, 4).map((s, i) => (
+                  <div key={i} className="flex items-center justify-between p-2 bg-white/[0.02] rounded-[10px] border border-white/[0.03]">
+                    <div className="min-w-0 pr-2">
+                      <p className="text-xs font-medium text-zinc-200 truncate">{s.gameTitle}</p>
+                      <span className="text-[9.5px] text-zinc-500 font-mono">{s.installedAt}</span>
+                    </div>
+                    <span className="text-[9.5px] font-medium text-zinc-300 bg-white/[0.06] border border-white/10 px-1.5 py-0.5 rounded-full shrink-0">
+                      {s.deviceType}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>

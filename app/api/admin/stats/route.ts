@@ -56,6 +56,8 @@ export async function GET(req: NextRequest) {
       totalSubscribers,
       totalPwaInstalls,
       totalPushSubscribers,
+      totalGameSaves,
+      recentGameSaves,
       games,
       guestSessionsWithPlays,
       recentFeedback,
@@ -68,6 +70,8 @@ export async function GET(req: NextRequest) {
       Subscriber.countDocuments(),
       AppInstall.countDocuments(),
       PushSubscription.countDocuments(),
+      AppInstall.countDocuments({ gameSlug: { $ne: null } }),
+      AppInstall.find({ gameSlug: { $ne: null } }).sort({ installedAt: -1 }).limit(10).lean(),
       Game.find({}, "playCount title slug likes dislikes").lean(),
       GuestSession.find({ recentlyPlayed: { $exists: true, $not: { $size: 0 } } }, "recentlyPlayed").lean(),
       Feedback.find().sort({ createdAt: -1 }).limit(10).lean(),
@@ -100,7 +104,7 @@ export async function GET(req: NextRequest) {
       .slice(0, 5);
 
     // 24h Stats
-    const [newUsers24h, newGuests24h, activeUsers24h, activeGuests24h, newSubs24h, newGames24h, newPlays24h, pwaInstalls24h, pushSubs24h] = await Promise.all([
+    const [newUsers24h, newGuests24h, activeUsers24h, activeGuests24h, newSubs24h, newGames24h, newPlays24h, pwaInstalls24h, pushSubs24h, gameSaves24h] = await Promise.all([
       User.countDocuments({ createdAt: { $gte: ago24h } }),
       GuestSession.countDocuments({ createdAt: { $gte: ago24h } }),
       User.countDocuments({ lastActiveAt: { $gte: ago24h } }),
@@ -109,11 +113,12 @@ export async function GET(req: NextRequest) {
       Game.countDocuments({ status: "published", createdAt: { $gte: ago24h } }),
       PlayEvent.countDocuments({ createdAt: { $gte: ago24h } }),
       AppInstall.countDocuments({ installedAt: { $gte: ago24h } }),
-      PushSubscription.countDocuments({ createdAt: { $gte: ago24h } })
+      PushSubscription.countDocuments({ createdAt: { $gte: ago24h } }),
+      AppInstall.countDocuments({ gameSlug: { $ne: null }, installedAt: { $gte: ago24h } })
     ]);
 
     // 7d Stats
-    const [newUsers7d, newGuests7d, activeUsers7d, activeGuests7d, newSubs7d, newGames7d, newPlays7d, pwaInstalls7d, pushSubs7d] = await Promise.all([
+    const [newUsers7d, newGuests7d, activeUsers7d, activeGuests7d, newSubs7d, newGames7d, newPlays7d, pwaInstalls7d, pushSubs7d, gameSaves7d] = await Promise.all([
       User.countDocuments({ createdAt: { $gte: ago7d } }),
       GuestSession.countDocuments({ createdAt: { $gte: ago7d } }),
       User.countDocuments({ lastActiveAt: { $gte: ago7d } }),
@@ -122,11 +127,12 @@ export async function GET(req: NextRequest) {
       Game.countDocuments({ status: "published", createdAt: { $gte: ago7d } }),
       PlayEvent.countDocuments({ createdAt: { $gte: ago7d } }),
       AppInstall.countDocuments({ installedAt: { $gte: ago7d } }),
-      PushSubscription.countDocuments({ createdAt: { $gte: ago7d } })
+      PushSubscription.countDocuments({ createdAt: { $gte: ago7d } }),
+      AppInstall.countDocuments({ gameSlug: { $ne: null }, installedAt: { $gte: ago7d } })
     ]);
 
     // 30d Stats
-    const [newUsers30d, newGuests30d, activeUsers30d, activeGuests30d, newSubs30d, newGames30d, newPlays30d, pwaInstalls30d, pushSubs30d] = await Promise.all([
+    const [newUsers30d, newGuests30d, activeUsers30d, activeGuests30d, newSubs30d, newGames30d, newPlays30d, pwaInstalls30d, pushSubs30d, gameSaves30d] = await Promise.all([
       User.countDocuments({ createdAt: { $gte: ago30d } }),
       GuestSession.countDocuments({ createdAt: { $gte: ago30d } }),
       User.countDocuments({ lastActiveAt: { $gte: ago30d } }),
@@ -135,7 +141,8 @@ export async function GET(req: NextRequest) {
       Game.countDocuments({ status: "published", createdAt: { $gte: ago30d } }),
       PlayEvent.countDocuments({ createdAt: { $gte: ago30d } }),
       AppInstall.countDocuments({ installedAt: { $gte: ago30d } }),
-      PushSubscription.countDocuments({ createdAt: { $gte: ago30d } })
+      PushSubscription.countDocuments({ createdAt: { $gte: ago30d } }),
+      AppInstall.countDocuments({ gameSlug: { $ne: null }, installedAt: { $gte: ago30d } })
     ]);
 
     // Playtime aggregation per timeframe
@@ -227,17 +234,33 @@ export async function GET(req: NextRequest) {
       return Object.entries(slugCountMap).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([slug, count]) => ({ slug, title: gameMap.get(slug) || slug, count }));
     };
 
-    // Calculate Top Games and Device Split per timeframe
+    const getTopSavedGames = async (since: Date | null) => {
+      const matchFilter: any = { gameSlug: { $ne: null } };
+      if (since) matchFilter.installedAt = { $gte: since };
+      const top = await AppInstall.aggregate([
+        { $match: matchFilter },
+        { $group: { _id: "$gameSlug", title: { $first: "$gameTitle" }, count: { $sum: 1 } } },
+        { $sort: { count: -1 } },
+        { $limit: 10 }
+      ]);
+      return top.map((t: any) => ({
+        slug: t._id,
+        title: t.title || gameMap.get(t._id) || t._id,
+        count: t.count
+      }));
+    };
+
+    // Calculate Top Games, Saved Games, and Device Split per timeframe
     const [
-      topGames24h, topGuestGames24h, devices24h,
-      topGames7d, topGuestGames7d, devices7d,
-      topGames30d, topGuestGames30d, devices30d,
-      devicesLifetime
+      topGames24h, topGuestGames24h, devices24h, topSavedGames24h,
+      topGames7d, topGuestGames7d, devices7d, topSavedGames7d,
+      topGames30d, topGuestGames30d, devices30d, topSavedGames30d,
+      devicesLifetime, topSavedGamesLifetime
     ] = await Promise.all([
-      getTopGames(ago24h), getTopGuestGames(ago24h), getDeviceSplit(ago24h),
-      getTopGames(ago7d), getTopGuestGames(ago7d), getDeviceSplit(ago7d),
-      getTopGames(ago30d), getTopGuestGames(ago30d), getDeviceSplit(ago30d),
-      getDeviceSplit(new Date(0)) // all time
+      getTopGames(ago24h), getTopGuestGames(ago24h), getDeviceSplit(ago24h), getTopSavedGames(ago24h),
+      getTopGames(ago7d), getTopGuestGames(ago7d), getDeviceSplit(ago7d), getTopSavedGames(ago7d),
+      getTopGames(ago30d), getTopGuestGames(ago30d), getDeviceSplit(ago30d), getTopSavedGames(ago30d),
+      getDeviceSplit(new Date(0)), getTopSavedGames(null)
     ]);
 
     // Top Games (Lifetime)
@@ -309,6 +332,7 @@ export async function GET(req: NextRequest) {
         totalGames: newGames24h,
         totalPlays: newPlays24h,
         pwaInstalls: pwaInstalls24h,
+        gameSaves: gameSaves24h,
         pushSubscribers: pushSubs24h,
         playtime: playtime24h.formatted,
         memberPlaytime: playtime24h.memberFormatted,
@@ -316,6 +340,7 @@ export async function GET(req: NextRequest) {
         retentionRate: retention24h,
         topGames: topGames24h,
         topGuestGames: topGuestGames24h,
+        topSavedGames: topSavedGames24h,
         deviceSplit: devices24h,
         avgPlaysPerActive: (activeUsers24h + activeGuests24h) > 0 ? (newPlays24h / (activeUsers24h + activeGuests24h)).toFixed(1) : 0
       },
@@ -328,6 +353,7 @@ export async function GET(req: NextRequest) {
         totalGames: newGames7d,
         totalPlays: newPlays7d,
         pwaInstalls: pwaInstalls7d,
+        gameSaves: gameSaves7d,
         pushSubscribers: pushSubs7d,
         playtime: playtime7d.formatted,
         memberPlaytime: playtime7d.memberFormatted,
@@ -335,6 +361,7 @@ export async function GET(req: NextRequest) {
         retentionRate: retention7d,
         topGames: topGames7d,
         topGuestGames: topGuestGames7d,
+        topSavedGames: topSavedGames7d,
         deviceSplit: devices7d,
         avgPlaysPerActive: (activeUsers7d + activeGuests7d) > 0 ? (newPlays7d / (activeUsers7d + activeGuests7d)).toFixed(1) : 0
       },
@@ -347,6 +374,7 @@ export async function GET(req: NextRequest) {
         totalGames: newGames30d,
         totalPlays: newPlays30d,
         pwaInstalls: pwaInstalls30d,
+        gameSaves: gameSaves30d,
         pushSubscribers: pushSubs30d,
         playtime: playtime30d.formatted,
         memberPlaytime: playtime30d.memberFormatted,
@@ -354,6 +382,7 @@ export async function GET(req: NextRequest) {
         retentionRate: retention30d,
         topGames: topGames30d,
         topGuestGames: topGuestGames30d,
+        topSavedGames: topSavedGames30d,
         deviceSplit: devices30d,
         avgPlaysPerActive: (activeUsers30d + activeGuests30d) > 0 ? (newPlays30d / (activeUsers30d + activeGuests30d)).toFixed(1) : 0
       },
@@ -366,6 +395,7 @@ export async function GET(req: NextRequest) {
         totalGames,
         totalPlays,
         pwaInstalls: totalPwaInstalls,
+        gameSaves: totalGameSaves,
         pushSubscribers: totalPushSubscribers,
         playtime: playtimeLifetime.formatted,
         memberPlaytime: playtimeLifetime.memberFormatted,
@@ -383,8 +413,20 @@ export async function GET(req: NextRequest) {
             minute: "2-digit"
           })
         })),
+        recentGameSaves: recentGameSaves.map((s: any) => ({
+          gameSlug: s.gameSlug,
+          gameTitle: s.gameTitle || gameMap.get(s.gameSlug) || s.gameSlug,
+          deviceType: s.deviceType || "Unknown",
+          installedAt: new Date(s.installedAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+          })
+        })),
         topGames: topGamesLifetime,
         topGuestGames: topGuestGamesLifetime,
+        topSavedGames: topSavedGamesLifetime,
         deviceSplit: devicesLifetime,
         avgPlaysPerActive: (totalUsers + totalGuests) > 0 ? (totalPlays / (totalUsers + totalGuests)).toFixed(1) : 0,
         topRatedGames,

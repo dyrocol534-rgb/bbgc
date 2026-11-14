@@ -95,10 +95,35 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       setDeferredPrompt(null);
       (window as any).__pwa_deferred_prompt = null;
       localStorage.setItem(`pwa_installed_${game.slug}`, "true");
+      trackGameSave();
     });
 
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, [game.slug]);
+
+  const trackGameSave = async () => {
+    try {
+      const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
+      const deviceType = /Tablet|iPad/i.test(ua)
+        ? "Tablet"
+        : /Mobi|Android/i.test(ua)
+        ? "Mobile"
+        : "Desktop";
+      await fetch("/api/pwa-install", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          deviceType,
+          userAgent: ua,
+          gameSlug: game.slug,
+          gameTitle: game.title,
+          installType: "game",
+        }),
+      });
+    } catch (e) {
+      // ignore tracking failure
+    }
+  };
 
   const handleSaveGameToDevice = async () => {
     triggerHaptic("medium");
@@ -120,6 +145,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           (window as any).__pwa_deferred_prompt = null;
           localStorage.setItem(`pwa_installed_${game.slug}`, "true");
           triggerHaptic("success");
+          trackGameSave();
           return;
         }
       } catch (err) {
@@ -130,6 +156,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     // 2. iOS Safari: Apple does not provide a silent/programmatic install API.
     // Instead, directly invoke native iOS Share Sheet so "Add to Home Screen" is immediately accessible!
     if (isIOS) {
+      trackGameSave();
       if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
         try {
           await navigator.share({

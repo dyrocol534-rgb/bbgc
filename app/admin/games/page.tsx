@@ -6,7 +6,8 @@ import {
   Loader2, Trash2, Eye, EyeOff, Star, Pencil, Search, 
   ChevronLeft, ChevronRight, ShieldCheck, 
   ShieldAlert, Play, Sparkles, Tag, Gamepad2, SlidersHorizontal, 
-  X, Filter, ThumbsUp, ThumbsDown, Calendar, User, ExternalLink 
+  X, Filter, ThumbsUp, ThumbsDown, Calendar, User, ExternalLink,
+  Smartphone
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -22,6 +23,7 @@ interface GameData {
   featured: boolean;
   verified?: boolean;
   playCount: number;
+  savedCount?: number;
   thumbnailUrl: string;
   likes?: string[];
   dislikes?: string[];
@@ -562,9 +564,20 @@ export default function AdminGamesPage() {
 
                 {/* Col 7-8: Engagement & Plays */}
                 <div className="col-span-2 min-w-0">
-                  <div className="flex items-center gap-1.5 text-xs font-mono text-zinc-200 font-semibold">
-                    <Play className="w-3 h-3 text-zinc-500 fill-zinc-500" />
-                    <span>{game.playCount.toLocaleString()} plays</span>
+                  <div className="flex items-center gap-1.5 text-xs font-mono text-zinc-200 font-semibold flex-wrap">
+                    <span className="flex items-center gap-1">
+                      <Play className="w-3 h-3 text-zinc-500 fill-zinc-500" />
+                      <span>{game.playCount.toLocaleString()} plays</span>
+                    </span>
+                    {typeof game.savedCount === "number" && game.savedCount > 0 && (
+                      <span 
+                        className="text-[9.5px] text-cyan-400 bg-cyan-500/10 border border-cyan-500/20 px-1.5 py-0.2 rounded-full font-mono flex items-center gap-0.5" 
+                        title={`${game.savedCount} users saved to device`}
+                      >
+                        <Smartphone className="w-2.5 h-2.5" />
+                        {game.savedCount}
+                      </span>
+                    )}
                   </div>
                   {(() => {
                     const likesCount = game.likes?.length || 0;

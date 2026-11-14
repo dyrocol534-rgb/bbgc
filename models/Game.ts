@@ -14,6 +14,7 @@ export interface IGame extends Document {
   height: number;
   orientation: "landscape" | "portrait" | "any";
   playCount: number;
+  savedCount?: number;
   rating: { avg: number; count: number };
   status: "draft" | "published";
   featured: boolean;
@@ -40,6 +41,7 @@ const GameSchema: Schema<IGame> = new Schema({
   height: { type: Number, default: 600 },
   orientation: { type: String, enum: ["landscape", "portrait", "any"], default: "any" },
   playCount: { type: Number, default: 0 },
+  savedCount: { type: Number, default: 0 },
   rating: {
     avg: { type: Number, default: 0 },
     count: { type: Number, default: 0 }
