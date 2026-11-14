@@ -1,66 +1,33 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import GameImage from "@/components/game/GameImage";
 import { RotateCcw } from "lucide-react";
+import { useRecentGamesStore, RecentGameItem } from "@/lib/stores/recentGamesStore";
 
 interface ContinuePlayingRowProps {
-  initialGames?: any[];
+  initialGames?: RecentGameItem[];
 }
 
 export default function ContinuePlayingRow({ initialGames }: ContinuePlayingRowProps) {
-  const [games, setGames] = useState<any[]>(initialGames || []);
-  const hasFetchedRef = useRef(false);
+  const games = useRecentGamesStore((state) => state.games);
+  const isHydrated = useRecentGamesStore((state) => state.isHydrated);
+  const setRecentGames = useRecentGamesStore((state) => state.setRecentGames);
+  const fetchServerRecentGames = useRecentGamesStore((state) => state.fetchServerRecentGames);
 
   useEffect(() => {
-    // Prevent duplicate fetches
-    if (hasFetchedRef.current) return;
-    if (initialGames && initialGames.length > 0) {
-      setGames(initialGames);
-      return;
+    // If initialGames provided from SSR and store is empty, seed store
+    if (initialGames && initialGames.length > 0 && games.length === 0) {
+      setRecentGames(initialGames);
     }
+    fetchServerRecentGames();
+  }, [initialGames, setRecentGames, fetchServerRecentGames]);
 
-    hasFetchedRef.current = true;
-
-    // Check sessionStorage cache for instant display
-    try {
-      const cached = sessionStorage.getItem("user_recent_games");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setGames(parsed);
-          return;
-        }
-      }
-    } catch {
-      // Ignore sessionStorage errors
-    }
-
-    let isMounted = true;
-    fetch("/api/user/recent")
-      .then((res) => {
-        if (!res.ok) return { games: [] };
-        return res.json();
-      })
-      .then((data) => {
-        if (isMounted && Array.isArray(data?.games)) {
-          setGames(data.games);
-          try {
-            sessionStorage.setItem("user_recent_games", JSON.stringify(data.games));
-          } catch {
-            // Ignore
-          }
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to load recent games:", err);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []); // Run strictly once on mount
+  // Prevent SSR hydration mismatch before localStorage rehydrates
+  if (!isHydrated && (!initialGames || initialGames.length === 0)) {
+    return null;
+  }
 
   if (!games || games.length === 0) return null;
 

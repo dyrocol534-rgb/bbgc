@@ -14,6 +14,7 @@ import GameImage from '@/components/game/GameImage';
 import { triggerHaptic } from '@/lib/utils';
 import { useUIStore } from '@/lib/stores/uiStore';
 import { useGamificationStore } from '@/lib/stores/gamificationStore';
+import { useRecentGamesStore } from '@/lib/stores/recentGamesStore';
 
 interface GamePlayerProps {
   game: {
@@ -186,6 +187,16 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   useEffect(() => {
     if (isPlaying) {
       axios.post(`/api/games/${game.slug}/play`).catch(console.error);
+
+      // Update persistent recent games store with full game metadata
+      useRecentGamesStore.getState().addRecentGame({
+        slug: game.slug,
+        title: game.title,
+        thumbnailUrl: game.thumbnailUrl,
+        category: game.category,
+      });
+
+      // Maintain legacy slug array in localStorage for backward compatibility
       try {
         const stored = localStorage.getItem('recentlyPlayed');
         let recent = stored ? JSON.parse(stored) : [];
@@ -195,7 +206,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         localStorage.setItem('recentlyPlayed', JSON.stringify(recent));
       } catch (e) {}
     }
-  }, [isPlaying, game.slug]);
+  }, [isPlaying, game.slug, game.title, game.thumbnailUrl, game.category]);
 
   // Anti-AFK & Playtime Tracker:
   // 1. Pauses immediately if browser tab is hidden / minimized (document.hidden)
