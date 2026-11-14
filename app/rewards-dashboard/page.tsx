@@ -6,7 +6,7 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { XP_CONFIG } from "@/lib/xp";
 import { SITE_CONFIG } from "@/lib/config";
-import { Coins, Flame, Clock, Users, ArrowRight, ChevronLeft, ChevronRight, Gift } from "lucide-react";
+import { Coins, Flame, Clock, Users, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import InfoTooltip from "@/components/ui/InfoTooltip";
 import Link from "next/link";
 
@@ -137,140 +137,65 @@ export default async function RewardsPage() {
           </div>
         </div>
 
-        {/* ── 2-Column Responsive Breakdown ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+        {/* ── Ways to Earn XP ── */}
+        <div className="space-y-1.5">
+          <h2 className="text-[10px] sm:text-[10.5px] font-semibold text-zinc-500 uppercase tracking-wider px-1">
+            Ways to Earn XP
+          </h2>
 
-          {/* ── Left Column: Ways to Earn XP ── */}
-          <div className="space-y-1.5">
-            <h2 className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider px-1">
-              Active XP Multipliers &amp; Earn Ways
-            </h2>
-
-            <div className="border border-zinc-900 rounded-xl divide-y divide-zinc-900 overflow-hidden bg-black">
-              {/* Daily Streak */}
-              <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-zinc-950 transition-colors">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 shrink-0">
-                    <Flame className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs sm:text-sm font-semibold text-white truncate">Daily Login Streak</p>
-                    <p className="text-[11px] text-zinc-500 truncate">Log in each day to maintain your streak multiplier</p>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="text-[11px] font-mono font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-md inline-block">
-                    +{XP_CONFIG.DAILY_LOGIN + nextStreakBonus} XP/day
-                  </span>
-                  <div className="text-[10px] text-zinc-500 mt-0.5">Cap: +{maxPossibleDaily} XP</div>
+          <div className="border border-zinc-900 rounded-xl divide-y divide-zinc-900 overflow-hidden bg-black">
+            {/* Daily Streak */}
+            <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-zinc-950/70 transition-colors">
+              <div className="flex items-center gap-3 min-w-0">
+                <Flame className="w-5 h-5 text-orange-400 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-[13px] font-bold text-white tracking-tight truncate">Daily Login Bonus</p>
+                  <p className="text-[10.5px] sm:text-[11px] text-zinc-400 truncate">Log in every day to grow your bonus XP</p>
                 </div>
               </div>
-
-              {/* Gameplay Duration */}
-              <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-zinc-950 transition-colors">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs sm:text-sm font-semibold text-white truncate">Playtime Activity Drop</p>
-                    <p className="text-[11px] text-zinc-500 truncate">Play any HTML5 browser game to trigger hourly drops</p>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="text-[11px] font-mono font-bold text-indigo-300 bg-indigo-950/40 border border-indigo-900/60 px-2 py-0.5 rounded-md inline-block">
-                    +{XP_CONFIG.PLAYTIME_PER_HOUR} XP/hr
-                  </span>
-                  <div className="text-[10px] text-zinc-500 mt-0.5">Auto-synced</div>
-                </div>
-              </div>
-
-              {/* Refer Friends */}
-              <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-zinc-950 transition-colors">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                    <Users className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs sm:text-sm font-semibold text-white truncate">Invite Friends (Referral)</p>
-                    <p className="text-[11px] text-zinc-500 truncate">Both receive bonus XP when friend plays 10 games</p>
-                  </div>
-                </div>
-                <Link
-                  href="/referral"
-                  className="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg hover:bg-emerald-500/20 transition-colors"
-                >
-                  <span>+{XP_CONFIG.REFERRAL_REWARD} XP</span>
-                  <ArrowRight className="w-3 h-3 ml-0.5" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Right Column: Rewards Catalog & Tiers ── */}
-          <div className="space-y-1.5">
-            <h2 className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider px-1">
-              Redeem, Store &amp; Tier Perks
-            </h2>
-
-            <div className="border border-zinc-900 rounded-xl divide-y divide-zinc-900 overflow-hidden bg-black">
-              {/* Rewards Store */}
-              <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-zinc-950 transition-colors">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
-                    <Gift className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs sm:text-sm font-semibold text-white truncate">Player Rewards Store</p>
-                    <p className="text-[11px] text-zinc-500 truncate">Exclusive profile frames, chat badges &amp; custom themes</p>
-                  </div>
-                </div>
-                <Link
-                  href="/rewards"
-                  className="shrink-0 text-[10px] font-medium text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md hover:bg-amber-500/20 transition-colors"
-                >
-                  Coming Soon →
-                </Link>
-              </div>
-
-              {/* Leaderboard Competitions */}
-              <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-zinc-950 transition-colors">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
-                    <Coins className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs sm:text-sm font-semibold text-white truncate">Global Leaderboard Rank</p>
-                    <p className="text-[11px] text-zinc-500 truncate">Climb top 100 global rankings with lifetime XP</p>
-                  </div>
-                </div>
-                <Link
-                  href="/leaderboard"
-                  className="shrink-0 inline-flex items-center gap-1 text-[11px] font-medium text-zinc-300 hover:text-white bg-zinc-900 border border-zinc-800 px-2.5 py-1 rounded-lg transition-colors"
-                >
-                  <span>View Rank</span>
-                  <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-
-              {/* VIP Perks */}
-              <div className="p-3.5 flex items-center justify-between gap-3 hover:bg-zinc-950 transition-colors">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 shrink-0">
-                    <Flame className="w-4 h-4 text-zinc-400" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs sm:text-sm font-semibold text-white truncate">Streak Saver Perk</p>
-                    <p className="text-[11px] text-zinc-500 truncate">Protect your streak if you miss a single calendar day</p>
-                  </div>
-                </div>
-                <span className="shrink-0 text-[10px] font-mono text-zinc-500 bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded-md">
-                  In Dev
+              <div className="text-right shrink-0">
+                <span className="text-[10.5px] font-mono font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 rounded-md inline-block">
+                  +{XP_CONFIG.DAILY_LOGIN + nextStreakBonus} XP/day
                 </span>
+                <div className="text-[9.5px] text-zinc-500 mt-0.5">Max: +{maxPossibleDaily} XP</div>
               </div>
             </div>
-          </div>
 
+            {/* Gameplay Duration */}
+            <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-zinc-950/70 transition-colors">
+              <div className="flex items-center gap-3 min-w-0">
+                <Clock className="w-5 h-5 text-sky-400 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-[13px] font-bold text-white tracking-tight truncate">Play Games</p>
+                  <p className="text-[10.5px] sm:text-[11px] text-zinc-400 truncate">Earn XP for every hour you play</p>
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <span className="text-[10.5px] font-mono font-bold text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded-md inline-block">
+                  +{XP_CONFIG.PLAYTIME_PER_HOUR} XP/hr
+                </span>
+                <div className="text-[9.5px] text-zinc-500 mt-0.5">Auto-synced</div>
+              </div>
+            </div>
+
+            {/* Refer Friends */}
+            <div className="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-zinc-950/70 transition-colors">
+              <div className="flex items-center gap-3 min-w-0">
+                <Users className="w-5 h-5 text-emerald-400 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-[13px] font-bold text-white tracking-tight truncate">Invite Friends</p>
+                  <p className="text-[10.5px] sm:text-[11px] text-zinc-400 truncate">Get bonus XP when a friend plays games</p>
+                </div>
+              </div>
+              <Link
+                href="/referral"
+                className="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full hover:bg-emerald-500/20 active:scale-95 transition-all"
+              >
+                <span>+{XP_CONFIG.REFERRAL_REWARD} XP</span>
+                <ArrowRight className="w-3 h-3 ml-0.5" />
+              </Link>
+            </div>
+          </div>
         </div>
 
       </div>

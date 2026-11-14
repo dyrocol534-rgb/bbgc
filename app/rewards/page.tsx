@@ -90,13 +90,6 @@ export default async function RewardsPage() {
 
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link
-              href="/rewards-dashboard"
-              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-medium shadow-xs"
-            >
-              <span>Stats</span>
-              <ChevronRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
-            </Link>
-            <Link
               href="/leaderboard"
               className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-medium shadow-xs"
             >
