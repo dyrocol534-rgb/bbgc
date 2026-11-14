@@ -186,71 +186,44 @@ export default function RewardsStoreClient({
       {/* ── Section Header ── */}
       <div className="flex items-center justify-between px-0.5">
         <div className="flex items-center gap-1.5">
-          <h2 className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-            Available Redemptions
+          <h2 className="text-[10.5px] sm:text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+            Available Rewards
           </h2>
           <InfoTooltip
             size="xs"
-            title="7-Day Redemption Rule"
-            content="To maintain fair supply, each player can redeem any specific reward item (like BGMI UC or MLBB Weekly Pass) once every 7 days. Your XP is immediately deducted upon placing an order."
+            title="Redemption Policy"
+            content="Each player can redeem a specific reward item once every 7 days. Your XP is deducted upon placing an order and rewards are delivered to your Game Player ID."
           />
         </div>
-        <span className="text-[10px] text-zinc-500 font-mono">
-          1 Claim / 7 Days
+        <span className="inline-flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-900/80 border border-white/[0.06] px-2.5 py-0.5 rounded-full font-mono">
+          1 claim / 7 days
         </span>
       </div>
 
-      {/* ── Full Width Responsive Grid (Dynamic Image Gradient Cards) ── */}
+      {/* ── Full Width Responsive Grid of Cards ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
         {rewards.map((item) => {
           const isOutOfStock = item.stockStatus === "out_of_stock";
           const isComingSoon = item.isComingSoon;
           const cooldown = cooldowns[item._id];
           const hasEnoughXp = currentXp >= item.requiredXp;
+          const cleanGame = item.game.replace(/\s*\(.*?\)\s*/g, "").trim();
 
           return (
             <div
               key={item._id}
-              className="group relative rounded-2xl bg-zinc-950/80 border border-white/[0.08] hover:border-white/20 p-3.5 sm:p-4 flex flex-col justify-between gap-3 transition-all duration-300 shadow-xl shadow-black/50 hover:shadow-2xl overflow-hidden backdrop-blur-xl"
+              className="group relative rounded-2xl bg-zinc-950/90 border border-zinc-800/80 hover:border-zinc-700/80 p-3.5 sm:p-4 flex flex-col justify-between gap-3 transition-all duration-200 shadow-lg shadow-black/40 overflow-hidden"
             >
-              {/* Dynamic Game/Image Background Gradient Bloom */}
-              {item.iconUrl ? (
-                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-0">
-                  {/* Primary bloom radiating from the image (top-left) */}
-                  <div
-                    className="absolute -top-12 -left-12 w-64 h-64 opacity-35 sm:opacity-40 blur-3xl scale-125 transition-all duration-700 group-hover:scale-150 group-hover:opacity-55"
-                    style={{
-                      backgroundImage: `url(${item.iconUrl})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  />
-                  {/* Subtle ambient counter-bloom at bottom-right */}
-                  <div
-                    className="absolute -bottom-10 -right-10 w-44 h-44 opacity-20 blur-3xl scale-125 transition-all duration-700 group-hover:opacity-30"
-                    style={{
-                      backgroundImage: `url(${item.iconUrl})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  />
-                  {/* Smooth dark vignette ensuring crisp text contrast */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/20 via-zinc-950/80 to-zinc-950/95" />
-                </div>
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/40 to-zinc-950/90 rounded-2xl z-0" />
-              )}
-
               {/* Top hairline highlight sheen */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none" />
 
               {/* Main Card Content */}
-              <div className="relative z-10 space-y-2.5">
-                {/* Header: Game Icon + Title/Category + Cost Pill */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    {/* Game Icon with squircle frame and hover zoom */}
-                    <div className="relative w-14 h-14 rounded-2xl bg-zinc-900 border border-white/[0.12] overflow-hidden flex items-center justify-center shrink-0 shadow-md shadow-black/60 group-hover:border-white/30 transition-all">
+              <div className="space-y-2.5">
+                {/* Header: Game Icon + Title/Game + Cost Pill */}
+                <div className="flex items-start justify-between gap-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                    {/* Game Icon */}
+                    <div className="relative w-12 h-12 rounded-xl bg-zinc-900 border border-white/[0.08] overflow-hidden flex items-center justify-center shrink-0 shadow-sm group-hover:border-white/20 transition-colors">
                       {item.iconUrl ? (
                         <Image
                           src={item.iconUrl}
@@ -260,24 +233,24 @@ export default function RewardsStoreClient({
                           unoptimized
                         />
                       ) : (
-                        <Gift className="w-7 h-7 text-zinc-500" />
+                        <Gift className="w-6 h-6 text-zinc-500" />
                       )}
                     </div>
 
                     {/* Game Name + Reward Title */}
                     <div className="min-w-0 flex-1">
-                      <p className="text-[11px] text-zinc-400 font-medium truncate leading-tight">
-                        {item.game}
+                      <p className="text-[10.5px] sm:text-[11px] text-zinc-400 font-medium truncate leading-tight">
+                        {cleanGame}
                       </p>
-                      <h3 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug line-clamp-2 mt-0.5 group-hover:text-amber-300 transition-colors">
+                      <h3 className="text-[13px] sm:text-[13.5px] font-bold text-white tracking-tight leading-snug line-clamp-2 mt-0.5 group-hover:text-amber-300 transition-colors">
                         {item.title}
                       </h3>
                     </div>
                   </div>
 
                   {/* Clean Cost Pill */}
-                  <div className="shrink-0 text-right">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-300 font-mono font-bold text-xs shadow-sm">
+                  <div className="shrink-0">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/25 text-amber-400 font-mono font-bold text-xs shadow-xs">
                       <Coins className="w-3.5 h-3.5 text-amber-400" />
                       <span>{item.requiredXp} XP</span>
                     </span>
@@ -285,52 +258,59 @@ export default function RewardsStoreClient({
                 </div>
               </div>
 
-              {/* Clean Bottom Bar: Minimal Status on Left, Action CTA on Right */}
-              <div className="relative z-10 pt-2.5 border-t border-white/[0.06] flex items-center justify-between gap-2">
-                {/* Left: Minimal Status Indicator */}
-                <div className="flex items-center gap-1.5 text-xs">
-                  {isOutOfStock ? (
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-rose-400">
-                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                      <span>Out of Stock</span>
+              {/* Bottom Row: Contextual Status on Left, Action CTA on Right */}
+              <div className="pt-2.5 border-t border-zinc-900/80 flex items-center justify-between gap-2">
+                {/* Left: Contextual Status */}
+                <div className="min-w-0">
+                  {isComingSoon ? (
+                    <span className="inline-flex items-center gap-1.5 text-[11px] text-amber-400/90">
+                      <Sparkles className="w-3 h-3 text-amber-400 shrink-0" />
+                      <span className="truncate">Upcoming reward</span>
+                    </span>
+                  ) : isOutOfStock ? (
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                      <span className="truncate">Restocking soon</span>
+                    </span>
+                  ) : cooldown ? (
+                    <span className="inline-flex items-center gap-1.5 text-[11px] text-amber-400/90 font-medium">
+                      <Clock className="w-3 h-3 text-amber-400 shrink-0" />
+                      <span className="truncate">Wait {cooldown.daysLeft}d to claim</span>
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-emerald-400">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50" />
-                      <span>In Stock</span>
+                    <span className="inline-flex items-center gap-1.5 text-[11px] text-emerald-400 font-medium">
+                      <Clock className="w-3 h-3 text-emerald-400 shrink-0" />
+                      <span className="truncate">30–60m delivery</span>
                     </span>
                   )}
-                  <span className="text-zinc-600 text-xs">•</span>
-                  <span className="text-[11px] text-zinc-400 font-mono">30-60m</span>
                 </div>
 
                 {/* Right: Rounded Action Button */}
-                <div>
+                <div className="shrink-0">
                   {isComingSoon ? (
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-zinc-700/50 text-zinc-400 text-xs font-semibold select-none">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                      <span>Coming Soon</span>
+                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-xs font-medium select-none">
+                      Coming Soon
                     </span>
                   ) : isOutOfStock ? (
-                    <span className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-zinc-900/80 border border-white/[0.08] text-zinc-500 text-xs font-semibold select-none">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-500 text-xs font-medium select-none">
                       Sold Out
                     </span>
                   ) : cooldown ? (
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs font-semibold">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span>Wait {cooldown.daysLeft}d</span>
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs font-medium">
+                      <Clock className="w-3 h-3" />
+                      <span>{cooldown.daysLeft}d Cooldown</span>
                     </span>
                   ) : !isAuthenticated ? (
                     <Link
                       href="/login"
-                      className="inline-flex items-center px-4 py-1.5 rounded-full bg-white hover:bg-zinc-200 active:scale-95 text-black font-bold text-xs transition-all shadow-md shadow-white/10"
+                      className="inline-flex items-center px-3.5 py-1 rounded-full bg-white hover:bg-zinc-200 active:scale-95 text-black font-bold text-xs transition-all shadow-xs"
                     >
                       Sign In
                     </Link>
                   ) : !hasEnoughXp ? (
                     <button
                       disabled
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-zinc-900/80 border border-white/[0.06] text-zinc-500 text-xs font-medium cursor-not-allowed"
+                      className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-500 text-xs font-medium cursor-not-allowed"
                     >
                       <Lock className="w-3 h-3 text-zinc-500" />
                       <span>Need {item.requiredXp - currentXp} XP</span>
@@ -338,7 +318,7 @@ export default function RewardsStoreClient({
                   ) : (
                     <button
                       onClick={() => openClaimModal(item)}
-                      className="inline-flex items-center gap-1 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:scale-95 text-black font-bold text-xs transition-all shadow-md shadow-amber-500/20"
+                      className="inline-flex items-center gap-1 px-3.5 py-1 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:scale-95 text-black font-bold text-xs transition-all shadow-md shadow-amber-500/20"
                     >
                       <Zap className="w-3.5 h-3.5 fill-black" />
                       <span>Redeem</span>

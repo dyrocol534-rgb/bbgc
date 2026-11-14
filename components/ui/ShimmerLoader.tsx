@@ -113,52 +113,48 @@ export function RewardCardSkeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative rounded-2xl bg-zinc-950/80 border border-white/[0.08] p-3.5 sm:p-4 flex flex-col justify-between gap-3 overflow-hidden backdrop-blur-xl shadow-xl shadow-black/50",
+        "relative rounded-2xl bg-zinc-950/90 border border-zinc-800/80 p-3.5 sm:p-4 flex flex-col justify-between gap-3 overflow-hidden shadow-lg shadow-black/40",
         className
       )}
     >
-      {/* Dynamic Subtle Shimmer Bloom */}
-      <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/30 to-zinc-950/90 rounded-2xl z-0" />
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none" />
 
       {/* Main Card Content */}
-      <div className="relative z-10 space-y-2.5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            {/* Game Icon Squircle */}
-            <div className="relative w-14 h-14 rounded-2xl bg-zinc-900 border border-white/[0.12] overflow-hidden flex items-center justify-center shrink-0 shadow-md shadow-black/60">
-              <Skeleton className="w-full h-full rounded-2xl" />
+      <div className="space-y-2.5">
+        <div className="flex items-start justify-between gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            {/* Game Icon */}
+            <div className="relative w-12 h-12 rounded-xl bg-zinc-900 border border-white/[0.08] overflow-hidden flex items-center justify-center shrink-0 shadow-sm">
+              <Skeleton className="w-full h-full rounded-xl" />
             </div>
 
             {/* Game Name + Reward Title */}
             <div className="min-w-0 flex-1 space-y-1.5">
-              <Skeleton className="h-3 w-28 sm:w-36 rounded-md" />
-              <Skeleton className="h-4 sm:h-5 w-44 max-w-[85%] rounded-md" />
+              <Skeleton className="h-3 w-24 sm:w-28 rounded-md" />
+              <Skeleton className="h-4 w-36 max-w-[85%] rounded-md" />
             </div>
           </div>
 
           {/* Cost Pill Badge */}
           <div className="shrink-0">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 shadow-sm">
+            <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 shadow-xs">
               <div className="w-3.5 h-3.5 rounded-full bg-amber-400/30" />
-              <Skeleton className="h-3.5 w-10 rounded-sm bg-amber-400/20" />
+              <Skeleton className="h-3.5 w-9 rounded-sm bg-amber-400/20" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Bottom Bar */}
-      <div className="relative z-10 pt-2.5 border-t border-white/[0.06] flex items-center justify-between gap-2">
+      <div className="pt-2.5 border-t border-zinc-900/80 flex items-center justify-between gap-2">
         {/* Status Indicator */}
         <div className="flex items-center gap-1.5">
           <Skeleton className="w-1.5 h-1.5 rounded-full" />
-          <Skeleton className="h-2.5 w-16 rounded-md" />
-          <span className="text-zinc-600 text-xs">•</span>
-          <Skeleton className="h-2.5 w-10 rounded-md" />
+          <Skeleton className="h-2.5 w-24 rounded-md" />
         </div>
 
         {/* Action CTA Button */}
-        <Skeleton className="h-7 w-20 sm:w-22 rounded-full" />
+        <Skeleton className="h-6 sm:h-7 w-18 sm:w-20 rounded-full" />
       </div>
     </div>
   );
@@ -249,13 +245,13 @@ export function RewardsStoreSkeleton({
           {/* ── Section Header ── */}
           <div className="flex items-center justify-between px-0.5">
             <div className="flex items-center gap-1.5">
-              <h2 className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
-                Available Redemptions
+              <h2 className="text-[10.5px] sm:text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+                Available Rewards
               </h2>
               <div className="w-3.5 h-3.5 rounded-full bg-zinc-800/80 border border-white/5" />
             </div>
-            <span className="text-[10px] text-zinc-500 font-mono">
-              1 Claim / 7 Days
+            <span className="inline-flex items-center gap-1 text-[10px] text-zinc-400 bg-zinc-900/80 border border-white/[0.06] px-2.5 py-0.5 rounded-full font-mono">
+              1 claim / 7 days
             </span>
           </div>
 
