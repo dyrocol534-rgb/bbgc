@@ -52,7 +52,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
   // PWA Save-to-Device state
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isGameInstalled, setIsGameInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
 
@@ -62,15 +61,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-
-    // Check standalone PWA mode
-    const isStandalone =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      (window.navigator as any).standalone === true;
-
-    if (isStandalone || localStorage.getItem(`pwa_installed_${game.slug}`) === "true") {
-      setIsGameInstalled(true);
-    }
 
     // Detect iOS
     const ua = window.navigator.userAgent;
@@ -91,10 +81,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
     window.addEventListener("beforeinstallprompt", handler);
     window.addEventListener("appinstalled", () => {
-      setIsGameInstalled(true);
       setDeferredPrompt(null);
       (window as any).__pwa_deferred_prompt = null;
-      localStorage.setItem(`pwa_installed_${game.slug}`, "true");
       trackGameSave();
     });
 
@@ -128,11 +116,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   const handleSaveGameToDevice = async () => {
     triggerHaptic("medium");
 
-    if (isGameInstalled) {
-      alert(`${game.title} is already saved to your device! 🚀`);
-      return;
-    }
-
     // 1. Android & Chromium: Directly trigger the native OS install dialog with 1 tap
     const prompt = deferredPrompt || (typeof window !== "undefined" ? (window as any).__pwa_deferred_prompt : null);
     if (prompt) {
@@ -140,10 +123,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         prompt.prompt();
         const { outcome } = await prompt.userChoice;
         if (outcome === "accepted") {
-          setIsGameInstalled(true);
           setDeferredPrompt(null);
           (window as any).__pwa_deferred_prompt = null;
-          localStorage.setItem(`pwa_installed_${game.slug}`, "true");
           triggerHaptic("success");
           trackGameSave();
           return;
@@ -819,17 +800,8 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                     className="px-5 py-2.5 sm:px-6 sm:py-2.5 bg-white/[0.08] hover:bg-white/[0.14] active:scale-[0.98] border border-white/[0.15] text-white text-xs sm:text-sm font-semibold rounded-full transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md shadow-sm"
                     title="Save this game as an app on your device"
                   >
-                    {isGameInstalled ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Saved</span>
-                      </>
-                    ) : (
-                      <>
-                        <Download className="w-3.5 h-3.5 text-zinc-300" />
-                        <span>Save to Device</span>
-                      </>
-                    )}
+                    <Download className="w-3.5 h-3.5 text-zinc-300" />
+                    <span>Save to Device</span>
                   </button>
                 </div>
               </div>
