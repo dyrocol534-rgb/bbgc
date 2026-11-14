@@ -40,7 +40,7 @@ export default function FeaturedCarousel({ games }: { games: any[] }) {
       <div className="absolute bottom-0 left-0 p-4 sm:p-6 md:p-10 max-w-2xl w-full">
         <div className="flex items-center gap-2 mb-2">
           {game.category?.map((cat: string) => (
-            <span key={cat} className="px-2 py-0.5 bg-primary/80 backdrop-blur-sm text-[10px] sm:text-xs font-bold uppercase rounded-full text-white">
+            <span key={cat} className="px-2.5 py-0.5 bg-black/50 backdrop-blur-md border border-white/15 text-[10px] sm:text-xs font-bold uppercase rounded-full text-white shadow-sm">
               {cat}
             </span>
           ))}

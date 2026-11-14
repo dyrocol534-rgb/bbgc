@@ -34,9 +34,9 @@ export default function GlobalError({
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
           <button
             onClick={() => reset()}
-            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover active:scale-95 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-white hover:bg-zinc-200 active:scale-95 text-black font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-white/10 cursor-pointer"
           >
-            <RotateCcw className="w-4 h-4" />
+            <RotateCcw className="w-4 h-4 text-black" />
             Try again
           </button>
           

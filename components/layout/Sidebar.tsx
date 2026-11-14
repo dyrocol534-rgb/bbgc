@@ -229,17 +229,17 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
         <div className="flex-1 overflow-y-auto custom-scrollbar p-3 flex flex-col justify-between">
           <div>
             {/* Surprise Me Button */}
-            <div className="mb-3">
+            <div className="mb-2">
               <button
                 type="button"
                 onClick={handleSurpriseMe}
                 disabled={isRolling}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all whitespace-nowrap bg-gradient-to-r from-purple-500/15 via-indigo-500/10 to-transparent hover:from-purple-500/25 hover:via-indigo-500/15 border border-purple-500/20 hover:border-purple-500/40 shadow-xs cursor-pointer active:scale-95 group"
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-zinc-400 hover:bg-white/[0.05] hover:text-white transition-all whitespace-nowrap cursor-pointer active:scale-95 group"
               >
-                <div className="w-7 h-7 rounded-[8px] bg-purple-500/20 border border-purple-400/30 flex items-center justify-center shrink-0 shadow-sm text-purple-300 group-hover:bg-purple-500/30 transition-all">
-                  {isRolling ? <Loader2 className="w-3.5 h-3.5 text-purple-200 animate-spin" /> : <Dices className="w-3.5 h-3.5 text-purple-300" />}
+                <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                  {isRolling ? <Loader2 className="w-4 h-4 text-purple-300 animate-spin" /> : <Dices className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform" />}
                 </div>
-                <span className="font-semibold text-xs text-zinc-200 group-hover:text-white transition-colors">Surprise Me!</span>
+                <span className="font-medium text-zinc-300 group-hover:text-white transition-colors">Surprise Me!</span>
               </button>
             </div>
 
@@ -260,11 +260,8 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                         : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
                     )}
                   >
-                    <div className={clsx(
-                      "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0",
-                      isActive ? link.bg : "bg-white/[0.04] text-zinc-400"
-                    )}>
-                      <Icon className={clsx("w-3.5 h-3.5", isActive ? link.color : "text-zinc-400")} />
+                    <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                      <Icon className={clsx("w-4 h-4 transition-colors", isActive ? link.color : "text-zinc-400 group-hover:text-white")} />
                     </div>
                     <span className="font-medium">{link.name}</span>
                   </Link>
@@ -273,8 +270,8 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             </nav>
 
             {/* Rewards */}
-            <div className="mb-3 flex flex-col gap-1.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 px-1">Rewards</span>
+            <div className="mb-3 flex flex-col gap-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 px-3 py-1">Rewards</span>
               <Link
                 href="/referral"
                 onClick={(e) => {
@@ -284,17 +281,15 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                   }
                   setIsExpanded(false);
                 }}
-                className="w-full flex items-center justify-between px-3 py-2 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent hover:from-emerald-500/25 hover:via-teal-500/15 border border-emerald-500/20 hover:border-emerald-500/40 rounded-xl transition-all group"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-zinc-400 hover:bg-white/[0.05] hover:text-white transition-all group"
               >
-                <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/30 transition-all">
-                    <Handshake className="w-3.5 h-3.5 text-emerald-400" />
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                    <Handshake className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
                   </div>
-                  <div className="flex flex-col items-start">
-                    <span className="text-white text-xs font-medium group-hover:text-emerald-300 transition-colors">Refer & Earn</span>
-                    <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+{XP_CONFIG.REFERRAL_REWARD} XP</span>
-                  </div>
+                  <span className="text-zinc-300 text-xs font-medium group-hover:text-white transition-colors truncate">Refer & Earn</span>
                 </div>
+                <span className="text-emerald-400/90 text-[10px] uppercase tracking-wider font-semibold">+{XP_CONFIG.REFERRAL_REWARD} XP</span>
               </Link>
               <Link
                 href="/rewards"
@@ -305,19 +300,17 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                   }
                   setIsExpanded(false);
                 }}
-                className="w-full flex items-center justify-between px-3 py-2 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-transparent hover:from-amber-500/25 hover:via-orange-500/15 border border-amber-500/20 hover:border-amber-500/40 rounded-xl transition-all group"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs sm:text-sm font-medium text-zinc-400 hover:bg-white/[0.05] hover:text-white transition-all group"
               >
-                <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-[8px] bg-amber-500/20 border border-amber-400/30 flex items-center justify-center shrink-0 group-hover:bg-amber-500/30 transition-all">
-                    <Flame className="w-3.5 h-3.5 text-amber-400" />
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                    <Flame className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
                   </div>
-                  <div className="flex flex-col items-start">
-                    <span className="text-white text-xs font-medium group-hover:text-amber-300 transition-colors">Daily Streak</span>
-                    <span className="text-zinc-400 text-[9.5px] uppercase tracking-wider font-semibold">
-                      {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
-                    </span>
-                  </div>
+                  <span className="text-zinc-300 text-xs font-medium group-hover:text-white transition-colors truncate">Daily Streak</span>
                 </div>
+                <span className="text-amber-400/90 text-[10px] uppercase tracking-wider font-semibold">
+                  {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
+                </span>
               </Link>
             </div>
 
@@ -341,11 +334,8 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                       isActive ? "bg-white/[0.09] text-white ring-1 ring-white/[0.1]" : "text-zinc-400 hover:bg-white/[0.04] hover:text-white"
                     )}
                   >
-                    <div className={clsx(
-                      "w-7 h-7 rounded-[7px] flex items-center justify-center shrink-0",
-                      isActive ? "bg-white/[0.12] text-white" : "bg-white/[0.03] text-zinc-500"
-                    )}>
-                      <Icon className="w-3.5 h-3.5" />
+                    <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                      <Icon className={clsx("w-4 h-4 transition-colors", isActive ? "text-white" : "text-zinc-500 group-hover:text-zinc-300")} />
                     </div>
                     <span className="font-medium">{link.name}</span>
                   </Link>
@@ -386,24 +376,24 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
         )}>
           <div>
             {/* Surprise Me Button */}
-            <div className={clsx("mb-3", isExpanded ? "px-3" : "px-2 flex justify-center")}>
+            <div className={clsx("mb-2", isExpanded ? "px-3" : "px-2 flex justify-center")}>
               <button
                 type="button"
                 onClick={handleSurpriseMe}
                 disabled={isRolling}
                 className={clsx(
-                  "flex items-center rounded-xl transition-all whitespace-nowrap cursor-pointer active:scale-95 group",
+                  "flex items-center rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap cursor-pointer active:scale-95 group",
                   isExpanded 
-                    ? "w-full gap-3 px-3 py-2 bg-gradient-to-r from-purple-500/15 via-indigo-500/10 to-transparent hover:from-purple-500/25 hover:via-indigo-500/15 border border-purple-500/20 hover:border-purple-500/40 shadow-xs" 
-                    : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
+                    ? "w-full gap-3 px-3 py-2 text-zinc-400 hover:bg-white/[0.05] hover:text-white" 
+                    : "w-10 h-10 justify-center p-0 text-zinc-400 hover:bg-white/[0.05] hover:text-white"
                 )}
                 title={!isExpanded ? "Surprise Me (Random Game)" : undefined}
               >
-                <div className="w-7 h-7 rounded-[8px] bg-purple-500/20 border border-purple-400/30 flex items-center justify-center shrink-0 shadow-sm text-purple-300 group-hover:bg-purple-500/30 transition-all">
-                  {isRolling ? <Loader2 className="w-3.5 h-3.5 text-purple-200 animate-spin" /> : <Dices className="w-3.5 h-3.5 text-purple-300" />}
+                <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                  {isRolling ? <Loader2 className="w-4 h-4 text-purple-300 animate-spin" /> : <Dices className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform" />}
                 </div>
                 {isExpanded && (
-                  <span className="font-semibold text-xs text-zinc-200 group-hover:text-white transition-colors truncate">Surprise Me!</span>
+                  <span className="font-medium text-zinc-300 group-hover:text-white transition-colors truncate">Surprise Me!</span>
                 )}
               </button>
             </div>
@@ -426,11 +416,8 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                     )}
                     title={!isExpanded ? link.name : undefined}
                   >
-                    <div className={clsx(
-                      "w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0 transition-all",
-                      isActive ? link.bg : "bg-white/[0.04] text-zinc-400 group-hover:text-white group-hover:bg-white/[0.08]"
-                    )}>
-                      <Icon className={clsx("w-3.5 h-3.5", isActive ? link.color : "text-zinc-400 group-hover:text-white")} />
+                    <div className="w-7 h-7 flex items-center justify-center shrink-0 transition-all">
+                      <Icon className={clsx("w-4 h-4 transition-colors", isActive ? link.color : "text-zinc-400 group-hover:text-white")} />
                     </div>
                     {isExpanded && (
                       <span className="font-medium truncate">{link.name}</span>
@@ -441,9 +428,9 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
             </nav>
 
             {/* Rewards & Referral Buttons */}
-            <div className={clsx("mb-3 flex flex-col gap-1.5", isExpanded ? "px-3" : "px-2 items-center")}>
+            <div className={clsx("mb-3 flex flex-col gap-0.5", isExpanded ? "px-3" : "px-2 items-center")}>
               {isExpanded && (
-                <div className="flex items-center gap-2 mb-0.5 px-1 text-zinc-500">
+                <div className="flex items-center gap-2 mb-0.5 px-3 py-1 text-zinc-500">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Rewards</span>
                 </div>
               )}
@@ -459,18 +446,18 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 className={clsx(
                   "flex items-center transition-all rounded-xl group overflow-hidden",
                   isExpanded 
-                    ? "w-full justify-between px-3 py-2 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-transparent hover:from-emerald-500/25 hover:via-teal-500/15 border border-emerald-500/20 hover:border-emerald-500/40" 
-                    : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
+                    ? "w-full justify-between px-3 py-2 text-zinc-400 hover:bg-white/[0.05] hover:text-white" 
+                    : "w-10 h-10 justify-center p-0 text-zinc-400 hover:bg-white/[0.05] hover:text-white"
                 )}
                 title={!isExpanded ? `Refer & Earn (+${XP_CONFIG.REFERRAL_REWARD} XP)` : undefined}
               >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-[8px] bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center shrink-0 group-hover:bg-emerald-500/30 transition-all">
-                    <Handshake className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                    <Handshake className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
                   </div>
                   {isExpanded && (
                     <div className="flex flex-col items-start whitespace-nowrap min-w-0">
-                      <span className="text-white text-xs font-medium group-hover:text-emerald-300 transition-colors truncate">Refer & Earn</span>
+                      <span className="text-zinc-300 text-xs font-medium group-hover:text-white transition-colors truncate">Refer & Earn</span>
                       <span className="text-emerald-400/90 text-[9.5px] uppercase tracking-wider font-semibold">+{XP_CONFIG.REFERRAL_REWARD} XP</span>
                     </div>
                   )}
@@ -489,18 +476,18 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                 className={clsx(
                   "flex items-center transition-all rounded-xl group overflow-hidden",
                   isExpanded 
-                    ? "w-full justify-between px-3 py-2 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-transparent hover:from-amber-500/25 hover:via-orange-500/15 border border-amber-500/20 hover:border-amber-500/40" 
-                    : "w-10 h-10 justify-center p-0 hover:bg-white/[0.04]"
+                    ? "w-full justify-between px-3 py-2 text-zinc-400 hover:bg-white/[0.05] hover:text-white" 
+                    : "w-10 h-10 justify-center p-0 text-zinc-400 hover:bg-white/[0.05] hover:text-white"
                 )}
                 title={!isExpanded ? "Daily Streak & XP" : undefined}
               >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-[8px] bg-amber-500/20 border border-amber-400/30 flex items-center justify-center shrink-0 group-hover:bg-amber-500/30 transition-all">
-                    <Flame className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-7 h-7 flex items-center justify-center shrink-0">
+                    <Flame className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
                   </div>
                   {isExpanded && (
                     <div className="flex flex-col items-start whitespace-nowrap min-w-0">
-                      <span className="text-white text-xs font-medium group-hover:text-amber-300 transition-colors truncate">Daily Streak</span>
+                      <span className="text-zinc-300 text-xs font-medium group-hover:text-white transition-colors truncate">Daily Streak</span>
                       <span className="text-zinc-400 text-[9.5px] uppercase tracking-wider font-semibold">
                         {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
                       </span>
@@ -547,13 +534,8 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                     )}
                     title={!isExpanded ? link.name : undefined}
                   >
-                    <div className={clsx(
-                      "w-7 h-7 rounded-[7px] flex items-center justify-center shrink-0 transition-all",
-                      isActive 
-                        ? "bg-white/[0.12] text-white" 
-                        : "bg-white/[0.03] text-zinc-500 group-hover:text-zinc-300 group-hover:bg-white/[0.06]"
-                    )}>
-                      <Icon className="w-3.5 h-3.5" />
+                    <div className="w-7 h-7 flex items-center justify-center shrink-0 transition-all">
+                      <Icon className={clsx("w-4 h-4 transition-colors", isActive ? "text-white" : "text-zinc-500 group-hover:text-zinc-300")} />
                     </div>
                     {isExpanded && (
                       <span className="font-medium truncate">{link.name}</span>

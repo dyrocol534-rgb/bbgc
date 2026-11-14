@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { X, Sparkles, UserPlus, Loader2 } from "lucide-react";
+import { X, Gamepad2, Gift, UserPlus, Loader2 } from "lucide-react";
 import { XP_CONFIG } from "@/lib/xp-config";
 
 export default function WelcomeModal() {
@@ -94,40 +94,40 @@ export default function WelcomeModal() {
       aria-labelledby="welcome-modal-title"
     >
       <div
-        className="bg-surface border border-zinc-800 sm:rounded-3xl rounded-t-3xl shadow-2xl w-full max-w-md max-h-[92dvh] sm:max-h-[min(92dvh,640px)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 flex flex-col"
+        className="bg-[#121216] border border-white/[0.08] sm:rounded-2xl rounded-t-2xl shadow-2xl w-full max-w-[390px] max-h-[92dvh] sm:max-h-[min(90dvh,580px)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-200 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative shrink-0 bg-gradient-to-br from-primary via-indigo-600 to-purple-600 px-4 py-5 sm:px-6 sm:py-6">
+        <div className="relative shrink-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 px-4 py-3.5 sm:px-5 sm:py-4 overflow-hidden">
           <button
             type="button"
             onClick={handleSkip}
             aria-label="Close welcome dialog"
-            className="absolute top-3 right-3 sm:top-4 sm:right-4 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 rounded-full p-1.5 transition-colors"
+            className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 text-white/80 hover:text-white bg-black/25 hover:bg-black/40 rounded-full p-1.5 transition-colors cursor-pointer z-20"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -top-10 -right-10 w-36 h-36 bg-white/15 rounded-full blur-2xl pointer-events-none" />
 
           <h2
             id="welcome-modal-title"
-            className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 relative z-10 pr-10"
+            className="text-lg sm:text-xl font-bold text-white flex items-center gap-2 relative z-10 pr-8 tracking-tight"
           >
-            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 shrink-0" />
+            <Gamepad2 className="w-5 h-5 text-amber-300 shrink-0" />
             Welcome to Bluebuff!
           </h2>
-          <p className="text-indigo-100 text-sm mt-1 relative z-10">
+          <p className="text-blue-100/90 text-xs mt-0.5 relative z-10">
             Complete your profile to earn rewards
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-5"
+          className="flex flex-col flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 space-y-3 sm:space-y-3.5 bg-[#0f0f13]"
         >
-          <div className="space-y-2">
-            <label htmlFor="welcome-phone" className="text-sm font-medium text-zinc-300">
+          <div className="space-y-1.5">
+            <label htmlFor="welcome-phone" className="text-xs font-medium text-zinc-300">
               Phone Number{" "}
-              <span className="text-zinc-500 text-xs font-normal">(Optional)</span>
+              <span className="text-zinc-500 text-[11px] font-normal">(Optional)</span>
             </label>
             <input
               id="welcome-phone"
@@ -137,15 +137,15 @@ export default function WelcomeModal() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+1 (555) 000-0000"
-              className="w-full bg-black/50 border border-zinc-800 rounded-xl px-4 py-3 text-base sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all"
+              className="w-full bg-white/[0.04] border border-white/[0.1] hover:border-white/[0.18] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all"
             />
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="welcome-referral" className="text-sm font-medium text-zinc-300 flex items-center gap-2">
-              <UserPlus className="w-4 h-4 text-primary-light shrink-0" />
+          <div className="space-y-1.5">
+            <label htmlFor="welcome-referral" className="text-xs font-medium text-zinc-300 flex items-center gap-1.5">
+              <UserPlus className="w-3.5 h-3.5 text-blue-400 shrink-0" />
               Referral Code{" "}
-              <span className="text-zinc-500 text-xs font-normal">(Optional)</span>
+              <span className="text-zinc-500 text-[11px] font-normal">(Optional)</span>
             </label>
             <input
               id="welcome-referral"
@@ -155,36 +155,39 @@ export default function WelcomeModal() {
               value={referralCode}
               onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
               placeholder="Enter code (e.g. A1B2C3)"
-              className="w-full bg-black/50 border border-zinc-800 rounded-xl px-4 py-3 text-base sm:text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 transition-all uppercase tracking-wide"
+              className="w-full bg-white/[0.04] border border-white/[0.1] hover:border-white/[0.18] rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 transition-all uppercase tracking-wider font-mono"
             />
-            <p className="text-xs text-zinc-500 leading-relaxed">
-              Got invited? Enter their code to both get{" "}
-              <span className="text-amber-400 font-bold">{XP_CONFIG.REFERRAL_REWARD} XP</span> when you play {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games!
-            </p>
+            <div className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-500/[0.08] border border-amber-500/20 text-[11px] sm:text-xs text-zinc-300 leading-relaxed">
+              <Gift className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+              <span>
+                Got invited? Enter their code to both get{" "}
+                <span className="text-amber-400 font-bold">{XP_CONFIG.REFERRAL_REWARD} XP</span> when you play {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games!
+              </span>
+            </div>
           </div>
 
           {error && (
-            <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
+            <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl px-3.5 py-2.5">
               {error}
             </p>
           )}
 
-          <div className="pt-1 sm:pt-2 flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 shrink-0">
+          <div className="pt-1 flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={handleSkip}
-              className="w-full sm:flex-1 py-3 px-4 rounded-xl font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all"
+              className="w-full sm:flex-1 py-2 px-3 rounded-xl font-medium text-zinc-400 hover:text-white hover:bg-white/[0.06] transition-all cursor-pointer text-xs text-center"
             >
               Skip for now
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:flex-1 py-3 px-4 rounded-xl font-bold text-white bg-primary hover:bg-primary-hover transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
+              className="w-full sm:flex-1 py-2.5 px-4 rounded-xl font-bold text-black bg-white hover:bg-zinc-200 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-md shadow-white/10 cursor-pointer text-xs sm:text-sm"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-black" />
                   Saving...
                 </>
               ) : (
