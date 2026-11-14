@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import clsx from "clsx";
 import { 
   Search, ChevronLeft, ChevronRight, X, User, Flame, 
@@ -14,16 +14,17 @@ interface UsersTabsProps {
   users: any[];
   guests: any[];
   subscribers?: any[];
+  serverNow?: number;
 }
 
 const ITEMS_PER_PAGE = 25;
 
-function formatLastOnline(dateVal?: string | Date): string {
+function formatLastOnline(dateVal?: string | Date, now: number = Date.now()): string {
   if (!dateVal) return "Recently";
   const date = new Date(dateVal);
   if (isNaN(date.getTime())) return "Recently";
 
-  const diffMs = Date.now() - date.getTime();
+  const diffMs = now - date.getTime();
   const diffSec = Math.max(0, Math.floor(diffMs / 1000));
 
   if (diffSec < 60) return "Just now";
@@ -37,22 +38,29 @@ function formatLastOnline(dateVal?: string | Date): string {
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-function isOnlineNow(dateVal?: string | Date): boolean {
+function isOnlineNow(dateVal?: string | Date, now: number = Date.now()): boolean {
   if (!dateVal) return false;
   const date = new Date(dateVal);
   if (isNaN(date.getTime())) return false;
-  return Date.now() - date.getTime() < 30 * 60 * 1000; // Active within last 30 minutes
+  return now - date.getTime() < 30 * 60 * 1000; // Active within last 30 minutes
 }
 
-export default function UsersTabs({ users, guests }: UsersTabsProps) {
+export default function UsersTabs({ users, guests, serverNow }: UsersTabsProps) {
   const [activeTab, setActiveTab] = useState<"all" | "users" | "guests">("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEntity, setSelectedEntity] = useState<{ type: "user" | "guest"; data: any } | null>(null);
 
-  // Time benchmarks for presentation cards
-  const now = Date.now();
-  const oneDayAgo = now - 24 * 60 * 60 * 1000;
+  // Synchronize baseline to serverNow on first render to prevent SSR-Client hydration mismatch
+  const [currentTimestamp, setCurrentTimestamp] = useState(serverNow ?? Date.now());
+
+  useEffect(() => {
+    setCurrentTimestamp(Date.now());
+    const interval = setInterval(() => setCurrentTimestamp(Date.now()), 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const oneDayAgo = currentTimestamp - 24 * 60 * 60 * 1000;
 
   // Registered User Stats
   const usersActive24h = useMemo(() => {
@@ -60,8 +68,8 @@ export default function UsersTabs({ users, guests }: UsersTabsProps) {
   }, [users, oneDayAgo]);
 
   const usersOnlineNow = useMemo(() => {
-    return users.filter((u) => isOnlineNow(u.lastActiveAt)).length;
-  }, [users]);
+    return users.filter((u) => isOnlineNow(u.lastActiveAt, currentTimestamp)).length;
+  }, [users, currentTimestamp]);
 
   const totalUserXp = useMemo(() => {
     return users.reduce((sum, u) => sum + (u.lifetimeXp || u.xp || 0), 0);
@@ -77,8 +85,8 @@ export default function UsersTabs({ users, guests }: UsersTabsProps) {
   }, [guests, oneDayAgo]);
 
   const guestsOnlineNow = useMemo(() => {
-    return guests.filter((g) => isOnlineNow(g.lastActiveAt || g.updatedAt)).length;
-  }, [guests]);
+    return guests.filter((g) => isOnlineNow(g.lastActiveAt || g.updatedAt, currentTimestamp)).length;
+  }, [guests, currentTimestamp]);
 
   const totalGuestPlays = useMemo(() => {
     return guests.reduce((sum, g) => sum + (g.gamesPlayedCount || 0), 0);
@@ -322,7 +330,7 @@ export default function UsersTabs({ users, guests }: UsersTabsProps) {
             const isUser = item._entityType === "user";
             const isGuest = item._entityType === "guest";
             const activeTime = isUser ? item.lastActiveAt : (item.lastActiveAt || item.updatedAt);
-            const online = isOnlineNow(activeTime);
+            const online = isOnlineNow(activeTime, currentTimestamp);
 
             return (
               <div
@@ -429,7 +437,7 @@ export default function UsersTabs({ users, guests }: UsersTabsProps) {
                     ) : (
                       <span className="text-[11px] text-zinc-400 flex items-center gap-1.5 font-mono">
                         <Clock className="w-3 h-3 text-zinc-500 shrink-0" />
-                        <span>Last online: {formatLastOnline(activeTime)}</span>
+                        <span suppressHydrationWarning>Last online: {formatLastOnline(activeTime, currentTimestamp)}</span>
                       </span>
                     )}
                   </div>
@@ -511,7 +519,7 @@ export default function UsersTabs({ users, guests }: UsersTabsProps) {
                           <span className="truncate text-zinc-400">{item.email}</span>
                         )}
                         {isGuest && (
-                          <span className="truncate font-mono">{formatLastOnline(activeTime)}</span>
+                          <span suppressHydrationWarning className="truncate font-mono">{formatLastOnline(activeTime, currentTimestamp)}</span>
                         )}
                       </div>
                     </div>

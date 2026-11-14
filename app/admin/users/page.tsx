@@ -17,10 +17,11 @@ export default async function AdminUsersPage() {
   // Serialize MongoDB object IDs and dates to plain JSON
   const users = JSON.parse(JSON.stringify(usersRaw));
   const guests = JSON.parse(JSON.stringify(guestsRaw));
+  const serverNow = Date.now();
 
   return (
     <div className="space-y-4 max-w-[1400px] mx-auto">
-      <UsersTabs users={users} guests={guests} />
+      <UsersTabs users={users} guests={guests} serverNow={serverNow} />
     </div>
   );
 }
