@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/config";
-import { ChevronLeft, Gift, Coins } from "lucide-react";
+import { ChevronLeft, ChevronRight, Gift, Coins } from "lucide-react";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -82,29 +82,26 @@ export default async function RewardsPage() {
         <div className="w-full h-13 sm:h-14 flex items-center justify-between">
           <Link
             href="/profile"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-semibold shadow-xs"
+            className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-semibold shadow-xs"
           >
-            <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white" />
+            <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             <span>Profile</span>
           </Link>
-
-          <div className="font-extrabold text-sm sm:text-base tracking-tight text-white flex items-center gap-2">
-            <Gift className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Rewards Store</span>
-          </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link
               href="/rewards-dashboard"
-              className="px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-medium shadow-xs"
+              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-medium shadow-xs"
             >
-              Stats
+              <span>Stats</span>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             </Link>
             <Link
               href="/leaderboard"
-              className="px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-medium shadow-xs"
+              className="group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900/80 hover:bg-zinc-800 border border-white/[0.08] text-zinc-300 hover:text-white active:scale-95 transition-all text-xs font-medium shadow-xs"
             >
-              Ranks
+              <span>Ranks</span>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             </Link>
           </div>
         </div>
@@ -112,6 +109,13 @@ export default async function RewardsPage() {
 
       {/* ── Full Width Responsive Main Container ── */}
       <main className="w-full px-3 sm:px-6 lg:px-8 xl:px-10 pt-3 sm:pt-4 space-y-3.5">
+        <div className="flex items-center gap-2 pt-1 pb-0.5">
+          <Gift className="w-5 h-5 text-amber-400 shrink-0" />
+          <h1 className="font-extrabold text-lg sm:text-xl tracking-tight text-white">
+            Rewards Store
+          </h1>
+        </div>
+
         <RewardsStoreClient
           rewards={rewards}
           initialClaims={initialClaims}
