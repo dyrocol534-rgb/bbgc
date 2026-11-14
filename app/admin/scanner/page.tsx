@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Activity, Play, Square, AlertTriangle, CheckCircle2, ArrowRight, ExternalLink } from "lucide-react";
+import { Activity, Play, Square, AlertTriangle, CheckCircle2, ArrowRight, ExternalLink, Trash2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { TableSkeleton } from "@/components/ui/ShimmerLoader";
@@ -25,6 +25,8 @@ export default function ScannerPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [scanIndex, setScanIndex] = useState(0);
   const [lastScanned, setLastScanned] = useState<string | null>(null);
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchGames();
@@ -55,6 +57,43 @@ export default function ScannerPage() {
 
   const stopScan = () => {
     setIsScanning(false);
+  };
+
+  const handleDeleteAllBroken = async () => {
+    if (brokenGames.length === 0) return;
+    const confirmMessage = `Are you sure you want to permanently delete all ${brokenGames.length} broken games from the database? This cannot be undone.`;
+    if (!window.confirm(confirmMessage)) return;
+
+    try {
+      setIsDeletingAll(true);
+      const ids = brokenGames.map(g => g._id);
+      const { data } = await axios.post('/api/admin/games/batch-delete', { ids });
+
+      if (data.success) {
+        const idSet = new Set(ids);
+        setGames(prev => prev.filter(g => !idSet.has(g._id)));
+      }
+    } catch (error) {
+      console.error("Failed to delete broken games:", error);
+      alert("Failed to delete broken games. Please try again.");
+    } finally {
+      setIsDeletingAll(false);
+    }
+  };
+
+  const handleDeleteSingleBroken = async (id: string, title: string) => {
+    if (!window.confirm(`Are you sure you want to permanently delete "${title}"?`)) return;
+
+    try {
+      setDeletingId(id);
+      await axios.delete(`/api/admin/games/${id}`);
+      setGames(prev => prev.filter(g => g._id !== id));
+    } catch (error) {
+      console.error("Failed to delete game:", error);
+      alert("Failed to delete game. Please try again.");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   // Perform the scan sequentially (or in batches)
@@ -206,11 +245,31 @@ export default function ScannerPage() {
       {/* Broken Games List */}
       {brokenGames.length > 0 && (
         <div className="border border-red-500/20 rounded-[18px] overflow-hidden shadow-xs">
-          <div className="bg-red-500/10 border-b border-red-500/20 px-3.5 py-2.5 flex items-center justify-between">
+          <div className="bg-red-500/10 border-b border-red-500/20 px-3.5 py-2.5 flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
               <h3 className="font-bold text-red-200 text-xs sm:text-sm">Broken Games Found ({brokenGames.length})</h3>
             </div>
+
+            <button
+              type="button"
+              onClick={handleDeleteAllBroken}
+              disabled={isDeletingAll || isScanning}
+              className="bg-red-600 hover:bg-red-500 active:scale-95 text-white px-3 py-1 sm:px-3.5 sm:py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 shadow-xs"
+              title="Permanently remove all broken games"
+            >
+              {isDeletingAll ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <span>Removing Games...</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-3 h-3" />
+                  <span>Remove All Broken ({brokenGames.length})</span>
+                </>
+              )}
+            </button>
           </div>
           
           {/* Mobile View (Cards) */}
@@ -231,13 +290,27 @@ export default function ScannerPage() {
                   <ExternalLink className="w-3 h-3 shrink-0" /> {game.playUrl}
                 </a>
                 
-                <div className="pt-1 flex justify-end">
+                <div className="pt-1 flex items-center justify-end gap-1.5">
                   <Link 
                     href={`/admin/games/${game._id}/edit`}
                     className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold bg-white/[0.06] hover:bg-white/[0.1] text-zinc-200 hover:text-white rounded-full transition-all border border-white/[0.08]"
                   >
                     Edit Game <ArrowRight className="w-3 h-3" />
                   </Link>
+                  <button 
+                    type="button"
+                    onClick={() => handleDeleteSingleBroken(game._id, game.title)}
+                    disabled={deletingId === game._id}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-red-400 hover:text-red-200 bg-red-500/10 hover:bg-red-500/20 rounded-full transition-all border border-red-500/20 cursor-pointer disabled:opacity-50"
+                    title="Delete this broken game"
+                  >
+                    {deletingId === game._id ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-3 h-3" />
+                    )}
+                    <span>Remove</span>
+                  </button>
                 </div>
               </div>
             ))}
@@ -272,13 +345,29 @@ export default function ScannerPage() {
                       </a>
                     </td>
                     <td className="py-2 px-3.5 text-right whitespace-nowrap">
-                      <Link 
-                        href={`/admin/games/${game._id}/edit`}
-                        className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.1] rounded-full transition-all border border-white/[0.08]"
-                        title="Edit Game"
-                      >
-                        Edit <ArrowRight className="w-3 h-3" />
-                      </Link>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Link 
+                          href={`/admin/games/${game._id}/edit`}
+                          className="inline-flex items-center gap-1 px-3 py-1 text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.1] rounded-full transition-all border border-white/[0.08]"
+                          title="Edit Game"
+                        >
+                          Edit <ArrowRight className="w-3 h-3" />
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteSingleBroken(game._id, game.title)}
+                          disabled={deletingId === game._id}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-red-400 hover:text-red-200 bg-red-500/10 hover:bg-red-500/20 rounded-full transition-all border border-red-500/20 cursor-pointer disabled:opacity-50"
+                          title="Remove this broken game"
+                        >
+                          {deletingId === game._id ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-3 h-3" />
+                          )}
+                          <span>Remove</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
