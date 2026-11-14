@@ -4,7 +4,7 @@ import { createPortal, preconnect, prefetchDNS } from 'react-dom';
 import { 
   Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, 
   MessageSquareWarning, X, Play, RotateCcw, Gamepad2, Star, Sparkles, Share2,
-  Download, Check
+  Download, Check, Volume2, VolumeX, Tv
 } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -15,6 +15,8 @@ import { triggerHaptic } from '@/lib/utils';
 import { useUIStore } from '@/lib/stores/uiStore';
 import { useGamificationStore } from '@/lib/stores/gamificationStore';
 import { useRecentGamesStore } from '@/lib/stores/recentGamesStore';
+import { usePlayerPreferencesStore } from '@/lib/stores/playerPreferencesStore';
+import FeedbackModal from '@/components/game/FeedbackModal';
 
 interface GamePlayerProps {
   game: {
@@ -33,6 +35,16 @@ interface GamePlayerProps {
 
 export default function GamePlayer({ game }: GamePlayerProps) {
   const openShareModal = useUIStore((state) => state.openShareModal);
+
+  // Persistent Player Preferences
+  const isTheaterMode = usePlayerPreferencesStore((state) => state.isTheaterMode);
+  const toggleTheaterMode = usePlayerPreferencesStore((state) => state.toggleTheaterMode);
+  const isForceLandscape = usePlayerPreferencesStore((state) => state.isForceLandscape);
+  const toggleForceLandscape = usePlayerPreferencesStore((state) => state.toggleForceLandscape);
+  const setForceLandscape = usePlayerPreferencesStore((state) => state.setForceLandscape);
+  const isMuted = usePlayerPreferencesStore((state) => state.isMuted);
+  const toggleMuted = usePlayerPreferencesStore((state) => state.toggleMuted);
+
   try {
     const origin = new URL(game.playUrl).origin;
     preconnect(origin, { crossOrigin: 'anonymous' });
@@ -41,12 +53,9 @@ export default function GamePlayer({ game }: GamePlayerProps) {
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMobileFS, setIsMobileFS] = useState(false);
-  const [isForceLandscape, setIsForceLandscape] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [feedbackText, setFeedbackText] = useState('');
-  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
   const [likeCount, setLikeCount] = useState(game.likes?.length || 0);
   const [dislikeCount, setDislikeCount] = useState(game.dislikes?.length || 0);
@@ -359,7 +368,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       // Back button was pressed: close mobile fullscreen game instead of navigating away
       setIsMobileFS(false);
       setIsPlaying(false);
-      setIsForceLandscape(false);
+      setForceLandscape(false);
       try {
         if (document.fullscreenElement) {
           const exitFS =
@@ -435,7 +444,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     }
     setIsMobileFS(false);
     setIsPlaying(false);
-    setIsForceLandscape(false);
+    setForceLandscape(false);
     try {
       if (document.fullscreenElement) {
         const exitFS =
@@ -469,7 +478,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
       console.log('Orientation lock attempt:', e);
     }
     // 2. Toggle CSS virtual orientation transform so it ALWAYS physically rotates on any device/iOS/browser
-    setIsForceLandscape(prev => !prev);
+    toggleForceLandscape();
   };
 
   // Desktop and responsive fullscreen toggle
@@ -525,11 +534,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     };
   }, []);
 
-  const closeFeedbackModal = useCallback(() => {
-    setShowFeedbackModal(false);
-    setFeedbackText('');
-  }, []);
-
   const handleInteract = async (action: 'like' | 'dislike' | 'favorite') => {
     triggerHaptic(action === 'favorite' ? 'medium' : 'light');
     try {
@@ -545,21 +549,6 @@ export default function GamePlayer({ game }: GamePlayerProps) {
     } catch (error: any) {
       triggerHaptic('warning');
       if (error.response?.status === 401) alert("Please log in to perform this action.");
-    }
-  };
-
-  const submitFeedback = async () => {
-    if (!feedbackText.trim()) return;
-    setIsSubmittingFeedback(true);
-    try {
-      await axios.post(`/api/games/${game.slug}/interact`, { action: 'feedback', message: feedbackText });
-      alert("Feedback submitted successfully!");
-      closeFeedbackModal();
-    } catch (error: any) {
-      if (error.response?.status === 401) alert("Please log in to submit feedback.");
-      else alert("Failed to submit feedback.");
-    } finally {
-      setIsSubmittingFeedback(false);
     }
   };
 
@@ -743,7 +732,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         <div 
           ref={containerRef}
           className={clsx(
-            "relative w-full transition-all",
+            "relative w-full transition-all duration-300",
             isFullscreen 
               ? "fixed inset-0 z-[99999] w-screen h-screen bg-black flex flex-col items-center justify-center rounded-none border-none overflow-hidden" 
               : "rounded-[20px]"
@@ -830,10 +819,11 @@ export default function GamePlayer({ game }: GamePlayerProps) {
             /* Desktop Inline Player */
             <div
               className={clsx(
-                "hidden lg:flex relative bg-black rounded-2xl overflow-hidden shadow-2xl flex-col items-center justify-center group border border-white/[0.08]",
-                isFullscreen ? "w-full h-full rounded-none border-none" : "w-full"
+                "hidden lg:flex relative bg-black rounded-2xl overflow-hidden shadow-2xl flex-col items-center justify-center group border border-white/[0.08] transition-all duration-300",
+                isFullscreen ? "w-full h-full rounded-none border-none" : "w-full",
+                isTheaterMode && !isFullscreen ? "h-[70vh] min-h-[500px] max-h-[750px]" : ""
               )}
-              style={{ aspectRatio: !isFullscreen ? aspectRatio : 'auto' }}
+              style={{ aspectRatio: !isFullscreen && !isTheaterMode ? aspectRatio : 'auto' }}
             >
               {isLoading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900 z-10">
@@ -845,7 +835,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 title={game.title}
                 loading="lazy"
                 className="w-full h-full absolute inset-0 border-0"
-                allow="fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"
+                allow={isMuted ? "fullscreen; gamepad; popups; popups-to-escape-sandbox" : "fullscreen; autoplay; gamepad; popups; popups-to-escape-sandbox"}
                 onLoad={() => setIsLoading(false)}
               />
 
@@ -998,6 +988,36 @@ export default function GamePlayer({ game }: GamePlayerProps) {
               <MessageSquareWarning className="w-3.5 h-3.5" />
             </button>
 
+            {/* Audio Mute/Unmute */}
+            <button
+              onClick={toggleMuted}
+              className={clsx(
+                "w-8 h-8 flex items-center justify-center rounded-full border transition-all shrink-0 cursor-pointer active:scale-95 shadow-sm",
+                isMuted
+                  ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                  : "bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border-white/[0.08]"
+              )}
+              title={isMuted ? "Unmute Audio" : "Mute Audio"}
+              aria-label={isMuted ? "Unmute Audio" : "Mute Audio"}
+            >
+              {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+            </button>
+
+            {/* Theater Mode Button (Desktop) */}
+            <button 
+              onClick={toggleTheaterMode} 
+              className={clsx(
+                "hidden lg:flex w-8 h-8 items-center justify-center rounded-full border transition-all shrink-0 cursor-pointer active:scale-95 shadow-sm",
+                isTheaterMode 
+                  ? "bg-white/20 text-white border-white/30" 
+                  : "bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border-white/[0.08]"
+              )} 
+              title={isTheaterMode ? "Exit Theater Mode" : "Theater Mode"}
+              aria-label={isTheaterMode ? "Exit Theater Mode" : "Theater Mode"}
+            >
+              <Tv className="w-3.5 h-3.5" />
+            </button>
+
             {/* Fullscreen Button */}
             <button 
               onClick={toggleFullscreen} 
@@ -1009,72 +1029,13 @@ export default function GamePlayer({ game }: GamePlayerProps) {
           </div>
         </div>
 
-        {/* iOS Feedback Bottom Sheet */}
-        {showFeedbackModal && typeof document !== 'undefined' && createPortal(
-          <div 
-            className="fixed inset-0 z-[99999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200" 
-            onClick={closeFeedbackModal}
-          >
-            <div 
-              className="relative bg-[#0c0c0e] border-t sm:border border-white/[0.1] rounded-t-[28px] sm:rounded-2xl p-5 sm:p-6 max-w-lg w-full shadow-2xl flex flex-col animate-in slide-in-from-bottom-5 sm:zoom-in-95 duration-200" 
-              onClick={e => e.stopPropagation()}
-            >
-              {/* Mobile Pull Bar */}
-              <div className="sm:hidden flex justify-center -mt-2 pb-2.5">
-                <div className="w-10 h-1 rounded-full bg-white/20" />
-              </div>
-
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-white/[0.06] border border-white/[0.1] flex items-center justify-center text-white shrink-0">
-                    <MessageSquareWarning className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-bold text-white tracking-tight">Game Feedback</h3>
-                    <p className="text-[11px] text-zinc-400">Help us improve Bluebuff Games</p>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={closeFeedbackModal} 
-                  className="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.12] active:scale-95 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer"
-                  aria-label="Close"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              <p className="text-zinc-400 text-xs mb-3.5 leading-relaxed">
-                Let us know what you think about <strong className="text-white font-semibold">{game.title}</strong>, or report an issue.
-              </p>
-
-              <textarea 
-                value={feedbackText} 
-                onChange={e => setFeedbackText(e.target.value)} 
-                placeholder="Write your feedback or issue description here..." 
-                className="w-full bg-[#050507] border border-white/[0.09] focus:border-white/30 rounded-2xl p-3.5 text-zinc-100 placeholder-zinc-500 text-xs sm:text-sm min-h-[110px] outline-none transition-all mb-4 focus:ring-1 focus:ring-white/10" 
-              />
-
-              <div className="flex items-center justify-end gap-2.5">
-                <button 
-                  onClick={closeFeedbackModal} 
-                  className="px-4 py-2 rounded-full text-zinc-400 hover:text-white text-xs font-semibold hover:bg-white/[0.06] transition-colors cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={submitFeedback} 
-                  disabled={isSubmittingFeedback || !feedbackText.trim()} 
-                  className="px-5 py-2.5 bg-white hover:bg-zinc-200 active:scale-95 text-black text-xs font-bold rounded-full transition-all shadow-md shadow-white/10 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
-                >
-                  {isSubmittingFeedback ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
-                  <span>Submit Feedback</span>
-                </button>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
+        {/* Game Feedback Bottom Sheet Modal */}
+        <FeedbackModal
+          isOpen={showFeedbackModal}
+          onClose={() => setShowFeedbackModal(false)}
+          gameTitle={game.title}
+          gameSlug={game.slug}
+        />
         {/* Save Game to Device / PWA Guide Bottom Sheet */}
         {showInstallModal && typeof document !== "undefined" && createPortal(
           <div 

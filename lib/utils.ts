@@ -13,6 +13,10 @@ export type HapticType = "light" | "medium" | "heavy" | "success" | "warning";
 export function triggerHaptic(type: HapticType = "light") {
   if (typeof window === "undefined" || !("vibrate" in navigator)) return;
   try {
+    const { usePlayerPreferencesStore } = require("./stores/playerPreferencesStore");
+    if (!usePlayerPreferencesStore.getState().isHapticsEnabled) return;
+  } catch (e) {}
+  try {
     switch (type) {
       case "light":
         navigator.vibrate(12);
