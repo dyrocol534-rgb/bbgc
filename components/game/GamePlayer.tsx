@@ -3,7 +3,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal, preconnect, prefetchDNS } from 'react-dom';
 import { 
   Maximize, Minimize, Loader2, ThumbsUp, ThumbsDown, Heart, 
-  MessageSquareWarning, X, Play, RotateCcw, Gamepad2, Star, Sparkles, Share2 
+  MessageSquareWarning, X, Play, RotateCcw, Gamepad2, Star, Sparkles, Share2,
+  Download, Check
 } from 'lucide-react';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -49,9 +50,109 @@ export default function GamePlayer({ game }: GamePlayerProps) {
   const [isDisliked, setIsDisliked] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
 
+  // PWA Save-to-Device state
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isGameInstalled, setIsGameInstalled] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [showInstallModal, setShowInstallModal] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const playButtonRef = useRef<HTMLButtonElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Check standalone PWA mode
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone === true;
+
+    if (isStandalone || localStorage.getItem(`pwa_installed_${game.slug}`) === "true") {
+      setIsGameInstalled(true);
+    }
+
+    // Detect iOS
+    const ua = window.navigator.userAgent;
+    const iOSCheck =
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    setIsIOS(iOSCheck);
+
+    const handler = (e: any) => {
+      e.preventDefault();
+      (window as any).__pwa_deferred_prompt = e;
+      setDeferredPrompt(e);
+    };
+
+    if ((window as any).__pwa_deferred_prompt) {
+      setDeferredPrompt((window as any).__pwa_deferred_prompt);
+    }
+
+    window.addEventListener("beforeinstallprompt", handler);
+    window.addEventListener("appinstalled", () => {
+      setIsGameInstalled(true);
+      setDeferredPrompt(null);
+      (window as any).__pwa_deferred_prompt = null;
+      localStorage.setItem(`pwa_installed_${game.slug}`, "true");
+    });
+
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, [game.slug]);
+
+  const handleSaveGameToDevice = async () => {
+    triggerHaptic("medium");
+
+    if (isGameInstalled) {
+      alert(`${game.title} is already saved to your device! 🚀`);
+      return;
+    }
+
+    // 1. Android & Chromium: Directly trigger the native OS install dialog with 1 tap
+    const prompt = deferredPrompt || (typeof window !== "undefined" ? (window as any).__pwa_deferred_prompt : null);
+    if (prompt) {
+      try {
+        prompt.prompt();
+        const { outcome } = await prompt.userChoice;
+        if (outcome === "accepted") {
+          setIsGameInstalled(true);
+          setDeferredPrompt(null);
+          (window as any).__pwa_deferred_prompt = null;
+          localStorage.setItem(`pwa_installed_${game.slug}`, "true");
+          triggerHaptic("success");
+          return;
+        }
+      } catch (err) {
+        console.error("Native install prompt error:", err);
+      }
+    }
+
+    // 2. iOS Safari: Apple does not provide a silent/programmatic install API.
+    // Instead, directly invoke native iOS Share Sheet so "Add to Home Screen" is immediately accessible!
+    if (isIOS) {
+      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+        try {
+          await navigator.share({
+            title: game.title,
+            text: `Play ${game.title} directly from your Home Screen!`,
+            url: window.location.href,
+          });
+          return;
+        } catch (e: any) {
+          // If dismissed by user, don't show error; if unsupported, show visual guide
+          if (e?.name !== "AbortError") {
+            setShowInstallModal(true);
+          }
+          return;
+        }
+      }
+      setShowInstallModal(true);
+      return;
+    }
+
+    // 3. Fallback visual guide for browsers where install prompt hasn't triggered yet
+    setShowInstallModal(true);
+  };
 
   useEffect(() => {
     axios.post(`/api/games/${game.slug}/interact`, { action: 'status' })
@@ -674,15 +775,34 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                   </div>
                 </div>
 
-                {/* iOS Big Pill Play Button */}
-                <div className="flex items-center justify-center w-full">
+                {/* Actions: Play Now & Save Game to Device */}
+                <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 w-full">
                   <button
                     ref={playButtonRef}
                     onClick={handlePlayNow}
-                    className="px-7 py-2.5 sm:px-8 sm:py-2.5 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black text-xs sm:text-sm font-bold rounded-full shadow-[0_6px_20px_rgba(255,255,255,0.15)] transition-all flex items-center gap-2 cursor-pointer"
+                    className="px-6 py-2.5 sm:px-7 sm:py-2.5 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black text-xs sm:text-sm font-bold rounded-full shadow-[0_6px_20px_rgba(255,255,255,0.15)] transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Play className="w-3.5 h-3.5 fill-current transition-transform" />
                     <span>Play Now</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleSaveGameToDevice}
+                    className="px-5 py-2.5 sm:px-6 sm:py-2.5 bg-white/[0.08] hover:bg-white/[0.14] active:scale-[0.98] border border-white/[0.15] text-white text-xs sm:text-sm font-semibold rounded-full transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-md shadow-sm"
+                    title="Save this game as an app on your device"
+                  >
+                    {isGameInstalled ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Saved</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-3.5 h-3.5 text-zinc-300" />
+                        <span>Save to Device</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -935,6 +1055,106 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                   <span>Submit Feedback</span>
                 </button>
               </div>
+            </div>
+          </div>,
+          document.body
+        )}
+        {/* Save Game to Device / PWA Guide Bottom Sheet */}
+        {showInstallModal && typeof document !== "undefined" && createPortal(
+          <div 
+            className="fixed inset-0 z-[99999] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200" 
+            onClick={() => setShowInstallModal(false)}
+          >
+            <div 
+              className="relative bg-[#0c0c0e] border-t sm:border border-white/[0.1] rounded-t-[28px] sm:rounded-2xl p-5 sm:p-6 max-w-sm sm:max-w-md w-full shadow-2xl flex flex-col animate-in slide-in-from-bottom-5 sm:zoom-in-95 duration-200" 
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Mobile Pull Bar */}
+              <div className="sm:hidden flex justify-center -mt-2 pb-2.5">
+                <div className="w-10 h-1 rounded-full bg-white/20" />
+              </div>
+
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {cleanThumb ? (
+                    <div className="w-9 h-9 rounded-xl overflow-hidden bg-zinc-800 border border-white/10 shrink-0">
+                      <GameImage src={cleanThumb} alt={game.title} sizes="36px" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="w-9 h-9 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                      {initialLetter}
+                    </div>
+                  )}
+                  <div className="flex flex-col min-w-0">
+                    <h3 className="text-sm font-bold text-white truncate leading-tight">
+                      Save {game.title}
+                    </h3>
+                    <p className="text-[11px] text-zinc-400">Install as standalone app on your device</p>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setShowInstallModal(false)} 
+                  className="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.12] active:scale-95 flex items-center justify-center text-zinc-400 hover:text-white transition-colors cursor-pointer shrink-0"
+                  aria-label="Close"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Steps */}
+              <div className="flex flex-col gap-2 py-3.5">
+                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <div className="w-7 h-7 rounded-lg bg-sky-500/15 border border-sky-500/25 flex items-center justify-center shrink-0 text-sky-400 text-xs font-bold">
+                    1
+                  </div>
+                  <div className="text-left min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-white leading-snug">
+                      {isIOS ? "Tap the Share button in Safari" : "Open browser menu (⋮)"}
+                    </p>
+                    <p className="text-[10.5px] text-zinc-400 leading-tight">
+                      {isIOS ? "Located in the bottom toolbar of Safari." : "Tap the three dots in top right."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <div className="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center shrink-0 text-indigo-400 text-xs font-bold">
+                    2
+                  </div>
+                  <div className="text-left min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-white leading-snug">
+                      Select &apos;Add to Home Screen&apos;
+                    </p>
+                    <p className="text-[10.5px] text-zinc-400 leading-tight">
+                      Or &apos;Install app&apos; to download the game shortcut.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0 text-emerald-400 text-xs font-bold">
+                    3
+                  </div>
+                  <div className="text-left min-w-0 flex-1">
+                    <p className="text-xs font-semibold text-white leading-snug">
+                      Launch Instantly anytime!
+                    </p>
+                    <p className="text-[10.5px] text-zinc-400 leading-tight">
+                      Runs full screen directly into {game.title} with no browser bar.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <button
+                onClick={() => setShowInstallModal(false)}
+                className="w-full py-2.5 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black font-bold text-xs rounded-xl transition-all shadow-md cursor-pointer"
+              >
+                Got it
+              </button>
             </div>
           </div>,
           document.body

@@ -81,6 +81,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description,
       images: game.thumbnailUrl ? [game.thumbnailUrl] : [],
     },
+    manifest: `/api/games/${slug}/manifest`,
+    appleWebApp: {
+      capable: true,
+      title: game.title,
+      statusBarStyle: "black-translucent",
+    },
+    icons: {
+      apple: game.thumbnailUrl || "/icons/icon-192x192.png",
+    },
   };
 }
 
