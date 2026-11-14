@@ -5,7 +5,7 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 import { XP_CONFIG } from "@/lib/xp";
 import ReferralClient from "./ReferralClient";
-import { Users, Coins, Hourglass, Check, ChevronLeft, ShieldCheck, HeartHandshake } from "lucide-react";
+import { Users, Coins, Hourglass, Check, ChevronLeft, ChevronRight, ShieldCheck, HeartHandshake } from "lucide-react";
 import InfoTooltip from "@/components/ui/InfoTooltip";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,7 +38,7 @@ export default async function ReferralPage() {
         <div className="flex items-center justify-between">
           <Link
             href="/profile"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+            className="group inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
           >
             <ChevronLeft className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" />
             <span>Profile</span>
@@ -47,41 +47,37 @@ export default async function ReferralPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/rewards"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-400 hover:text-amber-300 text-xs font-medium transition-colors"
+              className="group inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20 text-amber-400 hover:text-amber-300 text-xs font-medium transition-colors"
             >
               <Coins className="w-3.5 h-3.5" />
               <span>Rewards</span>
+              <ChevronRight className="w-3.5 h-3.5 text-amber-400/70 group-hover:text-amber-300 transition-transform" />
             </Link>
 
             <Link
               href="/leaderboard"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
+              className="group inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-white text-xs font-medium border border-zinc-800 transition-colors"
             >
               <span>Leaderboard</span>
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-transform" />
             </Link>
           </div>
         </div>
 
-        {/* ── Header ── */}
-        <div className="rounded-xl bg-zinc-950 border border-zinc-900 p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-0.5">
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-black text-white tracking-tight">
-                Referral Program
-              </h1>
-              <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">
-                +{XP_CONFIG.REFERRAL_REWARD} XP Each
-              </span>
-            </div>
-            <p className="text-xs text-zinc-400">
-              Invite friends to play on Bluebuff — both of you earn {XP_CONFIG.REFERRAL_REWARD} bonus XP as soon as they try {XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-            <span className="text-[11px] font-mono text-zinc-400 bg-black border border-zinc-900 px-2.5 py-1 rounded-lg">
-              Code: <strong className="text-white font-bold">{referralCode}</strong>
+        {/* ── Header with InfoTooltip ── */}
+        <div className="flex items-center justify-between px-0.5">
+          <div className="flex items-center gap-2">
+            <h1 className="text-base sm:text-lg font-black text-white tracking-tight">
+              Referral Program
+            </h1>
+            <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">
+              +{XP_CONFIG.REFERRAL_REWARD} XP Each
             </span>
+            <InfoTooltip
+              size="xs"
+              title="Referral Program"
+              content={`Invite friends to play on Bluebuff — both of you earn ${XP_CONFIG.REFERRAL_REWARD} bonus XP as soon as they try ${XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games.`}
+            />
           </div>
         </div>
 
@@ -109,13 +105,13 @@ export default async function ReferralPage() {
               <div className="flex flex-col text-left min-w-0">
                 <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Completed</span>
                 <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                  {rewardsUnlocked} Qualified
+                  {rewardsUnlocked} Joined
                 </span>
               </div>
             </div>
             <InfoTooltip
               size="xs"
-              title="Qualified Friends"
+              title="Completed Invites"
               content={`Friends who joined with your referral code and played at least ${XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games. Both of you received +${XP_CONFIG.REFERRAL_REWARD} XP.`}
             />
           </div>
@@ -142,13 +138,13 @@ export default async function ReferralPage() {
               <div className="flex flex-col text-left min-w-0">
                 <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">In Progress</span>
                 <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                  {pendingInvites} Pending
+                  {pendingInvites} Playing
                 </span>
               </div>
             </div>
             <InfoTooltip
               size="xs"
-              title="Pending Friends"
+              title="In Progress Invites"
               content={`Friends who signed up with your link but haven't finished playing ${XP_CONFIG.GAMES_REQUIRED_FOR_REFERRAL} games yet.`}
             />
           </div>

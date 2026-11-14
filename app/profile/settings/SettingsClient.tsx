@@ -356,15 +356,15 @@ export default function SettingsClient({ user }: SettingsClientProps) {
 
             <div className="bg-zinc-950 rounded-xl border border-zinc-900 p-3.5 text-xs text-zinc-400 space-y-2">
               <div className="flex items-center justify-between">
-                <span>App Version</span>
+                <span>Version</span>
                 <span className="font-mono text-zinc-300">v1.0.4</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Cloud Save</span>
+                <span>Cloud Sync</span>
                 <span className="text-emerald-400 font-medium">Synced</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Game Audio</span>
+                <span>Sound</span>
                 <span className="text-zinc-300 font-medium">Active</span>
               </div>
             </div>
