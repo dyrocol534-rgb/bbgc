@@ -27,6 +27,89 @@ function MovingOuterRing({ className }: { className?: string }) {
   );
 }
 
+function XpCoinIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="xpCoinGrad" cx="35%" cy="30%" r="65%">
+          <stop offset="0%" stopColor="#FFF275" />
+          <stop offset="35%" stopColor="#FFC72C" />
+          <stop offset="75%" stopColor="#E08E00" />
+          <stop offset="100%" stopColor="#9E5D00" />
+        </radialGradient>
+        <linearGradient id="xpRimGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#FFEAA7" />
+          <stop offset="100%" stopColor="#8A4E00" />
+        </linearGradient>
+        <filter id="xpGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="1.5" stdDeviation="2" floodColor="#FFB703" floodOpacity="0.45" />
+        </filter>
+      </defs>
+      <g filter="url(#xpGlow)">
+        <circle cx="16" cy="16" r="13.5" fill="url(#xpCoinGrad)" stroke="url(#xpRimGrad)" strokeWidth="1.2" />
+        <circle cx="16" cy="16" r="10.5" fill="none" stroke="#FFE79A" strokeWidth="0.8" strokeDasharray="1.5 1" opacity="0.65" />
+        <text
+          x="16"
+          y="20.2"
+          textAnchor="middle"
+          fontSize="11"
+          fontWeight="900"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          fill="#5C3500"
+          opacity="0.9"
+        >
+          XP
+        </text>
+        <text
+          x="16"
+          y="19.2"
+          textAnchor="middle"
+          fontSize="11"
+          fontWeight="900"
+          fontFamily="system-ui, -apple-system, sans-serif"
+          fill="#FFFDF0"
+        >
+          XP
+        </text>
+        <ellipse cx="12" cy="8.5" rx="4.5" ry="2" fill="#FFFFFF" opacity="0.5" transform="rotate(-25 12 8.5)" />
+      </g>
+    </svg>
+  );
+}
+
+function StreakFlameIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="flameOuterGrad" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stopColor="#E63946" />
+          <stop offset="45%" stopColor="#F77F00" />
+          <stop offset="90%" stopColor="#FCBF49" />
+          <stop offset="100%" stopColor="#FFE49E" />
+        </linearGradient>
+        <linearGradient id="flameInnerGrad" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stopColor="#F77F00" />
+          <stop offset="50%" stopColor="#FFD166" />
+          <stop offset="100%" stopColor="#FFFFFF" />
+        </linearGradient>
+        <filter id="flameGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="1.5" stdDeviation="2.5" floodColor="#F77F00" floodOpacity="0.5" />
+        </filter>
+      </defs>
+      <g filter="url(#flameGlow)">
+        <path
+          d="M16 3C16 3 19.5 7.5 19.5 11C19.5 12.2 19 13.2 18.2 14C19.8 13.5 22.5 14.5 23.5 17C24.8 20.3 23.5 24 20.8 26.5C18 29.1 13.8 29.5 10.8 27.5C7.5 25.3 6.2 21 7.8 17.2C8.8 14.8 11.2 13 12.2 10.5C13.5 7.2 13.2 4.8 16 3Z"
+          fill="url(#flameOuterGrad)"
+        />
+        <path
+          d="M16 14C17.2 16 18.2 17.5 18.2 20C18.2 22.2 16.8 24.2 15 24.8C13.2 24.2 12.2 22.5 12.2 20.5C12.2 18.2 13.8 16 16 14Z"
+          fill="url(#flameInnerGrad)"
+        />
+      </g>
+    </svg>
+  );
+}
+
 export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -373,8 +456,8 @@ export default function Navbar() {
         {/* Drawer Body */}
         <div className="flex-1 overflow-y-auto p-3 flex flex-col justify-between gap-3 custom-scrollbar bg-[#000000]">
           <div className="flex flex-col gap-2.5">
-            {/* Unique Dynamic Dual Capsule: XP & Streak */}
-            <div className="bg-[#141416] border border-white/[0.07] rounded-xl p-1 flex items-center shadow-sm">
+            {/* Dynamic Dual Stat Row: XP & Streak */}
+            <div className="flex items-center px-1 py-0.5">
               <Link 
                 href="/rewards" 
                 onClick={(e) => {
@@ -384,19 +467,20 @@ export default function Navbar() {
                   }
                   setIsSidebarOpen(false);
                 }}
-                className="flex-1 flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex-1 flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-xl hover:bg-white/[0.05] active:bg-white/[0.08] transition-colors group cursor-pointer"
               >
-                <div className="w-6 h-6 rounded-full bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0">
-                  <Coins className="w-3 h-3 text-white" />
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <XpCoinIcon className="w-6 h-6 shrink-0 group-hover:scale-110 transition-transform" />
+                  <div className="flex flex-col text-left min-w-0">
+                    <span className="text-[9.5px] font-bold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">XP Balance</span>
+                    <span className="text-[13px] font-black text-white group-hover:text-amber-300 transition-colors tracking-tight leading-tight">{displayXp} XP</span>
+                  </div>
                 </div>
-                <div className="flex flex-col text-left min-w-0">
-                  <span className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">XP Balance</span>
-                  <span className="text-[12.5px] font-bold text-white tracking-tight leading-tight">{displayXp} XP</span>
-                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all shrink-0" />
               </Link>
 
               {/* Vertical Hairline Divider */}
-              <div className="w-px h-6 bg-white/[0.08] shrink-0" />
+              <div className="w-px h-6 bg-white/[0.08] shrink-0 mx-0.5" />
 
               <Link 
                 href="/rewards" 
@@ -407,36 +491,37 @@ export default function Navbar() {
                   }
                   setIsSidebarOpen(false);
                 }}
-                className="flex-1 flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex-1 flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-xl hover:bg-white/[0.05] active:bg-white/[0.08] transition-colors group cursor-pointer"
               >
-                <div className="w-6 h-6 rounded-full bg-white/[0.08] border border-white/[0.12] flex items-center justify-center shrink-0">
-                  <Flame className="w-3 h-3 text-white" />
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <StreakFlameIcon className="w-6 h-6 shrink-0 group-hover:scale-110 transition-transform" />
+                  <div className="flex flex-col text-left min-w-0">
+                    <span className="text-[9.5px] font-bold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">Streak</span>
+                    <span className="text-[13px] font-black text-white group-hover:text-orange-300 transition-colors tracking-tight leading-tight">{displayStreak} Days</span>
+                  </div>
                 </div>
-                <div className="flex flex-col text-left min-w-0">
-                  <span className="text-[9px] font-semibold text-zinc-400 uppercase tracking-wider leading-none mb-0.5">Streak</span>
-                  <span className="text-[12.5px] font-bold text-white tracking-tight leading-tight">{displayStreak} Days</span>
-                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all shrink-0" />
               </Link>
             </div>
 
             {/* iOS Inset Grouped Navigation */}
-            <div className="bg-[#141416] rounded-xl border border-white/[0.07] divide-y divide-white/[0.05] overflow-hidden shadow-sm">
+            <div className="bg-gradient-to-b from-[#15151a] to-[#0f0f13] rounded-2xl border border-white/[0.08] divide-y divide-white/[0.04] overflow-hidden shadow-lg shadow-black/40">
               {session && (
                 <Link 
                   href="/profile" 
                   onClick={() => setIsSidebarOpen(false)} 
-                  className="flex items-center justify-between px-3 py-2 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                  className="flex items-center justify-between px-3.5 py-2.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition-colors group cursor-pointer"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <div className="w-6 h-6 rounded-md bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-blue-500/30 group-hover:scale-105 transition-transform">
                       <UserIcon className="w-3.5 h-3.5 text-white" />
                     </div>
                     <div className="flex flex-col text-left min-w-0">
-                      <span className="text-[12.5px] font-medium text-white tracking-tight truncate">My Profile</span>
-                      <span className="text-[9.5px] text-zinc-400 truncate">Account &amp; gameplay stats</span>
+                      <span className="text-[13px] font-semibold text-zinc-100 group-hover:text-white transition-colors tracking-tight truncate">My Profile</span>
+                      <span className="text-[10px] text-zinc-400 group-hover:text-zinc-300 transition-colors truncate mt-0.5">Account &amp; gameplay stats</span>
                     </div>
                   </div>
-                  <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
+                  <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
                 </Link>
               )}
 
@@ -449,22 +534,22 @@ export default function Navbar() {
                   }
                   setIsSidebarOpen(false);
                 }}
-                className="flex items-center justify-between px-3 py-2 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex items-center justify-between px-3.5 py-2.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition-colors group cursor-pointer"
               >
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-6 h-6 rounded-md bg-[#34C759] text-white flex items-center justify-center shrink-0 shadow-sm">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-500/30 group-hover:scale-105 transition-transform">
                     <HeartHandshake className="w-3.5 h-3.5 text-white" />
                   </div>
                   <div className="flex flex-col text-left min-w-0">
-                    <span className="text-[12.5px] font-medium text-white tracking-tight truncate">Refer &amp; Earn</span>
-                    <span className="text-[9.5px] text-zinc-400 truncate">Invite friends for bonus XP</span>
+                    <span className="text-[13px] font-semibold text-zinc-100 group-hover:text-white transition-colors tracking-tight truncate">Refer &amp; Earn</span>
+                    <span className="text-[10px] text-zinc-400 group-hover:text-zinc-300 transition-colors truncate mt-0.5">Invite friends for bonus XP</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 shrink-0 ml-2">
-                  <span className="text-[9.5px] font-semibold text-[#34c759] bg-[#34c759]/15 px-1.5 py-0.5 rounded-full whitespace-nowrap shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                  <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-2 py-0.5 rounded-full whitespace-nowrap shrink-0 shadow-xs">
                     +{XP_CONFIG.REFERRAL_REWARD} XP
                   </span>
-                  <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0" />
+                  <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all shrink-0" />
                 </div>
               </Link>
 
@@ -472,71 +557,72 @@ export default function Navbar() {
               <Link
                 href="/profile/settings"
                 onClick={() => setIsSidebarOpen(false)}
-                className="flex items-center justify-between px-3 py-2 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex items-center justify-between px-3.5 py-2.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition-colors group cursor-pointer"
               >
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-6 h-6 rounded-md bg-[#8E8E93] text-white flex items-center justify-center shrink-0 shadow-sm">
-                    <Settings className="w-3.5 h-3.5 text-white" />
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-xl bg-gradient-to-br from-zinc-700 to-zinc-800 border border-white/10 text-zinc-100 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                    <Settings className="w-3.5 h-3.5 text-zinc-200" />
                   </div>
                   <div className="flex flex-col text-left min-w-0">
-                    <span className="text-[12.5px] font-medium text-white tracking-tight truncate">Settings</span>
-                    <span className="text-[9.5px] text-zinc-400 truncate">Notifications, audio &amp; app</span>
+                    <span className="text-[13px] font-semibold text-zinc-100 group-hover:text-white transition-colors tracking-tight truncate">Settings</span>
+                    <span className="text-[10px] text-zinc-400 group-hover:text-zinc-300 transition-colors truncate mt-0.5">Notifications, audio &amp; app</span>
                   </div>
                 </div>
-                <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
               </Link>
+
               {/* Our Products Link to /products */}
               <Link
                 href="/products"
                 onClick={() => setIsSidebarOpen(false)}
-                className="flex items-center justify-between px-3 py-2 hover:bg-white/[0.04] active:bg-white/[0.08] transition-colors group"
+                className="flex items-center justify-between px-3.5 py-2.5 hover:bg-white/[0.05] active:bg-white/[0.08] transition-colors group cursor-pointer"
               >
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-6 h-6 rounded-md bg-white/[0.1] border border-white/10 text-white flex items-center justify-center shrink-0 shadow-sm">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-purple-500/30 group-hover:scale-105 transition-transform">
                     <ShoppingBag className="w-3.5 h-3.5 text-white" />
                   </div>
                   <div className="flex flex-col text-left min-w-0">
-                    <span className="text-[12.5px] font-medium text-white tracking-tight truncate">Our Products</span>
-                    <span className="text-[9.5px] text-zinc-400 truncate">Products you may like</span>
+                    <span className="text-[13px] font-semibold text-zinc-100 group-hover:text-white transition-colors tracking-tight truncate">Our Products</span>
+                    <span className="text-[10px] text-zinc-400 group-hover:text-zinc-300 transition-colors truncate mt-0.5">Products you may like</span>
                   </div>
                 </div>
-                <ChevronRight className="w-3 h-3 text-zinc-600 group-hover:text-zinc-400 transition-colors shrink-0 ml-2" />
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-600 group-hover:text-zinc-300 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
               </Link>
 
               {/* Sponsor Us or Partnership (Disabled) */}
               <div
-                className="flex items-center justify-between px-3 py-2 opacity-45 cursor-not-allowed select-none"
+                className="flex items-center justify-between px-3.5 py-2.5 opacity-50 cursor-not-allowed select-none"
                 title="Coming Soon"
               >
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-6 h-6 rounded-md bg-white/[0.06] border border-white/[0.08] text-zinc-400 flex items-center justify-center shrink-0 shadow-sm">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-zinc-400 flex items-center justify-center shrink-0 shadow-sm">
                     <Handshake className="w-3.5 h-3.5 text-zinc-400" />
                   </div>
                   <div className="flex flex-col text-left min-w-0">
-                    <span className="text-[12.5px] font-medium text-zinc-300 tracking-tight truncate">Sponsor Us or Partnership</span>
-                    <span className="text-[9.5px] text-zinc-500 truncate">Brand &amp; partner collaborations</span>
+                    <span className="text-[13px] font-medium text-zinc-300 tracking-tight truncate">Sponsor Us or Partnership</span>
+                    <span className="text-[10px] text-zinc-500 truncate mt-0.5">Brand &amp; partner collaborations</span>
                   </div>
                 </div>
-                <span className="text-[9px] font-medium text-zinc-500 bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded-full shrink-0 ml-2">
+                <span className="text-[9.5px] font-medium text-zinc-400 bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 rounded-full shrink-0 ml-2">
                   Soon
                 </span>
               </div>
 
               {/* Publish Your Game to Us (Disabled) */}
               <div
-                className="flex items-center justify-between px-3 py-2 opacity-45 cursor-not-allowed select-none"
+                className="flex items-center justify-between px-3.5 py-2.5 opacity-50 cursor-not-allowed select-none"
                 title="Coming Soon"
               >
-                <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  <div className="w-6 h-6 rounded-md bg-white/[0.06] border border-white/[0.08] text-zinc-400 flex items-center justify-center shrink-0 shadow-sm">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-zinc-400 flex items-center justify-center shrink-0 shadow-sm">
                     <Rocket className="w-3.5 h-3.5 text-zinc-400" />
                   </div>
                   <div className="flex flex-col text-left min-w-0">
-                    <span className="text-[12.5px] font-medium text-zinc-300 tracking-tight truncate">Publish Your Game to Us</span>
-                    <span className="text-[9.5px] text-zinc-500 truncate">Submit games to our platform</span>
+                    <span className="text-[13px] font-medium text-zinc-300 tracking-tight truncate">Publish Your Game to Us</span>
+                    <span className="text-[10px] text-zinc-500 truncate mt-0.5">Submit games to our platform</span>
                   </div>
                 </div>
-                <span className="text-[9px] font-medium text-zinc-500 bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded-full shrink-0 ml-2">
+                <span className="text-[9.5px] font-medium text-zinc-400 bg-white/[0.04] border border-white/[0.08] px-2 py-0.5 rounded-full shrink-0 ml-2">
                   Soon
                 </span>
               </div>
