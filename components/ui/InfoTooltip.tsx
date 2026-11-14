@@ -29,6 +29,31 @@ export default function InfoTooltip({
 }: InfoTooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
+
+  // Auto-adjust positioning to prevent offscreen overflow on mobile
+  useEffect(() => {
+    if (isOpen && containerRef.current && typeof window !== "undefined") {
+      const rect = containerRef.current.getBoundingClientRect();
+      const popoverWidth = window.innerWidth < 640 ? 250 : 288;
+      const centerLeft = rect.left + rect.width / 2 - popoverWidth / 2;
+      const centerRight = centerLeft + popoverWidth;
+
+      const newStyle: React.CSSProperties = {};
+      if (centerRight > window.innerWidth - 16) {
+        newStyle.left = "auto";
+        newStyle.right = "-4px";
+        newStyle.transform = "none";
+      } else if (centerLeft < 16) {
+        newStyle.left = "-4px";
+        newStyle.right = "auto";
+        newStyle.transform = "none";
+      }
+      setPopoverStyle(newStyle);
+    } else {
+      setPopoverStyle({});
+    }
+  }, [isOpen]);
 
   // Close on outside click
   useEffect(() => {
@@ -118,6 +143,7 @@ export default function InfoTooltip({
             alignClasses[align],
             popoverClassName
           )}
+          style={popoverStyle}
         >
           {/* Header Row if Title is supplied */}
           <div className="flex items-start justify-between gap-2 mb-1.5">
