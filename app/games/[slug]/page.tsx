@@ -293,33 +293,26 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                 </div>
               </div>
 
-              {/* Device Compatibility Row */}
-              <div className="pt-2 border-t border-white/[0.06]">
-                <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-[14px] bg-white/[0.03] border border-white/[0.06] gap-2.5">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400 shrink-0">
-                      <Globe className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-[9px] text-zinc-400 font-semibold uppercase tracking-wider leading-none mb-0.5">
-                        Supported Devices
-                      </span>
-                      <span className="text-xs sm:text-[13px] font-semibold text-white truncate">
-                        Mobile, iOS, Tablet &amp; PC
-                      </span>
-                    </div>
-                  </div>
+              {/* Device Compatibility Row - Seamless, no nested card */}
+              <div className="flex items-center justify-between py-1 border-t border-white/[0.06] gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Globe className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span className="text-xs font-medium text-zinc-400 shrink-0">Devices:</span>
+                  <span className="text-xs font-semibold text-white truncate">
+                    Mobile, iOS, Tablet &amp; PC
+                  </span>
+                </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0 text-[10.5px]">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-zinc-300 font-medium">
-                      <Smartphone className="w-3 h-3 text-sky-400" />
-                      <span>Mobile</span>
-                    </span>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-zinc-300 font-medium">
-                      <Monitor className="w-3 h-3 text-emerald-400" />
-                      <span>PC</span>
-                    </span>
-                  </div>
+                <div className="flex items-center gap-2 shrink-0 text-xs text-zinc-300">
+                  <span className="flex items-center gap-1 text-[11px] text-zinc-300">
+                    <Smartphone className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Mobile</span>
+                  </span>
+                  <span className="text-zinc-600">•</span>
+                  <span className="flex items-center gap-1 text-[11px] text-zinc-300">
+                    <Monitor className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>PC</span>
+                  </span>
                 </div>
               </div>
 
@@ -332,31 +325,31 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                 <GameDescription description={game.description} />
               </div>
 
-              {/* iOS Controls Section */}
+              {/* Controls Section - Clean, seamless layout */}
               <div className="space-y-2 pt-2 border-t border-white/[0.06]">
                 <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
                   <Gamepad2 className="w-3.5 h-3.5 text-white" />
                   Controls &amp; How to Play
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div className="flex items-center justify-between p-2.5 rounded-[12px] bg-white/[0.03] border border-white/[0.06]">
-                    <span className="text-[11.5px] font-medium text-zinc-300 flex items-center gap-2">
-                      <Monitor className="w-3.5 h-3.5 text-white shrink-0" />
-                      Desktop Keyboard
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs py-0.5">
+                  <div className="flex items-center justify-between sm:justify-start gap-2.5">
+                    <span className="text-zinc-400 flex items-center gap-1.5 text-xs">
+                      <Monitor className="w-3.5 h-3.5 text-zinc-300 shrink-0" />
+                      Desktop Keyboard:
                     </span>
                     <div className="flex items-center gap-1">
-                      <kbd className="px-1.5 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[9.5px] font-semibold rounded-md">WASD</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[9.5px] font-semibold rounded-md">Space</kbd>
-                      <kbd className="px-1.5 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[9.5px] font-semibold rounded-md">Mouse</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[9.5px] font-semibold rounded">WASD</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[9.5px] font-semibold rounded">Space</kbd>
+                      <kbd className="px-1.5 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[9.5px] font-semibold rounded">Mouse</kbd>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-[12px] bg-white/[0.03] border border-white/[0.06]">
-                    <span className="text-[11.5px] font-medium text-zinc-300 flex items-center gap-2">
+                  <div className="flex items-center justify-between sm:justify-start gap-2.5">
+                    <span className="text-zinc-400 flex items-center gap-1.5 text-xs">
                       <Smartphone className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                      Mobile &amp; Tablet
+                      Mobile &amp; Tablet:
                     </span>
-                    <kbd className="px-2 py-0.5 bg-white/[0.06] border border-white/[0.1] text-zinc-200 font-mono text-[9.5px] font-semibold rounded-md">Touch Screen</kbd>
+                    <span className="text-zinc-300 text-xs font-medium">Touch Screen</span>
                   </div>
                 </div>
               </div>
