@@ -15,35 +15,6 @@ function isAdmin(session: any) {
   );
 }
 
-// GET all reward claims for Admin order fulfillment dashboard
-export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!isAdmin(session)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    await dbConnect();
-    const status = req.nextUrl.searchParams.get("status");
-    const query: any = {};
-    if (status && status !== "all") {
-      query.status = status;
-    }
-
-    const claims = await RewardClaim.find(query)
-      .sort({ claimedAt: -1 })
-      .lean();
-
-    return NextResponse.json({ claims });
-  } catch (error: any) {
-    console.error("Error fetching admin claims:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to fetch claims" },
-      { status: 500 }
-    );
-  }
-}
-
 // PATCH update status, voucher code, notes, or refund on reject
 export async function PATCH(req: NextRequest) {
   const session = await getServerSession(authOptions);
