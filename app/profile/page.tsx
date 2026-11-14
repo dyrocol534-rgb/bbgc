@@ -143,85 +143,83 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        {/* ── Key Player Stats (Compact 6-Metric Grid) ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
-          {/* Total XP */}
-          <Link 
-            href="/rewards" 
-            className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5 hover:border-zinc-800 transition-colors group"
-          >
-            <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
-              <Coins className="w-3.5 h-3.5 text-amber-400" />
-            </div>
-            <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Total XP</span>
-              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">{xp.toLocaleString()} XP</span>
-            </div>
-          </Link>
+        {/* ── Key Player Stats (Clean 2-Row Grid, No Card, No Icon Border) ── */}
+        <div className="space-y-3 py-1">
+          {/* Row 1: XP, Streak, Play Time */}
+          <div className="grid grid-cols-3 gap-2">
+            {/* Total XP */}
+            <Link 
+              href="/rewards" 
+              className="flex items-center gap-2 min-w-0 hover:opacity-85 transition-opacity group"
+            >
+              <Coins className="w-4 h-4 text-amber-400 shrink-0" />
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Total XP</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                  {xp.toLocaleString()} XP
+                </span>
+              </div>
+            </Link>
 
-          {/* Daily Streak */}
-          <Link 
-            href="/rewards" 
-            className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5 hover:border-zinc-800 transition-colors group"
-          >
-            <div className="w-7 h-7 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center justify-center shrink-0">
-              <Flame className="w-3.5 h-3.5 text-orange-400" />
-            </div>
-            <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Streak</span>
-              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate">{streak} Days</span>
-            </div>
-          </Link>
+            {/* Daily Streak */}
+            <Link 
+              href="/rewards" 
+              className="flex items-center gap-2 min-w-0 hover:opacity-85 transition-opacity group"
+            >
+              <Flame className="w-4 h-4 text-orange-400 shrink-0" />
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Streak</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate mt-0.5">
+                  {streak} Days
+                </span>
+              </div>
+            </Link>
 
-          {/* Total Play Time */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center shrink-0">
-              <Clock className="w-3.5 h-3.5 text-sky-400" />
-            </div>
-            <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Play Time</span>
-              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                {playtimeHours}h {playtimeMinutes}m
-              </span>
+            {/* Total Play Time */}
+            <div className="flex items-center gap-2 min-w-0">
+              <Clock className="w-4 h-4 text-sky-400 shrink-0" />
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Play Time</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                  {playtimeHours}h {playtimeMinutes}m
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Games Played */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
-              <Gamepad2 className="w-3.5 h-3.5 text-emerald-400" />
+          {/* Row 2: Games Played, Avg Games/Day, Last Played */}
+          <div className="grid grid-cols-3 gap-2">
+            {/* Games Played */}
+            <div className="flex items-center gap-2 min-w-0">
+              <Gamepad2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Games</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                  {gamesPlayedCount}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Games Played</span>
-              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                {gamesPlayedCount}
-              </span>
-            </div>
-          </div>
 
-          {/* Average Games / Day */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0">
-              <Activity className="w-3.5 h-3.5 text-purple-400" />
+            {/* Average Games / Day */}
+            <div className="flex items-center gap-2 min-w-0">
+              <Activity className="w-4 h-4 text-purple-400 shrink-0" />
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Avg/Day</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                  {avgGamesPerDay}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Avg Games/Day</span>
-              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                {avgGamesPerDay}
-              </span>
-            </div>
-          </div>
 
-          {/* Last Played */}
-          <div className="bg-zinc-950 p-2.5 rounded-xl border border-zinc-900 flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shrink-0">
-              <Zap className="w-3.5 h-3.5 text-rose-400" />
-            </div>
-            <div className="flex flex-col text-left min-w-0">
-              <span className="text-[10px] font-medium text-zinc-500 leading-none mb-1">Last Played</span>
-              <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono">
-                {lastPlayedTime}
-              </span>
+            {/* Last Played */}
+            <div className="flex items-center gap-2 min-w-0">
+              <Zap className="w-4 h-4 text-rose-400 shrink-0" />
+              <div className="flex flex-col min-w-0">
+                <span className="text-[10px] font-medium text-zinc-500 leading-none truncate">Last Played</span>
+                <span className="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight truncate font-mono mt-0.5">
+                  {lastPlayedTime}
+                </span>
+              </div>
             </div>
           </div>
         </div>
