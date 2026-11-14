@@ -31,25 +31,35 @@ export default function InfoTooltip({
   const containerRef = useRef<HTMLDivElement>(null);
   const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
 
-  // Auto-adjust positioning to prevent offscreen overflow on mobile
+  // Auto-adjust positioning to prevent offscreen overflow on mobile & desktop
   useEffect(() => {
     if (isOpen && containerRef.current && typeof window !== "undefined") {
       const rect = containerRef.current.getBoundingClientRect();
-      const popoverWidth = window.innerWidth < 640 ? 250 : 288;
-      const centerLeft = rect.left + rect.width / 2 - popoverWidth / 2;
-      const centerRight = centerLeft + popoverWidth;
+      const viewportWidth = window.innerWidth;
+      const margin = 12;
+      const targetWidth = Math.min(280, viewportWidth - margin * 2);
 
-      const newStyle: React.CSSProperties = {};
-      if (centerRight > window.innerWidth - 16) {
-        newStyle.left = "auto";
-        newStyle.right = "-4px";
-        newStyle.transform = "none";
-      } else if (centerLeft < 16) {
-        newStyle.left = "-4px";
-        newStyle.right = "auto";
-        newStyle.transform = "none";
+      // Desired position centered on trigger button
+      let targetViewportLeft = rect.left + rect.width / 2 - targetWidth / 2;
+
+      // Clamp between margin and (viewportWidth - margin - targetWidth)
+      if (targetViewportLeft < margin) {
+        targetViewportLeft = margin;
       }
-      setPopoverStyle(newStyle);
+      if (targetViewportLeft + targetWidth > viewportWidth - margin) {
+        targetViewportLeft = viewportWidth - margin - targetWidth;
+      }
+
+      // Convert target viewport left to relative offset within container
+      const relativeLeft = Math.round(targetViewportLeft - rect.left);
+
+      setPopoverStyle({
+        left: `${relativeLeft}px`,
+        right: "auto",
+        transform: "none",
+        width: `${targetWidth}px`,
+        maxWidth: `${targetWidth}px`,
+      });
     } else {
       setPopoverStyle({});
     }

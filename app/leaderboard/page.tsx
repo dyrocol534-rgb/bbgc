@@ -41,11 +41,11 @@ export default async function LeaderboardPage() {
   let users: any[] = [];
   try {
     await dbConnect();
-    // Fetch top 100 users by lifetimeXp with lean field projection
+    // Fetch top 10 users by lifetimeXp with lean field projection
     users = await User.find({ lifetimeXp: { $gt: 0 } })
       .select('name lifetimeXp currentStreak')
       .sort({ lifetimeXp: -1 })
-      .limit(100)
+      .limit(10)
       .lean();
   } catch (error) {
     console.error("Error fetching leaderboard users:", error);
@@ -67,7 +67,7 @@ export default async function LeaderboardPage() {
           />
         </div>
         <p className="text-zinc-500 text-xs mt-1">
-          Top active players on {SITE_CONFIG.name}
+          Top 10 active players on {SITE_CONFIG.name}
         </p>
       </div>
 
