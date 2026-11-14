@@ -13,6 +13,7 @@ import Image from 'next/image';
 import GameImage from '@/components/game/GameImage';
 import { triggerHaptic } from '@/lib/utils';
 import { useUIStore } from '@/lib/stores/uiStore';
+import { useGamificationStore } from '@/lib/stores/gamificationStore';
 
 interface GamePlayerProps {
   game: {
@@ -253,9 +254,15 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         }
 
         // Active and verified: Send elapsedSeconds = 120 to the server
-        axios.post('/api/user/playtime', { elapsedSeconds: 120 }).catch(() => {
-          // Ignore errors
-        });
+        axios.post('/api/user/playtime', { elapsedSeconds: 120 })
+          .then((res) => {
+            if (res.data?.xpAwarded > 0) {
+              useGamificationStore.getState().addXp(res.data.xpAwarded);
+            }
+          })
+          .catch(() => {
+            // Ignore errors
+          });
       }, 120000); // 120 seconds (2 minutes)
     }
     return () => {

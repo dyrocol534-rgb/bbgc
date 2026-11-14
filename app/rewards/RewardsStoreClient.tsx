@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -19,6 +19,7 @@ import {
   Lock,
 } from "lucide-react";
 import InfoTooltip from "@/components/ui/InfoTooltip";
+import { useGamificationStore } from "@/lib/stores/gamificationStore";
 
 interface IRewardItem {
   _id: string;
@@ -69,7 +70,18 @@ export default function RewardsStoreClient({
   userXp: number;
   isAuthenticated: boolean;
 }) {
-  const [currentXp, setCurrentXp] = useState(userXp);
+  const storeXp = useGamificationStore((state) => state.xp);
+  const isStatsInitialized = useGamificationStore((state) => state.isInitialized);
+  const setXp = useGamificationStore((state) => state.setXp);
+
+  // Sync initial server XP to store on mount
+  useEffect(() => {
+    if (userXp > 0 && !isStatsInitialized) {
+      setXp(userXp);
+    }
+  }, [userXp, isStatsInitialized, setXp]);
+
+  const currentXp = isStatsInitialized ? storeXp : userXp;
   const [claims, setClaims] = useState<IClaimItem[]>(initialClaims);
   const [cooldowns, setCooldowns] = useState<CooldownMap>(initialCooldowns);
 
@@ -124,8 +136,8 @@ export default function RewardsStoreClient({
         throw new Error(data.error || "Failed to submit claim request");
       }
 
-      // Update XP & add new claim
-      setCurrentXp(data.remainingXp);
+      // Update XP in global store & add new claim
+      setXp(data.remainingXp);
       setClaims((prev) => [data.claim, ...prev]);
 
       // Set cooldown for this item (7 days)

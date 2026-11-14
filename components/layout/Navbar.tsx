@@ -13,6 +13,7 @@ import SearchBar from "./SearchBar";
 import NotificationBell from "../notifications/NotificationBell";
 import { XP_CONFIG } from "@/lib/xp-config";
 import { useUIStore } from "@/lib/stores/uiStore";
+import { useGamificationStore } from "@/lib/stores/gamificationStore";
 
 const ShareModal = dynamic(() => import("../game/ShareModal"), { ssr: false });
 
@@ -124,7 +125,14 @@ export default function Navbar() {
   const openShareModal = useUIStore((state) => state.openShareModal);
   const closeShareModal = useUIStore((state) => state.closeShareModal);
   const toggleNavSidebar = useUIStore((state) => state.toggleNavSidebar);
-  const [userStats, setUserStats] = useState<{ xp: number; streak: number } | null>(null);
+
+  // Global Gamification Store
+  const xp = useGamificationStore((state) => state.xp);
+  const streak = useGamificationStore((state) => state.streak);
+  const isStatsInitialized = useGamificationStore((state) => state.isInitialized);
+  const initFromSession = useGamificationStore((state) => state.initFromSession);
+  const fetchProfileStats = useGamificationStore((state) => state.fetchProfileStats);
+  const checkDailyStreak = useGamificationStore((state) => state.checkDailyStreak);
 
   const isGameSlugPage = Boolean(pathname?.startsWith("/games/") && pathname !== "/games");
   const gameSlug = isGameSlugPage ? pathname?.replace("/games/", "").split("/")[0].split("?")[0] : undefined;
@@ -148,53 +156,26 @@ export default function Navbar() {
     }
   };
 
-  // Keep local stats synced with session whenever session loads
+  // Keep store synced with session whenever session loads
   useEffect(() => {
     if (session?.user) {
-      setUserStats({
-        xp: (session.user as any).xp ?? 0,
-        streak: (session.user as any).currentStreak ?? 0,
-      });
+      initFromSession(session.user);
     }
-  }, [session]);
+  }, [session, initFromSession]);
 
   // Fetch fresh profile stats when drawer opens
   useEffect(() => {
     if (isSidebarOpen && session?.user?.email) {
-      fetch("/api/user/profile")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            setUserStats({
-              xp: data.xp ?? 0,
-              streak: data.currentStreak ?? 0,
-            });
-          }
-        })
-        .catch(console.error);
+      fetchProfileStats();
     }
-  }, [isSidebarOpen, session]);
+  }, [isSidebarOpen, session, fetchProfileStats]);
 
+  // Silently check and update daily streak
   useEffect(() => {
     if (session?.user?.email) {
-      // Silently check and update daily streak
-      const hasCheckedStreak = sessionStorage.getItem("hasCheckedStreak");
-      if (!hasCheckedStreak) {
-        fetch("/api/user/streak", { method: "POST" })
-          .then((res) => res.json())
-          .then((data) => {
-            sessionStorage.setItem("hasCheckedStreak", "true");
-            if (data?.success) {
-              setUserStats((prev) => ({
-                xp: (prev?.xp ?? (session.user as any).xp ?? 0) + (data.xpAwarded || 0),
-                streak: data.currentStreak ?? prev?.streak ?? (session.user as any).currentStreak ?? 0,
-              }));
-            }
-          })
-          .catch(console.error);
-      }
+      checkDailyStreak();
     }
-  }, [session]);
+  }, [session, checkDailyStreak]);
 
   const handleSurpriseMe = async () => {
     if (isRolling) return;
@@ -212,8 +193,8 @@ export default function Navbar() {
     }
   };
 
-  const displayXp = session ? (userStats ? userStats.xp : ((session.user as any)?.xp ?? 0)) : 0;
-  const displayStreak = session ? (userStats ? userStats.streak : ((session.user as any)?.currentStreak ?? 0)) : 0;
+  const displayXp = session ? (isStatsInitialized ? xp : ((session.user as any)?.xp ?? 0)) : 0;
+  const displayStreak = session ? (isStatsInitialized ? streak : ((session.user as any)?.currentStreak ?? 0)) : 0;
 
   if (isGameSlugPage) {
     return (

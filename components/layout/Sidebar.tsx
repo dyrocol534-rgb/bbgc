@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { XP_CONFIG } from "@/lib/xp-config";
 import { triggerHaptic } from "@/lib/utils";
 import { useUIStore } from "@/lib/stores/uiStore";
+import { useGamificationStore } from "@/lib/stores/gamificationStore";
 
 const PRIMARY_LINKS = [
   { name: "Home", href: "/", icon: Home, color: "text-blue-400", bg: "bg-blue-500/15" },
@@ -93,6 +94,9 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
       setNavSidebarOpen(val);
     }
   };
+  const streak = useGamificationStore((state) => state.streak);
+  const isStatsInitialized = useGamificationStore((state) => state.isInitialized);
+  const currentStreak = session?.user ? (isStatsInitialized ? streak : ((session.user as any).currentStreak || 0)) : 0;
   const pathname = usePathname();
   const router = useRouter();
   const [isRolling, setIsRolling] = useState(false);
@@ -307,7 +311,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                   <span className="text-zinc-300 text-xs font-medium group-hover:text-white transition-colors truncate">Daily Streak</span>
                 </div>
                 <span className="text-amber-400/90 text-[10px] uppercase tracking-wider font-semibold">
-                  {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
+                  {currentStreak} DAYS
                 </span>
               </Link>
             </div>
@@ -487,7 +491,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
                     <div className="flex flex-col items-start whitespace-nowrap min-w-0">
                       <span className="text-zinc-300 text-xs font-medium group-hover:text-white transition-colors truncate">Daily Streak</span>
                       <span className="text-zinc-400 text-[9.5px] uppercase tracking-wider font-semibold">
-                        {session?.user ? `${(session.user as any).currentStreak || 0} DAYS` : "0 DAYS"}
+                        {currentStreak} DAYS
                       </span>
                     </div>
                   )}
