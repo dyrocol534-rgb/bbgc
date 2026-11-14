@@ -264,10 +264,11 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
             <div className="rounded-[20px] bg-[#141416] border border-white/[0.08] p-4 sm:p-5 shadow-xs space-y-4">
               {/* Header Info */}
               <div className="space-y-2">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug">
+                <div className="flex flex-col gap-1.5 w-full">
+                  <h1 className="text-sm sm:text-base font-bold text-white tracking-tight leading-snug">
                     {game.title}
                   </h1>
+                  <div className="w-full h-[2px] bg-red-500 rounded-full" />
                 </div>
 
                 {/* Categories & Tags - Horizontal Scroll with small text */}

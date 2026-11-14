@@ -643,43 +643,48 @@ export default function GamePlayer({ game }: GamePlayerProps) {
               )}
 
               {/* Content */}
-              <div className="relative z-10 flex flex-col items-center w-full text-center">
-                {cleanThumb ? (
-                  <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-[18px] overflow-hidden mb-2.5 border border-white/20 shadow-md group ring-1 ring-white/10">
-                    <GameImage 
-                      src={cleanThumb} 
-                      alt={game.title} 
-                      priority={true} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
-                    />
-                  </div>
-                ) : (
-                  <div className="w-18 h-18 sm:w-20 sm:h-20 aspect-square rounded-[18px] bg-zinc-800 flex items-center justify-center mb-2.5 border border-white/20 shadow-lg text-white font-black text-2xl sm:text-3xl select-none">
-                    {initialLetter}
-                  </div>
-                )}
+              <div className="relative z-10 flex flex-col w-full">
+                {/* Logo at Start (Far Left), Name and Type right next to it */}
+                <div className="flex items-center justify-start gap-3.5 sm:gap-4 mb-3.5 sm:mb-4 w-full">
+                  {cleanThumb ? (
+                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-[18px] overflow-hidden border border-white/20 shadow-md group ring-1 ring-white/10 shrink-0">
+                      <GameImage 
+                        src={cleanThumb} 
+                        alt={game.title} 
+                        priority={true} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 aspect-square rounded-[18px] bg-zinc-800 flex items-center justify-center border border-white/20 shadow-lg text-white font-black text-2xl sm:text-3xl select-none shrink-0">
+                      {initialLetter}
+                    </div>
+                  )}
 
-                <h1 className="text-lg sm:text-xl font-bold text-white mb-1.5 text-center tracking-tight">
-                  {game.title}
-                </h1>
-                
-                {/* Category Pill */}
-                <div className="flex items-center justify-center mb-3.5">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/[0.08] border border-white/[0.12] text-[11px] font-semibold text-zinc-200 shadow-xs backdrop-blur-md">
-                    <span>🕹️</span>
-                    <span className="capitalize">{game.category?.[0] || "Arcade"}</span>
-                  </span>
+                  <div className="flex flex-col items-start text-left min-w-0 flex-1">
+                    <h1 className="text-lg sm:text-xl font-bold text-white mb-1.5 tracking-tight leading-snug line-clamp-2">
+                      {game.title}
+                    </h1>
+                    
+                    {/* Category Pill */}
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/[0.08] border border-white/[0.12] text-[11px] font-semibold text-zinc-200 shadow-xs backdrop-blur-md">
+                      <span>🕹️</span>
+                      <span className="capitalize">{game.category?.[0] || "Arcade"}</span>
+                    </span>
+                  </div>
                 </div>
 
                 {/* iOS Big Pill Play Button */}
-                <button
-                  ref={playButtonRef}
-                  onClick={handlePlayNow}
-                  className="px-7 py-2.5 sm:px-8 sm:py-2.5 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black text-xs sm:text-sm font-bold rounded-full shadow-[0_6px_20px_rgba(255,255,255,0.15)] transition-all flex items-center gap-2 cursor-pointer"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current transition-transform" />
-                  <span>Play Now</span>
-                </button>
+                <div className="flex items-center justify-center w-full">
+                  <button
+                    ref={playButtonRef}
+                    onClick={handlePlayNow}
+                    className="px-7 py-2.5 sm:px-8 sm:py-2.5 bg-white hover:bg-zinc-200 active:scale-[0.98] text-black text-xs sm:text-sm font-bold rounded-full shadow-[0_6px_20px_rgba(255,255,255,0.15)] transition-all flex items-center gap-2 cursor-pointer"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current transition-transform" />
+                    <span>Play Now</span>
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
@@ -767,10 +772,11 @@ export default function GamePlayer({ game }: GamePlayerProps) {
         </div>
 
         {/* ── iOS ACTION BAR (always visible below player) ─── */}
-        <div className="flex flex-row items-center justify-between bg-[#141416]/90 backdrop-blur-xl rounded-2xl p-2 px-3 border border-white/[0.08] gap-2 shadow-md">
-          <div className="flex items-center gap-2.5 min-w-0">
+        <div className="flex flex-row items-center justify-between bg-[#141416]/90 backdrop-blur-xl rounded-2xl p-2 px-3 border border-white/[0.08] gap-3 shadow-md">
+          {/* Left Group: Game Icon & Like/Dislike Rating */}
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             {cleanThumb ? (
-              <div className="relative w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 bg-zinc-800 border border-white/10 shadow-sm">
+              <div className="relative w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 bg-zinc-800 border border-white/10 shadow-sm ring-1 ring-white/5">
                 <GameImage 
                   src={cleanThumb} 
                   alt={game.title} 
@@ -783,13 +789,7 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 {initialLetter}
               </div>
             )}
-            <div className="flex flex-col min-w-0">
-              <h2 className="text-white font-semibold truncate text-xs sm:text-sm tracking-tight">{game.title}</h2>
-              <span className="text-[10.5px] text-zinc-400 truncate capitalize">{game.category?.[0] || "Online Game"}</span>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
             {/* iOS Like/Dislike Segmented Pill */}
             <div className="flex items-center bg-white/[0.05] rounded-full border border-white/[0.08] overflow-hidden shrink-0 p-0.5">
               <button 
@@ -815,6 +815,10 @@ export default function GamePlayer({ game }: GamePlayerProps) {
                 <ThumbsDown className={clsx("w-3.5 h-3.5", isDisliked ? "fill-current" : "")} />
               </button>
             </div>
+          </div>
+
+          {/* Right Group: Action Tools (Favorite, Share, Feedback, Fullscreen) */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
 
             {/* Favorite Button */}
             <button 
