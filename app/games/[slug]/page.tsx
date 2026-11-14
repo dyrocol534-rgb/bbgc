@@ -7,7 +7,7 @@ import GameImage from '@/components/game/GameImage';
 import GameDescription from '@/components/game/GameDescription';
 import { getPublishedGameBySlug, getRandomSuggestedGames } from '@/lib/services/gameService';
 import { getSidebarBentoSpanClass } from '@/lib/bento';
-import { Gamepad2, Smartphone, Monitor, Layers, Globe, ChevronRight, Star, Info, Sparkles } from 'lucide-react';
+import { Gamepad2, Smartphone, Monitor, Globe, ChevronRight, Star, Info, Sparkles } from 'lucide-react';
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -293,27 +293,32 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                 </div>
               </div>
 
-              {/* iOS Quick Spec Row - Side by Side & Compact */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-2.5 pt-2 border-t border-white/[0.06]">
-                <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-[12px] bg-white/[0.03] border border-white/[0.06]">
-                  <div className="w-7 h-7 rounded-[7px] bg-cyan-500/15 border border-cyan-500/25 flex items-center justify-center text-cyan-400 shrink-0">
-                    <Layers className="w-3.5 h-3.5" />
+              {/* Device Compatibility Row */}
+              <div className="pt-2 border-t border-white/[0.06]">
+                <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-[14px] bg-white/[0.03] border border-white/[0.06] gap-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-7 h-7 rounded-[8px] bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400 shrink-0">
+                      <Globe className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[9px] text-zinc-400 font-semibold uppercase tracking-wider leading-none mb-0.5">
+                        Supported Devices
+                      </span>
+                      <span className="text-xs sm:text-[13px] font-semibold text-white truncate">
+                        Mobile, iOS, Tablet &amp; PC
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-semibold uppercase tracking-wider">Engine</span>
-                    <span className="text-[11px] sm:text-xs font-semibold text-white truncate">
-                      {game.buildType === 'html5' ? 'HTML5' : game.buildType === 'unity-webgl' ? 'Unity WebGL' : 'HTML5 WebGL'}
-                    </span>
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-2 p-2 sm:p-2.5 rounded-[12px] bg-white/[0.03] border border-white/[0.06]">
-                  <div className="w-7 h-7 rounded-[7px] bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center text-emerald-400 shrink-0">
-                    <Globe className="w-3.5 h-3.5" />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-[9px] sm:text-[9.5px] text-zinc-400 font-semibold uppercase tracking-wider">Devices</span>
-                    <span className="text-[11px] sm:text-xs font-semibold text-white truncate">Mobile, iOS &amp; PC</span>
+                  <div className="flex items-center gap-1.5 shrink-0 text-[10.5px]">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-zinc-300 font-medium">
+                      <Smartphone className="w-3 h-3 text-sky-400" />
+                      <span>Mobile</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-zinc-300 font-medium">
+                      <Monitor className="w-3 h-3 text-emerald-400" />
+                      <span>PC</span>
+                    </span>
                   </div>
                 </div>
               </div>

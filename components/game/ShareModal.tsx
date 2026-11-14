@@ -255,7 +255,7 @@ export default function ShareModal({
                 Free Instant Play
               </span>
             </div>
-            <h3 id="share-modal-title" className="text-sm sm:text-base font-bold text-white truncate mt-1">
+            <h3 id="share-modal-title" className="text-xs sm:text-sm font-semibold text-white truncate mt-0.5">
               {displayTitle}
             </h3>
           </div>
@@ -271,21 +271,21 @@ export default function ShareModal({
         </div>
 
         {/* ── 2. QUICK 1-TAP SOCIAL & NATIVE SHARE ICONS ── */}
-        <div className="flex items-center justify-between px-1 pt-0.5">
+        <div className="flex items-center justify-between px-1 pt-1">
           {/* WhatsApp */}
           <a
             href={`https://wa.me/?text=${encodeURIComponent(`${shareMessage} ${shareUrl}`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center gap-1 group cursor-pointer"
+            className="flex flex-col items-center gap-1.5 group cursor-pointer"
             title="Share on WhatsApp"
           >
-            <div className="w-11 h-11 rounded-full bg-[#25D366]/15 group-hover:bg-[#25D366] text-[#25D366] group-hover:text-black flex items-center justify-center transition-all group-active:scale-90 shadow-sm">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#25D366] text-white flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-active:scale-95 shadow-md shadow-[#25D366]/25">
               <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.067-2.222-.563-1.637-.676-2.684-2.347-2.766-2.457-.082-.11-1.02-1.357-1.02-2.589 0-1.231.644-1.838.873-2.091.229-.253.5-.316.666-.316.166 0 .333.002.478.009.155.008.363-.059.57.437.214.512.729 1.776.792 1.905.063.13.104.281.021.447-.083.167-.125.27-.25.416-.124.146-.263.327-.375.438-.124.125-.254.261-.109.511.145.25.645 1.066 1.385 1.724.954.848 1.758 1.11 2.008 1.234.25.125.395.104.541-.062.146-.167.624-.728.79-1.019.166-.291.332-.249.562-.166.229.083 1.456.687 1.706.812.25.125.416.187.478.291.062.104.062.604-.082 1.009z" />
               </svg>
             </div>
-            <span className="text-[10px] font-medium text-zinc-400 group-hover:text-white transition-colors">
+            <span className="text-[10px] font-medium text-zinc-300 group-hover:text-white transition-colors">
               WhatsApp
             </span>
           </a>
@@ -295,16 +295,16 @@ export default function ShareModal({
             href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareMessage)}&url=${encodeURIComponent(shareUrl)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center gap-1 group cursor-pointer"
+            className="flex flex-col items-center gap-1.5 group cursor-pointer"
             title="Share on X"
           >
-            <div className="w-11 h-11 rounded-full bg-white/10 group-hover:bg-white text-white group-hover:text-black flex items-center justify-center transition-all group-active:scale-90 shadow-sm">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-black border border-white/20 text-white flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-active:scale-95 shadow-md shadow-white/5">
               <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
               </svg>
             </div>
-            <span className="text-[10px] font-medium text-zinc-400 group-hover:text-white transition-colors">
-              X (Twitter)
+            <span className="text-[10px] font-medium text-zinc-300 group-hover:text-white transition-colors">
+              X
             </span>
           </a>
 
@@ -313,13 +313,15 @@ export default function ShareModal({
             href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareMessage)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center gap-1 group cursor-pointer"
+            className="flex flex-col items-center gap-1.5 group cursor-pointer"
             title="Share on Telegram"
           >
-            <div className="w-11 h-11 rounded-full bg-[#2AABEE]/15 group-hover:bg-[#2AABEE] text-[#2AABEE] group-hover:text-white flex items-center justify-center transition-all group-active:scale-90 shadow-sm">
-              <Send className="w-4 h-4 translate-x-[-1px] translate-y-[1px]" />
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#24A1DE] text-white flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-active:scale-95 shadow-md shadow-[#24A1DE]/25">
+              <svg className="w-4.5 h-4.5 fill-current translate-x-[-1px] translate-y-[1px]" viewBox="0 0 24 24">
+                <path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l-.313 4.693c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.785l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434z" />
+              </svg>
             </div>
-            <span className="text-[10px] font-medium text-zinc-400 group-hover:text-white transition-colors">
+            <span className="text-[10px] font-medium text-zinc-300 group-hover:text-white transition-colors">
               Telegram
             </span>
           </a>
@@ -329,15 +331,15 @@ export default function ShareModal({
             href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center gap-1 group cursor-pointer"
+            className="flex flex-col items-center gap-1.5 group cursor-pointer"
             title="Share on Facebook"
           >
-            <div className="w-11 h-11 rounded-full bg-[#1877F2]/15 group-hover:bg-[#1877F2] text-[#1877F2] group-hover:text-white flex items-center justify-center transition-all group-active:scale-90 shadow-sm">
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.82 0-1.604.204-1.996.643-.393.439-.472 1.077-.472 2.052v1.285h4.423l-.689 3.667h-3.734v7.98H9.101z" />
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-[#1877F2] text-white flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-active:scale-95 shadow-md shadow-[#1877F2]/25">
+              <svg className="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
             </div>
-            <span className="text-[10px] font-medium text-zinc-400 group-hover:text-white transition-colors">
+            <span className="text-[10px] font-medium text-zinc-300 group-hover:text-white transition-colors">
               Facebook
             </span>
           </a>
@@ -347,13 +349,13 @@ export default function ShareModal({
             <button
               type="button"
               onClick={handleNativeShare}
-              className="flex flex-col items-center gap-1 group cursor-pointer"
+              className="flex flex-col items-center gap-1.5 group cursor-pointer"
               title="More Share Options"
             >
-              <div className="w-11 h-11 rounded-full bg-white/[0.08] hover:bg-white/[0.16] text-white flex items-center justify-center transition-all group-active:scale-90 border border-white/[0.08] shadow-sm">
-                <Share2 className="w-4 h-4" />
+              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white/[0.1] hover:bg-white/[0.18] text-white flex items-center justify-center transition-all duration-200 group-hover:scale-105 group-active:scale-95 border border-white/[0.1] shadow-md">
+                <Share2 className="w-4.5 h-4.5" />
               </div>
-              <span className="text-[10px] font-medium text-zinc-400 group-hover:text-white transition-colors">
+              <span className="text-[10px] font-medium text-zinc-300 group-hover:text-white transition-colors">
                 More
               </span>
             </button>
