@@ -386,9 +386,9 @@ export default function Navbar() {
               <span className="text-[14px] font-semibold text-white tracking-tight truncate leading-tight">
                 {session?.user?.name || "Guest Player"}
               </span>
-              <div className="mt-0.5">
-                {session ? (
-                  session.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") ? (
+              {session && (
+                <div className="mt-0.5">
+                  {session.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") ? (
                     <span className="inline-flex items-center text-[10.5px] font-medium text-white">
                       Administrator
                     </span>
@@ -396,11 +396,9 @@ export default function Navbar() {
                     <span className="inline-flex items-center text-[10.5px] text-[#8e8e93]">
                       Member
                     </span>
-                  )
-                ) : (
-                  <span className="text-[10.5px] text-[#8e8e93]">Play &amp; Earn XP</span>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-1.5 shrink-0 ml-2">
@@ -427,6 +425,20 @@ export default function Navbar() {
         {/* Drawer Body */}
         <div className="flex-1 overflow-y-auto p-3 flex flex-col justify-between gap-3 custom-scrollbar bg-[#000000]">
           <div className="flex flex-col gap-2.5">
+            {/* Top Sign In with Google for Guest */}
+            {!session && (
+              <button
+                onClick={() => {
+                  setIsSidebarOpen(false);
+                  router.push("/login");
+                }}
+                className="w-full py-2.5 px-3.5 bg-[#007AFF] hover:bg-[#0071E3] active:bg-[#0062C4] text-white font-semibold text-[13px] rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm touch-manipulation cursor-pointer"
+              >
+                <UserIcon className="w-4 h-4" />
+                <span>Sign In with Google</span>
+              </button>
+            )}
+
             {/* Dynamic Dual Stat Row: XP & Streak */}
             <div className="flex items-center px-1 py-0.5">
               <Link 
@@ -607,32 +619,19 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Footer Action */}
-        <div className="p-3 border-t border-white/[0.06] bg-black shrink-0">
-          {!session ? (
-            <button
-              onClick={() => {
-                setIsSidebarOpen(false);
-                router.push("/login");
-              }}
-              className="w-full py-2 px-3.5 bg-[#007AFF] hover:bg-[#0071E3] active:bg-[#0062C4] text-white font-semibold text-[13px] rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm touch-manipulation cursor-pointer"
+        {/* Footer Action (Admin Only) */}
+        {session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") && (
+          <div className="p-3 border-t border-white/[0.06] bg-black shrink-0">
+            <Link 
+              href="/admin" 
+              onClick={() => setIsSidebarOpen(false)} 
+              className="w-full py-2 px-3.5 bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.14] text-white font-semibold text-[12.5px] rounded-xl border border-white/[0.08] transition-colors flex items-center justify-center gap-2 touch-manipulation cursor-pointer"
             >
-              <UserIcon className="w-4 h-4" />
-              <span>Sign In with Google</span>
-            </button>
-          ) : (
-            session?.user?.email === (process.env.ADMIN_EMAIL || "tusharkantanayak713@gmail.com") && (
-              <Link 
-                href="/admin" 
-                onClick={() => setIsSidebarOpen(false)} 
-                className="w-full py-2 px-3.5 bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.14] text-white font-semibold text-[12.5px] rounded-xl border border-white/[0.08] transition-colors flex items-center justify-center gap-2 touch-manipulation cursor-pointer"
-              >
-                <UploadCloud className="w-4 h-4 text-white" />
-                <span>Admin Dashboard</span>
-              </Link>
-            )
-          )}
-        </div>
+              <UploadCloud className="w-4 h-4 text-white" />
+              <span>Admin Dashboard</span>
+            </Link>
+          </div>
+        )}
       </div>
 
       <ShareModal

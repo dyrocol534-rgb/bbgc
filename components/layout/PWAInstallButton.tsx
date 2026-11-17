@@ -315,49 +315,37 @@ export default function PWAInstallButton({
   if (variant === "bottomBanner") {
     return (
       <div className="w-full">
-        {/* Compact Single-Row Platform Bar */}
-        <div className="grid grid-cols-3 gap-1.5 w-full">
+        {/* Borderless Icon-Only Platform Bar */}
+        <div className="grid grid-cols-3 gap-2 w-full">
           {/* iOS / PWA Button */}
           <button
             onClick={handlePWAInstall}
-            className="flex items-center justify-center gap-1.5 h-[34px] px-2 rounded-lg bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/20 transition-all text-center group cursor-pointer active:scale-95"
+            className="flex items-center justify-center h-10 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] active:bg-white/[0.14] transition-all group cursor-pointer active:scale-95"
             title={isIOS ? "Install iOS App" : isInstalled ? "App Installed" : "Install Web App"}
+            aria-label="iOS App"
           >
-            {isIOS ? (
-              <svg className="w-3.5 h-3.5 fill-current text-white shrink-0" viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
-                <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.08-7.7-7.94-12.04-14.58-6.19-9.49-10.9-20.47-14.13-32.96-3.23-12.49-4.85-24.16-4.85-35 0-15.69 4.16-28.84 12.49-39.46 8.32-10.61 18.88-16.03 31.68-16.24 4.8 0 10.23 1.25 16.29 3.75 6.05 2.5 10.12 3.86 12.21 4.08 1.9-.22 6.13-1.63 12.7-4.22 6.57-2.6 12.26-3.79 17.07-3.59 13.07.76 23.49 5.49 31.24 14.18-11.45 6.94-17.07 16.48-16.85 28.62.22 9.53 3.97 17.51 11.24 23.94 7.27 6.43 15.86 10.02 25.77 10.77-2.28 7.04-5.16 14.07-8.65 21.08zM119.22 31.84c0-7.39 2.66-14.47 7.99-21.24 5.33-6.77 11.95-10.6 19.86-11.5 1.08 7.39-1.42 14.42-7.49 21.08-6.07 6.67-12.86 10.55-20.36 11.66z" />
-              </svg>
-            ) : isInstalled ? (
-              <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            {isInstalled ? (
+              <Check className="w-5 h-5 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
             ) : (
-              <svg className="w-3.5 h-3.5 fill-current text-white shrink-0" viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
-                <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.69-3.08-7.7-7.94-12.04-14.58-6.19-9.49-10.9-20.47-14.13-32.96-3.23-12.49-4.85-24.16-4.85-35 0-15.69 4.16-28.84 12.49-39.46 8.32-10.61 18.88-16.03 31.68-16.24 4.8 0 10.23 1.25 16.29 3.75 6.05 2.5 10.12 3.86 12.21 4.08 1.9-.22 6.13-1.63 12.7-4.22 6.57-2.6 12.26-3.79 17.07-3.59 13.07.76 23.49 5.49 31.24 14.18-11.45 6.94-17.07 16.48-16.85 28.62.22 9.53 3.97 17.51 11.24 23.94 7.27 6.43 15.86 10.02 25.77 10.77-2.28 7.04-5.16 14.07-8.65 21.08zM119.22 31.84c0-7.39 2.66-14.47 7.99-21.24 5.33-6.77 11.95-10.6 19.86-11.5 1.08 7.39-1.42 14.42-7.49 21.08-6.07 6.67-12.86 10.55-20.36 11.66z" />
+              <svg className="w-5 h-5 fill-current text-zinc-300 group-hover:text-white group-hover:scale-110 transition-all shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 1.01-2.87-.96.04-2.08.64-2.73 1.4-.56.64-.99 1.7-1.02 2.76 1.06.08 2.12-.54 2.74-1.29z"/>
               </svg>
             )}
-            <span className="text-[11px] font-medium text-zinc-200 group-hover:text-white truncate">
-              {isIOS ? "iOS App" : isInstalled ? "Installed" : "iOS App"}
-            </span>
           </button>
 
           {/* Google Play Button */}
           <button
             onClick={handlePlayStoreClick}
-            className="flex items-center justify-center gap-1.5 h-[34px] px-2 rounded-lg bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/20 transition-all text-center group cursor-pointer active:scale-95"
+            className="flex items-center justify-center h-10 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] active:bg-white/[0.14] transition-all group cursor-pointer active:scale-95"
             title="Download on Google Play Store"
+            aria-label="Google Play Store"
           >
-            <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#32BBFF" d="M396.121 229.173 34.445 19.532C25.061 14.118 14.968 13.418 6.458 17.696L261.929 256 396.121 229.173z" />
-              <path fill="#32BBFF" d="m6.458 494.304 255.471-238.303L6.458 17.696C2.592 19.636 0 24.169 0 30.47v451.06c0 6.301 2.592 10.834 6.458 12.774z" />
-              <path fill="#FFD700" d="M419.978 274.638 396.121 261.17 261.929 256l134.192 26.827 23.857 13.469c11.27-6.408 11.27-15.25 0-21.658z" />
-              <path fill="#F3BC00" d="m396.121 282.827-361.676 209.64c9.084 5.203 19.018 4.66 27.547-.407L419.978 274.638 396.121 282.827z" />
-              <path fill="#00F076" d="M261.929 256 6.458 17.696c-1.054.516-2.058 1.142-2.993 1.89L261.929 256z" />
-              <path fill="#00DA65" d="M261.929 256 3.465 492.414c.934.748 1.939 1.374 2.993 1.89L261.929 256z" />
-              <path fill="#FF3A44" d="M419.978 237.362 61.992 19.26C53.463 14.192 43.529 13.65 34.445 19.532L261.929 256 419.978 237.362z" />
-              <path fill="#C31162" d="M261.929 256 34.445 492.468c9.084 5.882 19.018 5.34 27.547.272l358.986-218.103L261.929 256z" />
+            <svg className="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#4285F4" d="M3.6 1.7C3.2 2.1 3 2.8 3 3.7v16.6c0 .9.2 1.6.6 2l.1.1 9.6-9.6v-.3L3.7 1.6l-.1.1z"/>
+              <path fill="#FBBC04" d="m16.5 15.8-3.2-3.3v-.3l3.2-3.3.1.1 3.8 2.2c1.1.6 1.1 1.6 0 2.2l-3.9 2.3z"/>
+              <path fill="#EA4335" d="m13.3 12.5-9.6 9.6c.5.5 1.3.6 2.2.1l10.7-6.1-3.3-3.6z"/>
+              <path fill="#34A853" d="m13.3 11.5 3.3-3.6L5.9 1.8c-.9-.5-1.7-.4-2.2.1l9.6 9.6z"/>
             </svg>
-            <span className="text-[11px] font-medium text-zinc-200 group-hover:text-white truncate">
-              Android
-            </span>
           </button>
 
           {/* Website Button */}
@@ -365,13 +353,15 @@ export default function PWAInstallButton({
             href="https://games.bluebuff.in"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-1.5 h-[34px] px-2 rounded-lg bg-[#141416] hover:bg-[#1a1a1e] border border-white/[0.08] hover:border-white/20 transition-all text-center group cursor-pointer active:scale-95"
+            className="flex items-center justify-center h-10 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] active:bg-white/[0.14] transition-all group cursor-pointer active:scale-95"
             title="Play on games.bluebuff.in"
+            aria-label="Website"
           >
-            <Globe className="w-3.5 h-3.5 text-zinc-300 group-hover:text-white shrink-0" />
-            <span className="text-[11px] font-medium text-zinc-200 group-hover:text-white truncate">
-              Website
-            </span>
+            <svg className="w-5 h-5 text-zinc-300 group-hover:text-white group-hover:scale-110 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+              <path d="M2 12h20"/>
+            </svg>
           </a>
         </div>
 
