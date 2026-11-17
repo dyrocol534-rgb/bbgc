@@ -13,6 +13,14 @@ export const SITE_CONFIG = {
   // Feature Flags
   // Controls visibility of the "Daily Rewards & Drops" notification prompt pill
   showNotificationPrompt: process.env.NEXT_PUBLIC_SHOW_NOTIFICATION_PROMPT === "true" || false,
+
+  // Advertising Configuration (Managed directly here, no env variables needed)
+  ads: {
+    enabled: true,
+    aadsSidebarUnitId: "2462468",
+    fallbackText: "A Product from",
+    fallbackUrl: "https://bluebuff.in",
+  },
 } as const;
 
 export default SITE_CONFIG;

@@ -17,6 +17,7 @@ import { XP_CONFIG } from "@/lib/xp-config";
 import { triggerHaptic } from "@/lib/utils";
 import { useUIStore } from "@/lib/stores/uiStore";
 import { useGamificationStore } from "@/lib/stores/gamificationStore";
+import SidebarAd from "@/components/ads/SidebarAd";
 
 const PRIMARY_LINKS = [
   { name: "Home", href: "/", icon: Home, color: "text-blue-400", bg: "bg-blue-500/15" },
@@ -227,6 +228,11 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
           </button>
         </div>
 
+        {/* Top Pinned Mobile Ad */}
+        <div className="shrink-0 border-b border-white/[0.08] p-3 bg-black/40">
+          <SidebarAd />
+        </div>
+
         {/* Drawer Body */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-3 flex flex-col justify-between">
           <div>
@@ -347,7 +353,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
           </div>
 
           {/* Mobile Footer */}
-          <div className="border-t border-white/[0.06] pt-3 mt-4 flex items-center justify-between text-[10px] text-zinc-500">
+          <div className="border-t border-white/[0.08] pt-3 mt-4 flex items-center justify-between text-[10px] text-zinc-500">
             <span>© {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff"}</span>
           </div>
         </div>
@@ -371,9 +377,16 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
           {isExpanded ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
         </button>
 
+        {/* Top Pinned Ad Area (when expanded) */}
+        {isExpanded && (
+          <div className="shrink-0 border-b border-white/[0.08] bg-black/60 backdrop-blur-md px-3 pt-2.5 pb-2">
+            <SidebarAd />
+          </div>
+        )}
+
         {/* Scrollable Navigation Area */}
         <div className={clsx(
-          "flex-1 overflow-y-auto overflow-x-hidden py-3 flex flex-col justify-between",
+          "flex-1 overflow-y-auto overflow-x-hidden py-3",
           isExpanded ? "custom-scrollbar" : "no-scrollbar"
         )}>
           <div>
@@ -547,11 +560,12 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
               })}
             </nav>
           </div>
+        </div>
 
-          {/* Footer Area (only when expanded) */}
-          {isExpanded && (
-            <div className="border-t border-white/[0.06] px-3 py-2 mt-4 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1.5">
+        {/* Footer Area (only when expanded) */}
+        {isExpanded && (
+          <div className="shrink-0 border-t border-white/[0.08] bg-black/60 backdrop-blur-md px-3 py-2 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5">
                 <a
                   href="https://whatsapp.com/channel/0029Vb7zuwD0VycLqwDcE53y"
                   target="_blank"
@@ -590,8 +604,7 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
               </div>
               <p className="text-[10px] text-zinc-500 leading-tight">© {new Date().getFullYear()} {process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"}</p>
             </div>
-          )}
-        </div>
+        )}
       </aside>
     </>
   );
