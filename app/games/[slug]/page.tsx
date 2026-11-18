@@ -5,6 +5,7 @@ import Image from 'next/image';
 import GamePlayer from '@/components/game/GamePlayer';
 import GameImage from '@/components/game/GameImage';
 import GameDescription from '@/components/game/GameDescription';
+import BannerAd from '@/components/ads/BannerAd';
 import { getPublishedGameBySlug, getRandomSuggestedGames } from '@/lib/services/gameService';
 import { getSidebarBentoSpanClass } from '@/lib/bento';
 import { Gamepad2, Smartphone, Monitor, Globe, ChevronRight, Star, Info, Sparkles } from 'lucide-react';
@@ -363,6 +364,9 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                 </div>
               </div>
             </div>
+
+            {/* Ad Banner below Details Card */}
+            <BannerAd />
           </div>
 
           {/* Suggested Games Bento Sidebar */}
