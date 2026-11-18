@@ -201,32 +201,21 @@ export default function Sidebar({ initialCategories = [] }: SidebarProps) {
       <div 
         className={clsx(
           "fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-black border-r border-white/[0.08] flex flex-col shadow-2xl transition-transform duration-300 ease-out md:hidden",
-          isExpanded ? "translate-x-0" : "-translate-x-full pointer-events-none"
+          isExpanded ? "translate-x-0 visible" : "-translate-x-full pointer-events-none invisible"
         )}
       >
-        {/* Drawer Header */}
-        <div className="p-3.5 border-b border-white/[0.06] flex items-center justify-between shrink-0 bg-black">
-          <div className="flex items-center gap-2.5">
-            <div className="relative w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center shrink-0">
-              <Image
-                src="/logo.png"
-                alt="Logo"
-                width={32}
-                height={32}
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <span className="text-sm font-bold text-white tracking-tight">Navigation</span>
-          </div>
+        {/* Outside Close Button (> instead of X) - only rendered when drawer is expanded */}
+        {isExpanded && (
           <button
             type="button"
             onClick={() => setIsExpanded(false)}
-            className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-zinc-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+            className="absolute left-full top-3.5 ml-2.5 w-8 h-8 rounded-full bg-[#18181c]/90 backdrop-blur-xl border border-white/20 text-zinc-300 hover:text-white flex items-center justify-center shadow-xl transition-all active:scale-90 hover:scale-105 cursor-pointer z-50 animate-in fade-in duration-200"
             aria-label="Close navigation"
+            title="Close navigation"
           >
-            <X className="w-4 h-4" />
+            <ChevronRight className="w-4 h-4" />
           </button>
-        </div>
+        )}
 
         {/* Top Pinned Mobile Ad */}
         <div className="shrink-0 border-b border-white/[0.08] p-3 bg-black/40">
