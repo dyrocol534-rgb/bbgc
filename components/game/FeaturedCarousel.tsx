@@ -28,7 +28,9 @@ export default function FeaturedCarousel({ games }: { games: any[] }) {
           alt={g.title}
           fill
           sizes="(max-width: 1400px) 100vw, 1400px"
-          priority={i === 0}
+          preload={i === 0}
+          loading={i === 0 ? "eager" : "lazy"}
+          fetchPriority={i === 0 ? "high" : "auto"}
           className={`object-cover transition-opacity duration-1000 ease-in-out ${
             i === currentIndex ? "opacity-50" : "opacity-0"
           }`}

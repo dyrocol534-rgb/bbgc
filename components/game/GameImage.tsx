@@ -8,6 +8,7 @@ interface GameImageProps {
   src: string;
   alt: string;
   priority?: boolean;
+  loading?: 'eager' | 'lazy';
   sizes?: string;
   className?: string;
 }
@@ -16,6 +17,7 @@ export default function GameImage({
   src,
   alt,
   priority = false,
+  loading,
   sizes = "(max-width: 640px) 25vw, (max-width: 1024px) 20vw, 160px",
   className = "",
 }: GameImageProps) {
@@ -34,6 +36,9 @@ export default function GameImage({
     }
     return s;
   }, [src]);
+
+  const isEager = loading === 'eager' || (priority && loading !== 'lazy');
+  const loadingMode = isEager ? 'eager' : 'lazy';
 
 
   if (imgError || !cleanSrc) {
@@ -60,8 +65,8 @@ export default function GameImage({
         <img
           src={cleanSrc}
           alt={alt}
-          loading={priority ? "eager" : "lazy"}
-          fetchPriority={priority ? "high" : "auto"}
+          loading={loadingMode}
+          fetchPriority={isEager ? "high" : "auto"}
           decoding="async"
           className={`w-full h-full object-cover transform-gpu group-hover:scale-105 transition-opacity duration-300 ease-out ${
             isLoaded ? "opacity-100" : "opacity-0"
@@ -76,6 +81,8 @@ export default function GameImage({
           fill
           quality={75}
           preload={priority}
+          loading={loadingMode}
+          fetchPriority={isEager ? "high" : "auto"}
           sizes={sizes}
           decoding="async"
           className={`object-cover transform-gpu group-hover:scale-105 transition-opacity duration-300 ease-out ${

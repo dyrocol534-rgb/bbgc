@@ -4,6 +4,7 @@ import { getInitialHomeGames, getPublishedGamesByCategory } from "@/lib/services
 import GameCard from "@/components/game/GameCard";
 import ContinuePlayingRow from "@/components/game/ContinuePlayingRow";
 import HorizontalGameSection from "@/components/game/HorizontalGameSection";
+import BannerAd from "@/components/ads/BannerAd";
 import Link from "next/link";
 
 import InfiniteGameGrid from "@/components/game/InfiniteGameGrid";
@@ -88,6 +89,9 @@ export default async function Home() {
             games={featuredGames}
           />
         )}
+
+        {/* Ad Banner between Featured Games and All Games */}
+        <BannerAd />
 
         {initialAllGames.length > 0 && (
           <section className="space-y-4">

@@ -18,6 +18,7 @@ export const SITE_CONFIG = {
   ads: {
     enabled: true,
     aadsSidebarUnitId: "2462468",
+    aadsBannerUnitId: "2462468",
     fallbackText: "A Product from",
     fallbackUrl: "https://bluebuff.in",
   },

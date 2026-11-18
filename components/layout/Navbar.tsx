@@ -228,9 +228,7 @@ export default function Navbar() {
                   src="/logo.png" 
                   alt="Logo" 
                   fill 
-                  sizes="32px" 
-                  priority 
-                  className="object-contain" 
+                  sizes="32px" preload loading="eager" className="object-contain" 
                   onError={() => setLogoError(true)}
                 />
               </div>
@@ -288,9 +286,7 @@ export default function Navbar() {
                 src="/logo.png" 
                 alt="Logo" 
                 fill 
-                sizes="36px" 
-                priority 
-                className="object-contain" 
+                sizes="36px" preload loading="eager" className="object-contain" 
                 onError={() => setLogoError(true)}
               />
             </div>

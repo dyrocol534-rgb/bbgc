@@ -133,8 +133,7 @@ function LoginContent() {
               alt="Bluebuff Games" 
               width={96}
               height={96}
-              priority
-              className="w-full h-full object-contain rounded-[16px]" 
+              preload loading="eager" className="w-full h-full object-contain rounded-[16px]" 
               onError={() => setLogoError(true)}
             />
           )}

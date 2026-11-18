@@ -387,6 +387,8 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
                         <GameImage 
                           src={g.thumbnailUrl} 
                           alt={g.title} 
+                          priority={index < 2}
+                          loading={index < 2 ? "eager" : "lazy"}
                           sizes="(max-width: 640px) 25vw, (max-width: 1024px) 20vw, 120px"
                           className="transition-transform duration-300 group-hover:scale-105"
                         />

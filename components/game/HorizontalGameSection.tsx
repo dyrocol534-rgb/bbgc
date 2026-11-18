@@ -48,6 +48,7 @@ export default function HorizontalGameSection({
               <GameCard
                 game={game}
                 imageContainerClassName={imageContainerClass}
+                priority={index < 4}
               />
             </div>
           );
