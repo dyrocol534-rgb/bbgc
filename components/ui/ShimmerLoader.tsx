@@ -38,11 +38,11 @@ export function PageSkeleton({
 /**
  * Metric Skeleton Row for Admin Analytics and Dashboard Stats
  */
-export function MetricsSkeleton({ count = 8 }: { count?: number }) {
+export function MetricsSkeleton({ count = 5 }: { count?: number }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] overflow-hidden grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-px bg-white/[0.06] animate-in fade-in duration-300">
+    <div className="rounded-2xl border border-white/[0.08] overflow-hidden grid grid-cols-2 lg:grid-cols-5 gap-px bg-white/[0.06] animate-in fade-in duration-300">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="p-3 sm:p-3.5 bg-black/60 space-y-3">
+        <div key={i} className={cn("p-3 sm:p-3.5 bg-black/60 space-y-3", i === 4 && "col-span-2 lg:col-span-1")}>
           <div className="flex items-center gap-2">
             <Skeleton className="w-5 h-5 rounded-[6px]" />
             <Skeleton className="h-3 w-16 rounded-md" />
