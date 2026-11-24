@@ -66,6 +66,20 @@ interface IActivityLog {
   createdAt: string;
 }
 
+function formatDate(dateValue: any): string {
+  if (!dateValue) return "Recently";
+  const d = new Date(dateValue);
+  return isNaN(d.getTime()) ? "Recently" : d.toLocaleDateString();
+}
+
+function formatTime(dateValue: any): string {
+  if (!dateValue) return "";
+  const d = new Date(dateValue);
+  return isNaN(d.getTime())
+    ? ""
+    : d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
 export default function AdminXpClient({
   initialUsers,
   initialTransactions,
@@ -323,10 +337,10 @@ export default function AdminXpClient({
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="relative w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 overflow-hidden flex items-center justify-center shrink-0">
-                      {user.image ? (
+                      {user.image && typeof user.image === "string" && (user.image.startsWith("http") || user.image.startsWith("/")) ? (
                         <Image
                           src={user.image}
-                          alt={user.name}
+                          alt={user.name || "Player"}
                           fill
                           className="object-cover"
                           unoptimized
@@ -374,7 +388,7 @@ export default function AdminXpClient({
               <div className="pt-2.5 border-t border-zinc-900 flex items-center justify-between gap-2">
                 <span className="text-[10px] text-zinc-600 font-mono">
                   {user.lastActiveAt
-                    ? `Active ${new Date(user.lastActiveAt).toLocaleDateString()}`
+                    ? `Active ${formatDate(user.lastActiveAt)}`
                     : "Joined recently"}
                 </span>
 
@@ -446,7 +460,7 @@ export default function AdminXpClient({
                       {/* Type */}
                       <td className="py-2.5 px-3">
                         <span className="inline-block px-1.5 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[10px] font-mono text-zinc-300 uppercase">
-                          {tx.type.replace("_", " ")}
+                          {String(tx.type || "transaction").replace(/_/g, " ")}
                         </span>
                       </td>
 
@@ -485,11 +499,7 @@ export default function AdminXpClient({
 
                       {/* Date */}
                       <td className="py-2.5 px-3 text-right font-mono text-zinc-500 text-[11px]">
-                        {new Date(tx.createdAt).toLocaleDateString()}{" "}
-                        {new Date(tx.createdAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {formatDate(tx.createdAt)} {formatTime(tx.createdAt)}
                       </td>
                     </tr>
                   );
@@ -558,7 +568,7 @@ export default function AdminXpClient({
                         {act.title}
                       </h4>
                       <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 uppercase">
-                        {act.category.replace("_", " ")}
+                        {String(act.category || act.type || "activity").replace(/_/g, " ")}
                       </span>
                     </div>
 
@@ -583,13 +593,10 @@ export default function AdminXpClient({
                 {/* Timestamp */}
                 <div className="text-right shrink-0">
                   <span className="text-[10px] text-zinc-500 font-mono block">
-                    {new Date(act.createdAt).toLocaleDateString()}
+                    {formatDate(act.createdAt)}
                   </span>
                   <span className="text-[10px] text-zinc-600 font-mono">
-                    {new Date(act.createdAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatTime(act.createdAt)}
                   </span>
                 </div>
               </div>
