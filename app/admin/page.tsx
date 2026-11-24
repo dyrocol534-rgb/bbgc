@@ -6,7 +6,8 @@ import {
   Gamepad2, Loader2, Activity, UserPlus, Mail, Ghost, 
   TrendingUp, RefreshCw, Smartphone, Star, MessageSquare, 
   Users, MousePointerClick, Heart, PlayCircle, BellRing, 
-  ArrowRight, Laptop, Tablet, Clock, Timer, Download
+  ArrowRight, Laptop, Tablet, Clock, Timer,
+  BarChart2
 } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -116,13 +117,14 @@ function MetricCell({
   );
 }
 
-const PIE_COLORS = ['#38bdf8', '#818cf8', '#34d399', '#71717a'];
+const PIE_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#71717a'];
 
 export default function AdminAnalytics() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [timeframe, setTimeframe] = useState<"24h" | "7d" | "30d" | "lifetime">("24h");
+  const [chartMode, setChartMode] = useState<"bar" | "area">("bar");
 
   const fetchStats = async (force = false) => {
     try {
@@ -311,27 +313,61 @@ export default function AdminAnalytics() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-2.5">
-        {/* Trend Chart */}
+        {/* Trend Chart (Bars & Area) */}
         <div className="lg:col-span-2 p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06] flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-2.5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
             <div>
-              <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5 text-white" />
-                Player Acquisition Trend
-              </h2>
-              <p className="text-[10px] text-zinc-500">Daily registered vs guest player signups</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <TrendingUp className="w-3.5 h-3.5 text-white" />
+                  Player Acquisition Trend
+                </h2>
+                {/* Bar / Area Toggle */}
+                <div className="flex items-center p-0.5 bg-black/50 border border-white/[0.08] rounded-full">
+                  <button
+                    onClick={() => setChartMode("bar")}
+                    className={clsx(
+                      "flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded-full transition-all cursor-pointer",
+                      chartMode === "bar"
+                        ? "bg-white/[0.14] text-white shadow-xs font-semibold"
+                        : "text-zinc-400 hover:text-zinc-200"
+                    )}
+                    title="Stacked Daily Bar Chart"
+                  >
+                    <BarChart2 className="w-3 h-3" />
+                    <span>Bars</span>
+                  </button>
+                  <button
+                    onClick={() => setChartMode("area")}
+                    className={clsx(
+                      "flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium rounded-full transition-all cursor-pointer",
+                      chartMode === "area"
+                        ? "bg-white/[0.14] text-white shadow-xs font-semibold"
+                        : "text-zinc-400 hover:text-zinc-200"
+                    )}
+                    title="Smooth Area Curves"
+                  >
+                    <TrendingUp className="w-3 h-3" />
+                    <span>Area</span>
+                  </button>
+                </div>
+              </div>
+              <p className="text-[10px] text-zinc-500 mt-0.5">Daily registered accounts vs guest visitors</p>
             </div>
-            <div className="flex items-center gap-3 text-[10.5px] font-medium">
-              <span className="flex items-center gap-1 text-emerald-400">
+
+            {/* Legend */}
+            <div className="flex items-center gap-3 text-[10.5px] font-medium self-start sm:self-auto">
+              <span className="flex items-center gap-1 text-emerald-400 font-mono">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Users
               </span>
-              <span className="flex items-center gap-1 text-amber-400">
+              <span className="flex items-center gap-1 text-amber-400 font-mono">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Guests
               </span>
             </div>
           </div>
-          <div className="h-[150px] sm:h-[165px] w-full">
-            <AcquisitionChart data={chartData} />
+
+          <div className="h-[160px] sm:h-[185px] w-full">
+            <AcquisitionChart data={chartData} mode={chartMode} />
           </div>
         </div>
 
@@ -345,25 +381,57 @@ export default function AdminAnalytics() {
               </h2>
               <span className="text-[9.5px] text-zinc-500 font-mono">Platform Split</span>
             </div>
+
+            {/* Platform Horizontal Progress Bar */}
+            {deviceData.length > 0 && (
+              <div className="w-full h-2 rounded-full bg-white/[0.04] overflow-hidden flex my-2 border border-white/[0.06]">
+                {deviceData.map((d, i) => {
+                  const pct = Math.round((d.value / (currentStats.totalPlays || 1)) * 100) || 0;
+                  return (
+                    <div 
+                      key={d.name} 
+                      style={{ width: `${pct}%`, backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} 
+                      className="h-full transition-all" 
+                      title={`${d.name}: ${pct}% (${d.value} plays)`}
+                    />
+                  );
+                })}
+              </div>
+            )}
+
             {deviceData.length === 0 ? (
-              <div className="h-[130px] flex items-center justify-center text-xs text-zinc-500">
+              <div className="h-[120px] flex items-center justify-center text-xs text-zinc-500">
                 No device data
               </div>
             ) : (
-              <div className="h-[130px] w-full">
+              <div className="h-[120px] w-full">
                 <DeviceChart data={deviceData} />
               </div>
             )}
-            <div className="flex flex-wrap justify-center gap-2.5 mt-2 pt-2 border-t border-white/[0.04]">
-              {deviceData.map((d, i) => (
-                <div key={d.name} className="flex items-center gap-1 text-[10px] text-zinc-400">
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                  <span className="text-zinc-300 font-medium">{d.name}</span>
-                  <span className="font-mono text-zinc-500">
-                    {Math.round((d.value / (currentStats.totalPlays || 1)) * 100) || 0}%
-                  </span>
-                </div>
-              ))}
+
+            {/* Responsive Device Cards / Pills */}
+            <div className="grid grid-cols-2 gap-1.5 mt-2 pt-2 border-t border-white/[0.04]">
+              {deviceData.map((d, i) => {
+                const pct = Math.round((d.value / (currentStats.totalPlays || 1)) * 100) || 0;
+                const DeviceIcon = d.name.toLowerCase().includes('desktop') 
+                  ? Laptop 
+                  : d.name.toLowerCase().includes('tablet') 
+                    ? Tablet 
+                    : Smartphone;
+
+                return (
+                  <div key={d.name} className="flex items-center justify-between p-1.5 rounded-lg bg-white/[0.02] border border-white/[0.04] text-[10px]">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                      <DeviceIcon className="w-3 h-3 text-zinc-400 shrink-0" />
+                      <span className="text-zinc-300 font-medium truncate">{d.name}</span>
+                    </div>
+                    <span className="font-mono text-zinc-400 font-semibold shrink-0 ml-1">
+                      {pct}%
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -470,82 +538,7 @@ export default function AdminAnalytics() {
         </div>
       </div>
 
-      {/* Saved Games / PWA Installs Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2.5">
-        {/* Top Saved Games (col-span-2) */}
-        <div className="lg:col-span-2 p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06]">
-          <div className="flex items-center justify-between mb-2.5">
-            <div>
-              <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Download className="w-3.5 h-3.5 text-cyan-400" />
-                Games Saved to Device ({timeframes.find(t => t.id === timeframe)?.label})
-              </h2>
-              <p className="text-[10px] text-zinc-500">Games installed directly to home screen / desktop as standalone apps</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded-full flex items-center gap-1">
-                <Smartphone className="w-2.5 h-2.5" />
-                {currentStats.gameSaves || 0} Game Saves
-              </span>
-            </div>
-          </div>
 
-          {!currentStats.topSavedGames || currentStats.topSavedGames.length === 0 ? (
-            <div className="p-6 bg-white/[0.01] rounded-[12px] border border-white/[0.04] border-dashed text-center">
-              <p className="text-xs text-zinc-500">No games saved to devices yet for this timeframe.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-              {currentStats.topSavedGames.slice(0, 6).map((game, i) => (
-                <div key={game.slug} className="flex items-center justify-between p-2 bg-white/[0.02] hover:bg-white/[0.04] rounded-[12px] transition-colors border border-white/[0.03]">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-zinc-500 text-[11px] font-mono font-bold w-3.5">{i + 1}.</span>
-                    <p className="text-zinc-200 text-xs font-semibold truncate">{game.title}</p>
-                  </div>
-                  <div className="text-cyan-400 font-semibold bg-cyan-500/10 px-2 py-0.5 rounded-full text-[10px] shrink-0 font-mono border border-cyan-500/20 flex items-center gap-1">
-                    {game.count.toLocaleString()} {game.count === 1 ? 'save' : 'saves'}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Recent Game Saves Feed (col-span-1) */}
-        <div className="p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06] flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-cyan-400" />
-                Recent Game Saves
-              </h2>
-              <span className="text-[9.5px] text-cyan-400 font-mono bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">
-                Live Saves
-              </span>
-            </div>
-
-            <div className="space-y-1.5 mt-2">
-              {!stats.lifetime.recentGameSaves || stats.lifetime.recentGameSaves.length === 0 ? (
-                <div className="p-4 bg-white/[0.01] rounded-[12px] border border-white/[0.04] border-dashed text-center">
-                  <p className="text-xs text-zinc-500">No game device saves logged yet.</p>
-                </div>
-              ) : (
-                stats.lifetime.recentGameSaves.slice(0, 4).map((s, i) => (
-                  <div key={i} className="flex items-center justify-between p-2 bg-white/[0.02] rounded-[10px] border border-white/[0.03]">
-                    <div className="min-w-0 pr-2">
-                      <p className="text-xs font-medium text-zinc-200 truncate">{s.gameTitle}</p>
-                      <span className="text-[9.5px] text-zinc-500 font-mono">{s.installedAt}</span>
-                    </div>
-                    <span className="text-[9.5px] font-medium text-zinc-300 bg-white/[0.06] border border-white/10 px-1.5 py-0.5 rounded-full shrink-0">
-                      {s.deviceType}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Community Pulse: Highest Rated & Feedback */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
