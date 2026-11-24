@@ -3,10 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Mail, CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/config";
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname?.startsWith("/admin")) return null;
+
   const currentYear = new Date().getFullYear();
   const siteName = SITE_CONFIG.name;
   const supportEmail = SITE_CONFIG.supportEmail;

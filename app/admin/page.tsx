@@ -185,9 +185,6 @@ export default function AdminAnalytics() {
     { id: "lifetime", label: "All Time" },
   ];
 
-  const pwaDevices = stats.lifetime.pwaDevices || { Mobile: 0, Desktop: 0, Tablet: 0 };
-  const totalPwaAll = (pwaDevices.Mobile + pwaDevices.Desktop + pwaDevices.Tablet) || 1;
-
   const pwaConversionRate = totalActive > 0 && currentStats.pwaInstalls
     ? ((currentStats.pwaInstalls / totalActive) * 100).toFixed(1)
     : "0.0";
@@ -437,105 +434,37 @@ export default function AdminAnalytics() {
         </div>
       </div>
 
-      {/* Top Games & PWA Ecosystem */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-2.5">
-        {/* Top Played Games */}
-        <div className="lg:col-span-2 p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06]">
-          <div className="flex items-center justify-between mb-2.5">
-            <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-              <PlayCircle className="w-3.5 h-3.5 text-white" />
-              Most Played Titles ({timeframes.find(t => t.id === timeframe)?.label})
-            </h2>
-            <Link href="/admin/games" className="text-[10.5px] font-medium text-zinc-400 hover:text-white transition-colors flex items-center gap-1">
-              Catalog <ArrowRight className="w-2.5 h-2.5" />
-            </Link>
-          </div>
-
-          {currentStats.topGames.length === 0 ? (
-            <div className="p-6 bg-white/[0.01] rounded-[12px] border border-white/[0.04] border-dashed text-center">
-              <p className="text-xs text-zinc-500">No play events recorded for this timeframe.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-              {currentStats.topGames.slice(0, 6).map((game, i) => (
-                <div key={game.slug} className="flex items-center justify-between p-2 bg-white/[0.02] hover:bg-white/[0.04] rounded-[12px] transition-colors border border-white/[0.03]">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-zinc-500 text-[11px] font-mono font-bold w-3.5">{i + 1}.</span>
-                    <p className="text-zinc-200 text-xs font-semibold truncate">{game.title}</p>
-                  </div>
-                  <div className="text-white font-semibold bg-white/10 px-2 py-0.2 rounded-full text-[10px] shrink-0 font-mono border border-white/15">
-                    {game.playCount.toLocaleString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+      {/* Most Played Titles */}
+      <div className="p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06]">
+        <div className="flex items-center justify-between mb-2.5">
+          <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
+            <PlayCircle className="w-3.5 h-3.5 text-white" />
+            Most Played Titles ({timeframes.find(t => t.id === timeframe)?.label})
+          </h2>
+          <Link href="/admin/games" className="text-[10.5px] font-medium text-zinc-400 hover:text-white transition-colors flex items-center gap-1">
+            Catalog <ArrowRight className="w-2.5 h-2.5" />
+          </Link>
         </div>
 
-        {/* PWA Device Installation Split */}
-        <div className="p-3.5 sm:p-4 rounded-[16px] bg-white/[0.02] border border-white/[0.06] flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-[11px] font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-                <Smartphone className="w-3.5 h-3.5 text-sky-400" />
-                PWA Device Mix
-              </h2>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[9.5px] text-sky-400 font-bold bg-sky-500/10 px-2 py-0.2 rounded-full border border-sky-500/20 font-mono">
-                  {stats.lifetime.pwaInstalls} Installs
-                </span>
-                <span className="text-[9.5px] text-cyan-400 font-bold bg-cyan-500/10 px-2 py-0.2 rounded-full border border-cyan-500/20 font-mono">
-                  {stats.lifetime.gameSaves || 0} Saved
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-2 mt-2">
-              <div>
-                <div className="flex justify-between text-[11px] mb-0.5">
-                  <span className="text-zinc-300 font-medium flex items-center gap-1 text-[11px]">
-                    <Smartphone className="w-3 h-3 text-sky-400" /> Mobile
-                  </span>
-                  <span className="text-zinc-400 font-mono text-[10.5px]">{pwaDevices.Mobile} ({Math.round((pwaDevices.Mobile / totalPwaAll) * 100)}%)</span>
-                </div>
-                <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                  <div className="h-full bg-sky-400 rounded-full transition-all duration-300" style={{ width: `${(pwaDevices.Mobile / totalPwaAll) * 100}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-[11px] mb-0.5">
-                  <span className="text-zinc-300 font-medium flex items-center gap-1 text-[11px]">
-                    <Laptop className="w-3 h-3 text-purple-400" /> Desktop
-                  </span>
-                  <span className="text-zinc-400 font-mono text-[10.5px]">{pwaDevices.Desktop} ({Math.round((pwaDevices.Desktop / totalPwaAll) * 100)}%)</span>
-                </div>
-                <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-400 rounded-full transition-all duration-300" style={{ width: `${(pwaDevices.Desktop / totalPwaAll) * 100}%` }} />
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between text-[11px] mb-0.5">
-                  <span className="text-zinc-300 font-medium flex items-center gap-1 text-[11px]">
-                    <Tablet className="w-3 h-3 text-emerald-400" /> Tablet
-                  </span>
-                  <span className="text-zinc-400 font-mono text-[10.5px]">{pwaDevices.Tablet} ({Math.round((pwaDevices.Tablet / totalPwaAll) * 100)}%)</span>
-                </div>
-                <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                  <div className="h-full bg-emerald-400 rounded-full transition-all duration-300" style={{ width: `${(pwaDevices.Tablet / totalPwaAll) * 100}%` }} />
-                </div>
-              </div>
-            </div>
+        {currentStats.topGames.length === 0 ? (
+          <div className="p-6 bg-white/[0.01] rounded-[12px] border border-white/[0.04] border-dashed text-center">
+            <p className="text-xs text-zinc-500">No play events recorded for this timeframe.</p>
           </div>
-
-          <div className="mt-3 pt-2.5 border-t border-white/[0.04] flex items-center justify-between text-[11px]">
-            <span className="text-zinc-400">Push Notifications</span>
-            <Link href="/admin/notifications" className="text-zinc-400 hover:text-white font-semibold flex items-center gap-1 transition-colors">
-              Broadcast <ArrowRight className="w-2.5 h-2.5" />
-            </Link>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {currentStats.topGames.slice(0, 6).map((game, i) => (
+              <div key={game.slug} className="flex items-center justify-between p-2 bg-white/[0.02] hover:bg-white/[0.04] rounded-[12px] transition-colors border border-white/[0.03]">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-zinc-500 text-[11px] font-mono font-bold w-3.5">{i + 1}.</span>
+                  <p className="text-zinc-200 text-xs font-semibold truncate">{game.title}</p>
+                </div>
+                <div className="text-white font-semibold bg-white/10 px-2 py-0.2 rounded-full text-[10px] shrink-0 font-mono border border-white/15">
+                  {game.playCount.toLocaleString()}
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </div>
 
 

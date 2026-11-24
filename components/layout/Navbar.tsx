@@ -196,6 +196,8 @@ export default function Navbar() {
   const displayXp = session ? (isStatsInitialized ? xp : ((session.user as any)?.xp ?? 0)) : 0;
   const displayStreak = session ? (isStatsInitialized ? streak : ((session.user as any)?.currentStreak ?? 0)) : 0;
 
+  if (pathname?.startsWith("/admin")) return null;
+
   if (isGameSlugPage) {
     return (
       <>

@@ -7,7 +7,7 @@ import {
   BarChart3, Gamepad2, DownloadCloud, UploadCloud, 
   BellRing, Activity, MessageSquareWarning, Users, 
   ChevronLeft, ChevronRight, LayoutDashboard,
-  Menu, X, Mail, Gift, Coins
+  Menu, X, Mail, Gift, Coins, ArrowLeft, Home
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -101,7 +101,7 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
   ) || ALL_NAV_LINKS[0];
 
   return (
-    <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-6 py-3 sm:py-5">
+    <div className="w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-6 -mt-14 sm:-mt-16 pt-0 pb-6">
       {/* Mobile Drawer Backdrop */}
       {isMobileMenuOpen && (
         <div
@@ -183,83 +183,108 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
           <Link
             href="/"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center justify-center gap-2 w-full py-2 bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-300 hover:text-white text-xs font-medium rounded-xl transition-all"
+            className="flex items-center justify-center gap-2 w-full py-2 bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-zinc-300 hover:text-white text-xs font-semibold rounded-xl transition-all"
           >
+            <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to Main Site</span>
           </Link>
         </div>
       </div>
+
+      {/* Sticky Mobile Admin Top Bar */}
+      <header className="sticky top-0 z-40 -mx-2 sm:-mx-4 px-3 sm:px-4 py-2.5 bg-black/95 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between lg:hidden mb-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] active:scale-95 text-zinc-300 hover:text-white border border-white/[0.08] text-xs font-semibold transition-all shrink-0 shadow-xs"
+            title="Back to Home"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Home</span>
+          </Link>
+          <div className="h-4 w-px bg-white/10 shrink-0" />
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-6 h-6 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white shrink-0">
+              <LayoutDashboard className="w-3.5 h-3.5 text-zinc-300" />
+            </div>
+            <h2 className="text-xs font-bold text-white tracking-wide truncate">Admin Panel</h2>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[10.5px] font-medium text-zinc-300">
+            <activeLink.icon className="w-3 h-3 text-white" />
+            <span className="truncate max-w-[90px] sm:max-w-[130px]">{activeLink.name}</span>
+          </span>
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors cursor-pointer"
+            aria-label="Open admin menu"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+        </div>
+      </header>
 
       <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-5 items-start">
         
         {/* Admin Sidebar */}
         <aside
           className={clsx(
-            "w-full shrink-0 transition-all duration-300 lg:sticky lg:top-20 z-20",
+            "w-full shrink-0 transition-all duration-300 lg:sticky lg:top-3 z-20",
             isCollapsed ? "lg:w-[68px]" : "lg:w-60"
           )}
         >
           <div className="relative bg-transparent border-0 p-1 lg:bg-black/90 lg:backdrop-blur-xl lg:border lg:border-zinc-900 lg:rounded-2xl lg:p-2.5 flex flex-col shadow-2xl">
             
-            {/* Header: Title & Desktop Toggle Button */}
-            <div className="hidden lg:flex items-center justify-between mb-2">
-              {!isCollapsed ? (
-                <>
-                  <div className="flex items-center gap-2.5 px-2 py-1 min-w-0">
-                    <div className="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white shrink-0 shadow-inner">
-                      <LayoutDashboard className="w-3.5 h-3.5 text-zinc-300" />
-                    </div>
-                    <span className="text-xs font-black text-white tracking-wider uppercase truncate">
-                      Admin Panel
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={toggleCollapse}
-                    title="Collapse navigation"
-                    className="w-7 h-7 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-all cursor-pointer shrink-0"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                  </button>
-                </>
-              ) : (
-                <div className="w-full flex items-center justify-center pb-2 border-b border-zinc-900">
-                  <button
-                    type="button"
-                    onClick={toggleCollapse}
-                    title="Expand navigation"
-                    className="w-9 h-9 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
+            {/* Header: Back to Home & Desktop Toggle Button */}
+            <div className="hidden lg:flex items-center justify-between gap-1.5 mb-2 pb-2 border-b border-zinc-900">
+              <Link
+                href="/"
+                className={clsx(
+                  "flex items-center gap-2 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] transition-all",
+                  isCollapsed ? "w-10 h-10 justify-center p-0" : "px-2.5 py-1.5 flex-1"
+                )}
+                title="Back to Home"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                {!isCollapsed && <span className="truncate">Home</span>}
+              </Link>
+              {!isCollapsed && (
+                <button
+                  type="button"
+                  onClick={toggleCollapse}
+                  title="Collapse navigation"
+                  className="w-7 h-7 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-all cursor-pointer shrink-0"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
               )}
             </div>
 
-            {/* Mobile Header / Status Badge & Hamburger */}
-            <div className="flex items-center justify-between gap-2 px-1 py-0.5 lg:hidden">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white">
+            {/* Desktop Brand Label */}
+            {!isCollapsed ? (
+              <div className="hidden lg:flex items-center gap-2 px-1 py-1 mb-2 text-white">
+                <div className="w-6 h-6 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white shrink-0 shadow-inner">
                   <LayoutDashboard className="w-3.5 h-3.5 text-zinc-300" />
                 </div>
-                <h2 className="text-xs font-bold text-white leading-tight">Admin Panel</h2>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[10.5px] font-medium text-zinc-300">
-                  <activeLink.icon className="w-3 h-3 text-white" />
-                  <span className="truncate max-w-[120px]">{activeLink.name}</span>
+                <span className="text-xs font-black tracking-wider uppercase truncate">
+                  Admin Panel
                 </span>
+              </div>
+            ) : (
+              <div className="hidden lg:flex justify-center mb-2">
                 <button
                   type="button"
-                  onClick={() => setIsMobileMenuOpen(true)}
-                  className="w-7 h-7 flex items-center justify-center rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors cursor-pointer"
-                  aria-label="Open admin menu"
+                  onClick={toggleCollapse}
+                  title="Expand navigation"
+                  className="w-10 h-10 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-all cursor-pointer"
                 >
-                  <Menu className="w-3.5 h-3.5" />
+                  <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            )}
 
             {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex lg:flex-col gap-2.5">
