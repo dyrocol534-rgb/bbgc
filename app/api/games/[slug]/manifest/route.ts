@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPublishedGameBySlug } from "@/lib/services/gameService";
 
-export const revalidate = 86400; // cache for 24 hours
-
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }

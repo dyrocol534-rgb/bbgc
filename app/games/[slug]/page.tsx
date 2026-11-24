@@ -10,14 +10,14 @@ import { getPublishedGameBySlug, getRandomSuggestedGames } from '@/lib/services/
 import { getSidebarBentoSpanClass } from '@/lib/bento';
 import { Gamepad2, Smartphone, Monitor, Globe, ChevronRight, Star, Info, Sparkles } from 'lucide-react';
 
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 604800; // Cache for 7 days (on-demand revalidated when edited/deleted)
 
 export async function generateStaticParams() {
   try {
     const { getCachedPublishedGamePool } = await import('@/lib/services/gameService');
     const pool = await getCachedPublishedGamePool();
-    // Pre-render top 30 most popular games at build time; others generate on-demand with 1-hour ISR cache
-    return pool.slice(0, 30).map((game) => ({ slug: game.slug }));
+    // Pre-render top 50 most popular games at build time; others generate on-demand and cache for 7 days
+    return pool.slice(0, 50).map((game) => ({ slug: game.slug }));
   } catch (error) {
     console.error("Error generating static params for games:", error);
     return [];

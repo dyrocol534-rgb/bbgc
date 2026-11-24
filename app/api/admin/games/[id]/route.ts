@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
@@ -61,7 +61,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       revalidateTag("games", "max");
       revalidateTag("published-games", "max");
       revalidateTag("published-categories", "max");
-      if (game.slug) revalidateTag(`game-${game.slug}`, "max");
+      if (game.slug) {
+        revalidateTag(`game-${game.slug}`, "max");
+        revalidatePath(`/games/${game.slug}`);
+      }
+      revalidatePath("/");
     } catch (e) {
       console.error("Cache revalidation error:", e);
     }
@@ -93,7 +97,11 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       revalidateTag("games", "max");
       revalidateTag("published-games", "max");
       revalidateTag("published-categories", "max");
-      if (game.slug) revalidateTag(`game-${game.slug}`, "max");
+      if (game.slug) {
+        revalidateTag(`game-${game.slug}`, "max");
+        revalidatePath(`/games/${game.slug}`);
+      }
+      revalidatePath("/");
     } catch (e) {
       console.error("Cache revalidation error:", e);
     }

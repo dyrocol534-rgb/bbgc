@@ -9,7 +9,7 @@ import Link from "next/link";
 
 import InfiniteGameGrid from "@/components/game/InfiniteGameGrid";
 
-export const revalidate = 300; // Edge ISR: Revalidate page every 5 minutes
+export const revalidate = 3600; // Edge ISR: Revalidate page every 1 hour (on-demand revalidated on admin mutations)
 
 export default async function Home() {
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games";

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import dbConnect from "@/lib/mongodb";
@@ -32,8 +32,12 @@ export async function POST(req: NextRequest) {
       revalidateTag("published-games", "max");
       revalidateTag("published-categories", "max");
       for (const g of gamesToDelete) {
-        if (g.slug) revalidateTag(`game-${g.slug}`, "max");
+        if (g.slug) {
+          revalidateTag(`game-${g.slug}`, "max");
+          revalidatePath(`/games/${g.slug}`);
+        }
       }
+      revalidatePath("/");
     } catch (e) {
       console.error("Cache revalidation error:", e);
     }

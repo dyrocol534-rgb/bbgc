@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import dbConnect from "@/lib/mongodb";
 import Game from "@/models/Game";
 
@@ -116,15 +116,17 @@ export async function POST(request: Request) {
       status: "draft"
     });
     
-    // Invalidate ISR caches
-    try {
-      revalidateTag("games", "max");
-      revalidateTag("published-games", "max");
-      revalidateTag("published-categories", "max");
-    } catch (e) {
-      console.error("Cache revalidation error:", e);
+    if (newGame.status === "published") {
+      try {
+        revalidateTag("games", "max");
+        revalidateTag("published-games", "max");
+        revalidateTag("published-categories", "max");
+        revalidatePath("/");
+      } catch (e) {
+        console.error("Cache revalidation error:", e);
+      }
     }
-    
+
     return NextResponse.json({ game: newGame }, { status: 201 });
   } catch (error) {
     console.error("Error creating game:", error);

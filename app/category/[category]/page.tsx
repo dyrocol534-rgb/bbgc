@@ -6,7 +6,7 @@ import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
 import { getPublishedGamesByCategory, getCachedPublishedCategories } from '@/lib/services/gameService';
 import Link from 'next/link';
 
-export const revalidate = 3600;
+export const revalidate = 86400; // Cache category pages for 24 hours
 
 export async function generateStaticParams() {
   try {

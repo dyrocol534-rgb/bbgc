@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache";
+import { cache } from "react";
 import dbConnect from "@/lib/mongodb";
 import Game from "@/models/Game";
 import GuestSession from "@/models/GuestSession";
@@ -90,7 +91,7 @@ function shuffleArray<T>(array: T[]): T[] {
 
 /**
  * Cached pool of top published games for instant in-memory random sampling.
- * Revalidated every 300 seconds (5 minutes) or on demand.
+ * Revalidated every 24 hours or on demand when published-games tag changes.
  */
 export const getCachedPublishedGamePool = unstable_cache(
   async (): Promise<GameCardData[]> => {
@@ -108,7 +109,7 @@ export const getCachedPublishedGamePool = unstable_cache(
     }
   },
   ["published-games-pool"],
-  { revalidate: 300, tags: ["published-games"] }
+  { revalidate: 86400, tags: ["published-games"] }
 );
 
 /**
@@ -141,24 +142,23 @@ export async function getInitialHomeGames(page: number = 1, limit: number = 24):
 }
 
 /**
- * Fetch a single published game by its slug with 24-hour ISR cache and tag invalidation
+ * Fetch a single published game by its slug.
+ * Uses React request cache to deduplicate between generateMetadata and Page component,
+ * avoiding duplicate DB calls and redundant Vercel Data Cache writes.
  */
-export const getPublishedGameBySlug = (slug: string) =>
-  unstable_cache(
-    async (): Promise<GameDetailData | null> => {
-      try {
-        await dbConnect();
-        const game = await Game.findOne({ slug, status: "published" }).lean();
-        if (!game) return null;
-        return serializeGameDetail(game);
-      } catch (error) {
-        console.error(`Error fetching game by slug (${slug}):`, error);
-        return null;
-      }
-    },
-    [`game-detail-${slug}`],
-    { revalidate: 86400, tags: ["games", `game-${slug}`] }
-  )();
+export const getPublishedGameBySlug = cache(
+  async (slug: string): Promise<GameDetailData | null> => {
+    try {
+      await dbConnect();
+      const game = await Game.findOne({ slug, status: "published" }).lean();
+      if (!game) return null;
+      return serializeGameDetail(game);
+    } catch (error) {
+      console.error(`Error fetching game by slug (${slug}):`, error);
+      return null;
+    }
+  }
+);
 
 /**
  * Fetch random suggested games instantly from cached game pool without $sample aggregation overhead
@@ -318,7 +318,7 @@ export async function getRecentGamesForUserOrGuest(
 
 /**
  * Cached list of all published categories.
- * Revalidated every 3600 seconds (1 hour).
+ * Revalidated every 24 hours or on demand when published-categories tag changes.
  */
 export const getCachedPublishedCategories = unstable_cache(
   async (): Promise<string[]> => {
@@ -340,6 +340,6 @@ export const getCachedPublishedCategories = unstable_cache(
     }
   },
   ["published-categories-list"],
-  { revalidate: 3600, tags: ["published-categories"] }
+  { revalidate: 86400, tags: ["published-categories"] }
 );
 

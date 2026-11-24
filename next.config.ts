@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true,
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 604800, // Cache optimized thumbnails for 7 days
     imageSizes: [32, 48, 64, 96, 128, 160, 256, 384],

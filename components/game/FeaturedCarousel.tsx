@@ -27,6 +27,7 @@ export default function FeaturedCarousel({ games }: { games: any[] }) {
           src={g.thumbnailUrl}
           alt={g.title}
           fill
+          unoptimized
           sizes="(max-width: 1400px) 100vw, 1400px"
           preload={i === 0}
           loading={i === 0 ? "eager" : "lazy"}

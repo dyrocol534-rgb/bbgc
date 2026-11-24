@@ -79,6 +79,7 @@ export default function GameImage({
           src={cleanSrc}
           alt={alt}
           fill
+          unoptimized
           quality={75}
           preload={priority}
           loading={loadingMode}
