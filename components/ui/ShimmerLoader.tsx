@@ -38,17 +38,20 @@ export function PageSkeleton({
 /**
  * Metric Skeleton Row for Admin Analytics and Dashboard Stats
  */
-export function MetricsSkeleton({ count = 5 }: { count?: number }) {
+export function MetricsSkeleton({ count = 4 }: { count?: number }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] overflow-hidden grid grid-cols-2 lg:grid-cols-5 gap-px bg-white/[0.06] animate-in fade-in duration-300">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 animate-in fade-in duration-300">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className={cn("p-3 sm:p-3.5 bg-black/60 space-y-3", i === 4 && "col-span-2 lg:col-span-1")}>
-          <div className="flex items-center gap-2">
-            <Skeleton className="w-5 h-5 rounded-[6px]" />
-            <Skeleton className="h-3 w-16 rounded-md" />
+        <div key={i} className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-3 w-20 rounded-md" />
+            <Skeleton className="w-6 h-6 rounded-lg" />
           </div>
-          <Skeleton className="h-7 w-20 rounded-lg" />
-          <Skeleton className="h-2.5 w-24 rounded-md" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-7 w-16 rounded-lg" />
+            <Skeleton className="h-5 w-14 rounded-full" />
+          </div>
+          <Skeleton className="h-2.5 w-28 rounded-md" />
         </div>
       ))}
     </div>

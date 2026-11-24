@@ -7,7 +7,7 @@ import {
   TrendingUp, RefreshCw, Smartphone, Star, MessageSquare, 
   Users, MousePointerClick, Heart, PlayCircle, BellRing, 
   ArrowRight, Laptop, Tablet, Clock, Timer,
-  BarChart2
+  BarChart2, SlidersHorizontal, ChevronDown, Check, X
 } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -79,13 +79,13 @@ function MetricCell({
   label: string; 
   value: string | number; 
   iconColor: string; 
-  sub?: string;
+  sub: string;
   badge?: React.ReactNode;
   className?: string;
 }) {
   return (
     <div className={clsx(
-      "p-3.5 sm:p-4 flex flex-col justify-between transition-all group relative min-w-0 bg-black/60 hover:bg-white/[0.03]",
+      "p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] transition-all flex flex-col justify-between group",
       className
     )}>
       <div className="flex items-center justify-between mb-2 min-w-0 gap-1.5">
@@ -107,11 +107,9 @@ function MetricCell({
           </span>
           {badge}
         </div>
-        {sub && (
-          <div className="text-[10px] text-zinc-500 font-medium truncate" title={sub}>
-            {sub}
-          </div>
-        )}
+        <div className="text-[10px] text-zinc-500 font-medium truncate" title={sub}>
+          {sub}
+        </div>
       </div>
     </div>
   );
@@ -125,6 +123,7 @@ export default function AdminAnalytics() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [timeframe, setTimeframe] = useState<"24h" | "7d" | "30d" | "lifetime">("24h");
   const [chartMode, setChartMode] = useState<"bar" | "area">("bar");
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
 
   const fetchStats = async (force = false) => {
     try {
@@ -192,20 +191,27 @@ export default function AdminAnalytics() {
   return (
     <div className="space-y-3.5 pb-6 max-w-[1400px] mx-auto">
       
-      {/* Frameless Compact Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
-        <div>
-          <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-            Platform Analytics
-          </h1>
-          <p className="text-[11px] text-zinc-400">
-            Real-time player engagement, retention, and catalog performance.
-          </p>
-        </div>
+      {/* Compact Header */}
+      <div className="flex items-center justify-between gap-2">
+        <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+          Platform Analytics
+        </h1>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-          {/* Apple Segmented Control */}
-          <div className="flex p-0.5 bg-black/40 border border-white/[0.08] rounded-full shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Mobile Filter Button (Opens Bottom Sheet) */}
+          <button
+            type="button"
+            onClick={() => setIsFilterSheetOpen(true)}
+            className="flex sm:hidden items-center gap-1.5 px-3 py-1 text-[11px] font-medium text-zinc-200 bg-white/[0.06] hover:bg-white/[0.1] rounded-full transition-all border border-white/[0.08] active:scale-95 cursor-pointer"
+            title="Filter Timeframe"
+          >
+            <SlidersHorizontal className="w-3 h-3 text-zinc-400" />
+            <span>{timeframes.find((t) => t.id === timeframe)?.label}</span>
+            <ChevronDown className="w-3 h-3 text-zinc-400" />
+          </button>
+
+          {/* Desktop Apple Segmented Control */}
+          <div className="hidden sm:flex p-0.5 bg-black/40 border border-white/[0.08] rounded-full shrink-0">
             {timeframes.map((tf) => (
               <button
                 key={tf.id}
@@ -234,8 +240,76 @@ export default function AdminAnalytics() {
         </div>
       </div>
 
-      {/* Consolidated High-Impact Metrics Strip */}
-      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.06] p-[1px] gap-[1px] grid grid-cols-2 lg:grid-cols-5 overflow-hidden">
+      {/* Mobile Timeframe Filter Bottom Sheet */}
+      {isFilterSheetOpen && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-end sm:hidden">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={() => setIsFilterSheetOpen(false)}
+          />
+
+          {/* Bottom Sheet Card */}
+          <div className="relative bg-[#111114] border-t border-white/[0.1] rounded-t-3xl p-5 pb-8 shadow-2xl z-10 animate-in slide-in-from-bottom duration-300 space-y-4">
+            {/* Grab handle */}
+            <div className="w-10 h-1 bg-white/20 rounded-full mx-auto" />
+
+            <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+              <div>
+                <h3 className="text-sm font-bold text-white">Select Timeframe</h3>
+                <p className="text-[11px] text-zinc-400">Filter platform metrics and trends</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsFilterSheetOpen(false)}
+                className="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-zinc-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Options List */}
+            <div className="space-y-1.5">
+              {[
+                { id: "24h", label: "Last 24 Hours", sub: "Recent player sessions & engagement" },
+                { id: "7d", label: "Past 7 Days", sub: "Weekly player activity & trends" },
+                { id: "30d", label: "Past 30 Days", sub: "Monthly retention & catalog plays" },
+                { id: "lifetime", label: "All Time (Lifetime)", sub: "Complete platform history & totals" },
+              ].map((opt) => {
+                const isSelected = timeframe === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => {
+                      setTimeframe(opt.id as any);
+                      setIsFilterSheetOpen(false);
+                    }}
+                    className={clsx(
+                      "w-full flex items-center justify-between p-3 rounded-2xl text-left transition-all border cursor-pointer",
+                      isSelected
+                        ? "bg-white/[0.08] border-white/[0.15] text-white"
+                        : "bg-white/[0.02] border-white/[0.04] text-zinc-300 hover:bg-white/[0.05]"
+                    )}
+                  >
+                    <div>
+                      <div className="text-xs font-semibold">{opt.label}</div>
+                      <div className="text-[10px] text-zinc-500 mt-0.5">{opt.sub}</div>
+                    </div>
+                    {isSelected && (
+                      <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center text-black shrink-0">
+                        <Check className="w-3 h-3 stroke-[3]" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Consolidated High-Impact Metrics Grid (4 Cards: 2x2 on Mobile, 4-col on Desktop) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
         {/* Card 1: Active Players & Retention */}
         <MetricCell
           icon={Users}
@@ -244,7 +318,7 @@ export default function AdminAnalytics() {
           badge={
             <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono flex items-center gap-0.5 shrink-0">
               <Heart className="w-2.5 h-2.5 fill-emerald-400/20" />
-              {currentStats.retentionRate ?? stats.lifetime.retentionRate ?? 0}% ret
+              {currentStats.retentionRate ?? stats.lifetime.retentionRate ?? 0}%
             </span>
           }
           sub={`${memberPct}% Mem • ${guestPct}% Guest`}
@@ -254,7 +328,7 @@ export default function AdminAnalytics() {
         {/* Card 2: Game Plays & Playtime */}
         <MetricCell
           icon={PlayCircle}
-          label={isLifetime ? "Plays & Total Time" : "Plays & Playtime"}
+          label="Game Plays"
           value={currentStats.totalPlays.toLocaleString()}
           badge={
             <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/20 font-mono flex items-center gap-0.5 shrink-0">
@@ -262,49 +336,37 @@ export default function AdminAnalytics() {
               {currentStats.playtime || stats.lifetime.totalPlaytimeFormatted || "0m"}
             </span>
           }
-          sub={`${currentStats.avgPlaysPerActive} plays/visitor • ${currentStats.memberPlaytime || '0m'} mem`}
+          sub={`${currentStats.avgPlaysPerActive} plays / visitor`}
           iconColor="bg-violet-500/10 text-violet-400 border-violet-500/20"
         />
 
-        {/* Card 3: New Registrations */}
+        {/* Card 3: Growth & Reach */}
         <MetricCell
           icon={UserPlus}
-          label="New Accounts"
+          label="Growth & Reach"
           value={currentStats.newUsers.toLocaleString()}
-          badge={
-            timeframe !== "lifetime" && currentStats.newUsers > 0 ? (
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-pink-500/10 text-pink-400 border border-pink-500/20 font-mono shrink-0">
-                +{currentStats.newUsers}
-              </span>
-            ) : undefined
-          }
-          sub={isLifetime ? "Lifetime registrations" : "New registered players"}
-          iconColor="bg-pink-500/10 text-pink-400 border-pink-500/20"
-        />
-
-        {/* Card 4: App & Push Reach */}
-        <MetricCell
-          icon={Smartphone}
-          label="App & Push Reach"
-          value={`${currentStats.pwaInstalls?.toLocaleString() || "0"} Installs`}
           badge={
             <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/20 font-mono flex items-center gap-0.5 shrink-0">
               <BellRing className="w-2.5 h-2.5" />
               {currentStats.pushSubscribers?.toLocaleString() || stats.lifetime.pushSubscribers?.toLocaleString() || "0"} push
             </span>
           }
-          sub={`${currentStats.gameSaves || 0} saves • ${pwaConversionRate}% conv`}
-          iconColor="bg-sky-500/10 text-sky-400 border-sky-500/20"
+          sub={`${currentStats.pwaInstalls || 0} PWA • ${pwaConversionRate}% conv`}
+          iconColor="bg-pink-500/10 text-pink-400 border-pink-500/20"
         />
 
-        {/* Card 5: Live Games */}
+        {/* Card 4: Live Games */}
         <MetricCell
           icon={Gamepad2}
           label="Live Games"
           value={stats.lifetime.totalGames.toLocaleString()}
-          sub="Published titles"
+          badge={
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono shrink-0">
+              Catalog
+            </span>
+          }
+          sub="Published & playable titles"
           iconColor="bg-amber-500/10 text-amber-400 border-amber-500/20"
-          className="col-span-2 lg:col-span-1"
         />
       </div>
 
