@@ -3,6 +3,7 @@ import { getBentoSpanClass, getImageContainerClass } from "@/lib/bento";
 import { getInitialHomeGames, getPublishedGamesByCategory } from "@/lib/services/gameService";
 import GameCard from "@/components/game/GameCard";
 import ContinuePlayingRow from "@/components/game/ContinuePlayingRow";
+import PlayStorePromoBanner from "@/components/game/PlayStorePromoBanner";
 import HorizontalGameSection from "@/components/game/HorizontalGameSection";
 import BannerAd from "@/components/ads/BannerAd";
 import Link from "next/link";
@@ -79,6 +80,9 @@ export default async function Home() {
 
         {/* Client-hydrated Continue Playing Row (Zero SSR overhead) */}
         <ContinuePlayingRow />
+
+        {/* Play Store Offline Promo Banner */}
+        <PlayStorePromoBanner />
 
         {/* Featured Games */}
         {featuredGames.length > 0 && (

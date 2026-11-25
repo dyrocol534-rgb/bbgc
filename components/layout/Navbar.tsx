@@ -124,6 +124,7 @@ export default function Navbar() {
   const openShareModal = useUIStore((state) => state.openShareModal);
   const closeShareModal = useUIStore((state) => state.closeShareModal);
   const toggleNavSidebar = useUIStore((state) => state.toggleNavSidebar);
+  const isNavSidebarOpen = useUIStore((state) => state.isNavSidebarOpen);
 
   // Global Gamification Store
   const xp = useGamificationStore((state) => state.xp);
@@ -270,10 +271,10 @@ export default function Navbar() {
             type="button"
             onClick={toggleNavSidebar}
             className="md:hidden w-[34px] h-[34px] flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.15] text-zinc-300 hover:text-white border border-white/[0.08] transition-all cursor-pointer shadow-xs active:scale-90"
-            aria-label="Toggle navigation menu"
-            title="Menu"
+            aria-label={isNavSidebarOpen ? "Close navigation menu" : "Open navigation menu"}
+            title={isNavSidebarOpen ? "Close menu" : "Open menu"}
           >
-            <Menu className="w-4 h-4 stroke-[2.2]" />
+            <ChevronRight className={`w-4 h-4 stroke-[2.2] transition-transform duration-200 ${isNavSidebarOpen ? "rotate-180" : ""}`} />
           </button>
 
           <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
