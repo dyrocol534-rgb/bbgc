@@ -75,6 +75,7 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
   fetchProfileStats: async () => {
     try {
       const res = await fetch("/api/user/profile");
+      if (!res.ok) return;
       const data = await res.json();
       if (data?.success) {
         set({

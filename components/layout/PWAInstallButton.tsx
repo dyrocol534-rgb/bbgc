@@ -10,7 +10,7 @@ export default function PWAInstallButton({
   variant = "icon",
   onInstall,
 }: {
-  variant?: "icon" | "menuItem" | "bottomBanner";
+  variant?: "icon" | "menuItem";
   onInstall?: () => void;
 }) {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -312,71 +312,6 @@ export default function PWAInstallButton({
     </a>
   );
 
-  if (variant === "bottomBanner") {
-    return (
-      <div className="w-full">
-        {/* Borderless Icon-Only Platform Bar */}
-        <div className="grid grid-cols-3 gap-2 w-full">
-          {/* iOS / PWA Button */}
-          <button
-            onClick={handlePWAInstall}
-            className="flex items-center justify-center h-10 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] active:bg-white/[0.14] transition-all group cursor-pointer active:scale-95"
-            title={isIOS ? "Install iOS App" : isInstalled ? "App Installed" : "Install Web App"}
-            aria-label="iOS App"
-          >
-            {isInstalled ? (
-              <Check className="w-5 h-5 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
-            ) : (
-              <svg className="w-5 h-5 fill-current text-zinc-300 group-hover:text-white group-hover:scale-110 transition-all shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 1.01-2.87-.96.04-2.08.64-2.73 1.4-.56.64-.99 1.7-1.02 2.76 1.06.08 2.12-.54 2.74-1.29z"/>
-              </svg>
-            )}
-          </button>
-
-          {/* Google Play Button */}
-          <button
-            onClick={handlePlayStoreClick}
-            className="flex items-center justify-center h-10 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] active:bg-white/[0.14] transition-all group cursor-pointer active:scale-95"
-            title="Download on Google Play Store"
-            aria-label="Google Play Store"
-          >
-            <svg className="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#4285F4" d="M3.6 1.7C3.2 2.1 3 2.8 3 3.7v16.6c0 .9.2 1.6.6 2l.1.1 9.6-9.6v-.3L3.7 1.6l-.1.1z"/>
-              <path fill="#FBBC04" d="m16.5 15.8-3.2-3.3v-.3l3.2-3.3.1.1 3.8 2.2c1.1.6 1.1 1.6 0 2.2l-3.9 2.3z"/>
-              <path fill="#EA4335" d="m13.3 12.5-9.6 9.6c.5.5 1.3.6 2.2.1l10.7-6.1-3.3-3.6z"/>
-              <path fill="#34A853" d="m13.3 11.5 3.3-3.6L5.9 1.8c-.9-.5-1.7-.4-2.2.1l9.6 9.6z"/>
-            </svg>
-          </button>
-
-          {/* Website Button */}
-          <a
-            href="https://games.bluebuff.in"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center h-10 rounded-xl bg-white/[0.04] hover:bg-white/[0.09] active:bg-white/[0.14] transition-all group cursor-pointer active:scale-95"
-            title="Play on games.bluebuff.in"
-            aria-label="Website"
-          >
-            <svg className="w-5 h-5 text-zinc-300 group-hover:text-white group-hover:scale-110 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-              <path d="M2 12h20"/>
-            </svg>
-          </a>
-        </div>
-
-        {/* Temporary toast */}
-        {toastMessage && (
-          <div className="text-center py-1 px-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px] animate-in fade-in">
-            {toastMessage}
-          </div>
-        )}
-
-        {/* iOS / PWA Guide Modal */}
-        {showIOSModal && renderIOSModal()}
-      </div>
-    );
-  }
 
   if (variant === "menuItem") {
     return (

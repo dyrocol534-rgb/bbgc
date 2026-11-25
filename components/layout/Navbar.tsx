@@ -8,7 +8,6 @@ import { useRouter, usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import clsx from "clsx";
 import dynamic from "next/dynamic";
-import PWAInstallButton from "./PWAInstallButton";
 import SearchBar from "./SearchBar";
 import NotificationBell from "../notifications/NotificationBell";
 import { XP_CONFIG } from "@/lib/xp-config";
@@ -365,7 +364,7 @@ export default function Navbar() {
       )}
 
       <div className={clsx(
-        "fixed top-0 right-0 h-full w-[340px] sm:w-[380px] max-w-[92vw] bg-black border-l border-white/[0.08] z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl",
+        "fixed top-0 right-0 h-full w-[310px] sm:w-[350px] max-w-[92vw] bg-black border-l border-white/[0.08] z-50 transform transition-transform duration-300 ease-out flex flex-col shadow-2xl",
         isSidebarOpen ? "translate-x-0" : "translate-x-full"
       )}>
         {/* iOS Sheet Header */}
@@ -610,11 +609,6 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Bottom Area: Play Store App Card & Footer */}
-          <div className="flex flex-col gap-1.5 pt-1">
-            {/* Play Store moved to bottom */}
-            <PWAInstallButton variant="bottomBanner" onInstall={() => setIsSidebarOpen(false)} />
-          </div>
         </div>
 
         {/* Footer Action (Admin Only) */}

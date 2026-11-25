@@ -6,6 +6,42 @@ import User from "@/models/User";
 
 export const dynamic = "force-dynamic";
 
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await dbConnect();
+
+    const user = await User.findOne({ email: session.user.email }).lean();
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      bio: user.bio,
+      phone: user.phone,
+      xp: user.xp ?? 0,
+      lifetimeXp: user.lifetimeXp ?? 0,
+      currentStreak: user.currentStreak ?? 0,
+      playtimeSeconds: user.playtimeSeconds ?? 0,
+      gamesPlayedCount: user.gamesPlayedCount ?? 0,
+      referralCode: user.referralCode,
+      profileCompleted: user.profileCompleted ?? false,
+    });
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
+}
+
 export async function PATCH(request: Request) {
   try {
     const session = await getServerSession(authOptions);
