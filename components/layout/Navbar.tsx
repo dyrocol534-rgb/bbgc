@@ -264,58 +264,99 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-16 w-full bg-black/95 backdrop-blur-xl border-b border-white/[0.08] flex items-center justify-between px-3 sm:px-4 lg:px-8 select-none">
-        <div className="flex items-center gap-2">
-          {/* Mobile Navigation Drawer Toggle */}
+      <nav className="fixed top-0 left-0 right-0 z-50 w-full bg-black/95 backdrop-blur-xl border-b border-white/[0.08] select-none">
+        {/* Top Header Row */}
+        <div className="h-14 sm:h-16 flex items-center justify-between px-3 sm:px-4 lg:px-8">
+          <div className="flex items-center gap-2">
+            {/* Mobile Navigation Drawer Toggle */}
+            <button
+              type="button"
+              onClick={toggleNavSidebar}
+              className="md:hidden w-[34px] h-[34px] flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.15] text-zinc-300 hover:text-white border border-white/[0.08] transition-all cursor-pointer shadow-xs active:scale-90"
+              aria-label={isNavSidebarOpen ? "Close navigation menu" : "Open navigation menu"}
+              title={isNavSidebarOpen ? "Close menu" : "Open menu"}
+            >
+              <ChevronRight className={`w-4 h-4 stroke-[2.2] transition-transform duration-200 ${isNavSidebarOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
+              {logoError ? (
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center font-black text-white text-lg sm:text-xl shadow-[0_0_15px_rgba(255,255,255,0.15)] border border-white/20 select-none tracking-tight">
+                  B
+                </div>
+              ) : (
+                <div className="relative w-8 h-8 sm:w-9 sm:h-9">
+                  <Image 
+                    src="/logo.png" 
+                    alt="Logo" 
+                    fill 
+                    sizes="36px" preload loading="eager" className="object-contain" 
+                    onError={() => setLogoError(true)}
+                  />
+                </div>
+              )}
+            </Link>
+          </div>
+          
+          {/* Desktop Search Bar (Centered) */}
+          <div className="flex-1 max-w-xl mx-4 hidden sm:block">
+            <SearchBar />
+          </div>
+          
+          {/* Actions: Dice (desktop), Notifications, Profile */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Desktop Surprise Me / Dice Button */}
+            <button
+              onClick={handleSurpriseMe}
+              disabled={isRolling}
+              className="hidden sm:flex group relative items-center justify-center sm:w-[36px] sm:h-[36px] rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-white backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-150 disabled:opacity-50 shrink-0 active:scale-90 cursor-pointer"
+              title="Surprise Me!"
+            >
+              <MovingOuterRing />
+              {isRolling ? (
+                <Loader2 className="w-4 h-4 text-white animate-spin" />
+              ) : (
+                <Dices className="w-4 h-4 text-white transition-transform duration-200 group-hover:rotate-12 stroke-[2.2]" />
+              )}
+
+              {/* Tooltip */}
+              <span className="absolute -bottom-9 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/[0.12] text-[11px] font-medium text-white px-2.5 py-1 rounded-xl hidden sm:block z-50 shadow-2xl">
+                Random Game 🎲
+              </span>
+            </button>
+
+            {/* Notification Bell Button */}
+            <NotificationBell />
+
+            {/* Profile / Menu Button */}
+            <button 
+              onClick={() => setIsSidebarOpen(true)} 
+              className="relative w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full overflow-hidden border border-white/[0.15] hover:border-white/[0.35] bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_2px_8px_rgba(0,0,0,0.3)] active:scale-90 transition-all duration-150 flex items-center justify-center shrink-0 touch-manipulation cursor-pointer"
+              aria-label="User Profile & Menu"
+              title={session?.user?.name || "Account & Menu"}
+            >
+              {session?.user?.image ? (
+                <Image src={session.user.image} alt="User" fill sizes="36px" className="object-cover" />
+              ) : (
+                <UserIcon className="w-4 h-4 text-white stroke-[2.2]" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Sub-Bar: Search & Roll Dice */}
+        <div className="sm:hidden px-3 pb-2 pt-0.5 border-t border-white/[0.06] flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <SearchBar isMobile={true} autoFocus={false} />
+          </div>
+
           <button
             type="button"
-            onClick={toggleNavSidebar}
-            className="md:hidden w-[34px] h-[34px] flex items-center justify-center rounded-full bg-white/[0.06] hover:bg-white/[0.1] active:bg-white/[0.15] text-zinc-300 hover:text-white border border-white/[0.08] transition-all cursor-pointer shadow-xs active:scale-90"
-            aria-label={isNavSidebarOpen ? "Close navigation menu" : "Open navigation menu"}
-            title={isNavSidebarOpen ? "Close menu" : "Open menu"}
-          >
-            <ChevronRight className={`w-4 h-4 stroke-[2.2] transition-transform duration-200 ${isNavSidebarOpen ? "rotate-180" : ""}`} />
-          </button>
-
-          <Link href="/" className="flex items-center text-primary shrink-0" title={`${process.env.NEXT_PUBLIC_SITE_NAME || "Bluebuff Games"} Home`}>
-          {logoError ? (
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-white/20 to-white/5 flex items-center justify-center font-black text-white text-lg sm:text-xl shadow-[0_0_15px_rgba(255,255,255,0.15)] border border-white/20 select-none tracking-tight">
-              B
-            </div>
-          ) : (
-            <div className="relative w-8 h-8 sm:w-9 sm:h-9">
-              <Image 
-                src="/logo.png" 
-                alt="Logo" 
-                fill 
-                sizes="36px" preload loading="eager" className="object-contain" 
-                onError={() => setLogoError(true)}
-              />
-            </div>
-          )}
-        </Link>
-      </div>
-        
-        <div className="flex-1 max-w-xl mx-4 hidden sm:block">
-          <SearchBar />
-        </div>
-        
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          {/* Mobile Search Button */}
-          <button 
-            className="sm:hidden w-[34px] h-[34px] flex items-center justify-center text-white rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-150 shrink-0 active:scale-90"
-            onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
-            title="Search"
-          >
-            <Search className="w-4 h-4 stroke-[2.2]" />
-          </button>
-          
-          {/* Surprise Me / Dice Button */}
-          <button
             onClick={handleSurpriseMe}
             disabled={isRolling}
-            className="group relative flex items-center justify-center w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] text-white backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-150 disabled:opacity-50 shrink-0 active:scale-90 cursor-pointer"
+            className="group relative flex items-center justify-center w-[36px] h-[36px] rounded-full bg-white/[0.06] hover:bg-white/[0.12] active:bg-white/[0.18] border border-white/[0.1] text-white backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_2px_8px_rgba(0,0,0,0.3)] transition-all duration-150 disabled:opacity-50 shrink-0 active:scale-90 cursor-pointer"
             title="Surprise Me!"
+            aria-label="Roll dice for random game"
           >
             <MovingOuterRing />
             {isRolling ? (
@@ -323,38 +364,9 @@ export default function Navbar() {
             ) : (
               <Dices className="w-4 h-4 text-white transition-transform duration-200 group-hover:rotate-12 stroke-[2.2]" />
             )}
-
-            {/* Tooltip */}
-            <span className="absolute -bottom-9 right-0 w-max opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity bg-[#1c1c1e]/95 backdrop-blur-xl border border-white/[0.12] text-[11px] font-medium text-white px-2.5 py-1 rounded-xl hidden sm:block z-50 shadow-2xl">
-              Random Game 🎲
-            </span>
-          </button>
-
-          {/* Notification Bell Button */}
-          <NotificationBell />
-
-          {/* Profile / Menu Button */}
-          <button 
-            onClick={() => setIsSidebarOpen(true)} 
-            className="relative w-[34px] h-[34px] sm:w-[36px] sm:h-[36px] rounded-full overflow-hidden border border-white/[0.15] hover:border-white/[0.35] bg-white/[0.06] backdrop-blur-xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_2px_8px_rgba(0,0,0,0.3)] active:scale-90 transition-all duration-150 flex items-center justify-center shrink-0 touch-manipulation cursor-pointer"
-            aria-label="User Profile & Menu"
-            title={session?.user?.name || "Account & Menu"}
-          >
-            {session?.user?.image ? (
-              <Image src={session.user.image} alt="User" fill sizes="36px" className="object-cover" />
-            ) : (
-              <UserIcon className="w-4 h-4 text-white stroke-[2.2]" />
-            )}
           </button>
         </div>
       </nav>
-
-      {/* Mobile Search Overlay */}
-      {isMobileSearchOpen && (
-        <div className="fixed top-16 left-0 right-0 z-30 bg-[#121215]/95 backdrop-blur-xl border-b border-white/[0.08] p-4 sm:hidden shadow-xl animate-in slide-in-from-top-2">
-          <SearchBar isMobile={true} onClose={() => setIsMobileSearchOpen(false)} />
-        </div>
-      )}
 
       {/* Sidebar Slider */}
       {isSidebarOpen && (

@@ -45,7 +45,15 @@ function setCachedSearch(key: string, data: any[]) {
   }
 }
 
-export default function SearchBar({ isMobile = false, onClose }: { isMobile?: boolean, onClose?: () => void }) {
+export default function SearchBar({ 
+  isMobile = false, 
+  autoFocus = false,
+  onClose 
+}: { 
+  isMobile?: boolean; 
+  autoFocus?: boolean;
+  onClose?: () => void;
+}) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -143,10 +151,10 @@ export default function SearchBar({ isMobile = false, onClose }: { isMobile?: bo
       <form onSubmit={handleSubmit} className="relative">
         <button 
           type="submit"
-          className="absolute left-3 top-1/2 -translate-y-1/2 p-1 text-text-muted hover:text-primary-light transition-colors z-10"
+          className="absolute left-3 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-white transition-colors z-10"
           title="Search"
         >
-          {isSearching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+          {isSearching ? <Loader2 className="w-4 h-4 animate-spin text-zinc-400" /> : <Search className="w-4 h-4 stroke-[2.2]" />}
         </button>
         <input
           type="text"
@@ -155,26 +163,23 @@ export default function SearchBar({ isMobile = false, onClose }: { isMobile?: bo
           onFocus={() => { if (query.trim().length > 1) setShowDropdown(true); }}
           placeholder="Search games..."
           className={clsx(
-            "w-full text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-primary-hover transition-all",
+            "w-full text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none transition-all",
             isMobile 
-              ? "bg-zinc-800 border border-zinc-700 rounded-lg py-2 pl-11 pr-10" 
-              : "bg-surface-hover/50 border border-zinc-700 rounded-full py-2 pl-11 pr-10 focus:border-transparent group-hover:bg-surface-hover"
+              ? "bg-white/[0.06] hover:bg-white/[0.09] focus:bg-black/90 border border-white/[0.1] focus:border-white/20 rounded-full h-[36px] pl-10 pr-9" 
+              : "bg-surface-hover/50 border border-zinc-700 rounded-full py-2 pl-11 pr-10 focus:border-transparent group-hover:bg-surface-hover focus:ring-2 focus:ring-primary-hover"
           )}
-          autoFocus={isMobile}
+          autoFocus={autoFocus}
         />
-        {(query.length > 0 || isMobile) && (
+        {query.length > 0 && (
           <button
             type="button"
             onClick={() => {
-              if (query.length > 0) {
-                setQuery("");
-                setShowDropdown(false);
-              } else if (onClose) {
-                onClose();
-              }
+              setQuery("");
+              setShowDropdown(false);
+              if (onClose) onClose();
             }}
             className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-white transition-colors z-10"
-            title={query.length > 0 ? "Clear search" : "Close search"}
+            title="Clear search"
           >
             <X className="w-4 h-4" />
           </button>

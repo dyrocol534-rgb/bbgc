@@ -71,7 +71,7 @@ export default function PlayStorePromoBanner() {
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleBannerClick}
-        className="group relative w-full overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#0B0F19] via-[#111827] to-[#1E112A] py-3 px-4 sm:py-3.5 sm:px-6 flex items-center justify-between gap-3 sm:gap-6 shadow-[0_8px_30px_rgba(0,0,0,0.6)] hover:shadow-[0_12px_36px_rgba(99,102,241,0.22)] border border-white/10 hover:border-violet-500/30 transition-all duration-300 transform-gpu cursor-pointer block"
+        className="group relative w-full overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#0B0F19] via-[#111827] to-[#1E112A] py-2.5 px-3 sm:py-3.5 sm:px-6 flex items-center justify-between gap-2.5 sm:gap-6 shadow-[0_8px_30px_rgba(0,0,0,0.6)] hover:shadow-[0_12px_36px_rgba(99,102,241,0.22)] border border-white/10 hover:border-violet-500/30 transition-all duration-300 transform-gpu cursor-pointer block"
       >
         {/* Ambient Top Glow & Neon Corner Accents */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/15 via-transparent to-transparent pointer-events-none" />
@@ -79,40 +79,40 @@ export default function PlayStorePromoBanner() {
         <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-cyan-600/10 rounded-full blur-2xl pointer-events-none" />
 
         {/* Left Section: Tag, Text, Mascot */}
-        <div className="flex items-center gap-3 sm:gap-5 min-w-0 z-10">
-          <div className="flex flex-col min-w-0">
+        <div className="flex items-center gap-2.5 sm:gap-4 min-w-0 z-10 flex-1">
+          <div className="flex flex-col min-w-0 flex-1">
             {/* Tag Badge */}
-            <div className="mb-1 self-start">
+            <div className="mb-0.5 sm:mb-1 self-start">
               {isInApp ? (
-                <span className="inline-flex items-center gap-1.5 bg-amber-400/15 border border-amber-300/30 text-amber-300 font-bold text-[10px] sm:text-[11px] px-2.5 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-sm">
-                  <Star className="w-3 h-3 text-amber-300 fill-amber-300 shrink-0" />
-                  <span>SUPPORT US</span>
+                <span className="inline-flex items-center gap-1 bg-amber-400/15 border border-amber-300/30 text-amber-300 font-bold text-[9.5px] sm:text-[11px] px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-sm">
+                  <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-300 fill-amber-300 shrink-0" />
+                  <span>Rate Us</span>
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 bg-white/[0.07] border border-white/[0.12] text-zinc-200 font-bold text-[10px] sm:text-[11px] px-2.5 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-sm">
-                  <Gamepad2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                  <span>GOOGLE PLAY APP</span>
+                <span className="inline-flex items-center gap-1 bg-white/[0.07] border border-white/[0.12] text-zinc-200 font-bold text-[9.5px] sm:text-[11px] px-2 py-0.5 rounded-full uppercase tracking-wider backdrop-blur-sm">
+                  <Gamepad2 className="w-3 h-3 text-cyan-400 shrink-0" />
+                  <span>Android App</span>
                 </span>
               )}
             </div>
 
             {/* Headline */}
-            <h3 className="text-white font-black text-xs sm:text-sm md:text-base tracking-tight leading-snug drop-shadow-sm">
+            <h3 className="text-white font-extrabold sm:font-black text-xs sm:text-sm md:text-base tracking-tight leading-snug truncate drop-shadow-sm">
               {isInApp 
-                ? "Enjoying Bluebuff? Leave us a review on Google Play!" 
-                : "Play 1,000+ Games on the Bluebuff Android App!"}
+                ? "Love Bluebuff? Leave a Review!" 
+                : "Play 1,000+ Games on the App"}
             </h3>
 
             {/* Subtitle */}
-            <p className="hidden sm:block text-zinc-400 text-[11px] md:text-xs font-medium leading-normal mt-0.5">
+            <p className="hidden md:block text-zinc-400 text-[11px] md:text-xs font-medium leading-normal mt-0.5 truncate">
               {isInApp 
-                ? "Your 5-star rating helps us bring you more awesome games & updates." 
-                : "Instant play, fullscreen mode & faster loading on your device."}
+                ? "Help us bring you more free games & updates." 
+                : "Instant play, fullscreen mode & faster loading."}
             </p>
           </div>
 
           {/* Peeking Cyber Gamer Bot Mascot */}
-          <div className="hidden sm:flex relative shrink-0 self-end -mb-3.5 pointer-events-none select-none">
+          <div className="hidden md:flex relative shrink-0 self-end -mb-3.5 pointer-events-none select-none">
             <svg 
               className="w-16 h-12 md:w-20 md:h-15 overflow-visible transform group-hover:scale-105 group-hover:-translate-y-0.5 transition-all duration-300" 
               viewBox="0 0 120 80" 
@@ -200,23 +200,25 @@ export default function PlayStorePromoBanner() {
         </div>
 
         {/* Right Section: CTA Button & Dismiss */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0 z-10">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 z-10">
           {isInApp ? (
-            <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 active:scale-95 text-black font-extrabold text-[11px] sm:text-xs md:text-sm px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-lg shadow-black/25 group-hover:shadow-[0_6px_20px_rgba(251,191,36,0.4)] transition-all duration-200 select-none">
-              <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-950 fill-amber-950 shrink-0" />
-              <span className="whitespace-nowrap">Review on Google Play</span>
+            <div className="inline-flex items-center gap-1 sm:gap-1.5 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 active:scale-95 text-black font-extrabold text-[10.5px] sm:text-xs md:text-sm px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg shadow-black/25 group-hover:shadow-[0_6px_20px_rgba(251,191,36,0.4)] transition-all duration-200 select-none">
+              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-950 fill-amber-950 shrink-0" />
+              <span className="whitespace-nowrap sm:hidden">Rate App</span>
+              <span className="whitespace-nowrap hidden sm:inline">Rate on Google Play</span>
               <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-black/70 group-hover:translate-x-0.5 transition-transform" />
             </div>
           ) : (
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white hover:bg-zinc-100 active:scale-95 text-black font-extrabold text-[11px] sm:text-xs md:text-sm px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-lg shadow-black/30 group-hover:shadow-[0_6px_24px_rgba(255,255,255,0.3)] transition-all duration-200 select-none">
+            <div className="inline-flex items-center gap-1 sm:gap-1.5 bg-white hover:bg-zinc-100 active:scale-95 text-black font-extrabold text-[10.5px] sm:text-xs md:text-sm px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg shadow-black/30 group-hover:shadow-[0_6px_24px_rgba(255,255,255,0.3)] transition-all duration-200 select-none">
               {/* Google Play Triangle SVG */}
-              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path fill="#4285F4" d="M3.6 1.7C3.2 2.1 3 2.8 3 3.7v16.6c0 .9.2 1.6.6 2l.1.1 9.6-9.6v-.3L3.7 1.6l-.1.1z"/>
                 <path fill="#FBBC04" d="m16.5 15.8-3.2-3.3v-.3l3.2-3.3.1.1 3.8 2.2c1.1.6 1.1 1.6 0 2.2l-3.9 2.3z"/>
                 <path fill="#EA4335" d="m13.3 12.5-9.6 9.6c.5.5 1.3.6 2.2.1l10.7-6.1-3.3-3.6z"/>
                 <path fill="#34A853" d="m13.3 11.5 3.3-3.6L5.9 1.8c-.9-.5-1.7-.4-2.2.1l9.6 9.6z"/>
               </svg>
-              <span className="whitespace-nowrap">Get the App</span>
+              <span className="whitespace-nowrap sm:hidden">Get App</span>
+              <span className="whitespace-nowrap hidden sm:inline">Get the App</span>
               <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-black/70 group-hover:translate-x-0.5 transition-transform" />
             </div>
           )}
