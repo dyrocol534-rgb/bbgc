@@ -19,15 +19,18 @@ export async function GET(request: Request) {
     if (category) {
       dbQuery.category = { $regex: new RegExp(`^${category}$`, 'i') };
     }
-    let isTextSearch = false;
+    let isSearch = false;
+    let trimmedQuery = "";
     if (query && query.trim()) {
-      const trimmed = query.trim();
-      if (trimmed.length === 1) {
-        dbQuery.title = { $regex: `^${trimmed}`, $options: "i" };
-      } else {
-        dbQuery.$text = { $search: trimmed };
-        isTextSearch = true;
-      }
+      trimmedQuery = query.trim();
+      const escaped = trimmedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp(escaped, 'i');
+      dbQuery.$or = [
+        { title: { $regex: searchRegex } },
+        { category: { $regex: searchRegex } },
+        { tags: { $regex: searchRegex } },
+      ];
+      isSearch = true;
     }
     if (featured) {
       dbQuery.featured = true;
@@ -38,7 +41,7 @@ export async function GET(request: Request) {
     }
     
     const skip = (page - 1) * limit;
-    const isAutocomplete = Boolean(query && limit <= 10);
+    const isAutocomplete = Boolean(query && limit <= 20);
     
     let total = 0;
     let hasMore = false;
@@ -49,24 +52,56 @@ export async function GET(request: Request) {
       const maxSkip = Math.max(0, total - limit);
       const randomSkip = maxSkip > 0 ? Math.floor(Math.random() * (maxSkip + 1)) : 0;
       games = await Game.find(dbQuery)
-        .select('_id slug title thumbnailUrl category playCount')
+        .select('_id slug title thumbnailUrl category playCount rating')
         .skip(randomSkip)
         .limit(limit)
         .lean();
       hasMore = games.length === limit;
-    } else if (isTextSearch) {
-      total = await Game.countDocuments(dbQuery);
-      games = await Game.find(dbQuery, { score: { $meta: "textScore" } })
-        .select('_id slug title thumbnailUrl category playCount')
-        .sort({ score: { $meta: "textScore" }, playCount: -1 })
-        .skip(skip)
-        .limit(limit)
+    } else if (isSearch) {
+      // Find matching candidates and rank them by relevance
+      const candidateLimit = Math.min(Math.max((skip + limit) * 4, 60), 300);
+      const candidates = await Game.find(dbQuery)
+        .select('_id slug title thumbnailUrl category playCount rating')
+        .sort({ playCount: -1 })
+        .limit(candidateLimit)
         .lean();
-      hasMore = skip + games.length < total;
+
+      const lowerQuery = trimmedQuery.toLowerCase();
+      const escaped = trimmedQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const wholeWordRegex = new RegExp(`\\b${escaped}\\b`, 'i');
+
+      const scored = candidates.map((g: any) => {
+        const title = (g.title || '').toLowerCase();
+        let score = 0;
+        if (title === lowerQuery) {
+          score = 1000; // Exact title match
+        } else if (title.startsWith(lowerQuery)) {
+          score = 800; // Starts with query
+        } else if (wholeWordRegex.test(title)) {
+          score = 600; // Contains full word in title
+        } else if (title.includes(lowerQuery)) {
+          score = 400; // Substring in title
+        } else if (Array.isArray(g.category) && g.category.some((c: string) => c.toLowerCase().includes(lowerQuery))) {
+          score = 200; // Category match
+        } else {
+          score = 100; // Tag match
+        }
+        return { game: g, score };
+      });
+
+      scored.sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return (b.game.playCount || 0) - (a.game.playCount || 0);
+      });
+
+      const sortedGames = scored.map(item => item.game);
+      games = sortedGames.slice(skip, skip + limit);
+      total = sortedGames.length;
+      hasMore = skip + limit < sortedGames.length;
     } else {
       // High-performance pagination: fetch limit + 1 to determine hasMore without expensive full collection scans
       const fetched = await Game.find(dbQuery)
-        .select('_id slug title thumbnailUrl category playCount')
+        .select('_id slug title thumbnailUrl category playCount rating')
         .sort({ playCount: -1, createdAt: -1 })
         .skip(skip)
         .limit(limit + 1)

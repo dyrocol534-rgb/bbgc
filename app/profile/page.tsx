@@ -284,7 +284,7 @@ export default async function ProfilePage() {
               </div>
 
               {orderedRecent.length > 0 ? (
-                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[74px] sm:auto-cols-[82px] md:auto-cols-[88px] auto-rows-[78px] sm:auto-rows-[86px] md:auto-rows-[92px] gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[74px] sm:auto-cols-[82px] md:auto-cols-[88px] auto-rows-[78px] sm:auto-rows-[86px] md:auto-rows-[92px] gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-proximity scroll-smooth touch-auto">
                   {orderedRecent.map((game: any, index: number) => {
                     const spanClass = getHorizontalBentoSpanClass(index);
                     const imageContainerClass = getImageContainerClass(spanClass);
@@ -332,7 +332,7 @@ export default async function ProfilePage() {
               </div>
 
               {orderedFavorites.length > 0 ? (
-                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[74px] sm:auto-cols-[82px] md:auto-cols-[88px] auto-rows-[78px] sm:auto-rows-[86px] md:auto-rows-[92px] gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+                <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[74px] sm:auto-cols-[82px] md:auto-cols-[88px] auto-rows-[78px] sm:auto-rows-[86px] md:auto-rows-[92px] gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none snap-x snap-proximity scroll-smooth touch-auto">
                   {orderedFavorites.map((game: any, index: number) => {
                     const spanClass = getHorizontalBentoSpanClass(index);
                     const imageContainerClass = getImageContainerClass(spanClass);

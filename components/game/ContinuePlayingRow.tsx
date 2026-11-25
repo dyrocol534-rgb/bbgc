@@ -45,7 +45,7 @@ export default function ContinuePlayingRow({ initialGames }: ContinuePlayingRowP
         </Link>
       </div>
       
-      <div className="flex overflow-x-auto gap-3.5 sm:gap-4 pb-2 pt-1 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+      <div className="flex overflow-x-auto gap-3.5 sm:gap-4 pb-2 pt-1 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-none snap-x snap-proximity scroll-smooth touch-auto">
         {displayGames.map((game, index) => (
           <Link
             href={`/games/${game.slug}`}

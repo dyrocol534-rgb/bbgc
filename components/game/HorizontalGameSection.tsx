@@ -2,6 +2,7 @@ import Link from 'next/link';
 import GameCard from '@/components/game/GameCard';
 import { GameCardData } from '@/lib/services/gameService';
 import { getHorizontalBentoSpanClass, getImageContainerClass } from '@/lib/bento';
+import HorizontalScrollContainer from './HorizontalScrollContainer';
 
 interface HorizontalGameSectionProps {
   title: string;
@@ -18,7 +19,8 @@ export default function HorizontalGameSection({
 }: HorizontalGameSectionProps) {
   if (!games || games.length === 0) return null;
 
-  const displayGames = games.slice(0, 9);
+  // Display up to 18 games for a rich 2-row horizontal scrollable layout
+  const displayGames = games.slice(0, 18);
 
   return (
     <section className="space-y-2.5 sm:space-y-3">
@@ -35,7 +37,7 @@ export default function HorizontalGameSection({
         </Link>
       </div>
 
-      <div className="grid grid-rows-2 [grid-auto-flow:column_dense] auto-cols-[64px] sm:auto-cols-[72px] md:auto-cols-[80px] auto-rows-[66px] sm:auto-rows-[76px] md:auto-rows-[84px] gap-2 sm:gap-2.5 overflow-x-auto pb-1.5 pt-0.5 -mx-3 px-3 sm:mx-0 sm:px-0 scrollbar-none snap-x snap-mandatory scroll-smooth touch-pan-x">
+      <HorizontalScrollContainer>
         {displayGames.map((game, index) => {
           const spanClass = getHorizontalBentoSpanClass(index);
           const imageContainerClass = getImageContainerClass(spanClass);
@@ -53,7 +55,7 @@ export default function HorizontalGameSection({
             </div>
           );
         })}
-      </div>
+      </HorizontalScrollContainer>
     </section>
   );
 }

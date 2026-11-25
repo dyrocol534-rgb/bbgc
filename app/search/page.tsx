@@ -4,6 +4,7 @@ import Game from '@/models/Game';
 import GameCard from '@/components/game/GameCard';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { SearchX } from 'lucide-react';
+import SearchInputHeader from '@/components/search/SearchInputHeader';
 
 const siteName = process.env.NEXT_PUBLIC_SITE_NAME || 'Bluebuff Games';
 
@@ -34,35 +35,51 @@ async function searchGames(query: string) {
     const trimmed = query.trim();
     if (!trimmed) return [];
 
-    // Use full-text index when query length >= 2
-    let filter: any = { status: "published" };
-    if (trimmed.length === 1) {
-      filter.title = { $regex: `^${trimmed}`, $options: "i" };
-    } else {
-      filter.$text = { $search: trimmed };
-    }
+    const escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const searchRegex = new RegExp(escaped, 'i');
+    const wholeWordRegex = new RegExp(`\\b${escaped}\\b`, 'i');
 
-    let games = await Game.find(filter)
-      .select("_id slug title thumbnailUrl category playCount")
-      .sort(trimmed.length > 1 ? { score: { $meta: "textScore" }, playCount: -1 } : { playCount: -1 })
-      .limit(48)
+    const candidates = await Game.find({
+      status: "published",
+      $or: [
+        { title: { $regex: searchRegex } },
+        { category: { $regex: searchRegex } },
+        { tags: { $regex: searchRegex } },
+      ],
+    })
+      .select("_id slug title thumbnailUrl category playCount rating")
+      .sort({ playCount: -1 })
+      .limit(120)
       .lean();
 
-    // Fallback if full-text index returned 0 matches
-    if (games.length === 0 && trimmed.length > 1) {
-      games = await Game.find({
-        status: "published",
-        title: { $regex: trimmed, $options: "i" },
-      })
-        .select("_id slug title thumbnailUrl category playCount")
-        .sort({ playCount: -1 })
-        .limit(48)
-        .lean();
-    }
+    const lowerQuery = trimmed.toLowerCase();
+    const scored = candidates.map((g: any) => {
+      const title = (g.title || "").toLowerCase();
+      let score = 0;
+      if (title === lowerQuery) {
+        score = 1000; // Exact title match
+      } else if (title.startsWith(lowerQuery)) {
+        score = 800; // Starts with query
+      } else if (wholeWordRegex.test(title)) {
+        score = 600; // Contains full word in title
+      } else if (title.includes(lowerQuery)) {
+        score = 400; // Substring in title
+      } else if (Array.isArray(g.category) && g.category.some((c: string) => c.toLowerCase().includes(lowerQuery))) {
+        score = 200; // Category match
+      } else {
+        score = 100; // Tag match
+      }
+      return { game: g, score };
+    });
 
-    return games.map((g: any) => ({
-      ...g,
-      _id: g._id?.toString() || "",
+    scored.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return (b.game.playCount || 0) - (a.game.playCount || 0);
+    });
+
+    return scored.slice(0, 60).map((item) => ({
+      ...item.game,
+      _id: item.game._id?.toString() || "",
     }));
   } catch (error) {
     console.error("Error searching games:", error);
@@ -92,15 +109,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-baseline justify-between border-b border-zinc-800 pb-3 gap-2">
-        <h1 className="text-xl md:text-2xl font-bold text-text-main truncate">
-          {query ? `Search results for "${query}"` : "Search Games"}
-        </h1>
-        <p className="text-zinc-400 text-sm whitespace-nowrap">
-          {query ? `Found ${games.length} games` : "Enter a search term in the navigation bar"}
-        </p>
-      </div>
+    <div className="container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
+      <SearchInputHeader initialQuery={query} totalGames={games.length} />
 
       {query && games.length === 0 ? (
         <EmptyState 
